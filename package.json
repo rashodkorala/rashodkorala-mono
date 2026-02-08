@@ -1,0 +1,22 @@
+{
+  "name": "rashodkorala-mono",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm --filter \"./apps/*\" dev",
+    "dev:cms": "pnpm --filter @rashodkorala/cms dev",
+    "dev:portfolio": "pnpm --filter @rashodkorala/portfolio dev",
+    "dev:photos": "pnpm --filter @rashodkorala/photos dev",
+    "build": "pnpm --filter \"./apps/*\" build",
+    "build:cms": "pnpm --filter @rashodkorala/cms build",
+    "build:portfolio": "pnpm --filter @rashodkorala/portfolio build",
+    "build:photos": "pnpm --filter @rashodkorala/photos build",
+    "lint": "pnpm --filter \"./apps/*\" lint",
+    "clean": "pnpm --filter \"./apps/*\" exec rm -rf node_modules .next",
+    "clean:all": "rm -rf node_modules && pnpm clean"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "packageManager": "pnpm@9.0.0"
+}

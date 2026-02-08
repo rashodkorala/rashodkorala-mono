@@ -1,0 +1,18 @@
+{
+  "photos": [
+    {
+      "title": "Ancient Temple",
+      "description": "A beautiful ancient temple at sunset",
+      "category": "architecture",
+      "alt_text": "Ancient temple with golden sunset lighting",
+      "image_path": "images/temple.jpg"
+    },
+    {
+      "title": "Mountain Lake",
+      "description": "Serene mountain lake reflection",
+      "category": "nature",
+      "alt_text": "Crystal clear mountain lake reflecting surrounding peaks",
+      "image_path": "images/lake.jpg"
+    }
+  ]
+} 
