@@ -9,7 +9,6 @@ import {
   IconListDetails,
   IconPhoto,
   IconSettings,
-  IconBook,
   IconBriefcase,
 } from "@tabler/icons-react"
 
@@ -66,11 +65,6 @@ const data = {
     },
   ],
   navSecondary: [
-    {
-      title: "Documentation",
-      url: "/docs",
-      icon: IconBook,
-    },
     {
       title: "Settings",
       url: "/protected/settings",
