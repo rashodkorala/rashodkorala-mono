@@ -83,38 +83,6 @@ export interface CaseStudy {
   updatedAt: string
 }
 
-export interface CaseStudyInsert {
-  title: string
-  slug: string
-  summary?: string | null
-  type?: CaseStudyType
-  status?: CaseStudyStatus
-  featured?: boolean
-  publishedAt?: string | null
-  subjectName?: string | null
-  subjectType?: string | null
-  industry?: string | null
-  audience?: string | null
-  role?: string | null
-  teamSize?: string | null
-  timeline?: string | null
-  tags?: string[]
-  skills?: string[]
-  stack?: string[]
-  coverUrl?: string | null
-  galleryUrls?: string[]
-  links?: Link[]
-  results?: Result[]
-  metrics?: Metric[]
-  mdxPath: string
-  seoTitle?: string | null
-  seoDescription?: string | null
-}
-
-export interface CaseStudyUpdate extends Partial<CaseStudyInsert> {
-  id: string
-}
-
 export interface CaseStudyFormData {
   title: string
   slug: string
