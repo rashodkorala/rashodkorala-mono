@@ -58,9 +58,10 @@ export function BlogForm({ isOpen, onClose, editingBlog }: BlogFormProps) {
     title: "",
     slug: "",
     excerpt: "",
-    content: "",
+    mdxContent: "",
     featuredImageUrl: "",
     status: "draft",
+    targetApp: "portfolio",
     authorName: "",
     category: "",
     tags: [],
@@ -80,9 +81,10 @@ export function BlogForm({ isOpen, onClose, editingBlog }: BlogFormProps) {
         title: editingBlog.title,
         slug: editingBlog.slug,
         excerpt: editingBlog.excerpt || "",
-        content: editingBlog.content,
+        mdxContent: "", // Content is managed separately via blog editor
         featuredImageUrl: editingBlog.featuredImageUrl || "",
         status: editingBlog.status,
+        targetApp: editingBlog.targetApp,
         authorName: editingBlog.authorName || "",
         category: editingBlog.category || "",
         tags: editingBlog.tags || [],
@@ -97,9 +99,10 @@ export function BlogForm({ isOpen, onClose, editingBlog }: BlogFormProps) {
         title: "",
         slug: "",
         excerpt: "",
-        content: "",
+        mdxContent: "",
         featuredImageUrl: "",
         status: "draft",
+        targetApp: "portfolio",
         authorName: "",
         category: "",
         tags: [],
@@ -254,11 +257,11 @@ export function BlogForm({ isOpen, onClose, editingBlog }: BlogFormProps) {
           </div>
 
           <div>
-            <Label htmlFor="content">Content *</Label>
+            <Label htmlFor="mdxContent">Content *</Label>
             <Textarea
-              id="content"
-              value={formData.content}
-              onChange={(e) => setFormData({ ...formData, content: e.target.value })}
+              id="mdxContent"
+              value={formData.mdxContent}
+              onChange={(e) => setFormData({ ...formData, mdxContent: e.target.value })}
               required
               disabled={isLoading}
               rows={10}
@@ -318,6 +321,24 @@ export function BlogForm({ isOpen, onClose, editingBlog }: BlogFormProps) {
                 placeholder="e.g., Technology, Design"
               />
             </div>
+          </div>
+
+          <div>
+            <Label htmlFor="targetApp">Target App *</Label>
+            <Select
+              value={formData.targetApp}
+              onValueChange={(value) => setFormData({ ...formData, targetApp: value as any })}
+              disabled={isLoading}
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="portfolio">Portfolio</SelectItem>
+                <SelectItem value="photos">Photos</SelectItem>
+                <SelectItem value="both">Both</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           <div>
