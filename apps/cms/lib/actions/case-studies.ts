@@ -2,7 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server"
 import { revalidatePath } from "next/cache"
-import type { CaseStudy, CaseStudyDB, CaseStudyInsert, CaseStudyUpdate, CaseStudyFormData } from "@/lib/types/case-study"
+import type { CaseStudy, CaseStudyDB, CaseStudyFormData } from "@/lib/types/case-study"
 
 function transformCaseStudy(caseStudy: CaseStudyDB): CaseStudy {
   return {
