@@ -44,25 +44,6 @@ export default function AboutSection() {
               interact with technology. Every line of code is an opportunity to make
               something beautiful and functional.
             </p>
-
-            <div className="pt-8 grid grid-cols-3 gap-8">
-              {[
-                { number: "5+", label: "Years Exp." },
-                { number: "20+", label: "Projects" },
-                { number: "1", label: "Startup" }
-              ].map((stat, i) => (
-                <motion.div
-                  key={stat.label}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={isInView ? { opacity: 1, y: 0 } : {}}
-                  transition={{ duration: 0.6, delay: 0.4 + i * 0.1 }}
-                >
-                  <p className="text-3xl md:text-4xl font-light">{stat.number}</p>
-                  <p className="text-sm text-black/40 mt-1">{stat.label}</p>
-                </motion.div>
-              ))}
-            </div>
-
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={isInView ? { opacity: 1, y: 0 } : {}}
