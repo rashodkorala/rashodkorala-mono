@@ -26,6 +26,7 @@ export default function Index() {
             {/* <Work /> Disabled - keeping code for future use */}
             <Projects />
             <AboutSection />
+            
             <Startup /> {/* Disabled - keeping code for future use */}
         </>
     );

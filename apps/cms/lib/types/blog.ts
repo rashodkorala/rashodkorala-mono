@@ -1,4 +1,5 @@
 export type BlogStatus = "draft" | "published" | "archived"
+export type TargetApp = "portfolio" | "photos" | "both"
 
 // Database schema (snake_case)
 export interface BlogDB {
@@ -10,6 +11,7 @@ export interface BlogDB {
   content: string
   featured_image_url: string | null
   status: BlogStatus
+  target_app: TargetApp
   published_at: string | null
   author_name: string | null
   category: string | null
@@ -32,6 +34,7 @@ export interface Blog {
   content: string
   featuredImageUrl: string | null
   status: BlogStatus
+  targetApp: TargetApp
   publishedAt: string | null
   authorName: string | null
   category: string | null
@@ -46,11 +49,12 @@ export interface Blog {
 
 export interface BlogInsert {
   title: string
-  slug: string
+  slug?: string
   excerpt?: string | null
   content: string
   featuredImageUrl?: string | null
   status?: BlogStatus
+  targetApp?: TargetApp
   publishedAt?: string | null
   authorName?: string | null
   category?: string | null
@@ -63,4 +67,3 @@ export interface BlogInsert {
 export interface BlogUpdate extends Partial<BlogInsert> {
   id: string
 }
-

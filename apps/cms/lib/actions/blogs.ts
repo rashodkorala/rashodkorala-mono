@@ -2,7 +2,7 @@
 
 import { createClient } from "@/lib/supabase/server"
 import { revalidatePath } from "next/cache"
-import type { Blog, BlogDB, BlogInsert, BlogUpdate } from "@/lib/types/blog"
+import type { Blog, BlogDB, BlogInsert, BlogUpdate, TargetApp } from "@/lib/types/blog"
 
 function transformBlog(blog: BlogDB): Blog {
   return {
@@ -14,6 +14,7 @@ function transformBlog(blog: BlogDB): Blog {
     content: blog.content,
     featuredImageUrl: blog.featured_image_url,
     status: blog.status,
+    targetApp: blog.target_app || "portfolio",
     publishedAt: blog.published_at,
     authorName: blog.author_name,
     category: blog.category,
@@ -36,9 +37,9 @@ function slugify(text: string): string {
     .trim()
 }
 
-export async function getBlogs(status?: string): Promise<Blog[]> {
+export async function getBlogs(status?: string, targetApp?: TargetApp): Promise<Blog[]> {
   const supabase = await createClient()
-  
+
   const {
     data: { user },
   } = await supabase.auth.getUser()
@@ -57,6 +58,10 @@ export async function getBlogs(status?: string): Promise<Blog[]> {
     query = query.eq("status", status)
   }
 
+  if (targetApp) {
+    query = query.or(`target_app.eq.${targetApp},target_app.eq.both`)
+  }
+
   const { data, error } = await query
 
   if (error) {
@@ -68,7 +73,7 @@ export async function getBlogs(status?: string): Promise<Blog[]> {
 
 export async function getBlog(id: string): Promise<Blog | null> {
   const supabase = await createClient()
-  
+
   const {
     data: { user },
   } = await supabase.auth.getUser()
@@ -96,7 +101,7 @@ export async function getBlog(id: string): Promise<Blog | null> {
 
 export async function getBlogBySlug(slug: string): Promise<Blog | null> {
   const supabase = await createClient()
-  
+
   const {
     data: { user },
   } = await supabase.auth.getUser()
@@ -124,7 +129,7 @@ export async function getBlogBySlug(slug: string): Promise<Blog | null> {
 
 export async function createBlog(blog: BlogInsert): Promise<Blog> {
   const supabase = await createClient()
-  
+
   const {
     data: { user },
   } = await supabase.auth.getUser()
@@ -145,6 +150,7 @@ export async function createBlog(blog: BlogInsert): Promise<Blog> {
       content: blog.content,
       featured_image_url: blog.featuredImageUrl || null,
       status: blog.status || "draft",
+      target_app: blog.targetApp || "portfolio",
       published_at: blog.publishedAt || (blog.status === "published" ? new Date().toISOString() : null),
       author_name: blog.authorName || null,
       category: blog.category || null,
@@ -161,13 +167,14 @@ export async function createBlog(blog: BlogInsert): Promise<Blog> {
     throw new Error(`Failed to create blog: ${error.message}`)
   }
 
+  revalidatePath("/protected/blogs")
   revalidatePath("/protected/content")
   return transformBlog(data)
 }
 
 export async function updateBlog(blog: BlogUpdate): Promise<Blog> {
   const supabase = await createClient()
-  
+
   const {
     data: { user },
   } = await supabase.auth.getUser()
@@ -183,6 +190,7 @@ export async function updateBlog(blog: BlogUpdate): Promise<Blog> {
     content: string
     featured_image_url: string | null
     status: string
+    target_app: string
     published_at: string | null
     author_name: string | null
     category: string | null
@@ -191,6 +199,7 @@ export async function updateBlog(blog: BlogUpdate): Promise<Blog> {
     seo_description: string | null
     featured: boolean
   }> = {}
+
   if (blog.title !== undefined) updateData.title = blog.title
   if (blog.slug !== undefined) updateData.slug = blog.slug
   if (blog.excerpt !== undefined) updateData.excerpt = blog.excerpt
@@ -202,6 +211,7 @@ export async function updateBlog(blog: BlogUpdate): Promise<Blog> {
       updateData.published_at = new Date().toISOString()
     }
   }
+  if (blog.targetApp !== undefined) updateData.target_app = blog.targetApp
   if (blog.publishedAt !== undefined) updateData.published_at = blog.publishedAt
   if (blog.authorName !== undefined) updateData.author_name = blog.authorName
   if (blog.category !== undefined) updateData.category = blog.category
@@ -222,13 +232,15 @@ export async function updateBlog(blog: BlogUpdate): Promise<Blog> {
     throw new Error(`Failed to update blog: ${error.message}`)
   }
 
+  revalidatePath("/protected/blogs")
   revalidatePath("/protected/content")
+  revalidatePath(`/protected/blogs/${blog.id}`)
   return transformBlog(data)
 }
 
 export async function deleteBlog(id: string): Promise<void> {
   const supabase = await createClient()
-  
+
   const {
     data: { user },
   } = await supabase.auth.getUser()
@@ -247,6 +259,6 @@ export async function deleteBlog(id: string): Promise<void> {
     throw new Error(`Failed to delete blog: ${error.message}`)
   }
 
+  revalidatePath("/protected/blogs")
   revalidatePath("/protected/content")
 }
-

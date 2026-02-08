@@ -10,6 +10,7 @@ import {
   IconPhoto,
   IconSettings,
   IconBriefcase,
+  IconPencil,
 } from "@tabler/icons-react"
 
 import { NavMain } from "@/components/nav-main"
@@ -47,6 +48,11 @@ const data = {
       title: "Photos",
       url: "/protected/photos",
       icon: IconPhoto,
+    },
+    {
+      title: "Blogs",
+      url: "/protected/blogs",
+      icon: IconPencil,
     },
     {
       title: "Content",

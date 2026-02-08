@@ -5,7 +5,7 @@ import { Geist_Mono, Geist } from 'next/font/google';
 import Footer from '@/src/components/footer';
 import Home from '@/src/components/main/home';
 import Provider from '@/lib/provider';
-import IntroWrapper from '@/src/components/introWrapper';
+// import IntroWrapper from '@/src/components/introWrapper';
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -79,7 +79,7 @@ export default function RootLayout({
             <html lang="en" suppressHydrationWarning  >
                 <body className={`${geistSans.variable} ${geistMono.variable}`}>
                     <Provider>
-                        <IntroWrapper />
+                        {/* <IntroWrapper /> */}
                         <main className='max-w-[2800px] mx-auto px-6'>
                             {/* <Home /> */}
                             {children}
