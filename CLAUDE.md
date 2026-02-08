@@ -63,8 +63,46 @@ rashodkorala-mono/
 │       ├── app/                # Pages: /, /about, /contact, /projects, /projects/[slug]
 │       └── lib/supabase.ts     # Singleton Supabase client
 │
+├── packages/
+│   └── theView/                    # Shared blog components package
+│       ├── src/
+│       │   ├── components/        # BlogPostContent component
+│       │   ├── themes/            # Theme configs (portfolio, photos)
+│       │   ├── utils/             # Markdown parser utility
+│       │   └── types.ts           # Shared TypeScript types
+│       └── package.json
+│
 └── pnpm-workspace.yaml
 ```
+
+## Shared Packages
+
+### `@rashodkorala/theView` (`packages/theView/`)
+
+Shared package for blog post rendering components used across Portfolio and Photos apps.
+
+**Purpose:** Consolidates blog rendering logic to avoid duplication and enable single-source-of-truth updates.
+
+**Key Files:**
+- `packages/theView/src/components/BlogPostContent.tsx` — Main blog post component with theme support
+- `packages/theView/src/utils/markdownParser.ts` — Configurable markdown-to-HTML parser
+- `packages/theView/src/themes/portfolio.ts` — Portfolio theme (light-only styling)
+- `packages/theView/src/themes/photos.ts` — Photos theme (dark mode support)
+- `packages/theView/src/types.ts` — Shared TypeScript interfaces
+
+**Usage:**
+```typescript
+import { BlogPostContent, portfolioTheme } from "@rashodkorala/theView"
+import type { BlogPost } from "@rashodkorala/theView"
+
+<BlogPostContent blog={blog} theme={portfolioTheme} />
+```
+
+**Benefits:**
+- Single source of truth for markdown parsing logic
+- Consistent behavior across apps
+- Theme-based styling allows each app to maintain unique design
+- Easy to add new features or fix bugs in one place
 
 ## Key Files by Concern
 
@@ -147,3 +185,5 @@ ANALYTICS_USER_ID
 - Components use shadcn/ui patterns with `cn()` for className merging
 - Image optimization: AVIF/WebP formats, responsive sizes, 60s cache TTL
 - Auth: Supabase SSR with cookie-based sessions, middleware enforces protected routes
+- Shared components: Use workspace packages (`packages/*`) for code shared across multiple apps
+- Blog rendering: Use `@rashodkorala/theView` package for blog post components (Portfolio and Photos)
