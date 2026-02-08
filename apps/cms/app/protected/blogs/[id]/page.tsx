@@ -1,5 +1,5 @@
 import { notFound } from "next/navigation"
-import { getBlog } from "@/lib/actions/blogs"
+import { getBlog, fetchMarkdownFromStorage } from "@/lib/actions/blogs"
 import { BlogEditor } from "@/components/blogs/blog-editor"
 
 interface EditBlogPageProps {
@@ -14,5 +14,16 @@ export default async function EditBlogPage({ params }: EditBlogPageProps) {
     notFound()
   }
 
-  return <BlogEditor blog={blog} />
+  // Fetch markdown content from storage
+  let markdownContent = ""
+  if (blog.mdxPath) {
+    try {
+      markdownContent = await fetchMarkdownFromStorage(blog.mdxPath)
+    } catch (error) {
+      console.error("Error fetching markdown:", error)
+      // Continue with empty content if fetch fails
+    }
+  }
+
+  return <BlogEditor blog={blog} markdownContent={markdownContent} />
 }

@@ -37,22 +37,29 @@ export default function Sidebar() {
                     {/* Navigation Links */}
                     <nav className="flex flex-col space-y-11 w-full h-full justify-center font-thin px-[40px]">
                         <div className="flex flex-col space-y-4 text-5xl md:text-6xl">
-                            <Link 
-                                href="/projects" 
+                            <Link
+                                href="/projects"
                                 className="transform transition-transform duration-300 ease-in-out hover:scale-105"
                                 onClick={closeMenu}
                             >
                                 Projects
                             </Link>
-                            <Link 
-                                href="/about" 
+                            <Link
+                                href="/blog"
+                                className="transform transition-transform duration-300 ease-in-out hover:scale-105"
+                                onClick={closeMenu}
+                            >
+                                The View
+                            </Link>
+                            <Link
+                                href="/about"
                                 className="transform transition-transform duration-300 ease-in-out hover:scale-105"
                                 onClick={closeMenu}
                             >
                                 About
                             </Link>
-                            <Link 
-                                href="/contact" 
+                            <Link
+                                href="/contact"
                                 className="transform transition-transform duration-300 ease-in-out hover:scale-105"
                                 onClick={closeMenu}
                             >
@@ -62,22 +69,22 @@ export default function Sidebar() {
 
                         {/* Social Links */}
                         <div className="flex flex-col space-y-4 text-3xl md:text-4xl">
-                            <Link 
-                                href="https://instagram.com/rashodk_" 
+                            <Link
+                                href="https://instagram.com/rashodk_"
                                 className="transform transition-transform duration-300 ease-in-out hover:scale-105"
                                 onClick={closeMenu}
                             >
                                 Instagram
                             </Link>
-                            <Link 
-                                href="https://linkedin.com/in/rashodk" 
+                            <Link
+                                href="https://linkedin.com/in/rashodk"
                                 className="transform transition-transform duration-300 ease-in-out hover:scale-105"
                                 onClick={closeMenu}
                             >
                                 LinkedIn
                             </Link>
-                            <Link 
-                                href="https://github.com/rashodkorala" 
+                            <Link
+                                href="https://github.com/rashodkorala"
                                 className="transform transition-transform duration-300 ease-in-out hover:scale-105"
                                 onClick={closeMenu}
                             >

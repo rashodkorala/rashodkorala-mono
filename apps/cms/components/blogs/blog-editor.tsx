@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 import Link from "next/link"
@@ -19,25 +19,29 @@ import { Textarea } from "@/components/ui/textarea"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Separator } from "@/components/ui/separator"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { IconArrowLeft, IconDeviceFloppy, IconEye, IconTrash } from "@tabler/icons-react"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { IconArrowLeft, IconDeviceFloppy, IconEye, IconTrash, IconCode, IconPhoto } from "@tabler/icons-react"
 import type { Blog, BlogInsert, BlogUpdate, BlogStatus, TargetApp } from "@/lib/types/blog"
-import { createBlog, updateBlog, deleteBlog } from "@/lib/actions/blogs"
+import { createBlog, updateBlog, deleteBlog, uploadBlogMedia } from "@/lib/actions/blogs"
 import { generateSlug } from "@/lib/utils/slug"
+import ReactMarkdown from "react-markdown"
+import remarkGfm from "remark-gfm"
 
 interface BlogEditorProps {
   blog?: Blog | null
+  markdownContent?: string
 }
 
-export function BlogEditor({ blog }: BlogEditorProps) {
+export function BlogEditor({ blog, markdownContent = "" }: BlogEditorProps) {
   const router = useRouter()
   const supabase = createClient()
   const isEditing = !!blog
 
-  const [formData, setFormData] = useState<BlogInsert>({
+  const [formData, setFormData] = useState<Omit<BlogInsert, "mdxContent"> & { mdxContent: string }>({
     title: "",
     slug: "",
     excerpt: "",
-    content: "",
+    mdxContent: "",
     featuredImageUrl: "",
     status: "draft",
     targetApp: "portfolio",
@@ -55,6 +59,9 @@ export function BlogEditor({ blog }: BlogEditorProps) {
   const [imageFile, setImageFile] = useState<File | null>(null)
   const [imagePreview, setImagePreview] = useState<string>("")
   const [autoGenerateSlug, setAutoGenerateSlug] = useState(true)
+  const [mdxView, setMdxView] = useState<"write" | "preview">("write")
+  const [isUploadingImage, setIsUploadingImage] = useState(false)
+  const contentTextareaRef = useRef<HTMLTextAreaElement | null>(null)
 
   useEffect(() => {
     if (blog) {
@@ -62,7 +69,7 @@ export function BlogEditor({ blog }: BlogEditorProps) {
         title: blog.title,
         slug: blog.slug,
         excerpt: blog.excerpt || "",
-        content: blog.content,
+        mdxContent: markdownContent || "",
         featuredImageUrl: blog.featuredImageUrl || "",
         status: blog.status,
         targetApp: blog.targetApp || "portfolio",
@@ -76,7 +83,7 @@ export function BlogEditor({ blog }: BlogEditorProps) {
       setAutoGenerateSlug(false)
       setImagePreview(blog.featuredImageUrl || "")
     }
-  }, [blog])
+  }, [blog, markdownContent])
 
   // Auto-generate slug from title
   useEffect(() => {
@@ -135,6 +142,54 @@ export function BlogEditor({ blog }: BlogEditorProps) {
     })
   }
 
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+
+    if (!file.type.startsWith("image/")) {
+      toast.error("Please select an image file")
+      return
+    }
+
+    setIsUploadingImage(true)
+    try {
+      const imageUrl = await uploadBlogMedia(file)
+
+      // Insert markdown image syntax at cursor position
+      const textarea = contentTextareaRef.current
+      if (textarea) {
+        const start = textarea.selectionStart
+        const end = textarea.selectionEnd
+        const textBefore = formData.mdxContent.substring(0, start)
+        const textAfter = formData.mdxContent.substring(end)
+        const imageMarkdown = `![${file.name}](${imageUrl})`
+        const newContent = textBefore + imageMarkdown + textAfter
+
+        setFormData({ ...formData, mdxContent: newContent })
+
+        // Reset cursor position after the inserted image
+        setTimeout(() => {
+          const newCursorPos = start + imageMarkdown.length
+          textarea.setSelectionRange(newCursorPos, newCursorPos)
+          textarea.focus()
+        }, 0)
+      } else {
+        // If no cursor position, append at the end
+        const imageMarkdown = `\n\n![${file.name}](${imageUrl})\n\n`
+        setFormData({ ...formData, mdxContent: formData.mdxContent + imageMarkdown })
+      }
+
+      toast.success("Image uploaded and inserted")
+    } catch (error) {
+      console.error("Error uploading image:", error)
+      toast.error(error instanceof Error ? error.message : "Failed to upload image")
+    } finally {
+      setIsUploadingImage(false)
+      // Reset file input
+      e.target.value = ""
+    }
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
@@ -142,7 +197,7 @@ export function BlogEditor({ blog }: BlogEditorProps) {
       toast.error("Title is required")
       return
     }
-    if (!formData.content.trim()) {
+    if (!formData.mdxContent.trim()) {
       toast.error("Content is required")
       return
     }
@@ -192,34 +247,34 @@ export function BlogEditor({ blog }: BlogEditorProps) {
           ...blogData,
         }
         await updateBlog(updateData)
-        toast.success("Blog updated successfully")
+        toast.success("The View post updated successfully")
       } else {
         await createBlog(blogData)
-        toast.success("Blog created successfully")
+        toast.success("The View post created successfully")
       }
 
       router.push("/protected/blogs")
       router.refresh()
     } catch (error) {
       console.error("Error saving blog:", error)
-      toast.error(error instanceof Error ? error.message : "Failed to save blog")
+      toast.error(error instanceof Error ? error.message : "Failed to save post")
     } finally {
       setIsLoading(false)
     }
   }
 
   const handleDelete = async () => {
-    if (!blog || !confirm("Are you sure you want to delete this blog post?")) return
+    if (!blog || !confirm("Are you sure you want to delete this post?")) return
 
     setIsDeleting(true)
     try {
       await deleteBlog(blog.id)
-      toast.success("Blog deleted successfully")
+      toast.success("Post deleted successfully")
       router.push("/protected/blogs")
       router.refresh()
     } catch (error) {
       console.error("Error deleting blog:", error)
-      toast.error(error instanceof Error ? error.message : "Failed to delete blog")
+      toast.error(error instanceof Error ? error.message : "Failed to delete post")
     } finally {
       setIsDeleting(false)
     }
@@ -238,10 +293,10 @@ export function BlogEditor({ blog }: BlogEditorProps) {
             </Link>
             <div>
               <h1 className="text-xl font-semibold">
-                {isEditing ? "Edit Blog Post" : "New Blog Post"}
+                {isEditing ? "Edit The View Post" : "New The View Post"}
               </h1>
               <p className="text-sm text-muted-foreground">
-                {isEditing ? "Update your blog post" : "Create a new blog post"}
+                {isEditing ? "Update your post" : "Create a new post"}
               </p>
             </div>
           </div>
@@ -277,7 +332,7 @@ export function BlogEditor({ blog }: BlogEditorProps) {
             <Card>
               <CardHeader>
                 <CardTitle>Content</CardTitle>
-                <CardDescription>Write your blog post content</CardDescription>
+                <CardDescription>Write your post content</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
@@ -286,7 +341,7 @@ export function BlogEditor({ blog }: BlogEditorProps) {
                     id="title"
                     value={formData.title}
                     onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                    placeholder="Enter blog title..."
+                    placeholder="Enter post title..."
                     className="text-lg"
                     required
                   />
@@ -303,17 +358,82 @@ export function BlogEditor({ blog }: BlogEditorProps) {
                   />
                 </div>
 
+                {/* Markdown Editor with Write/Preview toggle */}
                 <div className="space-y-2">
-                  <Label htmlFor="content">Content * (Markdown supported)</Label>
-                  <Textarea
-                    id="content"
-                    value={formData.content}
-                    onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-                    placeholder="Write your blog content here... (Markdown supported)"
-                    rows={20}
-                    className="font-mono text-sm"
-                    required
-                  />
+                  <div className="flex items-center justify-between">
+                    <Label>Content * (Markdown)</Label>
+                    <div className="flex items-center gap-2">
+                      {mdxView === "write" && (
+                        <div className="relative">
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleImageUpload}
+                            className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                            disabled={isUploadingImage}
+                            id="content-image-upload"
+                          />
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            className="h-7 px-2 text-xs"
+                            disabled={isUploadingImage}
+                            asChild
+                          >
+                            <label htmlFor="content-image-upload" className="cursor-pointer">
+                              <IconPhoto className="h-3 w-3 mr-1" />
+                              {isUploadingImage ? "Uploading..." : "Upload Image"}
+                            </label>
+                          </Button>
+                        </div>
+                      )}
+                      <div className="flex border rounded-md">
+                        <Button
+                          type="button"
+                          variant={mdxView === "write" ? "secondary" : "ghost"}
+                          size="sm"
+                          className="rounded-r-none h-7 px-2 text-xs"
+                          onClick={() => setMdxView("write")}
+                        >
+                          <IconCode className="h-3 w-3 mr-1" />
+                          Write
+                        </Button>
+                        <Button
+                          type="button"
+                          variant={mdxView === "preview" ? "secondary" : "ghost"}
+                          size="sm"
+                          className="rounded-l-none h-7 px-2 text-xs"
+                          onClick={() => setMdxView("preview")}
+                        >
+                          <IconEye className="h-3 w-3 mr-1" />
+                          Preview
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+
+                  {mdxView === "write" ? (
+                    <Textarea
+                      ref={contentTextareaRef}
+                      value={formData.mdxContent}
+                      onChange={(e) => setFormData({ ...formData, mdxContent: e.target.value })}
+                      placeholder="Write your post content in Markdown... Use the 'Upload Image' button to insert images, or use markdown syntax: ![alt text](image-url)"
+                      rows={24}
+                      className="font-mono text-sm"
+                      required
+                    />
+                  ) : (
+                    <div className="border rounded-md p-4 min-h-[600px] prose prose-lg dark:prose-invert max-w-none">
+                      {formData.mdxContent.trim() ? (
+                        <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                          {formData.mdxContent}
+                        </ReactMarkdown>
+                      ) : (
+                        <p className="text-muted-foreground">No content to preview</p>
+                      )}
+                    </div>
+                  )}
                 </div>
               </CardContent>
             </Card>
@@ -392,7 +512,7 @@ export function BlogEditor({ blog }: BlogEditorProps) {
                     </SelectContent>
                   </Select>
                   <p className="text-xs text-muted-foreground">
-                    Choose which app(s) will display this blog
+                    Choose which app(s) will display this post
                   </p>
                 </div>
 

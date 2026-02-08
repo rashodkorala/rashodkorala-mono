@@ -32,13 +32,30 @@ export async function GET(request: NextRequest) {
         throw error
       }
 
+      // Fetch markdown content from storage if mdx_path exists
+      let markdownContent = ""
+      if (data.mdx_path) {
+        try {
+          const { data: markdownData, error: markdownError } = await supabase.storage
+            .from("blogs-mdx")
+            .download(data.mdx_path)
+
+          if (!markdownError && markdownData) {
+            markdownContent = await markdownData.text()
+          }
+        } catch (err) {
+          console.error("Error fetching markdown from storage:", err)
+          // Fallback to empty content if fetch fails
+        }
+      }
+
       // Transform to camelCase
       const blog = {
         id: data.id,
         title: data.title,
         slug: data.slug,
         excerpt: data.excerpt,
-        content: data.content,
+        content: markdownContent,
         featuredImageUrl: data.featured_image_url,
         status: data.status,
         targetApp: data.target_app,
@@ -90,13 +107,13 @@ export async function GET(request: NextRequest) {
       throw error
     }
 
-    // Transform to camelCase
+    // Transform to camelCase (note: for list view, we don't fetch markdown content)
     const blogs = (data || []).map((item) => ({
       id: item.id,
       title: item.title,
       slug: item.slug,
       excerpt: item.excerpt,
-      content: item.content,
+      content: "", // Content not included in list view
       featuredImageUrl: item.featured_image_url,
       status: item.status,
       targetApp: item.target_app,

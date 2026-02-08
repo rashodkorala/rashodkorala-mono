@@ -61,11 +61,46 @@ export default function AboutSection() {
           </motion.div>
         </div>
 
-        {/* Photography Section */}
+        {/* Blog Section */}
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8, delay: 0.6 }}
+          className="mt-24 pt-16 border-t border-black/10"
+        >
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8">
+            <div>
+              <p className="text-sm tracking-[0.3em] uppercase text-black/40 mb-4">
+                Writing
+              </p>
+              <h3 className="text-3xl md:text-4xl font-light tracking-tight mb-2">
+                The View
+              </h3>
+              <p className="text-lg text-black/50 font-light max-w-md">
+                how I view things — Thoughts, insights, and perspectives
+              </p>
+            </div>
+
+            <motion.div
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+            >
+              <Link
+                href="/blog"
+                className="inline-flex items-center gap-2 px-6 py-3 border border-black/20 rounded-full text-sm hover:bg-black hover:text-white transition-colors group"
+              >
+                Read More
+                <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" strokeWidth={1.5} />
+              </Link>
+            </motion.div>
+          </div>
+        </motion.div>
+
+        {/* Photography Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 40 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.8, delay: 0.8 }}
           className="mt-24 pt-16 border-t border-black/10"
         >
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8">

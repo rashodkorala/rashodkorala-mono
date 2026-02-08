@@ -86,15 +86,15 @@ export function BlogsList({ blogs: initialBlogs }: BlogsListProps) {
   }
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this blog post?")) return
+    if (!confirm("Are you sure you want to delete this post?")) return
 
     try {
       await deleteBlog(id)
       setBlogs(blogs.filter((b) => b.id !== id))
-      toast.success("Blog deleted successfully")
+      toast.success("Post deleted successfully")
       router.refresh()
     } catch (error) {
-      toast.error("Failed to delete blog")
+      toast.error("Failed to delete post")
     }
   }
 
@@ -103,9 +103,9 @@ export function BlogsList({ blogs: initialBlogs }: BlogsListProps) {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-semibold">Blog Posts</h1>
+          <h1 className="text-2xl font-semibold">The View</h1>
           <p className="text-muted-foreground">
-            Manage your blog posts for Portfolio and Photos apps
+            Manage your posts for Portfolio and Photos apps
           </p>
         </div>
         <Link href="/protected/blogs/new">
@@ -202,7 +202,7 @@ export function BlogsList({ blogs: initialBlogs }: BlogsListProps) {
               <TableRow>
                 <TableCell colSpan={6} className="text-center py-12">
                   <IconFileText className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
-                  <p className="text-muted-foreground">No blog posts found</p>
+                  <p className="text-muted-foreground">No posts found</p>
                   <Link href="/protected/blogs/new">
                     <Button variant="link" className="mt-2">
                       Create your first post

@@ -11,7 +11,7 @@ function transformBlog(blog: BlogDB): Blog {
     title: blog.title,
     slug: blog.slug,
     excerpt: blog.excerpt,
-    content: blog.content,
+    mdxPath: blog.mdx_path,
     featuredImageUrl: blog.featured_image_url,
     status: blog.status,
     targetApp: blog.target_app || "portfolio",
@@ -35,6 +35,82 @@ function slugify(text: string): string {
     .replace(/\s+/g, "-")
     .replace(/-+/g, "-")
     .trim()
+}
+
+// Upload markdown content to storage
+export async function uploadMarkdownToStorage(slug: string, content: string): Promise<string> {
+  const supabase = await createClient()
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  if (!user) {
+    throw new Error("Unauthorized")
+  }
+
+  const fileName = `${slug}.md`
+  const filePath = `${user.id}/${fileName}`
+
+  // Upload or update the file
+  const { error } = await supabase.storage
+    .from("blogs-mdx")
+    .upload(filePath, content, {
+      contentType: "text/markdown",
+      upsert: true,
+    })
+
+  if (error) {
+    throw new Error(`Failed to upload markdown: ${error.message}`)
+  }
+
+  return filePath
+}
+
+// Fetch markdown content from storage
+export async function fetchMarkdownFromStorage(mdxPath: string): Promise<string> {
+  const supabase = await createClient()
+
+  const { data, error } = await supabase.storage
+    .from("blogs-mdx")
+    .download(mdxPath)
+
+  if (error) {
+    throw new Error(`Failed to fetch markdown: ${error.message}`)
+  }
+
+  return await data.text()
+}
+
+// Upload media (images) to storage for blog posts
+export async function uploadBlogMedia(file: File): Promise<string> {
+  const supabase = await createClient()
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+
+  if (!user) {
+    throw new Error("Unauthorized")
+  }
+
+  const fileExt = file.name.split(".").pop()
+  const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`
+  const filePath = `${user.id}/${fileName}`
+
+  const { error } = await supabase.storage
+    .from("blogs-media")
+    .upload(filePath, file)
+
+  if (error) {
+    throw new Error(`Failed to upload media: ${error.message}`)
+  }
+
+  const {
+    data: { publicUrl },
+  } = supabase.storage.from("blogs-media").getPublicUrl(filePath)
+
+  return publicUrl
 }
 
 export async function getBlogs(status?: string, targetApp?: TargetApp): Promise<Blog[]> {
@@ -140,6 +216,9 @@ export async function createBlog(blog: BlogInsert): Promise<Blog> {
 
   const slug = blog.slug || slugify(blog.title)
 
+  // Upload markdown to storage
+  const mdxPath = await uploadMarkdownToStorage(slug, blog.mdxContent)
+
   const { data, error } = await supabase
     .from("blogs")
     .insert({
@@ -147,7 +226,8 @@ export async function createBlog(blog: BlogInsert): Promise<Blog> {
       title: blog.title,
       slug: slug,
       excerpt: blog.excerpt || null,
-      content: blog.content,
+      content: null, // Content is now stored in markdown files (mdx_path)
+      mdx_path: mdxPath,
       featured_image_url: blog.featuredImageUrl || null,
       status: blog.status || "draft",
       target_app: blog.targetApp || "portfolio",
@@ -183,11 +263,24 @@ export async function updateBlog(blog: BlogUpdate): Promise<Blog> {
     throw new Error("Unauthorized")
   }
 
+  // Get existing blog to find mdx_path if updating content
+  let existingBlog: Blog | null = null
+  if (blog.mdxContent) {
+    existingBlog = await getBlog(blog.id)
+  }
+
+  // Upload markdown to storage if content is being updated
+  let mdxPath: string | undefined = undefined
+  if (blog.mdxContent !== undefined) {
+    const slug = blog.slug || existingBlog?.slug || slugify(blog.title || existingBlog?.title || "")
+    mdxPath = await uploadMarkdownToStorage(slug, blog.mdxContent)
+  }
+
   const updateData: Partial<{
     title: string
     slug: string
     excerpt: string | null
-    content: string
+    mdx_path: string | null
     featured_image_url: string | null
     status: string
     target_app: string
@@ -203,7 +296,7 @@ export async function updateBlog(blog: BlogUpdate): Promise<Blog> {
   if (blog.title !== undefined) updateData.title = blog.title
   if (blog.slug !== undefined) updateData.slug = blog.slug
   if (blog.excerpt !== undefined) updateData.excerpt = blog.excerpt
-  if (blog.content !== undefined) updateData.content = blog.content
+  if (mdxPath !== undefined) updateData.mdx_path = mdxPath
   if (blog.featuredImageUrl !== undefined) updateData.featured_image_url = blog.featuredImageUrl
   if (blog.status !== undefined) {
     updateData.status = blog.status
@@ -249,6 +342,17 @@ export async function deleteBlog(id: string): Promise<void> {
     throw new Error("Unauthorized")
   }
 
+  // Get the blog to find the mdx_path
+  const blog = await getBlog(id)
+
+  if (blog && blog.mdxPath) {
+    // Delete markdown file from storage
+    await supabase.storage
+      .from("blogs-mdx")
+      .remove([blog.mdxPath])
+  }
+
+  // Delete from database
   const { error } = await supabase
     .from("blogs")
     .delete()

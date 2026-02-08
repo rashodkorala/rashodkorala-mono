@@ -192,6 +192,9 @@ importers:
       '@radix-ui/react-slot':
         specifier: ^1.2.3
         version: 1.2.4(@types/react@18.3.28)(react@19.2.4)
+      '@rashodkorala/theView':
+        specifier: workspace:*
+        version: link:../../packages/theView
       '@supabase/auth-helpers-nextjs':
         specifier: ^0.10.0
         version: 0.10.0(@supabase/supabase-js@2.95.3)
@@ -289,6 +292,9 @@ importers:
       '@radix-ui/react-tabs':
         specifier: ^1.1.13
         version: 1.1.13(@types/react-dom@18.3.7(@types/react@18.3.28))(@types/react@18.3.28)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@rashodkorala/theView':
+        specifier: workspace:*
+        version: link:../../packages/theView
       '@react-spring/web':
         specifier: ^9.7.5
         version: 9.7.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -407,6 +413,37 @@ importers:
       tailwindcss:
         specifier: ^3.4.19
         version: 3.4.19(yaml@2.8.2)
+      typescript:
+        specifier: ^5
+        version: 5.9.3
+
+  packages/theView:
+    dependencies:
+      framer-motion:
+        specifier: ^12.23.26
+        version: 12.33.0(@emotion/is-prop-valid@1.4.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      lucide-react:
+        specifier: ^0.483.0
+        version: 0.483.0(react@19.2.4)
+      next:
+        specifier: ^15.0.0
+        version: 15.5.9(@babel/core@7.29.0)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      react:
+        specifier: ^18.0.0 || ^19.0.0
+        version: 19.2.4
+      react-dom:
+        specifier: ^18.0.0 || ^19.0.0
+        version: 19.2.4(react@19.2.4)
+    devDependencies:
+      '@types/node':
+        specifier: ^20
+        version: 20.19.33
+      '@types/react':
+        specifier: ^18.3.0
+        version: 18.3.28
+      '@types/react-dom':
+        specifier: ^18.3.0
+        version: 18.3.7(@types/react@18.3.28)
       typescript:
         specifier: ^5
         version: 5.9.3
@@ -10868,6 +10905,10 @@ snapshots:
   lucide-react@0.483.0(react@18.3.1):
     dependencies:
       react: 18.3.1
+
+  lucide-react@0.483.0(react@19.2.4):
+    dependencies:
+      react: 19.2.4
 
   lucide-react@0.511.0(react@19.2.4):
     dependencies:

@@ -50,7 +50,7 @@ const data = {
       icon: IconPhoto,
     },
     {
-      title: "Blogs",
+      title: "The View",
       url: "/protected/blogs",
       icon: IconPencil,
     },

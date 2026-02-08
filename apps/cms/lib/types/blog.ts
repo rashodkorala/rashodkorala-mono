@@ -8,7 +8,7 @@ export interface BlogDB {
   title: string
   slug: string
   excerpt: string | null
-  content: string
+  mdx_path: string | null
   featured_image_url: string | null
   status: BlogStatus
   target_app: TargetApp
@@ -31,7 +31,7 @@ export interface Blog {
   title: string
   slug: string
   excerpt: string | null
-  content: string
+  mdxPath: string | null
   featuredImageUrl: string | null
   status: BlogStatus
   targetApp: TargetApp
@@ -51,7 +51,7 @@ export interface BlogInsert {
   title: string
   slug?: string
   excerpt?: string | null
-  content: string
+  mdxContent: string
   featuredImageUrl?: string | null
   status?: BlogStatus
   targetApp?: TargetApp
