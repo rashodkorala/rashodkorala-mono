@@ -68,7 +68,7 @@ export default function About() {
                 Specializing in creating elegant, performant applications across the full stack. The belief is simple: the best software is invisible, working seamlessly, integrating into lives without friction.
               </p>
               <p>
-                Beyond coding, time is spent building a startup, mentoring junior developers, and exploring new cities with a camera. Open source isn't just a practice but a way of giving back to the community that made growth possible.
+                Beyond coding, time is spent building a startup, mentoring junior developers, and exploring new cities with a camera. Open source isn&apos;t just a practice but a way of giving back to the community that made growth possible.
               </p>
             </div>
           </motion.div>

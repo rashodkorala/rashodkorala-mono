@@ -28,11 +28,11 @@ export default function Footer() {
               Contact
             </p>
             <h2 className="text-4xl md:text-5xl font-light tracking-tight mb-6">
-              Let's work <span className="font-medium">together</span>
+              Let&apos;s work <span className="font-medium">together</span>
             </h2>
             <p className="text-lg text-black/50 dark:text-white/50 font-light mb-8">
               Have a project in mind or want to discuss opportunities?
-              I'm always open to interesting conversations.
+              I&apos;m always open to interesting conversations.
             </p>
 
             <motion.a
@@ -77,7 +77,7 @@ export default function Footer() {
             </div>
 
             <div className="space-y-2 text-black/40 dark:text-white/40 text-sm font-light">
-              <p>Based in St. John's, Newfoundland</p>
+              <p>Based in St. John&apos;s, Newfoundland</p>
               <p>Available for remote work worldwide</p>
             </div>
           </motion.div>
