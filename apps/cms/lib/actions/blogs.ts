@@ -13,6 +13,7 @@ function transformBlog(blog: BlogDB): Blog {
     excerpt: blog.excerpt,
     mdxPath: blog.mdx_path,
     featuredImageUrl: blog.featured_image_url,
+    featuredVideoUrl: blog.featured_video_url ?? null,
     status: blog.status,
     targetApp: blog.target_app || "portfolio",
     publishedAt: blog.published_at,
@@ -229,6 +230,7 @@ export async function createBlog(blog: BlogInsert): Promise<Blog> {
       content: null, // Content is now stored in markdown files (mdx_path)
       mdx_path: mdxPath,
       featured_image_url: blog.featuredImageUrl || null,
+      featured_video_url: blog.featuredVideoUrl || null,
       status: blog.status || "draft",
       target_app: blog.targetApp || "portfolio",
       published_at: blog.publishedAt || (blog.status === "published" ? new Date().toISOString() : null),
@@ -282,6 +284,7 @@ export async function updateBlog(blog: BlogUpdate): Promise<Blog> {
     excerpt: string | null
     mdx_path: string | null
     featured_image_url: string | null
+    featured_video_url: string | null
     status: string
     target_app: string
     published_at: string | null
@@ -298,6 +301,7 @@ export async function updateBlog(blog: BlogUpdate): Promise<Blog> {
   if (blog.excerpt !== undefined) updateData.excerpt = blog.excerpt
   if (mdxPath !== undefined) updateData.mdx_path = mdxPath
   if (blog.featuredImageUrl !== undefined) updateData.featured_image_url = blog.featuredImageUrl
+  if (blog.featuredVideoUrl !== undefined) updateData.featured_video_url = blog.featuredVideoUrl
   if (blog.status !== undefined) {
     updateData.status = blog.status
     if (blog.status === "published" && !blog.publishedAt) {

@@ -10,6 +10,7 @@ export interface BlogDB {
   excerpt: string | null
   mdx_path: string | null
   featured_image_url: string | null
+  featured_video_url: string | null
   status: BlogStatus
   target_app: TargetApp
   published_at: string | null
@@ -33,6 +34,7 @@ export interface Blog {
   excerpt: string | null
   mdxPath: string | null
   featuredImageUrl: string | null
+  featuredVideoUrl: string | null
   status: BlogStatus
   targetApp: TargetApp
   publishedAt: string | null
@@ -53,6 +55,7 @@ export interface BlogInsert {
   excerpt?: string | null
   mdxContent: string
   featuredImageUrl?: string | null
+  featuredVideoUrl?: string | null
   status?: BlogStatus
   targetApp?: TargetApp
   publishedAt?: string | null

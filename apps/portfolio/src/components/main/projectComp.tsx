@@ -5,12 +5,12 @@ import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getProjectBySlug } from '@/lib/supabase/projects';
 import { Project } from '@/lib/types';
-import { ArrowLeft, ExternalLink, Github } from 'lucide-react';
+import { ArrowLeft, ExternalLink, Github, Play } from 'lucide-react';
 
 const ProjectComp = ({ projectSlug }: { projectSlug: string }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [project, setProject] = useState<Project | null>(null);
-  const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
+  const [selectedMediaIndex, setSelectedMediaIndex] = useState<number | null>(null);
 
   useEffect(() => {
     async function fetchProject() {
@@ -29,7 +29,7 @@ const ProjectComp = ({ projectSlug }: { projectSlug: string }) => {
   }, [projectSlug]);
 
   const handleClose = () => {
-    setSelectedImageIndex(null);
+    setSelectedMediaIndex(null);
   };
 
   // Get year from created_at
@@ -65,11 +65,16 @@ const ProjectComp = ({ projectSlug }: { projectSlug: string }) => {
     );
   }
 
-  // Define images after we know project exists
+  // Build gallery: mix of images and videos for grid + modal
   const galleryImages = project.gallery_image_urls || [];
-  const allImages = project.cover_image_url
-    ? [project.cover_image_url, ...galleryImages]
-    : galleryImages;
+  const galleryVideos = project.gallery_video_urls || [];
+  type MediaItem = { type: 'image'; url: string } | { type: 'video'; url: string };
+  const allMedia: MediaItem[] = [];
+  if (project.cover_image_url) {
+    allMedia.push({ type: 'image', url: project.cover_image_url });
+  }
+  galleryImages.forEach((url) => allMedia.push({ type: 'image', url }));
+  galleryVideos.forEach((url) => allMedia.push({ type: 'video', url }));
 
   return (
     <div className="min-h-screen bg-black text-white">
@@ -147,27 +152,40 @@ const ProjectComp = ({ projectSlug }: { projectSlug: string }) => {
             </div>
           </motion.div>
 
-          {/* Images */}
-          {allImages.length > 0 && (
+          {/* Gallery: images and videos */}
+          {allMedia.length > 0 && (
             <motion.div
               initial={{ opacity: 0, y: 40 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.3 }}
-              className="grid md:grid-cols-2 gap-6 mb-20"
+              className={allMedia.length === 1 ? 'flex justify-center mb-20' : 'grid md:grid-cols-2 gap-6 mb-20'}
             >
-              {allImages.slice(0, 4).map((image, index) => (
+              {allMedia.slice(0, 6).map((item, index) => (
                 <div
                   key={index}
-                  className="relative aspect-video rounded-lg overflow-hidden border border-white/10 cursor-pointer"
-                  onClick={() => setSelectedImageIndex(index)}
+                  className={`group relative aspect-video rounded-lg overflow-hidden border border-white/10 cursor-pointer ${allMedia.length === 1 ? 'w-full max-w-5xl h-full max-h-5xl' : ''}`}
+                  onClick={() => setSelectedMediaIndex(index)}
                 >
-                  <Image
-                    src={image}
-                    alt={`${project.title} screenshot ${index + 1}`}
-                    fill
-                    className="object-cover grayscale hover:grayscale-0 transition-all duration-500"
-                    sizes="(max-width: 768px) 100vw, 50vw"
-                  />
+                  {item.type === 'image' ? (
+                    <Image
+                      src={item.url}
+                      alt={`${project.title} ${index + 1}`}
+                      fill
+                      className="object-cover grayscale hover:grayscale-0 transition-all duration-500"
+                      sizes="(max-width: 768px) 100vw, 50vw"
+                    />
+                  ) : (
+                    <>
+                      <video
+                        src={item.url}
+                        className="absolute inset-0 w-full h-full object-cover object-center grayscale group-hover:grayscale-0 transition-all duration-500"
+                        muted
+                        autoPlay
+                        playsInline
+                        preload="auto"
+                      />
+                    </>
+                  )}
                 </div>
               ))}
             </motion.div>
@@ -242,9 +260,9 @@ const ProjectComp = ({ projectSlug }: { projectSlug: string }) => {
         </div>
       </div>
 
-      {/* Image Modal */}
+      {/* Gallery Modal (image or video) */}
       <AnimatePresence mode="wait">
-        {selectedImageIndex !== null && (
+        {selectedMediaIndex !== null && allMedia[selectedMediaIndex] && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -264,22 +282,32 @@ const ProjectComp = ({ projectSlug }: { projectSlug: string }) => {
             </motion.button>
 
             <motion.div
-              key={selectedImageIndex}
+              key={selectedMediaIndex}
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
               exit={{ scale: 0.9, opacity: 0 }}
               transition={{ duration: 0.4, ease: [0.25, 0.1, 0.25, 1] }}
               onClick={(e: React.MouseEvent) => e.stopPropagation()}
-              className="relative w-full h-full max-w-[95vw] max-h-[95vh]"
+              className="relative w-full h-full max-w-[95vw] max-h-[95vh] flex items-center justify-center"
             >
-              <Image
-                src={allImages[selectedImageIndex]}
-                alt={project.title || "Project Image"}
-                fill
-                className="object-contain"
-                priority
-                sizes="95vw"
-              />
+              {allMedia[selectedMediaIndex].type === 'image' ? (
+                <Image
+                  src={allMedia[selectedMediaIndex].url}
+                  alt={project.title || 'Project media'}
+                  fill
+                  className="object-contain"
+                  priority
+                  sizes="95vw"
+                />
+              ) : (
+                <video
+                  src={allMedia[selectedMediaIndex].url}
+                  controls
+                  autoPlay
+                  className="max-w-full max-h-[95vh] w-auto h-auto object-contain"
+                  playsInline
+                />
+              )}
             </motion.div>
           </motion.div>
         )}

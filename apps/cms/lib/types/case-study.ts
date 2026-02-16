@@ -38,6 +38,7 @@ export interface CaseStudyDB {
   stack: string[]
   cover_url: string | null
   gallery_urls: string[]
+  gallery_video_urls: string[]
   links: Link[]
   results: Result[]
   metrics: Metric[]
@@ -72,6 +73,7 @@ export interface CaseStudy {
   stack: string[]
   coverUrl: string | null
   galleryUrls: string[]
+  galleryVideoUrls: string[]
   links: Link[]
   results: Result[]
   metrics: Metric[]
@@ -103,6 +105,7 @@ export interface CaseStudyFormData {
   stack: string[]
   coverUrl: string | null
   galleryUrls: string[]
+  galleryVideoUrls: string[]
   links: Link[]
   results: Result[]
   metrics: Metric[]

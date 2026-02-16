@@ -18,6 +18,7 @@ export interface ProjectDB {
   case_study_url: string | null
   cover_image_url: string | null
   gallery_image_urls: string[] | null
+  gallery_video_urls: string[] | null
   category: ProjectCategory | null
   status: ProjectStatus
   featured: boolean
@@ -43,6 +44,7 @@ export interface Project {
   caseStudyUrl: string | null
   coverImageUrl: string | null
   galleryImageUrls: string[] | null
+  galleryVideoUrls: string[] | null
   category: ProjectCategory | null
   status: ProjectStatus
   featured: boolean
@@ -65,6 +67,7 @@ export interface ProjectInsert {
   caseStudyUrl?: string | null
   coverImageUrl?: string | null
   galleryImageUrls?: string[] | null
+  galleryVideoUrls?: string[] | null
   category?: ProjectCategory | null
   status?: ProjectStatus
   featured?: boolean

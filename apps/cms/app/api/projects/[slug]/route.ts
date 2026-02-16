@@ -56,6 +56,7 @@ export async function GET(
       caseStudyUrl: project.case_study_url,
       coverImageUrl: project.cover_image_url,
       galleryImageUrls: project.gallery_image_urls,
+      galleryVideoUrls: project.gallery_video_urls ?? null,
       category: project.category,
       status: project.status,
       featured: project.featured,

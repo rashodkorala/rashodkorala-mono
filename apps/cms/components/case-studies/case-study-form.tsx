@@ -72,6 +72,7 @@ export function CaseStudyForm({ caseStudy, mdxContent = "" }: CaseStudyFormProps
     stack: caseStudy?.stack || [],
     coverUrl: caseStudy?.coverUrl || null,
     galleryUrls: caseStudy?.galleryUrls || [],
+    galleryVideoUrls: caseStudy?.galleryVideoUrls || [],
     links: caseStudy?.links || [],
     results: caseStudy?.results || [],
     metrics: caseStudy?.metrics || [],
@@ -83,6 +84,7 @@ export function CaseStudyForm({ caseStudy, mdxContent = "" }: CaseStudyFormProps
   const [isLoading, setIsLoading] = useState(false)
   const [coverImageFile, setCoverImageFile] = useState<File | null>(null)
   const [galleryImageFiles, setGalleryImageFiles] = useState<File[]>([])
+  const [galleryVideoFiles, setGalleryVideoFiles] = useState<File[]>([])
   const [mdxView, setMdxView] = useState<"write" | "preview">("write")
   const [showTemplateConfirm, setShowTemplateConfirm] = useState(false)
   const [aiLoading, setAiLoading] = useState<Record<string, boolean>>({})
@@ -139,6 +141,22 @@ export function CaseStudyForm({ caseStudy, mdxContent = "" }: CaseStudyFormProps
   const removeGalleryImage = (index: number) => {
     setFormData(prev => ({ ...prev, galleryUrls: prev.galleryUrls.filter((_, i) => i !== index) }))
     setGalleryImageFiles(prev => prev.filter((_, i) => i !== index))
+  }
+
+  const handleGalleryVideoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || [])
+    if (files.length === 0) return
+    const valid = files.filter(f => f.type.startsWith("video/"))
+    setGalleryVideoFiles(prev => [...prev, ...valid])
+    e.target.value = ""
+  }
+
+  const removeGalleryVideoFile = (index: number) => {
+    setGalleryVideoFiles(prev => prev.filter((_, i) => i !== index))
+  }
+
+  const removeGalleryVideoUrl = (index: number) => {
+    setFormData(prev => ({ ...prev, galleryVideoUrls: prev.galleryVideoUrls.filter((_, i) => i !== index) }))
   }
 
   // ── Template insert with confirmation ──
@@ -316,7 +334,13 @@ Write 2-3 paragraphs per section. Use markdown headers (##), bullet points, and 
         galleryUrls.push(url)
       }
 
-      await createOrUpdateCaseStudy({ ...formData, coverUrl, galleryUrls }, caseStudy?.id)
+      const galleryVideoUrls = [...(formData.galleryVideoUrls || [])]
+      for (const file of galleryVideoFiles) {
+        const url = await uploadMedia(file)
+        galleryVideoUrls.push(url)
+      }
+
+      await createOrUpdateCaseStudy({ ...formData, coverUrl, galleryUrls, galleryVideoUrls }, caseStudy?.id)
 
       toast.success(isEditing ? "Case study updated" : "Case study created")
       router.push("/protected/case-studies")
@@ -719,6 +743,42 @@ Write 2-3 paragraphs per section. Use markdown headers (##), bullet points, and 
                           size="icon"
                           className="absolute top-2 right-2 h-6 w-6"
                           onClick={() => removeGalleryImage(index)}
+                        >
+                          <IconX className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div className="space-y-2">
+                <Label>Gallery Videos</Label>
+                <Input type="file" accept="video/mp4,video/webm" multiple onChange={handleGalleryVideoUpload} />
+                <p className="text-xs text-muted-foreground">MP4 or WebM. Optional.</p>
+                {galleryVideoFiles.length > 0 && (
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {galleryVideoFiles.map((file, index) => (
+                      <div key={index} className="flex items-center gap-2 rounded-lg border px-3 py-2 text-sm">
+                        <span className="truncate max-w-[180px]">{file.name}</span>
+                        <Button type="button" variant="ghost" size="sm" onClick={() => removeGalleryVideoFile(index)}>
+                          <IconX className="h-4 w-4" />
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                )}
+                {formData.galleryVideoUrls?.length > 0 && (
+                  <div className="grid grid-cols-2 gap-4 mt-4">
+                    {formData.galleryVideoUrls.map((url, index) => (
+                      <div key={index} className="relative">
+                        <video src={url} className="w-full h-32 object-cover rounded-lg" muted playsInline preload="metadata" />
+                        <Button
+                          type="button"
+                          variant="destructive"
+                          size="icon"
+                          className="absolute top-2 right-2 h-6 w-6"
+                          onClick={() => removeGalleryVideoUrl(index)}
                         >
                           <IconX className="h-4 w-4" />
                         </Button>

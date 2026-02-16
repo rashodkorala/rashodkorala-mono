@@ -60,6 +60,7 @@ export function BlogForm({ isOpen, onClose, editingBlog }: BlogFormProps) {
     excerpt: "",
     mdxContent: "",
     featuredImageUrl: "",
+    featuredVideoUrl: "",
     status: "draft",
     targetApp: "portfolio",
     authorName: "",
@@ -83,6 +84,7 @@ export function BlogForm({ isOpen, onClose, editingBlog }: BlogFormProps) {
         excerpt: editingBlog.excerpt || "",
         mdxContent: "", // Content is managed separately via blog editor
         featuredImageUrl: editingBlog.featuredImageUrl || "",
+        featuredVideoUrl: editingBlog.featuredVideoUrl || "",
         status: editingBlog.status,
         targetApp: editingBlog.targetApp,
         authorName: editingBlog.authorName || "",
@@ -101,6 +103,7 @@ export function BlogForm({ isOpen, onClose, editingBlog }: BlogFormProps) {
         excerpt: "",
         mdxContent: "",
         featuredImageUrl: "",
+        featuredVideoUrl: "",
         status: "draft",
         targetApp: "portfolio",
         authorName: "",
@@ -290,6 +293,20 @@ export function BlogForm({ isOpen, onClose, editingBlog }: BlogFormProps) {
                 />
               </div>
             )}
+          </div>
+
+          <div>
+            <Label htmlFor="featuredVideoUrl">Featured Video URL (optional)</Label>
+            <Input
+              id="featuredVideoUrl"
+              type="url"
+              value={formData.featuredVideoUrl || ""}
+              onChange={(e) => setFormData({ ...formData, featuredVideoUrl: e.target.value || "" })}
+              disabled={isLoading}
+              placeholder="https://... (MP4 or WebM)"
+              className="mt-1"
+            />
+            <p className="text-xs text-muted-foreground mt-1">Link to a video file or hosted video. Shown on the blog post when set.</p>
           </div>
 
           <div className="grid grid-cols-2 gap-4">

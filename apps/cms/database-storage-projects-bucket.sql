@@ -6,11 +6,13 @@ INSERT INTO storage.buckets (id, name, public, file_size_limit, allowed_mime_typ
 VALUES (
   'projects',
   'projects',
-  true, -- Public bucket so images can be accessed via public URLs
-  10485760, -- 10MB file size limit
-  ARRAY['image/jpeg', 'image/png', 'image/webp', 'image/gif']
+  true, -- Public bucket so images and videos can be accessed via public URLs
+  104857600, -- 100MB file size limit (for videos)
+  ARRAY['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'video/mp4', 'video/webm']
 )
-ON CONFLICT (id) DO NOTHING;
+ON CONFLICT (id) DO UPDATE SET
+  file_size_limit = 104857600,
+  allowed_mime_types = ARRAY['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'video/mp4', 'video/webm'];
 
 -- Step 2: Drop existing policies if they exist (to avoid conflicts)
 DROP POLICY IF EXISTS "Users can upload project images" ON storage.objects;

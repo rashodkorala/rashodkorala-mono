@@ -79,6 +79,7 @@ export function ProjectForm({ project, open, onOpenChange }: ProjectFormProps) {
     caseStudyUrl: "",
     coverImageUrl: "",
     galleryImageUrls: [],
+    galleryVideoUrls: [],
     category: null,
     status: "draft",
     featured: false,
@@ -93,6 +94,7 @@ export function ProjectForm({ project, open, onOpenChange }: ProjectFormProps) {
   const [coverPreview, setCoverPreview] = useState<string>("")
   const [galleryFiles, setGalleryFiles] = useState<File[]>([])
   const [galleryPreviews, setGalleryPreviews] = useState<Record<string, string>>({})
+  const [galleryVideoFiles, setGalleryVideoFiles] = useState<File[]>([])
   const [autoGenerateSlug, setAutoGenerateSlug] = useState(true)
   const [showQuestionnaire, setShowQuestionnaire] = useState(false)
   const [aiLoading, setAiLoading] = useState<{
@@ -119,6 +121,7 @@ export function ProjectForm({ project, open, onOpenChange }: ProjectFormProps) {
         caseStudyUrl: project.caseStudyUrl || "",
         coverImageUrl: project.coverImageUrl || "",
         galleryImageUrls: project.galleryImageUrls || [],
+        galleryVideoUrls: project.galleryVideoUrls || [],
         category: project.category,
         status: project.status,
         featured: project.featured,
@@ -129,6 +132,7 @@ export function ProjectForm({ project, open, onOpenChange }: ProjectFormProps) {
       setCoverFile(null)
       setGalleryFiles([])
       setGalleryPreviews({})
+      setGalleryVideoFiles([])
     } else {
       setFormData({
         slug: "",
@@ -144,6 +148,7 @@ export function ProjectForm({ project, open, onOpenChange }: ProjectFormProps) {
         caseStudyUrl: "",
         coverImageUrl: "",
         galleryImageUrls: [],
+        galleryVideoUrls: [],
         category: null,
         status: "draft",
         featured: false,
@@ -154,6 +159,7 @@ export function ProjectForm({ project, open, onOpenChange }: ProjectFormProps) {
       setCoverFile(null)
       setGalleryFiles([])
       setGalleryPreviews({})
+      setGalleryVideoFiles([])
     }
   }, [project, open])
 
@@ -257,6 +263,38 @@ export function ProjectForm({ project, open, onOpenChange }: ProjectFormProps) {
     setFormData({
       ...formData,
       galleryImageUrls: formData.galleryImageUrls?.filter((_, i) => i !== index) || [],
+    })
+  }
+
+  const handleGalleryVideosChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || [])
+    if (files.length === 0) return
+
+    const validFiles = files.filter((file) => {
+      const isVideo = file.type.startsWith("video/")
+      if (!isVideo) {
+        toast.error(`${file.name} is not a video file`)
+        return false
+      }
+      if (file.size > 100 * 1024 * 1024) {
+        toast.error(`${file.name} is larger than 100MB`)
+        return false
+      }
+      return true
+    })
+
+    setGalleryVideoFiles((prev) => [...prev, ...validFiles])
+    e.target.value = ""
+  }
+
+  const removeGalleryVideoFile = (index: number) => {
+    setGalleryVideoFiles((prev) => prev.filter((_, i) => i !== index))
+  }
+
+  const removeGalleryVideoUrl = (index: number) => {
+    setFormData({
+      ...formData,
+      galleryVideoUrls: formData.galleryVideoUrls?.filter((_, i) => i !== index) || [],
     })
   }
 
@@ -549,10 +587,55 @@ export function ProjectForm({ project, open, onOpenChange }: ProjectFormProps) {
         ...uploadedGalleryUrls,
       ]
 
+      // Upload gallery videos
+      const uploadedGalleryVideoUrls: string[] = []
+      for (const file of galleryVideoFiles) {
+        try {
+          const uniqueName = generateUniqueName(file)
+          const timestamp = Date.now()
+          const filePath = `gallery/videos/${timestamp}-${uniqueName}`
+
+          const { data: uploadData, error: storageError } = await supabase.storage
+            .from("projects")
+            .upload(filePath, file, {
+              cacheControl: "3600",
+              upsert: false,
+            })
+
+          if (storageError) {
+            console.error("Gallery video upload error:", storageError)
+            throw new Error(`Failed to upload gallery video: ${storageError.message}`)
+          }
+
+          if (!uploadData) {
+            throw new Error("Upload succeeded but no data returned")
+          }
+
+          const {
+            data: { publicUrl },
+          } = supabase.storage.from("projects").getPublicUrl(filePath)
+
+          if (!publicUrl) {
+            throw new Error("Failed to get public URL for uploaded video")
+          }
+
+          uploadedGalleryVideoUrls.push(publicUrl)
+        } catch (error) {
+          console.error("Error uploading gallery video:", error)
+          throw error
+        }
+      }
+
+      const allGalleryVideoUrls = [
+        ...(formData.galleryVideoUrls || []),
+        ...uploadedGalleryVideoUrls,
+      ]
+
       const projectData: ProjectInsert = {
         ...formData,
         coverImageUrl,
         galleryImageUrls: allGalleryUrls,
+        galleryVideoUrls: allGalleryVideoUrls,
       }
 
       if (isEditing && project) {
@@ -1163,6 +1246,66 @@ export function ProjectForm({ project, open, onOpenChange }: ProjectFormProps) {
                             strokeWidth={2}
                             d="M6 18L18 6M6 6l12 12"
                           />
+                        </svg>
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            <div className="flex flex-col gap-2">
+              <Label htmlFor="galleryVideos">Gallery Videos</Label>
+              <Input
+                id="galleryVideos"
+                type="file"
+                accept="video/mp4,video/webm"
+                multiple
+                onChange={handleGalleryVideosChange}
+              />
+              <p className="text-xs text-muted-foreground">
+                MP4 or WebM (max 100MB each). Shown with images on the project page.
+              </p>
+              {galleryVideoFiles.length > 0 && (
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {galleryVideoFiles.map((file, index) => (
+                    <div
+                      key={index}
+                      className="flex items-center gap-2 rounded-lg border bg-muted px-3 py-2 text-sm"
+                    >
+                      <span className="truncate max-w-[180px]">{file.name}</span>
+                      <button
+                        type="button"
+                        onClick={() => removeGalleryVideoFile(index)}
+                        className="text-destructive hover:underline"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              )}
+              {formData.galleryVideoUrls && formData.galleryVideoUrls.length > 0 && (
+                <div className="grid grid-cols-2 gap-2 mt-2">
+                  {formData.galleryVideoUrls.map((url, index) => (
+                    <div
+                      key={index}
+                      className="relative group aspect-video rounded-lg border overflow-hidden bg-muted"
+                    >
+                      <video
+                        src={url}
+                        className="object-cover w-full h-full"
+                        muted
+                        playsInline
+                        preload="metadata"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => removeGalleryVideoUrl(index)}
+                        className="absolute top-1 right-1 bg-destructive text-destructive-foreground rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                      >
+                        <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                         </svg>
                       </button>
                     </div>

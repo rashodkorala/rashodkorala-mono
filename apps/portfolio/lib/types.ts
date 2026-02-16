@@ -17,6 +17,7 @@ export interface Project {
   case_study_url?: string;
   cover_image_url?: string;
   gallery_image_urls?: string[]; // Array of gallery image URLs
+  gallery_video_urls?: string[]; // Array of gallery video URLs
   category?: ProjectCategory;
   status: ProjectStatus;
   featured: boolean;

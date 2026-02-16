@@ -57,6 +57,7 @@ export async function GET(request: NextRequest) {
         excerpt: data.excerpt,
         content: markdownContent,
         featuredImageUrl: data.featured_image_url,
+        featuredVideoUrl: data.featured_video_url ?? null,
         status: data.status,
         targetApp: data.target_app,
         publishedAt: data.published_at,
@@ -115,6 +116,7 @@ export async function GET(request: NextRequest) {
       excerpt: item.excerpt,
       content: "", // Content not included in list view
       featuredImageUrl: item.featured_image_url,
+      featuredVideoUrl: item.featured_video_url ?? null,
       status: item.status,
       targetApp: item.target_app,
       publishedAt: item.published_at,

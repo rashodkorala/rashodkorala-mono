@@ -28,6 +28,7 @@ function transformProject(project: ProjectDB): Project {
     caseStudyUrl: project.case_study_url,
     coverImageUrl: project.cover_image_url,
     galleryImageUrls: project.gallery_image_urls,
+    galleryVideoUrls: project.gallery_video_urls ?? null,
     category: project.category,
     status: project.status,
     featured: project.featured,
@@ -175,6 +176,7 @@ export async function createProject(project: ProjectInsert): Promise<Project> {
       case_study_url: project.caseStudyUrl || null,
       cover_image_url: project.coverImageUrl || null,
       gallery_image_urls: project.galleryImageUrls || [],
+      gallery_video_urls: project.galleryVideoUrls || [],
       category: project.category || null,
       status: project.status || "draft",
       featured: project.featured || false,
@@ -224,6 +226,8 @@ export async function updateProject(
     updateData.cover_image_url = updates.coverImageUrl
   if (updates.galleryImageUrls !== undefined)
     updateData.gallery_image_urls = updates.galleryImageUrls || []
+  if (updates.galleryVideoUrls !== undefined)
+    updateData.gallery_video_urls = updates.galleryVideoUrls || []
   if (updates.category !== undefined) updateData.category = updates.category
   if (updates.status !== undefined) updateData.status = updates.status
   if (updates.featured !== undefined) updateData.featured = updates.featured
