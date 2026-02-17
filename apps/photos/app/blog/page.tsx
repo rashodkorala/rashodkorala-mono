@@ -1,5 +1,5 @@
 import { Metadata } from "next"
-import { createClient } from "@/utils/supabase/server"
+import { createPublicClient } from "@/utils/supabase/server"
 import BlogList from "@/components/blog/BlogList"
 import BlogNavigation from "@/components/blog/BlogNavigation"
 
@@ -27,7 +27,7 @@ interface BlogPost {
 }
 
 async function getBlogs(): Promise<BlogPost[]> {
-  const supabase = await createClient()
+  const supabase = createPublicClient()
   const { data, error } = await supabase
     .from("blogs")
     .select("id, title, slug, excerpt, featured_image_url, published_at, author_name, category, tags")

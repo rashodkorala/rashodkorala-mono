@@ -31,6 +31,18 @@ export async function createClient() {
 }
 
 /**
+ * Public client for read-only access to public data (no cookies).
+ * Safe for use in prerender/cache; use for published blogs, etc.
+ */
+export function createPublicClient() {
+    return createSupabaseClient(
+        process.env.NEXT_PUBLIC_SUPABASE_URL!,
+        process.env.SUPABASE_ANON_KEY || process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,
+        { auth: { persistSession: false } }
+    )
+}
+
+/**
  * Admin client that uses service role key to bypass RLS.
  * Only use this server-side for operations that need full access.
  * NEVER expose the service role key to the client.

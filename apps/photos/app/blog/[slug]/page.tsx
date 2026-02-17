@@ -1,6 +1,6 @@
 import { Metadata } from "next"
 import { notFound } from "next/navigation"
-import { createClient } from "@/utils/supabase/server"
+import { createPublicClient } from "@/utils/supabase/server"
 import BlogPostContent from "@/components/blog/BlogPostContent"
 
 export const revalidate = 3600
@@ -26,7 +26,7 @@ interface PageProps {
 }
 
 async function getBlog(slug: string): Promise<BlogPost | null> {
-  const supabase = await createClient()
+  const supabase = createPublicClient()
 
   const { data, error } = await supabase
     .from("blogs")
