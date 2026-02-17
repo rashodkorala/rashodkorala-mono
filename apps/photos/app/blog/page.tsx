@@ -1,5 +1,4 @@
 import { Metadata } from "next"
-import { unstable_cache } from "next/cache"
 import { createClient } from "@/utils/supabase/server"
 import BlogList from "@/components/blog/BlogList"
 import BlogNavigation from "@/components/blog/BlogNavigation"
@@ -27,7 +26,7 @@ interface BlogPost {
   tags: string[] | null
 }
 
-async function getBlogsUncached(): Promise<BlogPost[]> {
+async function getBlogs(): Promise<BlogPost[]> {
   const supabase = await createClient()
   const { data, error } = await supabase
     .from("blogs")
@@ -43,8 +42,6 @@ async function getBlogsUncached(): Promise<BlogPost[]> {
 
   return data || []
 }
-
-const getBlogs = unstable_cache(getBlogsUncached, ["blogs-photos-list"], { revalidate: 3600, tags: ["blogs-photos"] })
 
 export default async function BlogPage() {
   const blogs = await getBlogs()

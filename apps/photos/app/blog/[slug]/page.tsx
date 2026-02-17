@@ -1,6 +1,5 @@
 import { Metadata } from "next"
 import { notFound } from "next/navigation"
-import { unstable_cache } from "next/cache"
 import { createClient } from "@/utils/supabase/server"
 import BlogPostContent from "@/components/blog/BlogPostContent"
 
@@ -26,7 +25,7 @@ interface PageProps {
   params: Promise<{ slug: string }>
 }
 
-async function getBlogUncached(slug: string): Promise<BlogPost | null> {
+async function getBlog(slug: string): Promise<BlogPost | null> {
   const supabase = await createClient()
 
   const { data, error } = await supabase
@@ -63,10 +62,6 @@ async function getBlogUncached(slug: string): Promise<BlogPost | null> {
     ...data,
     content: markdownContent,
   }
-}
-
-function getBlog(slug: string) {
-  return unstable_cache(() => getBlogUncached(slug), ["blog-photos", slug], { revalidate: 3600, tags: ["blogs-photos", `blog-${slug}`] })()
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {

@@ -121,7 +121,7 @@ const Projects: React.FC<ProjectsProps> = ({ initialProjects = [] }) => {
     }
 
     fetchProjects();
-  }, [initialProjects.length]);
+  }, [initialProjects]);
 
   if (isLoading) {
     return (
