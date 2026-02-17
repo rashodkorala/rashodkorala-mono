@@ -7,12 +7,22 @@ import { getProjectBySlug } from '@/lib/supabase/projects';
 import { Project } from '@/lib/types';
 import { ArrowLeft, ExternalLink, Github, Play } from 'lucide-react';
 
-const ProjectComp = ({ projectSlug }: { projectSlug: string }) => {
-  const [isLoading, setIsLoading] = useState(true);
-  const [project, setProject] = useState<Project | null>(null);
+interface ProjectCompProps {
+  projectSlug: string;
+  initialProject?: Project | null;
+}
+
+const ProjectComp = ({ projectSlug, initialProject = null }: ProjectCompProps) => {
+  const [isLoading, setIsLoading] = useState(!initialProject);
+  const [project, setProject] = useState<Project | null>(initialProject);
   const [selectedMediaIndex, setSelectedMediaIndex] = useState<number | null>(null);
 
   useEffect(() => {
+    if (initialProject) {
+      setProject(initialProject);
+      setIsLoading(false);
+      return;
+    }
     async function fetchProject() {
       try {
         setIsLoading(true);
@@ -26,7 +36,7 @@ const ProjectComp = ({ projectSlug }: { projectSlug: string }) => {
     }
 
     fetchProject();
-  }, [projectSlug]);
+  }, [projectSlug, initialProject]);
 
   const handleClose = () => {
     setSelectedMediaIndex(null);

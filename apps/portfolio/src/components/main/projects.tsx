@@ -90,14 +90,23 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
   );
 }
 
-const Projects: React.FC = () => {
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+interface ProjectsProps {
+  initialProjects?: Project[];
+}
+
+const Projects: React.FC<ProjectsProps> = ({ initialProjects = [] }) => {
+  const [projects, setProjects] = useState<Project[]>(initialProjects);
+  const [isLoading, setIsLoading] = useState(initialProjects.length === 0);
   const [error, setError] = useState<string | null>(null);
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   useEffect(() => {
+    if (initialProjects.length > 0) {
+      setProjects(initialProjects);
+      setIsLoading(false);
+      return;
+    }
     async function fetchProjects() {
       try {
         setIsLoading(true);
@@ -112,7 +121,7 @@ const Projects: React.FC = () => {
     }
 
     fetchProjects();
-  }, []);
+  }, [initialProjects.length]);
 
   if (isLoading) {
     return (

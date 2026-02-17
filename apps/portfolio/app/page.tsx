@@ -4,6 +4,9 @@ import AboutSection from "@/src/components/main/aboutSection";
 // import Work from "@/src/components/main/work"; // Disabled - keeping code for future use
 
 import { Metadata } from "next";
+import { getCachedAllProjects } from "@/lib/supabase/cached-projects";
+
+export const revalidate = 3600;
 
 export const metadata: Metadata = {
     title: 'Home',
@@ -20,11 +23,12 @@ export const metadata: Metadata = {
 
 
 
-export default function Index() {
+export default async function Index() {
+    const initialProjects = await getCachedAllProjects();
     return (
         <>
             {/* <Work /> Disabled - keeping code for future use */}
-            <Projects />
+            <Projects initialProjects={initialProjects} />
             <AboutSection />
             
             <Startup /> {/* Disabled - keeping code for future use */}
