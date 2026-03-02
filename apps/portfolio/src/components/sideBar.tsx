@@ -35,8 +35,8 @@ export default function Sidebar() {
                     </button>
 
                     {/* Navigation Links */}
-                    <nav className="flex flex-col space-y-11 w-full h-full justify-center font-thin px-[40px]">
-                        <div className="flex flex-col space-y-4 text-5xl md:text-6xl">
+                    <nav className="flex flex-col space-y-11 w-full h-full justify-center font-thin px-6 md:px-10">
+                        <div className="flex flex-col space-y-4 text-4xl sm:text-5xl md:text-6xl">
                             <Link
                                 href="/projects"
                                 className="transform transition-transform duration-300 ease-in-out hover:scale-105"

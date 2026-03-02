@@ -41,53 +41,51 @@ export default function Contact() {
     }
 
     return (
-        <div className="flex items-center justify-center p-8 ">
+        <div className="flex items-center justify-center p-8 dark:bg-black">
             <div className="max-w-7xl w-full h-full lg:p-10 rounded-lg min-h-screen">
-                <h2 className="text-7xl font-thin mb-6">Contact Me</h2>
+                <h2 className="text-4xl md:text-6xl lg:text-7xl font-thin mb-6 dark:text-white">Contact Me</h2>
                 <form onSubmit={handleSubmit} className="space-y-20 font-thin text-2xl lg:p-10">
-                    <div className="grid grid-cols-2 gap-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                         <Input
                             type="text"
                             name="first_name"
                             placeholder="First Name *"
                             required
-                            className="border-b-2  focus:border-orange-600 outline-none py-2 border-slate-400"
+                            className="border-b-2 focus:border-orange-600 outline-none py-2 border-slate-400 dark:border-white/30 dark:text-white dark:placeholder:text-white/40"
                         />
                         <Input
                             type="text"
                             name="last_name"
                             placeholder="Last Name *"
                             required
-                            className="border-b-2  focus:border-orange-600 outline-none py-2 border-slate-400"
+                            className="border-b-2 focus:border-orange-600 outline-none py-2 border-slate-400 dark:border-white/30 dark:text-white dark:placeholder:text-white/40"
                         />
                     </div>
-                    <div className="grid grid-cols-2 gap-8">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                         <Input
                             type="email"
                             name="email"
                             placeholder="Email *"
                             required
-                            className="border-b-2  focus:border-orange-600 outline-none py-2 border-slate-400"
+                            className="border-b-2 focus:border-orange-600 outline-none py-2 border-slate-400 dark:border-white/30 dark:text-white dark:placeholder:text-white/40"
                         />
                         <Input
                             type="tel"
                             name="phone_number"
                             placeholder="Phone Number"
-                            className="border-b-2  focus:border-orange-600 outline-none py-2 border-slate-400"
+                            className="border-b-2 focus:border-orange-600 outline-none py-2 border-slate-400 dark:border-white/30 dark:text-white dark:placeholder:text-white/40"
                         />
                     </div>
                     <Textarea
                         name="message"
                         placeholder="Message *"
                         required
-                        className="border-b-2  focus:border-orange-600 outline-none py-2 border-slate-400 h-56"
-
+                        className="border-b-2 focus:border-orange-600 outline-none py-2 border-slate-400 dark:border-white/30 dark:text-white dark:placeholder:text-white/40 h-56"
                     />
                     <Button
                         variant={"default"}
                         type="submit"
-
-                        className="border-2  hover:border-orange-600 outline-none p-4 border-slate-400 text-lg"
+                        className="border-2 hover:border-orange-600 outline-none p-4 border-slate-400 dark:border-white/30 text-lg"
                     >
                         Send Message
                     </Button>
