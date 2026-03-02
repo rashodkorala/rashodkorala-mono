@@ -45,7 +45,7 @@ const Footer = () => {
                         whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ once: true }}
                         transition={{ duration: 0.5, delay: 0.3 }}
-                        href="mailto:rashodkorala2002@gmail.com"
+                        href="mailto:hello@rashodkorala.com"
                         className="text-xs uppercase tracking-[0.4em] text-muted-foreground hover:text-foreground transition-colors"
                     >
                         Email

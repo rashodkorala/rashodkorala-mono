@@ -149,7 +149,7 @@ const Navigation = () => {
                 >
                     <p>Currently booking 2025</p>
                     <a
-                        href="mailto:rashodkorala2002@gmail.com"
+                        href="mailto:hello@rashodkorala.com"
                         className="text-foreground hover:underline tracking-[0.2em]"
                     >
                         Email

@@ -125,7 +125,7 @@ export default function RootLayout({
     description: 'Professional photographer specializing in architecture, interior spaces, nature, street, and artistic photography',
     url: 'https://photos.rashodkorala.com',
     image: 'https://photos.rashodkorala.com/og-image.jpg',
-    email: 'rashodkorala2002@gmail.com',
+    email: 'hello@rashodkorala.com',
     address: {
       '@type': 'PostalAddress',
       addressLocality: "St. John's",

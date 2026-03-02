@@ -63,7 +63,7 @@ A global platform for artists to showcase and sell their artwork featuring:
 
 I'm always open to discussing new projects, creative ideas, or opportunities to be part of your visions.
 
-- 📧 [Email](mailto:rashodkorala2002@gmail.com)
+- 📧 [Email](mailto:hello@rashodkorala.com)
 - 💼 [LinkedIn](www.linkedin.com/in/rashodk)
 - 🐦 [Twitter](https://twitter.com/rashodkorala)
 - 📸 [Instagram](https://www.instagram.com/rashodk_/)

@@ -157,7 +157,7 @@ export default function Contact() {
                             <div>
                                 <h3 className="text-xl font-medium text-gray-900 mb-4">Contact Information</h3>
                                 <div className="space-y-3 text-gray-600">
-                                    <p>📧 rashodkorala2002@gmail.com</p>
+                                    <p>📧 hello@rashodkorala.com</p>
                                     <p>📍 St. John&apos;s, Canada</p>
                                 </div>
                             </div>

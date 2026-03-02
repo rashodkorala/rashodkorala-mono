@@ -103,10 +103,10 @@ const Index = () => {
                     className="flex flex-col sm:flex-row gap-6 text-lg font-light"
                 >
                     <a
-                        href="mailto:rashodkorala2002@gmail.com"
+                        href="mailto:hello@rashodkorala.com"
                         className="underline underline-offset-4 decoration-muted-foreground hover:text-foreground"
                     >
-                        rashodkorala2002@gmail.com
+                        hello@rashodkorala.com
                     </a>
                     <p className="text-muted-foreground">Based in St. John&apos;s, working worldwide</p>
                 </motion.div>

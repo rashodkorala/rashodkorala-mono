@@ -42,7 +42,7 @@ export default function Footer() {
               className="inline-flex items-center gap-3 text-2xl md:text-3xl font-light hover:text-black/60 dark:hover:text-white/60 transition-colors group"
             >
               <Mail className="w-6 h-6" strokeWidth={1} />
-              rashodkorala2002@gmail.com
+              hello@rashodkorala.com
               <ArrowUpRight className="w-5 h-5 opacity-0 group-hover:opacity-100 transition-opacity" strokeWidth={1.5} />
             </motion.a>
           </motion.div>
