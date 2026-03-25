@@ -110,12 +110,6 @@ export default function AetherPage() {
                                 <ExternalLink className="w-3.5 h-3.5" />
                                 Visit Aether Labs
                             </Link>
-                            <Link
-                                href="/contact"
-                                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[14px] leading-[20px] text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100/50 dark:hover:bg-gray-800/50 rounded transition-colors font-normal"
-                            >
-                                Talk Partnerships
-                            </Link>
                         </div>
                     </div>
 
@@ -288,12 +282,6 @@ export default function AetherPage() {
                             >
                                 <ExternalLink className="w-3.5 h-3.5" />
                                 Explore Aether Labs
-                            </Link>
-                            <Link
-                                href="/contact"
-                                className="inline-flex items-center gap-1.5 px-3 py-1.5 text-[14px] leading-[20px] text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 hover:bg-gray-100/50 dark:hover:bg-gray-800/50 rounded transition-colors font-normal"
-                            >
-                                Collaborate
                             </Link>
                         </div>
                     </div>
