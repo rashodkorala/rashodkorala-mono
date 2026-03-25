@@ -9,6 +9,7 @@ export interface Photo {
     category: 'architecture' | 'nature' | 'street' | 'travel' | 'wildlife' | 'night' | 'abstract' | 'interior_spaces';
     image_url: string;
     alt_text: string | null;
+    story_id?: string | null;
     created_at: string;
     updated_at: string;
 }

@@ -1,6 +1,10 @@
 "use server"
 
 import { createClient } from "@/lib/supabase/server"
+import {
+  isPostHogApiConfigured,
+} from "@/lib/posthog/hogql-client"
+import { fetchPostHogAnalyticsSummary } from "@/lib/posthog/posthog-dashboard-summary"
 import type { AnalyticsSummary } from "@/lib/types/analytics"
 
 export async function getAnalyticsSummary(
@@ -18,6 +22,14 @@ export async function getAnalyticsSummary(
 
   const start = startDate || new Date(Date.now() - 30 * 24 * 60 * 60 * 1000) // 30 days ago
   const end = endDate || new Date()
+
+  if (isPostHogApiConfigured()) {
+    try {
+      return await fetchPostHogAnalyticsSummary(start, end)
+    } catch (err) {
+      console.error("PostHog dashboard analytics failed, using Supabase:", err)
+    }
+  }
 
   const { data, error } = await supabase.rpc("get_analytics_summary", {
     p_user_id: user.id,

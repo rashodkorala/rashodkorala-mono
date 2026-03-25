@@ -3,6 +3,7 @@ import createMDX from "@next/mdx";
 import path from "path";
 
 const nextConfig: NextConfig = {
+  transpilePackages: ["@rashodkorala/posthog-next"],
   // Set output file tracing root to the workspace root for monorepo support
   outputFileTracingRoot: path.join(__dirname, "../.."),
   pageExtensions: ["js", "jsx", "md", "mdx", "ts", "tsx"],

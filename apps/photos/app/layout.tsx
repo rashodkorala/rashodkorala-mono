@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { PostHogProvider } from "@rashodkorala/posthog-next";
 import "./globals.css";
 import Navigation from "@/components/Navigation";
 import Footer from "@/components/Pages/Footer";
@@ -183,7 +184,8 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
         />
-        <ThemeProvider>
+        <PostHogProvider app="photos">
+          <ThemeProvider>
           <div className="bg-background text-foreground min-h-screen transition-colors duration-300">
             <div className="lg:flex lg:min-h-screen">
               <Navigation />
@@ -194,7 +196,8 @@ export default function RootLayout({
               </div>
             </div>
           </div>
-        </ThemeProvider>
+          </ThemeProvider>
+        </PostHogProvider>
       </body>
     </html>
   );

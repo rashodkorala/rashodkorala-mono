@@ -17,8 +17,17 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Checkbox } from "@/components/ui/checkbox"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 import type { Photo, PhotoInsert, CameraSettings } from "@/lib/types/photo"
+import type { Story } from "@/lib/types/story"
 import { createPhoto, updatePhoto } from "@/lib/actions/photos"
+import { getStories } from "@/lib/actions/stories"
 
 interface PhotoFormProps {
   photo?: Photo | null
@@ -41,6 +50,7 @@ export function PhotoForm({ photo, open, onOpenChange }: PhotoFormProps) {
     cameraSettings: null,
     tags: [],
     featured: false,
+    storyId: null,
   })
 
   const [isLoading, setIsLoading] = useState(false)
@@ -56,6 +66,14 @@ export function PhotoForm({ photo, open, onOpenChange }: PhotoFormProps) {
     camera: "",
     lens: "",
   })
+  const [stories, setStories] = useState<Story[]>([])
+
+  useEffect(() => {
+    if (!open) return
+    getStories()
+      .then(setStories)
+      .catch(() => setStories([]))
+  }, [open])
 
   useEffect(() => {
     if (photo) {
@@ -69,6 +87,7 @@ export function PhotoForm({ photo, open, onOpenChange }: PhotoFormProps) {
         cameraSettings: photo.cameraSettings,
         tags: photo.tags || [],
         featured: photo.featured,
+        storyId: photo.storyId ?? null,
       })
       setCameraSettings(photo.cameraSettings || {
         aperture: "",
@@ -91,6 +110,7 @@ export function PhotoForm({ photo, open, onOpenChange }: PhotoFormProps) {
         cameraSettings: null,
         tags: [],
         featured: false,
+        storyId: null,
       })
       setCameraSettings({
         aperture: "",
@@ -144,6 +164,16 @@ export function PhotoForm({ photo, open, onOpenChange }: PhotoFormProps) {
         ? crypto.randomUUID()
         : Math.random().toString(36).slice(2)
     return `${randomPart}.${extension}`
+  }
+
+  const titleFromFileName = (fileName: string) => {
+    const base = fileName.replace(/\.[^/.]+$/, "").trim()
+    return base || "Untitled"
+  }
+
+  const titleFromImageUrl = (url: string) => {
+    const segment = url.split("/").pop()?.trim() ?? ""
+    return titleFromFileName(segment || "photo")
   }
 
   const handleAnalyzeImage = async () => {
@@ -248,10 +278,18 @@ export function PhotoForm({ photo, open, onOpenChange }: PhotoFormProps) {
         ? cameraSettings
         : null
 
+      const trimmedTitle = (formData.title ?? "").trim()
+      const resolvedTitle =
+        trimmedTitle ||
+        (selectedFile
+          ? titleFromFileName(selectedFile.name)
+          : titleFromImageUrl(imageUrl))
+
       if (isEditing && photo) {
         const updateData = {
           id: photo.id,
           ...formData,
+          title: resolvedTitle,
           imageUrl,
           cameraSettings: cameraSettingsData,
         }
@@ -260,6 +298,7 @@ export function PhotoForm({ photo, open, onOpenChange }: PhotoFormProps) {
       } else {
         await createPhoto({
           ...formData,
+          title: resolvedTitle,
           imageUrl,
           cameraSettings: cameraSettingsData,
         })
@@ -308,35 +347,11 @@ export function PhotoForm({ photo, open, onOpenChange }: PhotoFormProps) {
           <DialogTitle>{isEditing ? "Edit Photo" : "New Photo"}</DialogTitle>
           <DialogDescription>
             {isEditing
-              ? "Update your photo details"
-              : "Add a new photo to your collection"}
+              ? "Change title, story, or other details anytime — use Story to add this image to a visual story on the Photos site."
+              : "Pick an image and save. Add a title or other details anytime."}
           </DialogDescription>
         </DialogHeader>
         <form id="photo-form" onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <div className="flex flex-col gap-3">
-            <Label htmlFor="title">Title *</Label>
-            <Input
-              id="title"
-              value={formData.title}
-              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              placeholder="e.g., Sunset over Mountains"
-              required
-            />
-          </div>
-
-          <div className="flex flex-col gap-3">
-            <Label htmlFor="description">Description</Label>
-            <Textarea
-              id="description"
-              value={formData.description || ""}
-              onChange={(e) =>
-                setFormData({ ...formData, description: e.target.value })
-              }
-              placeholder="Describe your photo..."
-              rows={3}
-            />
-          </div>
-
           <div className="flex flex-col gap-3">
             <div className="flex items-center justify-between">
               <Label htmlFor="imageFile">
@@ -419,6 +434,79 @@ export function PhotoForm({ photo, open, onOpenChange }: PhotoFormProps) {
                 />
               </div>
             )}
+          </div>
+
+          <div className="flex flex-col gap-3">
+            <Label htmlFor="title">Title (optional)</Label>
+            <Input
+              id="title"
+              value={formData.title}
+              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+              placeholder="Leave blank to use the image file name"
+            />
+            <p className="text-xs text-muted-foreground">
+              If empty, the title is taken from the uploaded file name.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <Checkbox
+              id="featured"
+              checked={formData.featured}
+              onCheckedChange={(checked) =>
+                setFormData({ ...formData, featured: !!checked })
+              }
+            />
+            <Label htmlFor="featured" className="cursor-pointer">
+              Featured photo (show on frontend)
+            </Label>
+          </div>
+
+          <div className="flex flex-col gap-3">
+            <Label htmlFor="story">Story (optional)</Label>
+            <Select
+              value={formData.storyId ?? "__none__"}
+              onValueChange={(value) =>
+                setFormData({
+                  ...formData,
+                  storyId: value === "__none__" ? null : value,
+                })
+              }
+            >
+              <SelectTrigger id="story" className="w-full">
+                <SelectValue placeholder="No story" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="__none__">No story</SelectItem>
+                {stories.map((s) => (
+                  <SelectItem key={s.id} value={s.id}>
+                    {s.title}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+            <p className="text-xs text-muted-foreground">
+              Group this photo under a visual story on the Photos site.
+            </p>
+          </div>
+
+          <details className="group rounded-lg border p-4 [&_summary::-webkit-details-marker]:hidden">
+            <summary className="cursor-pointer list-none text-sm font-medium">
+              Additional details{" "}
+              <span className="font-normal text-muted-foreground">(optional)</span>
+            </summary>
+            <div className="mt-4 flex flex-col gap-4">
+          <div className="flex flex-col gap-3">
+            <Label htmlFor="description">Description</Label>
+            <Textarea
+              id="description"
+              value={formData.description || ""}
+              onChange={(e) =>
+                setFormData({ ...formData, description: e.target.value })
+              }
+              placeholder="Describe your photo..."
+              rows={3}
+            />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
@@ -588,19 +676,8 @@ export function PhotoForm({ photo, open, onOpenChange }: PhotoFormProps) {
               </div>
             )}
           </div>
-
-          <div className="flex items-center gap-2">
-            <Checkbox
-              id="featured"
-              checked={formData.featured}
-              onCheckedChange={(checked) =>
-                setFormData({ ...formData, featured: !!checked })
-              }
-            />
-            <Label htmlFor="featured" className="cursor-pointer">
-              Featured photo (show on frontend)
-            </Label>
-          </div>
+            </div>
+          </details>
         </form>
         <DialogFooter>
           <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>

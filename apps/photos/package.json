@@ -10,6 +10,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@rashodkorala/posthog-next": "workspace:*",
     "@rashodkorala/theView": "workspace:*",
     "@radix-ui/react-select": "^2.2.6",
     "@radix-ui/react-slot": "^1.2.3",

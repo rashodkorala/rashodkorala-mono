@@ -1,6 +1,7 @@
 import { Metadata } from 'next'
 import '@/styles/globals.css'
 
+import { PostHogProvider } from '@rashodkorala/posthog-next'
 import { Geist_Mono, Geist } from 'next/font/google';
 import Footer from '@/src/components/footer';
 import Home from '@/src/components/main/home';
@@ -78,14 +79,16 @@ export default function RootLayout({
         <>
             <html lang="en" suppressHydrationWarning  >
                 <body className={`${geistSans.variable} ${geistMono.variable}`}>
-                    <Provider>
-                        {/* <IntroWrapper /> */}
-                        <main className='max-w-[2800px] mx-auto px-6'>
-                            {/* <Home /> */}
-                            {children}
-                            <Footer />
-                        </main>
-                    </Provider>
+                    <PostHogProvider app="portfolio">
+                        <Provider>
+                            {/* <IntroWrapper /> */}
+                            <main className='max-w-[2800px] mx-auto px-6'>
+                                {/* <Home /> */}
+                                {children}
+                                <Footer />
+                            </main>
+                        </Provider>
+                    </PostHogProvider>
                 </body>
             </html>
         </>

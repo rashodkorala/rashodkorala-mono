@@ -8,6 +8,7 @@ import {
   IconFolder,
   IconListDetails,
   IconPhoto,
+  IconBook,
   IconSettings,
   IconBriefcase,
   IconPencil,
@@ -48,6 +49,11 @@ const data = {
       title: "Photos",
       url: "/protected/photos",
       icon: IconPhoto,
+    },
+    {
+      title: "Stories",
+      url: "/protected/stories",
+      icon: IconBook,
     },
     {
       title: "The View",

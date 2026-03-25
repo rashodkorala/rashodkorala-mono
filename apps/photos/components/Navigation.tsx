@@ -9,6 +9,7 @@ import ThemeToggle from "@/components/ThemeToggle";
 const navItems = [
     { name: "About", path: "/about" },
     { name: "Gallery", path: "/#gallery" },
+    { name: "Stories", path: "/stories" },
     { name: "The View", path: "/blog" },
     { name: "Contact", path: "/#contact" },
 ];
@@ -115,7 +116,10 @@ const Navigation = () => {
                         {navItems.map((item, index) => {
                             const isActive =
                                 pathname !== "/"
-                                    ? pathname === item.path.replace("/#", "/")
+                                    ? item.path.startsWith("/#")
+                                        ? false
+                                        : pathname === item.path ||
+                                          pathname.startsWith(`${item.path}/`)
                                     : activeSection === item.path.substring(2);
 
                             return (

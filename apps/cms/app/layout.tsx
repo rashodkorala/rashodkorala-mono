@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import { PostHogProvider } from "@rashodkorala/posthog-next";
 import { ThemeProvider } from "next-themes";
 import { Toaster } from "@/components/ui/sonner";
 import "./globals.css";
@@ -49,16 +50,18 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning className="dark" style={{ colorScheme: "dark" }}>
       <body className={`${inter.className} antialiased bg-background text-foreground`}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="dark"
-          enableSystem={false}
-          disableTransitionOnChange
-          storageKey="theme-preference"
-        >
-          {children}
-          <Toaster />
-        </ThemeProvider>
+        <PostHogProvider app="cms">
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="dark"
+            enableSystem={false}
+            disableTransitionOnChange
+            storageKey="theme-preference"
+          >
+            {children}
+            <Toaster />
+          </ThemeProvider>
+        </PostHogProvider>
       </body>
     </html>
   );

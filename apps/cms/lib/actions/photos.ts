@@ -6,12 +6,35 @@ import type { Photo, PhotoDB, PhotoInsert, PhotoUpdate } from "@/lib/types/photo
 
 function transformPhoto(photo: PhotoDB): Photo {
   return {
-    ...photo,
+    id: photo.id,
+    title: photo.title,
+    description: photo.description,
     imageUrl: photo.image_url,
     altText: photo.alt_text,
+    category: photo.category,
+    location: photo.location,
     dateTaken: photo.date_taken,
     cameraSettings: photo.camera_settings,
+    tags: photo.tags,
+    featured: photo.featured,
+    storyId: photo.story_id ?? null,
+    created_at: photo.created_at,
+    updated_at: photo.updated_at,
+    user_id: photo.user_id,
   }
+}
+
+function titleFromImageUrl(imageUrl: string): string {
+  const segment = imageUrl.split("/").pop()?.trim() ?? ""
+  const base = segment.replace(/\.[^/.]+$/, "").trim()
+  return base || "Untitled"
+}
+
+function normalizeTitle(raw: string | undefined, imageUrl: string): string {
+  const t = raw?.trim()
+  if (t) return t
+  if (imageUrl.trim()) return titleFromImageUrl(imageUrl)
+  return "Untitled"
 }
 
 export async function getPhotos(): Promise<Photo[]> {
@@ -131,7 +154,7 @@ export async function createPhoto(photo: PhotoInsert): Promise<Photo> {
   const { data, error } = await supabase
     .from("photos")
     .insert({
-      title: photo.title,
+      title: normalizeTitle(photo.title, photo.imageUrl),
       description: photo.description || null,
       image_url: photo.imageUrl,
       alt_text: photo.altText || null,
@@ -141,6 +164,7 @@ export async function createPhoto(photo: PhotoInsert): Promise<Photo> {
       camera_settings: photo.cameraSettings || null,
       tags: photo.tags || [],
       featured: photo.featured || false,
+      story_id: photo.storyId ?? null,
       user_id: user.id,
     })
     .select()
@@ -178,8 +202,12 @@ export async function updatePhoto(photo: PhotoUpdate): Promise<Photo> {
     camera_settings: unknown
     tags: string[] | null
     featured: boolean
+    story_id: string | null
   }> = {}
-  if (updates.title !== undefined) updateData.title = updates.title
+  if (updates.title !== undefined) {
+    const nextUrl = updates.imageUrl ?? ""
+    updateData.title = normalizeTitle(updates.title, nextUrl)
+  }
   if (updates.description !== undefined) updateData.description = updates.description
   if (updates.imageUrl !== undefined) updateData.image_url = updates.imageUrl
   if (updates.altText !== undefined) updateData.alt_text = updates.altText
@@ -189,6 +217,7 @@ export async function updatePhoto(photo: PhotoUpdate): Promise<Photo> {
   if (updates.cameraSettings !== undefined) updateData.camera_settings = updates.cameraSettings
   if (updates.tags !== undefined) updateData.tags = updates.tags || []
   if (updates.featured !== undefined) updateData.featured = updates.featured
+  if (updates.storyId !== undefined) updateData.story_id = updates.storyId
 
   const { data, error } = await supabase
     .from("photos")

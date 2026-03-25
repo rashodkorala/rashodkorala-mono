@@ -134,7 +134,7 @@ export function ChartAreaInteractive({ analytics }: ChartAreaInteractiveProps) {
       <CardContent className="px-2 pt-4 sm:px-6 sm:pt-6">
         {filteredData.length === 0 ? (
           <div className="flex h-[250px] items-center justify-center text-muted-foreground">
-            No analytics data available yet. Add the tracking script to your websites to start collecting data.
+            No pageview data in this range yet. With PostHog configured, pageviews from your sites appear here; otherwise use the CMS tracking script and API.
           </div>
         ) : (
         <ChartContainer
