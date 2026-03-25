@@ -82,7 +82,7 @@ export default function CaseStudyPage({
           ) : null}
         </div>
 
-        <h1 className="mt-6 text-4xl md:text-6xl" style={{ fontFamily: "Playfair Display, serif" }}>
+        <h1 className="mt-6 text-4xl md:text-6xl">
           {caseStudy.title}
         </h1>
         {caseStudy.summary ? <p className="mt-3 text-lg text-[#6b6a65]">{caseStudy.summary}</p> : null}
@@ -176,7 +176,7 @@ export default function CaseStudyPage({
             <div className="mt-3 grid md:grid-cols-4 gap-4">
               {metrics.map((metric, idx) => (
                 <div key={idx} className="border border-[#1f1f1c] rounded-xl p-4">
-                  <p className="text-3xl" style={{ fontFamily: "Playfair Display, serif" }}>{metric.value || "-"}</p>
+                  <p className="text-3xl">{metric.value || "-"}</p>
                   <p className="text-[#6b6a65] text-sm mt-1">{metric.label || ""}</p>
                 </div>
               ))}

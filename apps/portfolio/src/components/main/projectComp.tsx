@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
 import { getProjectBySlug } from '@/lib/supabase/projects';
 import { Project } from '@/lib/types';
-import { ArrowLeft, ExternalLink, Github, Play } from 'lucide-react';
+import { ArrowLeft, ExternalLink, Github } from 'lucide-react';
 
 interface ProjectCompProps {
   projectSlug: string;
@@ -116,9 +116,9 @@ const ProjectComp = ({ projectSlug, initialProject = null }: ProjectCompProps) =
             className="mb-16"
           >
             <div className="flex flex-wrap gap-3 mb-6">
-              <span className="text-sm text-white/30 font-mono">{getYear()}</span>
+              <span className="text-[11px] uppercase tracking-[0.08em] text-white/40">{getYear()}</span>
               {project.tech && project.tech.map(tag => (
-                <span key={tag} className="text-xs px-3 py-1 border border-white/20 rounded-full text-white/50">
+                <span key={tag} className="text-[11px] uppercase tracking-[0.08em] px-3 py-1 border border-white/20 rounded-full text-white/50">
                   {tag}
                 </span>
               ))}
@@ -128,7 +128,7 @@ const ProjectComp = ({ projectSlug, initialProject = null }: ProjectCompProps) =
               {project.title}
             </h1>
 
-            <p className="text-xl text-white/50 font-light max-w-3xl">
+            <p className="text-lg md:text-xl text-white/60 leading-relaxed max-w-3xl">
               {project.subtitle || project.solution || project.problem || ''}
             </p>
 
@@ -210,8 +210,8 @@ const ProjectComp = ({ projectSlug, initialProject = null }: ProjectCompProps) =
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8, delay: 0.4 }}
                 >
-                  <h2 className="text-sm tracking-[0.3em] uppercase text-white/40 mb-4">Challenge</h2>
-                  <p className="text-lg text-white/60 font-light leading-relaxed">
+                  <h2 className="text-[11px] tracking-[0.08em] uppercase text-white/40 mb-4">Challenge</h2>
+                  <p className="text-lg text-white/60 leading-relaxed">
                     {project.problem}
                   </p>
                 </motion.div>
@@ -223,8 +223,8 @@ const ProjectComp = ({ projectSlug, initialProject = null }: ProjectCompProps) =
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.8, delay: 0.5 }}
                 >
-                  <h2 className="text-sm tracking-[0.3em] uppercase text-white/40 mb-4">Solution</h2>
-                  <p className="text-lg text-white/60 font-light leading-relaxed">
+                  <h2 className="text-[11px] tracking-[0.08em] uppercase text-white/40 mb-4">Solution</h2>
+                  <p className="text-lg text-white/60 leading-relaxed">
                     {project.solution}
                   </p>
                 </motion.div>
@@ -240,11 +240,11 @@ const ProjectComp = ({ projectSlug, initialProject = null }: ProjectCompProps) =
               transition={{ duration: 0.8, delay: 0.6 }}
               className="border-t border-white/10 pt-16"
             >
-              <h2 className="text-sm tracking-[0.3em] uppercase text-white/40 mb-8">Impact</h2>
+              <h2 className="text-[11px] tracking-[0.08em] uppercase text-white/40 mb-8">Impact</h2>
               <div className="grid md:grid-cols-3 gap-8">
                 {project.features.slice(0, 3).map((feature, index) => (
                   <div key={index} className="p-6 border border-white/10 rounded-lg">
-                    <p className="text-lg font-light">{feature}</p>
+                    <p className="text-base md:text-lg">{feature}</p>
                   </div>
                 ))}
               </div>

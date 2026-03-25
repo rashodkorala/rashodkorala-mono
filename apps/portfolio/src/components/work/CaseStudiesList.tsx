@@ -36,7 +36,7 @@ export default function CaseStudiesList({ items }: CaseStudiesListProps) {
                     ))}
                   </div>
 
-                  <h2 className="text-2xl md:text-3xl flex items-center gap-2" style={{ fontFamily: "Playfair Display, serif" }}>
+                  <h2 className="text-2xl md:text-3xl flex items-center gap-2">
                     {item.title}
                     <ArrowUpRight className="w-4 h-4 text-[#6b6a65] group-hover:text-[#e8e6e0]" />
                   </h2>

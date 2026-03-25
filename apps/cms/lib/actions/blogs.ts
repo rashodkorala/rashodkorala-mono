@@ -250,7 +250,6 @@ export async function createBlog(blog: BlogInsert): Promise<Blog> {
   }
 
   revalidatePath("/protected/blogs")
-  revalidatePath("/protected/content")
   return transformBlog(data)
 }
 
@@ -330,7 +329,6 @@ export async function updateBlog(blog: BlogUpdate): Promise<Blog> {
   }
 
   revalidatePath("/protected/blogs")
-  revalidatePath("/protected/content")
   revalidatePath(`/protected/blogs/${blog.id}`)
   return transformBlog(data)
 }
@@ -368,5 +366,4 @@ export async function deleteBlog(id: string): Promise<void> {
   }
 
   revalidatePath("/protected/blogs")
-  revalidatePath("/protected/content")
 }

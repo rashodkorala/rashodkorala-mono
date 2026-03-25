@@ -4,9 +4,6 @@ import * as React from "react"
 import {
   IconChartBar,
   IconDashboard,
-  IconFileDescription,
-  IconFolder,
-  IconListDetails,
   IconPhoto,
   IconBook,
   IconSettings,
@@ -36,11 +33,6 @@ const data = {
       icon: IconDashboard,
     },
     {
-      title: "Projects",
-      url: "/protected/projects",
-      icon: IconFolder,
-    },
-    {
       title: "Case Studies",
       url: "/protected/case-studies",
       icon: IconBriefcase,
@@ -59,16 +51,6 @@ const data = {
       title: "The View",
       url: "/protected/blogs",
       icon: IconPencil,
-    },
-    {
-      title: "Content",
-      url: "/protected/content",
-      icon: IconFileDescription,
-    },
-    {
-      title: "Pages",
-      url: "/protected/pages",
-      icon: IconListDetails,
     },
     {
       title: "Analytics",
