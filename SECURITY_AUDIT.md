@@ -28,10 +28,7 @@ An attacker can craft a URL like `/auth/confirm?token_hash=...&type=...&next=htt
 
 ### 2. Storage Bucket Policies Allow Cross-User File Manipulation
 
-**Files:**
-- `apps/cms/database-storage-media-bucket.sql:24-27`
-- `apps/cms/database-storage-projects-bucket.sql:24-27`
-- `apps/cms/database-storage-case-studies-bucket.sql:24-27`
+**Status:** Referenced SQL files have been removed from this repository. Validate current bucket policies directly in Supabase.
 
 **Severity:** HIGH
 
@@ -115,7 +112,7 @@ Base64 is not a hash — it is a reversible encoding. The stored "hashed" IPs ca
 
 ### 6. `SECURITY DEFINER` Function Without `search_path` Restriction
 
-**File:** `apps/cms/database-schema-analytics.sql:122`
+**Status:** Referenced SQL file has been removed from this repository. Validate the deployed function definition directly in Supabase.
 **Severity:** MEDIUM
 
 The `get_analytics_summary` function uses `SECURITY DEFINER` without setting a restricted `search_path`:
@@ -306,7 +303,7 @@ Found in `apps/photos/app/layout.tsx:180,184` and `apps/cms/components/ui/chart.
 
 ### 19. SQL Schema Files in Source Code
 
-Database schema `.sql` files are committed to the repo at `apps/cms/database-*.sql`. While not a vulnerability, these provide an attacker with full knowledge of the database structure. Consider keeping schema migrations in a protected directory or using a migration tool like Supabase CLI migrations.
+This finding no longer applies to the current repository state: SQL schema files have been removed from source.
 
 ---
 

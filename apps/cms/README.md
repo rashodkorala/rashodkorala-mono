@@ -90,11 +90,7 @@ OPENAI_API_KEY=your_openai_api_key_optional
 
 ### 4. Set Up Database
 
-Run the following SQL scripts in your Supabase SQL Editor (in order):
-
-1. **Projects Table**: `database-schema.sql`
-2. **Photos Table**: `database-schema-photos.sql`
-3. **Add Alt Text** (if needed): `database-migration-add-alt-text.sql`
+Create your required tables, RLS policies, and functions directly in Supabase (via SQL editor, migrations, or your preferred infrastructure workflow).
 
 See the detailed setup guides:
 - [Projects Setup Guide](./PROJECTS_SETUP.md)
@@ -252,7 +248,6 @@ The AI uses GPT-4o-mini for cost-effective content generation. Individual fields
 │   ├── supabase/         # Supabase client setup
 │   ├── types/            # TypeScript types
 │   └── utils/            # Utility functions
-├── database-schema*.sql   # Database migration files
 └── README.md
 ```
 
@@ -276,7 +271,7 @@ The project uses Tailwind CSS and shadcn/ui. To customize:
 
 ### Adding New Features
 
-1. Create database schema (SQL file)
+1. Create or update your database schema in Supabase
 2. Add TypeScript types in `lib/types/`
 3. Create server actions in `lib/actions/`
 4. Build UI components in `components/`
@@ -338,7 +333,7 @@ This project is open source and available under the [MIT License](LICENSE).
 
 - Ensure RLS policies are set up correctly
 - Check that user_id is properly set in all queries
-- Verify table schemas match the SQL files
+- Verify table schemas match what the app expects
 
 ### Storage Errors
 

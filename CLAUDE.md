@@ -50,7 +50,6 @@ rashodkorala-mono/
 │   │   │   ├── actions/        # Server actions (projects, case-studies, photos, media, pages, analytics, blogs)
 │   │   │   ├── supabase/       # Server client + middleware
 │   │   │   └── types/          # TypeScript types for all entities
-│   │   ├── database-*.sql      # 11 SQL schema/storage/function files
 │   │   └── middleware.ts       # Auth middleware protecting /protected/* routes
 │   │
 │   ├── photos/                 # Photo Gallery
@@ -131,16 +130,6 @@ import type { BlogPost } from "@rashodkorala/theView"
 - `apps/cms/lib/actions/analytics.ts` — Analytics summary via RPC
 - `apps/cms/lib/actions/pages.ts` — Page management
 - `apps/cms/lib/actions/blogs.ts` — Blog post management
-
-### Database Schemas
-- `apps/cms/database-schema-projects.sql` — Projects table + RLS
-- `apps/cms/database-schema-case-studies.sql` — Case studies + RLS
-- `apps/cms/database-schema-analytics.sql` — Analytics + RLS + summary function
-- `apps/cms/database-schema-media.sql` — Media library + RLS
-- `apps/cms/database-schema-photos.sql` — Photos table
-- `apps/cms/database-schema-blogs.sql` — Blog posts
-- `apps/cms/database-schema-pages.sql` — Custom pages
-- `apps/cms/database-storage-*.sql` — Storage bucket policies (3 files)
 
 ### Configuration
 - `apps/cms/next.config.ts` — MDX + image optimization config
