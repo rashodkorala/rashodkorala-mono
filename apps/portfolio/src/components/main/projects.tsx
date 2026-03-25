@@ -150,7 +150,7 @@ const Projects: React.FC<ProjectsProps> = ({ initialProjects = [] }) => {
               <p className="text-red-600 dark:text-red-400 text-lg">{error}</p>
               <button
                 onClick={() => window.location.reload()}
-                className="px-6 py-2 bg-orange-600 text-white rounded hover:bg-orange-700 transition-colors"
+                className="px-6 py-2 bg-black text-white dark:bg-white dark:text-black rounded hover:bg-black/80 dark:hover:bg-white/80 transition-colors"
               >
                 Try Again
               </button>
@@ -170,8 +170,8 @@ const Projects: React.FC<ProjectsProps> = ({ initialProjects = [] }) => {
           transition={{ duration: 0.8 }}
           className="mb-16"
         >
-          <p className="text-[11px] tracking-[0.08em] uppercase text-black/40 dark:text-white/40 mb-4">
-            Work
+          <p className="text-[11px] tracking-[0.08em] uppercase text-black/40 dark:text-white/40 mb-3">
+            Projects
           </p>
           <h2 className="text-4xl md:text-5xl font-light tracking-tight text-black dark:text-white">
             Selected <span className="font-medium">projects</span>

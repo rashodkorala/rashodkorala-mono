@@ -107,7 +107,7 @@ const Work: React.FC = () => {
                             <div className="space-y-6">
                                 <div className="space-y-3">
                                     {item.featured && (
-                                        <div className="text-[13px] leading-[18px] text-orange-600 dark:text-orange-400 font-normal">
+                                        <div className="text-[13px] leading-[18px] text-black/60 dark:text-white/60 font-normal">
                                             Featured Startup
                                         </div>
                                     )}

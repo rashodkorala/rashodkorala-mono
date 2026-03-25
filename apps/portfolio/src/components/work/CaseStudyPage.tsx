@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 import type { CaseStudy } from "@/lib/types";
 
 function asStringArray(value: unknown): string[] {
@@ -63,41 +64,55 @@ export default function CaseStudyPage({
   const learnings = parseBullets(learned);
 
   return (
-    <div className="min-h-screen bg-[#080808] text-[#e8e6e0]">
+    <div className="min-h-screen bg-white dark:bg-black text-black dark:text-white">
       <div className="max-w-6xl mx-auto px-6 py-10">
-        <Link href="/work" className="text-sm text-[#6b6a65] hover:text-[#e8e6e0] transition-colors">
+        <Link
+          href="/work"
+          className="inline-flex items-center gap-2 text-sm text-black/50 dark:text-white/50 hover:text-black dark:hover:text-white transition-colors group"
+        >
+          <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" strokeWidth={1.5} />
           Back to work
         </Link>
 
         <div className="mt-8 flex flex-wrap items-center gap-2">
           {tags.map((tag) => (
-            <span key={tag} className="text-[11px] uppercase tracking-[0.08em] px-2 py-1 rounded-full border border-[#1f1f1c] text-[#6b6a65]">
+            <span
+              key={tag}
+              className="text-[11px] uppercase tracking-[0.08em] px-2 py-1 rounded-full border border-black/10 dark:border-white/10 text-black/50 dark:text-white/50"
+            >
               {tag}
             </span>
           ))}
           {caseStudy.category ? (
-            <span className="text-[11px] uppercase tracking-[0.08em] px-2 py-1 rounded-full border border-[#1f1f1c] text-[#e8e6e0]">
+            <span className="text-[11px] uppercase tracking-[0.08em] px-2 py-1 rounded-full border border-black/10 dark:border-white/10 text-black/70 dark:text-white/70">
               {caseStudy.category}
             </span>
           ) : null}
         </div>
 
-        <h1 className="mt-6 text-4xl md:text-6xl">
+        <h1 className="mt-6 text-4xl md:text-6xl font-light tracking-tight">
           {caseStudy.title}
         </h1>
-        {caseStudy.summary ? <p className="mt-3 text-lg text-[#6b6a65]">{caseStudy.summary}</p> : null}
+        {caseStudy.summary ? (
+          <p className="mt-3 text-lg text-black/50 dark:text-white/50 font-light">{caseStudy.summary}</p>
+        ) : null}
 
-        <div className="mt-8 flex flex-wrap items-center gap-4 text-sm text-[#6b6a65] border-y border-[#1f1f1c] py-4">
+        <div className="mt-8 flex flex-wrap items-center gap-4 text-sm text-black/50 dark:text-white/50 border-y border-black/10 dark:border-white/10 py-4">
           <span>Role: {caseStudy.role || "N/A"}</span>
-          <span className="w-px h-4 bg-[#1f1f1c]" />
+          <span className="w-px h-4 bg-black/10 dark:bg-white/10" />
           <span>Timeline: {caseStudy.timeline || "N/A"}</span>
-          <span className="w-px h-4 bg-[#1f1f1c]" />
+          <span className="w-px h-4 bg-black/10 dark:bg-white/10" />
           <span>Status: {caseStudy.status}</span>
           {links.map((link) =>
             link.url ? (
               <span key={`${link.label}-${link.url}`} className="flex items-center gap-2">
-                <span className="w-px h-4 bg-[#1f1f1c]" />
-                <a href={link.url} target="_blank" rel="noreferrer" className="hover:text-[#e8e6e0] transition-colors">
+                <span className="w-px h-4 bg-black/10 dark:bg-white/10" />
+                <a
+                  href={link.url}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="hover:text-black dark:hover:text-white transition-colors"
+                >
                   {link.label || link.type || "Link"}
                 </a>
               </span>
@@ -106,38 +121,43 @@ export default function CaseStudyPage({
         </div>
 
         {caseStudy.cover_url ? (
-          <div className="mt-8 relative w-full aspect-video rounded-[12px] overflow-hidden border border-[#1f1f1c]">
+          <div className="mt-8 relative w-full aspect-video rounded-lg overflow-hidden border border-black/10 dark:border-white/10">
             <Image src={caseStudy.cover_url} alt={caseStudy.title} fill className="object-cover" priority />
           </div>
         ) : null}
 
         {caseStudy.lede ? (
-          <p className="mt-8 text-[18px] leading-[1.8] text-[#6b6a65] max-w-4xl">{caseStudy.lede}</p>
+          <p className="mt-8 text-[18px] leading-[1.8] text-black/60 dark:text-white/60 max-w-4xl">{caseStudy.lede}</p>
         ) : null}
 
         <section className="mt-14 space-y-10">
           {challenge ? (
             <div>
-              <p className="text-[11px] uppercase tracking-[0.08em] text-[#6b6a65]">Challenge</p>
-              <p className="mt-3 leading-8 text-[#e8e6e0]">{challenge}</p>
+              <p className="text-[11px] uppercase tracking-[0.08em] text-black/40 dark:text-white/40">Challenge</p>
+              <p className="mt-3 leading-8">{challenge}</p>
             </div>
           ) : null}
 
           {approach ? (
             <div>
-              <p className="text-[11px] uppercase tracking-[0.08em] text-[#6b6a65]">Approach</p>
-              <p className="mt-3 leading-8 text-[#e8e6e0]">{approach}</p>
+              <p className="text-[11px] uppercase tracking-[0.08em] text-black/40 dark:text-white/40">Approach</p>
+              <p className="mt-3 leading-8">{approach}</p>
             </div>
           ) : null}
 
           {processSteps.length > 0 ? (
             <div>
-              <p className="text-[11px] uppercase tracking-[0.08em] text-[#6b6a65]">Process</p>
+              <p className="text-[11px] uppercase tracking-[0.08em] text-black/40 dark:text-white/40">Process</p>
               <ol className="mt-4 grid gap-3">
                 {processSteps.map((step, idx) => (
-                  <li key={`${step.title}-${idx}`} className="bg-[#141414] border border-[#1f1f1c] rounded-xl p-4">
-                    <p className="font-medium">{idx + 1}. {step.title}</p>
-                    <p className="text-[#6b6a65] mt-2">{step.description}</p>
+                  <li
+                    key={`${step.title}-${idx}`}
+                    className="bg-black/[0.02] dark:bg-white/[0.03] border border-black/10 dark:border-white/10 rounded-xl p-4"
+                  >
+                    <p className="font-medium">
+                      {idx + 1}. {step.title}
+                    </p>
+                    <p className="text-black/50 dark:text-white/50 mt-2">{step.description}</p>
                   </li>
                 ))}
               </ol>
@@ -146,10 +166,12 @@ export default function CaseStudyPage({
 
           {learnings.length > 0 ? (
             <div>
-              <p className="text-[11px] uppercase tracking-[0.08em] text-[#6b6a65]">What I learned</p>
+              <p className="text-[11px] uppercase tracking-[0.08em] text-black/40 dark:text-white/40">
+                What I learned
+              </p>
               <ul className="mt-3 space-y-2">
                 {learnings.map((item) => (
-                  <li key={item} className="text-[#e8e6e0]">- {item}</li>
+                  <li key={item}>- {item}</li>
                 ))}
               </ul>
             </div>
@@ -158,12 +180,17 @@ export default function CaseStudyPage({
 
         {results.length > 0 ? (
           <section className="mt-12">
-            <p className="text-[11px] uppercase tracking-[0.08em] text-[#6b6a65]">Outcome</p>
+            <p className="text-[11px] uppercase tracking-[0.08em] text-black/40 dark:text-white/40">Outcome</p>
             <div className="mt-4 grid md:grid-cols-3 gap-4">
               {results.slice(0, 3).map((item, idx) => (
-                <div key={idx} className="bg-[#141414] border border-[#1f1f1c] rounded-xl p-5">
+                <div
+                  key={idx}
+                  className="bg-black/[0.02] dark:bg-white/[0.03] border border-black/10 dark:border-white/10 rounded-xl p-5"
+                >
                   <p className="text-lg">{item.title || item.value || "Outcome"}</p>
-                  {item.description ? <p className="text-[#6b6a65] mt-2">{item.description}</p> : null}
+                  {item.description ? (
+                    <p className="text-black/50 dark:text-white/50 mt-2">{item.description}</p>
+                  ) : null}
                 </div>
               ))}
             </div>
@@ -172,12 +199,12 @@ export default function CaseStudyPage({
 
         {metrics.length > 0 ? (
           <section className="mt-12">
-            <p className="text-[11px] uppercase tracking-[0.08em] text-[#6b6a65]">Metrics</p>
+            <p className="text-[11px] uppercase tracking-[0.08em] text-black/40 dark:text-white/40">Metrics</p>
             <div className="mt-3 grid md:grid-cols-4 gap-4">
               {metrics.map((metric, idx) => (
-                <div key={idx} className="border border-[#1f1f1c] rounded-xl p-4">
+                <div key={idx} className="border border-black/10 dark:border-white/10 rounded-xl p-4">
                   <p className="text-3xl">{metric.value || "-"}</p>
-                  <p className="text-[#6b6a65] text-sm mt-1">{metric.label || ""}</p>
+                  <p className="text-black/50 dark:text-white/50 text-sm mt-1">{metric.label || ""}</p>
                 </div>
               ))}
             </div>
@@ -186,23 +213,34 @@ export default function CaseStudyPage({
 
         {gallery.length > 0 ? (
           <section className="mt-12">
-            <p className="text-[11px] uppercase tracking-[0.08em] text-[#6b6a65]">Gallery</p>
+            <p className="text-[11px] uppercase tracking-[0.08em] text-black/40 dark:text-white/40">Gallery</p>
             <div className="mt-4 grid grid-cols-2 md:grid-cols-4 gap-3">
               {gallery.map((url, idx) => (
-                <div key={`${url}-${idx}`} className="relative aspect-[3/4] rounded-lg overflow-hidden border border-[#1f1f1c]">
-                  <Image src={url} alt={`${caseStudy.title} gallery ${idx + 1}`} fill className="object-cover" />
+                <div
+                  key={`${url}-${idx}`}
+                  className="relative aspect-[3/4] rounded-lg overflow-hidden border border-black/10 dark:border-white/10"
+                >
+                  <Image
+                    src={url}
+                    alt={`${caseStudy.title} gallery ${idx + 1}`}
+                    fill
+                    className="object-cover"
+                  />
                 </div>
               ))}
             </div>
           </section>
         ) : null}
 
-        <hr className="border-[#1f1f1c] my-12" />
+        <hr className="border-black/10 dark:border-white/10 my-12" />
 
         {stack.length > 0 ? (
           <div className="flex flex-wrap gap-2 pb-10">
             {stack.map((tech) => (
-              <span key={tech} className="px-3 py-1 text-xs rounded-full border border-[#1f1f1c] text-[#6b6a65]">
+              <span
+                key={tech}
+                className="px-3 py-1 text-xs rounded-full border border-black/10 dark:border-white/10 text-black/50 dark:text-white/50"
+              >
                 {tech}
               </span>
             ))}
