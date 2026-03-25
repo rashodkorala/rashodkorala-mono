@@ -19,7 +19,7 @@ export default function ProjectSection() {
             <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-16 items-center">
                 {/* Text Section */}
                 <div>
-                    <span className="inline-block px-4 py-1 rounded-full bg-orange-600/10 text-orange-600 text-sm font-medium mb-4">
+                    <span className="inline-block px-4 py-1 rounded-full bg-black/10 text-black dark:bg-white/10 dark:text-white text-sm font-medium mb-4">
                         Featured Project
                     </span>
                     <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
@@ -33,14 +33,14 @@ export default function ProjectSection() {
                         <Link
                             href="https://startup.rashodkorala.com/"
                             target="_blank"
-                            className="inline-flex items-center px-5 py-2.5 bg-orange-600 text-white text-sm font-medium rounded-full hover:bg-orange-700 transition"
+                            className="inline-flex items-center px-5 py-2.5 bg-black text-white dark:bg-white dark:text-black text-sm font-medium rounded-full hover:bg-black/80 dark:hover:bg-white/80 transition"
                         >
                             <ExternalLink className="mr-2 h-4 w-4" />
                             Live Demo
                         </Link>
                         <Link
                             href="/aether"
-                            className="inline-flex items-center px-5 py-2.5 bg-orange-600 text-white text-sm font-medium rounded-full hover:bg-orange-700 transition"
+                            className="inline-flex items-center px-5 py-2.5 bg-black text-white dark:bg-white dark:text-black text-sm font-medium rounded-full hover:bg-black/80 dark:hover:bg-white/80 transition"
                         >
                             <ExternalLink className="mr-2 h-4 w-4" />
                             Learn More

@@ -1,5 +1,8 @@
 import { Metadata } from "next";
 import Projects from "@/src/components/main/projects";
+import { getCachedAllProjects } from "@/lib/supabase/cached-projects";
+
+export const revalidate = 3600;
 
 export const metadata: Metadata = {
     title: "Projects",
@@ -14,10 +17,7 @@ export const metadata: Metadata = {
     },
 };
 
-export default function Index() {
-    return (
-        <>
-            <Projects />
-        </>
-    );
+export default async function Index() {
+    const initialProjects = await getCachedAllProjects();
+    return <Projects initialProjects={initialProjects} />;
 }

@@ -51,14 +51,14 @@ export default function Contact() {
                             name="first_name"
                             placeholder="First Name *"
                             required
-                            className="border-b-2 focus:border-orange-600 outline-none py-2 border-slate-400 dark:border-white/30 dark:text-white dark:placeholder:text-white/40"
+                            className="border-b-2 focus:border-black dark:focus:border-white outline-none py-2 border-slate-400 dark:border-white/30 dark:text-white dark:placeholder:text-white/40"
                         />
                         <Input
                             type="text"
                             name="last_name"
                             placeholder="Last Name *"
                             required
-                            className="border-b-2 focus:border-orange-600 outline-none py-2 border-slate-400 dark:border-white/30 dark:text-white dark:placeholder:text-white/40"
+                            className="border-b-2 focus:border-black dark:focus:border-white outline-none py-2 border-slate-400 dark:border-white/30 dark:text-white dark:placeholder:text-white/40"
                         />
                     </div>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -67,30 +67,30 @@ export default function Contact() {
                             name="email"
                             placeholder="Email *"
                             required
-                            className="border-b-2 focus:border-orange-600 outline-none py-2 border-slate-400 dark:border-white/30 dark:text-white dark:placeholder:text-white/40"
+                            className="border-b-2 focus:border-black dark:focus:border-white outline-none py-2 border-slate-400 dark:border-white/30 dark:text-white dark:placeholder:text-white/40"
                         />
                         <Input
                             type="tel"
                             name="phone_number"
                             placeholder="Phone Number"
-                            className="border-b-2 focus:border-orange-600 outline-none py-2 border-slate-400 dark:border-white/30 dark:text-white dark:placeholder:text-white/40"
+                            className="border-b-2 focus:border-black dark:focus:border-white outline-none py-2 border-slate-400 dark:border-white/30 dark:text-white dark:placeholder:text-white/40"
                         />
                     </div>
                     <Textarea
                         name="message"
                         placeholder="Message *"
                         required
-                        className="border-b-2 focus:border-orange-600 outline-none py-2 border-slate-400 dark:border-white/30 dark:text-white dark:placeholder:text-white/40 h-56"
+                        className="border-b-2 focus:border-black dark:focus:border-white outline-none py-2 border-slate-400 dark:border-white/30 dark:text-white dark:placeholder:text-white/40 h-56"
                     />
                     <Button
                         variant={"default"}
                         type="submit"
-                        className="border-2 hover:border-orange-600 outline-none p-4 border-slate-400 dark:border-white/30 text-lg"
+                        className="border-2 hover:border-black dark:hover:border-white outline-none p-4 border-slate-400 dark:border-white/30 text-lg"
                     >
                         Send Message
                     </Button>
 
-                    {formStatus && <p className="text-orange-600 mt-4 font-thin">{formStatus}</p>}
+                    {formStatus && <p className="text-black dark:text-white mt-4 font-thin">{formStatus}</p>}
                     <input type="hidden" name="from_name" value="rashodkorala.com"></input>
 
                 </form>

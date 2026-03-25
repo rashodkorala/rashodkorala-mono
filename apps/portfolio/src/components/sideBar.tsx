@@ -12,13 +12,13 @@ export default function Sidebar() {
         <div className="z-50">
             {/* Menu Buttons */}
             <button
-                className="text-6xl md:text-7xl font-medium focus:outline-none hidden text-orange-600 lg:block"
+                className="text-6xl md:text-7xl font-medium focus:outline-none hidden text-black dark:text-white lg:block"
                 onClick={() => setIsOpen(!isOpen)}
             >
                 + Menu
             </button>
             <button
-                className="text-6xl md:text-7xl font-medium focus:outline-none text-orange-600 block lg:hidden"
+                className="text-6xl md:text-7xl font-medium focus:outline-none text-black dark:text-white block lg:hidden"
                 onClick={() => setIsOpen(!isOpen)}
             >
                 +
@@ -26,7 +26,7 @@ export default function Sidebar() {
 
             {/* Sidebar */}
             {isOpen && (
-                <div className="fixed top-0 right-0 w-full lg:w-1/3 h-full bg-background text-orange-600 shadow-lg p-6 z-10">
+                <div className="fixed top-0 right-0 w-full lg:w-1/3 h-full bg-background text-foreground shadow-lg p-6 z-10">
                     <button
                         className="text-6xl md:text-7xl font-medium mb-4 focus:outline-none absolute top-4 right-4"
                         onClick={closeMenu}

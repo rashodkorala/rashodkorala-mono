@@ -148,7 +148,7 @@ export default function AetherPage() {
                             </p>
                         </div>
                         <div className="space-y-4 pt-8 border-t border-gray-200/50 dark:border-gray-800/50">
-                            <div className="text-[13px] leading-[18px] text-orange-600 dark:text-orange-400 font-normal uppercase tracking-[0.5px]">
+                            <div className="text-[13px] leading-[18px] text-black/70 dark:text-white/70 font-normal uppercase tracking-[0.5px]">
                                 Objective
                             </div>
                             <h3 className="text-[24px] leading-[1.4] font-semibold tracking-[-0.3px] text-gray-900 dark:text-gray-50">
@@ -183,7 +183,7 @@ export default function AetherPage() {
                                     className="space-y-3 pb-6 border-b border-gray-200/50 dark:border-gray-800/50 last:border-0 last:pb-0"
                                 >
                                     <div className="flex items-center gap-3">
-                                        <span className="text-[13px] leading-[18px] text-orange-600 dark:text-orange-400 font-normal">
+                                        <span className="text-[13px] leading-[18px] text-black/70 dark:text-white/70 font-normal">
                                             {step.badge}
                                         </span>
                                         <span className="text-[13px] leading-[18px] text-gray-400 dark:text-gray-600 font-normal">
@@ -233,7 +233,7 @@ export default function AetherPage() {
                         <div className="space-y-6">
                             {highlights.map((item) => (
                                 <div key={item.title} className="flex items-start gap-4">
-                                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-orange-500/10 text-orange-600 dark:bg-orange-500/20 dark:text-orange-400 flex-shrink-0 mt-0.5">
+                                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-black/10 text-black/70 dark:bg-white/10 dark:text-white/70 flex-shrink-0 mt-0.5">
                                         <item.icon className="h-5 w-5" />
                                     </div>
                                     <div className="space-y-2 flex-1">

@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { unstable_cache } from "next/cache";
 import { supabase } from "@/lib/supabase";
 import BlogList from "@/src/components/blog/blogList";
-import BlogNavigation from "@/src/components/blog/blogNavigation";
 
 export const revalidate = 3600;
 
@@ -47,18 +46,17 @@ export default async function ViewPage() {
   const blogs = await getBlogs();
 
   return (
-    <div className="min-h-screen bg-white text-black dark:bg-black dark:text-white">
-      <BlogNavigation />
-      <div className="px-4 sm:px-6 pb-16 sm:pb-24">
+    <div className="min-h-screen bg-white dark:bg-black text-black dark:text-white">
+      <div className="px-6 pb-24">
         <div className="max-w-6xl mx-auto">
-          <div className="mb-12 sm:mb-16">
-            <p className="text-xs sm:text-sm tracking-[0.3em] uppercase text-black/40 dark:text-white/40 mb-3 sm:mb-4">
+          <div className="pt-24 mb-16">
+            <p className="text-[11px] uppercase tracking-[0.08em] text-black/40 dark:text-white/40 mb-3">
               The View
             </p>
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-light tracking-tight mb-3 sm:mb-4">
+            <h1 className="text-4xl md:text-5xl font-light tracking-tight mb-4">
               how I view <span className="font-medium">things</span>
             </h1>
-            <p className="text-base sm:text-lg text-black/50 dark:text-white/50 font-light max-w-3xl">
+            <p className="text-lg text-black/50 dark:text-white/50 font-light max-w-3xl">
               Opinions, observations, and technology writing.
             </p>
           </div>
