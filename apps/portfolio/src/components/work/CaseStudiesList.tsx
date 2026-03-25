@@ -25,7 +25,7 @@ export default function CaseStudiesList({ items }: CaseStudiesListProps) {
                 <div>
                   <div className="flex items-center gap-2 mb-2">
                     {item.category ? (
-                      <span className="text-[11px] px-2 py-1 rounded-full bg-[#c8f135] text-[#080808] uppercase tracking-[0.08em]">
+                      <span className="text-[11px] px-2 py-1 rounded-full border border-[#1f1f1c] text-[#e8e6e0] uppercase tracking-[0.08em]">
                         {item.category}
                       </span>
                     ) : null}
@@ -38,7 +38,7 @@ export default function CaseStudiesList({ items }: CaseStudiesListProps) {
 
                   <h2 className="text-2xl md:text-3xl flex items-center gap-2" style={{ fontFamily: "Playfair Display, serif" }}>
                     {item.title}
-                    <ArrowUpRight className="w-4 h-4 text-[#6b6a65] group-hover:text-[#c8f135]" />
+                    <ArrowUpRight className="w-4 h-4 text-[#6b6a65] group-hover:text-[#e8e6e0]" />
                   </h2>
                   {item.summary ? <p className="text-[#6b6a65] mt-2">{item.summary}</p> : null}
                 </div>

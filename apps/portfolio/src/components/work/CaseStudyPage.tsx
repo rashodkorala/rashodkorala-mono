@@ -65,7 +65,7 @@ export default function CaseStudyPage({
   return (
     <div className="min-h-screen bg-[#080808] text-[#e8e6e0]">
       <div className="max-w-6xl mx-auto px-6 py-10">
-        <Link href="/work" className="text-sm text-[#6b6a65] hover:text-[#c8f135] transition-colors">
+        <Link href="/work" className="text-sm text-[#6b6a65] hover:text-[#e8e6e0] transition-colors">
           Back to work
         </Link>
 
@@ -76,7 +76,7 @@ export default function CaseStudyPage({
             </span>
           ))}
           {caseStudy.category ? (
-            <span className="text-[11px] uppercase tracking-[0.08em] px-2 py-1 rounded-full bg-[#c8f135] text-[#080808]">
+            <span className="text-[11px] uppercase tracking-[0.08em] px-2 py-1 rounded-full border border-[#1f1f1c] text-[#e8e6e0]">
               {caseStudy.category}
             </span>
           ) : null}
@@ -97,7 +97,7 @@ export default function CaseStudyPage({
             link.url ? (
               <span key={`${link.label}-${link.url}`} className="flex items-center gap-2">
                 <span className="w-px h-4 bg-[#1f1f1c]" />
-                <a href={link.url} target="_blank" rel="noreferrer" className="hover:text-[#c8f135] transition-colors">
+                <a href={link.url} target="_blank" rel="noreferrer" className="hover:text-[#e8e6e0] transition-colors">
                   {link.label || link.type || "Link"}
                 </a>
               </span>
