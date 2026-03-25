@@ -34,26 +34,20 @@ const ProjectComp = ({ projectSlug, initialProject = null }: ProjectCompProps) =
         setIsLoading(false);
       }
     }
-
     fetchProject();
   }, [projectSlug, initialProject]);
 
-  const handleClose = () => {
-    setSelectedMediaIndex(null);
-  };
+  const handleClose = () => setSelectedMediaIndex(null);
 
-  // Get year from created_at
   const getYear = () => {
-    if (project?.created_at) {
-      return new Date(project.created_at).getFullYear().toString();
-    }
+    if (project?.created_at) return new Date(project.created_at).getFullYear().toString();
     return new Date().getFullYear().toString();
   };
 
   if (isLoading) {
     return (
       <div className="min-h-screen bg-black text-white flex items-center justify-center">
-        <p className="text-white/50">Loading...</p>
+        <p className="text-white/40">Loading...</p>
       </div>
     );
   }
@@ -62,11 +56,8 @@ const ProjectComp = ({ projectSlug, initialProject = null }: ProjectCompProps) =
     return (
       <div className="min-h-screen bg-black text-white flex items-center justify-center">
         <div className="text-center space-y-4">
-          <p className="text-white/50">Project not found</p>
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2 text-white/50 hover:text-white transition-colors"
-          >
+          <p className="text-white/40">Project not found</p>
+          <Link href="/" className="inline-flex items-center gap-2 text-white/40 hover:text-white transition-colors">
             <ArrowLeft className="w-4 h-4" strokeWidth={1.5} />
             <span className="text-sm font-light">Back to home</span>
           </Link>
@@ -75,40 +66,32 @@ const ProjectComp = ({ projectSlug, initialProject = null }: ProjectCompProps) =
     );
   }
 
-  // Build gallery: mix of images and videos for grid + modal
   const galleryImages = project.gallery_image_urls || [];
   const galleryVideos = project.gallery_video_urls || [];
   type MediaItem = { type: 'image'; url: string } | { type: 'video'; url: string };
   const allMedia: MediaItem[] = [];
-  if (project.cover_image_url) {
-    allMedia.push({ type: 'image', url: project.cover_image_url });
-  }
+  if (project.cover_image_url) allMedia.push({ type: 'image', url: project.cover_image_url });
   galleryImages.forEach((url) => allMedia.push({ type: 'image', url }));
   galleryVideos.forEach((url) => allMedia.push({ type: 'video', url }));
 
   return (
     <div className="min-h-screen bg-black text-white">
-      {/* Navigation */}
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="px-6 py-8"
+        className="px-6 md:px-12 py-8"
       >
-        <div className="max-w-6xl mx-auto">
-          <Link
-            href="/"
-            className="inline-flex items-center gap-2 text-white/50 hover:text-white transition-colors group"
-          >
+        <div className="max-w-4xl">
+          <Link href="/projects" className="inline-flex items-center gap-2 text-white/40 hover:text-white transition-colors group">
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" strokeWidth={1.5} />
-            <span className="text-sm font-light">Back to home</span>
+            <span className="text-sm font-light">Back to projects</span>
           </Link>
         </div>
       </motion.div>
 
-      <div className="px-6 pb-24">
-        <div className="max-w-6xl mx-auto">
-          {/* Header */}
+      <div className="px-6 md:px-12 pb-24">
+        <div className="max-w-4xl">
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
@@ -116,19 +99,16 @@ const ProjectComp = ({ projectSlug, initialProject = null }: ProjectCompProps) =
             className="mb-16"
           >
             <div className="flex flex-wrap gap-3 mb-6">
-              <span className="text-[11px] uppercase tracking-[0.08em] text-white/40">{getYear()}</span>
+              <span className="text-[11px] uppercase tracking-[0.08em] text-white/25 font-mono">{getYear()}</span>
               {project.tech && project.tech.map(tag => (
-                <span key={tag} className="text-[11px] uppercase tracking-[0.08em] px-3 py-1 border border-white/20 rounded-full text-white/50">
+                <span key={tag} className="text-[11px] uppercase tracking-[0.08em] px-2.5 py-1 border border-white/10 rounded-full text-white/30">
                   {tag}
                 </span>
               ))}
             </div>
 
-            <h1 className="text-4xl md:text-6xl font-light tracking-tight mb-6">
-              {project.title}
-            </h1>
-
-            <p className="text-lg md:text-xl text-white/60 leading-relaxed max-w-3xl">
+            <h1 className="text-3xl md:text-5xl font-light tracking-tight mb-6">{project.title}</h1>
+            <p className="text-lg text-white/50 leading-relaxed max-w-2xl">
               {project.subtitle || project.solution || project.problem || ''}
             </p>
 
@@ -140,7 +120,7 @@ const ProjectComp = ({ projectSlug, initialProject = null }: ProjectCompProps) =
                   rel="noopener noreferrer"
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className="inline-flex items-center gap-2 px-5 py-2.5 border border-white/20 rounded-full text-sm hover:bg-white hover:text-black transition-colors"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 border border-white/15 rounded-full text-sm hover:bg-white hover:text-black transition-colors"
                 >
                   <ExternalLink className="w-4 h-4" strokeWidth={1.5} />
                   Live Demo
@@ -153,7 +133,7 @@ const ProjectComp = ({ projectSlug, initialProject = null }: ProjectCompProps) =
                   rel="noopener noreferrer"
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className="inline-flex items-center gap-2 px-5 py-2.5 border border-white/20 rounded-full text-sm hover:bg-white hover:text-black transition-colors"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 border border-white/15 rounded-full text-sm hover:bg-white hover:text-black transition-colors"
                 >
                   <Github className="w-4 h-4" strokeWidth={1.5} />
                   View Code
@@ -162,7 +142,6 @@ const ProjectComp = ({ projectSlug, initialProject = null }: ProjectCompProps) =
             </div>
           </motion.div>
 
-          {/* Gallery: images and videos */}
           {allMedia.length > 0 && (
             <motion.div
               initial={{ opacity: 0, y: 40 }}
@@ -173,7 +152,7 @@ const ProjectComp = ({ projectSlug, initialProject = null }: ProjectCompProps) =
               {allMedia.slice(0, 6).map((item, index) => (
                 <div
                   key={index}
-                  className={`group relative aspect-video rounded-lg overflow-hidden border border-white/10 cursor-pointer ${allMedia.length === 1 ? 'w-full max-w-5xl h-full max-h-5xl' : ''}`}
+                  className={`group relative aspect-video rounded-lg overflow-hidden border border-white/10 cursor-pointer ${allMedia.length === 1 ? 'w-full max-w-4xl' : ''}`}
                   onClick={() => setSelectedMediaIndex(index)}
                 >
                   {item.type === 'image' ? (
@@ -185,62 +164,40 @@ const ProjectComp = ({ projectSlug, initialProject = null }: ProjectCompProps) =
                       sizes="(max-width: 768px) 100vw, 50vw"
                     />
                   ) : (
-                    <>
-                      <video
-                        src={item.url}
-                        className="absolute inset-0 w-full h-full object-cover object-center grayscale group-hover:grayscale-0 transition-all duration-500"
-                        muted
-                        autoPlay
-                        playsInline
-                        preload="auto"
-                      />
-                    </>
+                    <video
+                      src={item.url}
+                      className="absolute inset-0 w-full h-full object-cover object-center grayscale group-hover:grayscale-0 transition-all duration-500"
+                      muted
+                      autoPlay
+                      playsInline
+                      preload="auto"
+                    />
                   )}
                 </div>
               ))}
             </motion.div>
           )}
 
-          {/* Content Sections */}
           {(project.problem || project.solution) && (
             <div className="grid md:grid-cols-2 gap-16 md:gap-24 mb-20">
               {project.problem && (
-                <motion.div
-                  initial={{ opacity: 0, y: 40 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, delay: 0.4 }}
-                >
-                  <h2 className="text-[11px] tracking-[0.08em] uppercase text-white/40 mb-4">Challenge</h2>
-                  <p className="text-lg text-white/60 leading-relaxed">
-                    {project.problem}
-                  </p>
+                <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.4 }}>
+                  <h2 className="text-[11px] tracking-[0.08em] uppercase text-white/30 mb-4">Challenge</h2>
+                  <p className="text-lg text-white/50 leading-relaxed">{project.problem}</p>
                 </motion.div>
               )}
-
               {project.solution && (
-                <motion.div
-                  initial={{ opacity: 0, y: 40 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.8, delay: 0.5 }}
-                >
-                  <h2 className="text-[11px] tracking-[0.08em] uppercase text-white/40 mb-4">Solution</h2>
-                  <p className="text-lg text-white/60 leading-relaxed">
-                    {project.solution}
-                  </p>
+                <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.5 }}>
+                  <h2 className="text-[11px] tracking-[0.08em] uppercase text-white/30 mb-4">Solution</h2>
+                  <p className="text-lg text-white/50 leading-relaxed">{project.solution}</p>
                 </motion.div>
               )}
             </div>
           )}
 
-          {/* Features / Results */}
           {project.features && project.features.length > 0 && (
-            <motion.div
-              initial={{ opacity: 0, y: 40 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 0.6 }}
-              className="border-t border-white/10 pt-16"
-            >
-              <h2 className="text-[11px] tracking-[0.08em] uppercase text-white/40 mb-8">Impact</h2>
+            <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.6 }} className="border-t border-white/10 pt-16">
+              <h2 className="text-[11px] tracking-[0.08em] uppercase text-white/30 mb-8">Impact</h2>
               <div className="grid md:grid-cols-3 gap-8">
                 {project.features.slice(0, 3).map((feature, index) => (
                   <div key={index} className="p-6 border border-white/10 rounded-lg">
@@ -251,18 +208,14 @@ const ProjectComp = ({ projectSlug, initialProject = null }: ProjectCompProps) =
             </motion.div>
           )}
 
-          {/* Next Project */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.8 }}
             className="mt-24 pt-16 border-t border-white/10 text-center"
           >
-            <p className="text-sm text-white/40 mb-6">Interested in more?</p>
-            <Link
-              href="/"
-              className="inline-flex items-center gap-2 text-xl font-light hover:text-white/70 transition-colors"
-            >
+            <p className="text-sm text-white/30 mb-6">Interested in more?</p>
+            <Link href="/projects" className="inline-flex items-center gap-2 text-xl font-light hover:text-white/60 transition-colors">
               View all projects
               <ArrowLeft className="w-5 h-5 rotate-180" strokeWidth={1.5} />
             </Link>
@@ -270,7 +223,6 @@ const ProjectComp = ({ projectSlug, initialProject = null }: ProjectCompProps) =
         </div>
       </div>
 
-      {/* Gallery Modal (image or video) */}
       <AnimatePresence mode="wait">
         {selectedMediaIndex !== null && allMedia[selectedMediaIndex] && (
           <motion.div

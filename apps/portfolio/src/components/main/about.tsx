@@ -20,47 +20,41 @@ const interests = [
 
 export default function About() {
   return (
-    <div className="min-h-screen bg-white text-black dark:bg-black dark:text-white">
-      {/* Navigation */}
+    <div className="min-h-screen bg-black text-white">
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.6 }}
-        className="px-6 py-8"
+        className="px-6 md:px-12 py-8"
       >
-        <div className="max-w-6xl mx-auto">
-          <Link href="/" className="inline-flex items-center gap-2 text-black/50 hover:text-black dark:text-white/50 dark:hover:text-white transition-colors group">
+        <div className="max-w-4xl">
+          <Link href="/" className="inline-flex items-center gap-2 text-white/40 hover:text-white transition-colors group">
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" strokeWidth={1.5} />
             <span className="text-sm font-light">Back to home</span>
           </Link>
         </div>
       </motion.div>
 
-      <div className="px-6 pb-24">
-        <div className="max-w-6xl mx-auto">
-          {/* Header */}
+      <div className="px-6 md:px-12 pb-24">
+        <div className="max-w-4xl">
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.1 }}
             className="mb-20"
           >
-            <p className="text-sm tracking-[0.3em] uppercase text-black/40 dark:text-white/40 mb-4">
+            <h1 className="text-3xl md:text-5xl font-light tracking-tight mb-8">
               About
-            </p>
-            <h1 className="text-4xl md:text-6xl font-light tracking-tight mb-8">
-              Where curiosity meets execution
             </h1>
           </motion.div>
 
-          {/* Bio */}
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="max-w-4xl mb-24"
+            className="max-w-3xl mb-24"
           >
-            <div className="space-y-6 text-lg text-black/60 dark:text-white/60 font-light leading-relaxed">
+            <div className="space-y-6 text-[17px] text-white/50 font-light leading-[1.8]">
               <p>
                 Five years of building web and mobile applications. A journey that started with curiosity about how things work, naturally leading to a deep connection with code and craft.
               </p>
@@ -73,14 +67,13 @@ export default function About() {
             </div>
           </motion.div>
 
-          {/* Skills */}
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.3 }}
             className="mb-24"
           >
-            <h2 className="text-sm tracking-[0.3em] uppercase text-black/40 dark:text-white/40 mb-8">
+            <h2 className="text-sm tracking-[0.08em] uppercase text-white/30 mb-8">
               Technical Skills
             </h2>
             <div className="grid md:grid-cols-2 gap-12">
@@ -96,7 +89,7 @@ export default function About() {
                     {skill.items.map(item => (
                       <span
                         key={item}
-                        className="px-4 py-2 border border-black/10 dark:border-white/10 rounded-full text-sm text-black/60 dark:text-white/60 hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-colors"
+                        className="px-3 py-1.5 border border-white/10 rounded-full text-[13px] text-white/50 hover:bg-white hover:text-black transition-colors"
                       >
                         {item}
                       </span>
@@ -107,14 +100,13 @@ export default function About() {
             </div>
           </motion.div>
 
-          {/* Interests */}
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.5 }}
             className="mb-24"
           >
-            <h2 className="text-sm tracking-[0.3em] uppercase text-black/40 dark:text-white/40 mb-8">
+            <h2 className="text-sm tracking-[0.08em] uppercase text-white/30 mb-8">
               Beyond Code
             </h2>
             <div className="grid md:grid-cols-2 gap-6">
@@ -124,32 +116,31 @@ export default function About() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.6, delay: 0.6 + i * 0.1 }}
-                  className="p-6 border border-black/10 dark:border-white/10 rounded-lg hover:border-black/20 dark:hover:border-white/20 transition-colors"
+                  className="p-6 border border-white/10 rounded-lg hover:border-white/20 transition-colors"
                 >
-                  <interest.icon className="w-6 h-6 text-black/40 dark:text-white/40 mb-4" strokeWidth={1.5} />
+                  <interest.icon className="w-6 h-6 text-white/30 mb-4" strokeWidth={1.5} />
                   <h3 className="text-lg font-light mb-2">{interest.title}</h3>
-                  <p className="text-sm text-black/50 dark:text-white/50 font-light">{interest.description}</p>
+                  <p className="text-sm text-white/40 font-light">{interest.description}</p>
                 </motion.div>
               ))}
             </div>
           </motion.div>
 
-          {/* CTA */}
           <motion.div
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.7 }}
-            className="border-t border-black/10 dark:border-white/10 pt-16 text-center"
+            className="border-t border-white/10 pt-16 text-center"
           >
-            <p className="text-lg text-black/50 dark:text-white/50 font-light mb-6">
+            <p className="text-lg text-white/40 font-light mb-6">
               Interested in working together?
             </p>
-            <Link
-              href="/"
-              className="inline-flex items-center gap-2 px-6 py-3 border border-black/20 dark:border-white/20 rounded-full text-sm hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-colors"
+            <a
+              href="mailto:hello@rashodkorala.com"
+              className="inline-flex items-center gap-2 px-6 py-3 border border-white/15 rounded-full text-sm hover:bg-white hover:text-black transition-colors"
             >
               Get in touch
-            </Link>
+            </a>
           </motion.div>
         </div>
       </div>
