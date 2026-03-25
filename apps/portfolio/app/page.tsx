@@ -1,10 +1,10 @@
-import Projects from "@/src/components/main/projects";
+import CaseStudiesList from "@/src/components/work/CaseStudiesList";
 import Startup from "@/src/components/main/startup";
 import AboutSection from "@/src/components/main/aboutSection";
 // import Work from "@/src/components/main/work"; // Disabled - keeping code for future use
 
 import { Metadata } from "next";
-import { getCachedAllProjects } from "@/lib/supabase/cached-projects";
+import { getCachedCaseStudies } from "@/lib/supabase/cached-case-studies";
 
 export const revalidate = 3600;
 
@@ -24,11 +24,11 @@ export const metadata: Metadata = {
 
 
 export default async function Index() {
-    const initialProjects = await getCachedAllProjects();
+    const initialCaseStudies = await getCachedCaseStudies();
     return (
         <>
             {/* <Work /> Disabled - keeping code for future use */}
-            <Projects initialProjects={initialProjects} />
+            <CaseStudiesList items={initialCaseStudies} />
             <AboutSection />
             
             <Startup /> {/* Disabled - keeping code for future use */}

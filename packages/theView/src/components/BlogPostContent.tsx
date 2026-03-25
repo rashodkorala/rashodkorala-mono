@@ -11,9 +11,16 @@ import { renderMarkdown } from "../utils/markdownParser"
 interface BlogPostContentProps {
   blog: BlogPost
   theme: ThemeConfig
+  backHref?: string
+  backLabel?: string
 }
 
-export function BlogPostContent({ blog, theme }: BlogPostContentProps) {
+export function BlogPostContent({
+  blog,
+  theme,
+  backHref = "/blog",
+  backLabel = "Back to The View",
+}: BlogPostContentProps) {
   const ref = useRef(null)
   const isInView = useInView(ref, { once: true, margin: "-100px" })
 
@@ -41,11 +48,11 @@ export function BlogPostContent({ blog, theme }: BlogPostContentProps) {
       >
         <div className="max-w-6xl mx-auto px-4 sm:px-6">
           <Link
-            href="/blog"
+            href={backHref}
             className={`inline-flex items-center gap-2 ${theme.navigation.link} ${theme.navigation.linkHover}`}
           >
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" strokeWidth={1.5} />
-            <span className="text-xs sm:text-sm font-light">Back to The View</span>
+            <span className="text-xs sm:text-sm font-light">{backLabel}</span>
           </Link>
         </div>
       </motion.div>
@@ -161,10 +168,10 @@ export function BlogPostContent({ blog, theme }: BlogPostContentProps) {
           >
             <p className={theme.footer.text}>Interested in more?</p>
             <Link
-              href="/blog"
+              href={backHref}
               className={theme.footer.button}
             >
-              Back to The View
+              {backLabel}
             </Link>
           </motion.div>
         </div>

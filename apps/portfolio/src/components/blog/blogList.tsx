@@ -18,7 +18,7 @@ interface BlogPost {
   tags: string[] | null
 }
 
-function BlogCard({ post, index }: { post: BlogPost; index: number }) {
+function BlogCard({ post, index, basePath }: { post: BlogPost; index: number; basePath: string }) {
   const [isHovered, setIsHovered] = useState(false);
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-50px" });
@@ -32,7 +32,7 @@ function BlogCard({ post, index }: { post: BlogPost; index: number }) {
   };
 
   return (
-    <Link href={`/blog/${post.slug}`}>
+    <Link href={`${basePath}/${post.slug}`}>
       <motion.div
         ref={ref}
         initial={{ opacity: 0, y: 40 }}
@@ -103,9 +103,10 @@ function BlogCard({ post, index }: { post: BlogPost; index: number }) {
 
 interface BlogListProps {
   blogs: BlogPost[];
+  basePath?: string;
 }
 
-export default function BlogList({ blogs }: BlogListProps) {
+export default function BlogList({ blogs, basePath = "/blog" }: BlogListProps) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
@@ -126,7 +127,7 @@ export default function BlogList({ blogs }: BlogListProps) {
   return (
     <div ref={ref}>
       {blogs.map((post, index) => (
-        <BlogCard key={post.id} post={post} index={index} />
+        <BlogCard key={post.id} post={post} index={index} basePath={basePath} />
       ))}
     </div>
   );

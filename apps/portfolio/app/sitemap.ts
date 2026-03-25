@@ -1,7 +1,7 @@
 import { MetadataRoute } from "next"
 import { unstable_cache } from "next/cache"
 import { supabase } from "@/lib/supabase"
-import { getCachedAllProjects } from "@/lib/supabase/cached-projects"
+import { getCachedCaseStudies } from "@/lib/supabase/cached-case-studies"
 
 const BASE_URL = "https://rashodkorala.com"
 
@@ -27,27 +27,27 @@ const getCachedBlogSlugs = unstable_cache(getBlogSlugsUncached, ["sitemap-blog-s
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: `${BASE_URL}/`, lastModified: new Date(), changeFrequency: "weekly", priority: 1 },
-    { url: `${BASE_URL}/projects`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.9 },
-    { url: `${BASE_URL}/blog`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.8 },
+    { url: `${BASE_URL}/work`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.9 },
+    { url: `${BASE_URL}/view`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.8 },
     { url: `${BASE_URL}/about`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.7 },
     { url: `${BASE_URL}/contact`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.6 },
   ]
 
-  const [projects, blogs] = await Promise.all([getCachedAllProjects(), getCachedBlogSlugs()])
+  const [caseStudies, blogs] = await Promise.all([getCachedCaseStudies(), getCachedBlogSlugs()])
 
-  const projectRoutes: MetadataRoute.Sitemap = projects.map((project) => ({
-    url: `${BASE_URL}/projects/${project.slug}`,
-    lastModified: new Date(project.updated_at),
+  const caseStudyRoutes: MetadataRoute.Sitemap = caseStudies.map((caseStudy) => ({
+    url: `${BASE_URL}/work/${caseStudy.slug}`,
+    lastModified: new Date(caseStudy.updated_at),
     changeFrequency: "monthly",
     priority: 0.8,
   }))
 
   const blogRoutes: MetadataRoute.Sitemap = blogs.map((blog) => ({
-    url: `${BASE_URL}/blog/${blog.slug}`,
+    url: `${BASE_URL}/view/${blog.slug}`,
     lastModified: blog.updated_at ? new Date(blog.updated_at) : new Date(),
     changeFrequency: "monthly",
     priority: 0.7,
   }))
 
-  return [...staticRoutes, ...projectRoutes, ...blogRoutes]
+  return [...staticRoutes, ...caseStudyRoutes, ...blogRoutes]
 }

@@ -38,14 +38,14 @@ export default function Sidebar() {
                     <nav className="flex flex-col space-y-11 w-full h-full justify-center font-thin px-6 md:px-10">
                         <div className="flex flex-col space-y-4 text-4xl sm:text-5xl md:text-6xl">
                             <Link
-                                href="/projects"
+                                href="/work"
                                 className="transform transition-transform duration-300 ease-in-out hover:scale-105"
                                 onClick={closeMenu}
                             >
-                                Projects
+                                Work
                             </Link>
                             <Link
-                                href="/blog"
+                                href="/view"
                                 className="transform transition-transform duration-300 ease-in-out hover:scale-105"
                                 onClick={closeMenu}
                             >
