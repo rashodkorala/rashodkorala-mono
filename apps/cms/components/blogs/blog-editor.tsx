@@ -32,13 +32,18 @@ import type { Blog, BlogInsert, BlogUpdate, BlogStatus, TargetApp } from "@/lib/
 import type { UnifiedContentKind } from "@/lib/types/unified-content"
 import { UNIFIED_KIND_LABELS, inferKindFromBlogCategory } from "@/lib/types/unified-content"
 import type {
+  CaseStudy,
   CaseStudyType,
   Link as CaseStudyLink,
   Result,
   Metric,
 } from "@/lib/types/case-study"
 import { createBlog, updateBlog, deleteBlog, uploadBlogMedia } from "@/lib/actions/blogs"
-import { createOrUpdateCaseStudy, uploadMedia } from "@/lib/actions/case-studies"
+import {
+  createOrUpdateCaseStudy,
+  deleteCaseStudy,
+  uploadMedia,
+} from "@/lib/actions/case-studies"
 import { generateSlug } from "@/lib/utils/slug"
 import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm"
@@ -64,7 +69,11 @@ function defaultCaseStudyExtras() {
 
 interface BlogEditorProps {
   blog?: Blog | null
+  /** When editing a case study from Case Studies → [slug], same UX as /case-studies/new. */
+  caseStudy?: CaseStudy | null
   markdownContent?: string
+  /** Shown when MDX could not be loaded from storage (repair flow). */
+  mdxWarning?: string | null
   /** When creating content, start as this kind (e.g. case study from Case Studies → New). */
   initialKind?: UnifiedContentKind
   /** If true, user cannot change content kind (e.g. editing an existing post). */
@@ -75,7 +84,9 @@ interface BlogEditorProps {
 
 export function BlogEditor({
   blog,
+  caseStudy = null,
   markdownContent = "",
+  mdxWarning = null,
   initialKind = "the_view",
   lockKind = false,
   backHref = "/protected/blogs",
@@ -83,6 +94,7 @@ export function BlogEditor({
   const router = useRouter()
   const supabase = createClient()
   const isEditing = !!blog
+  const editingCaseStudy = !!caseStudy
 
   const [formData, setFormData] = useState<Omit<BlogInsert, "mdxContent"> & { mdxContent: string }>({
     title: "",
@@ -114,8 +126,12 @@ export function BlogEditor({
 
   const [contentKind, setContentKind] = useState<UnifiedContentKind>(initialKind)
   const [csExtra, setCsExtra] = useState(defaultCaseStudyExtras)
+  const [galleryUrls, setGalleryUrls] = useState<string[]>([])
+  const [galleryVideoUrls, setGalleryVideoUrls] = useState<string[]>([])
+  const [galleryUrlInput, setGalleryUrlInput] = useState("")
+  const [galleryVideoUrlInput, setGalleryVideoUrlInput] = useState("")
 
-  const kindLocked = lockKind || isEditing
+  const kindLocked = lockKind || isEditing || editingCaseStudy
 
   useEffect(() => {
     if (blog) {
@@ -144,6 +160,49 @@ export function BlogEditor({
     }
   }, [blog, markdownContent, initialKind])
 
+  useEffect(() => {
+    if (!caseStudy) return
+    setContentKind("case_study")
+    setFormData({
+      title: caseStudy.title,
+      slug: caseStudy.slug,
+      excerpt: caseStudy.summary || "",
+      mdxContent: markdownContent || "",
+      featuredImageUrl: caseStudy.coverUrl || "",
+      featuredVideoUrl: "",
+      status: caseStudy.status,
+      targetApp: "portfolio",
+      publishedAt: caseStudy.publishedAt ?? null,
+      authorName: "",
+      category: "",
+      tags: [],
+      seoTitle: caseStudy.seoTitle || "",
+      seoDescription: caseStudy.seoDescription || "",
+      featured: caseStudy.featured,
+    })
+    setCsExtra({
+      type: caseStudy.type,
+      subjectName: caseStudy.subjectName || "",
+      subjectType: caseStudy.subjectType || "",
+      industry: caseStudy.industry || "",
+      audience: caseStudy.audience || "",
+      role: caseStudy.role || "",
+      teamSize: caseStudy.teamSize || "",
+      timeline: caseStudy.timeline || "",
+      tags: caseStudy.tags || [],
+      skills: caseStudy.skills || [],
+      stack: caseStudy.stack || [],
+      links: caseStudy.links || [],
+      results: caseStudy.results || [],
+      metrics: caseStudy.metrics || [],
+    })
+    setGalleryUrls([...(caseStudy.galleryUrls || [])])
+    setGalleryVideoUrls([...(caseStudy.galleryVideoUrls || [])])
+    setAutoGenerateSlug(false)
+    setImageFile(null)
+    setImagePreview(caseStudy.coverUrl || "")
+  }, [caseStudy, markdownContent])
+
   const [csTagInput, setCsTagInput] = useState("")
   const [csStackInput, setCsStackInput] = useState("")
   const [csSkillInput, setCsSkillInput] = useState("")
@@ -155,11 +214,11 @@ export function BlogEditor({
 
   // Auto-generate slug from title
   useEffect(() => {
-    if (autoGenerateSlug && formData.title && !isEditing) {
+    if (autoGenerateSlug && formData.title && !isEditing && !editingCaseStudy) {
       const newSlug = generateSlug(formData.title)
       setFormData((prev) => ({ ...prev, slug: newSlug }))
     }
-  }, [formData.title, autoGenerateSlug, isEditing])
+  }, [formData.title, autoGenerateSlug, isEditing, editingCaseStudy])
 
   // Clean up preview URL
   useEffect(() => {
@@ -279,13 +338,8 @@ export function BlogEditor({
         throw new Error("You must be logged in")
       }
 
-      // New case study → case_studies table + case-studies-mdx (same MDX + image UX as The View)
+      // Case study → case_studies table + case-studies-mdx (create or update)
       if (contentKind === "case_study") {
-        if (isEditing) {
-          toast.error("Edit case studies from Case Studies → edit, or create a new one here.")
-          return
-        }
-
         let coverUrl: string | null = formData.featuredImageUrl || null
         if (imageFile) {
           coverUrl = await uploadMedia(imageFile)
@@ -313,8 +367,8 @@ export function BlogEditor({
             skills: csExtra.skills,
             stack: csExtra.stack,
             coverUrl,
-            galleryUrls: [],
-            galleryVideoUrls: [],
+            galleryUrls,
+            galleryVideoUrls,
             links: csExtra.links,
             results: csExtra.results,
             metrics: csExtra.metrics,
@@ -322,10 +376,10 @@ export function BlogEditor({
             seoTitle: formData.seoTitle?.trim() || "",
             seoDescription: formData.seoDescription?.trim() || "",
           },
-          undefined
+          caseStudy?.id
         )
 
-        toast.success("Case study created")
+        toast.success(caseStudy ? "Case study updated" : "Case study created")
         router.push("/protected/case-studies")
         router.refresh()
         return
@@ -390,6 +444,23 @@ export function BlogEditor({
   }
 
   const handleDelete = async () => {
+    if (caseStudy) {
+      if (!confirm("Delete this case study? This cannot be undone.")) return
+      setIsDeleting(true)
+      try {
+        await deleteCaseStudy(caseStudy.id)
+        toast.success("Case study deleted")
+        router.push("/protected/case-studies")
+        router.refresh()
+      } catch (error) {
+        console.error("Error deleting case study:", error)
+        toast.error(error instanceof Error ? error.message : "Failed to delete case study")
+      } finally {
+        setIsDeleting(false)
+      }
+      return
+    }
+
     if (!blog || !confirm("Are you sure you want to delete this post?")) return
 
     setIsDeleting(true)
@@ -406,8 +477,9 @@ export function BlogEditor({
     }
   }
 
-  const headerTitle =
-    isEditing
+  const headerTitle = caseStudy
+    ? "Edit case study"
+    : isEditing
       ? "Edit post"
       : contentKind === "case_study"
         ? "New case study"
@@ -423,6 +495,11 @@ export function BlogEditor({
 
   return (
     <div className="min-h-screen w-full min-w-0 max-w-full overflow-x-hidden">
+      {mdxWarning ? (
+        <div className="border-b border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+          {mdxWarning}
+        </div>
+      ) : null}
       {/* Header */}
       <div className="sticky top-0 z-10 border-b bg-background">
         <div className="flex flex-col gap-3 px-3 py-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4 sm:px-4 sm:py-4">
@@ -440,7 +517,7 @@ export function BlogEditor({
             </div>
           </div>
           <div className="flex shrink-0 flex-wrap items-center justify-end gap-2">
-            {isEditing && (
+            {(isEditing || caseStudy) && (
               <Button
                 type="button"
                 variant="destructive"
@@ -459,7 +536,11 @@ export function BlogEditor({
               disabled={isLoading}
             >
               <IconDeviceFloppy className="h-4 w-4 sm:mr-2" />
-              {isLoading ? "Saving..." : isEditing ? "Update" : "Publish"}
+              {isLoading
+                ? "Saving..."
+                : isEditing || caseStudy
+                  ? "Update"
+                  : "Publish"}
             </Button>
           </div>
         </div>
@@ -1262,7 +1343,7 @@ export function BlogEditor({
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
                     <Label htmlFor="slug">Slug</Label>
-                    {!isEditing && (
+                    {!isEditing && !caseStudy && (
                       <div className="flex items-center gap-2">
                         <Checkbox
                           id="auto-slug"
@@ -1280,7 +1361,7 @@ export function BlogEditor({
                     value={formData.slug || ""}
                     onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
                     placeholder="url-friendly-slug"
-                    disabled={autoGenerateSlug && !isEditing}
+                    disabled={autoGenerateSlug && !isEditing && !caseStudy}
                   />
                   <p className="text-xs text-muted-foreground">
                     {contentKind === "case_study"
@@ -1332,6 +1413,135 @@ export function BlogEditor({
                 )}
               </CardContent>
             </Card>
+
+            {contentKind === "case_study" && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Gallery</CardTitle>
+                  <CardDescription>Optional image and video URLs for the portfolio layout.</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <Label className="text-xs">Image URLs</Label>
+                    <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-stretch">
+                      <Input
+                        className="min-w-0 flex-1"
+                        value={galleryUrlInput}
+                        onChange={(e) => setGalleryUrlInput(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            e.preventDefault()
+                            const u = galleryUrlInput.trim()
+                            if (u) {
+                              setGalleryUrls((prev) => [...prev, u])
+                              setGalleryUrlInput("")
+                            }
+                          }
+                        }}
+                        placeholder="https://…"
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="icon"
+                        className="shrink-0 self-start sm:self-auto"
+                        onClick={() => {
+                          const u = galleryUrlInput.trim()
+                          if (u) {
+                            setGalleryUrls((prev) => [...prev, u])
+                            setGalleryUrlInput("")
+                          }
+                        }}
+                      >
+                        <IconPlus className="h-4 w-4" />
+                      </Button>
+                    </div>
+                    {galleryUrls.length > 0 && (
+                      <ul className="space-y-1 text-xs">
+                        {galleryUrls.map((url, i) => (
+                          <li
+                            key={`${url}-${i}`}
+                            className="flex items-center justify-between gap-2 rounded border px-2 py-1"
+                          >
+                            <span className="min-w-0 truncate">{url}</span>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="icon"
+                              className="h-7 w-7 shrink-0"
+                              onClick={() =>
+                                setGalleryUrls((prev) => prev.filter((_, j) => j !== i))
+                              }
+                            >
+                              <IconX className="h-3 w-3" />
+                            </Button>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-xs">Video URLs</Label>
+                    <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-stretch">
+                      <Input
+                        className="min-w-0 flex-1"
+                        value={galleryVideoUrlInput}
+                        onChange={(e) => setGalleryVideoUrlInput(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            e.preventDefault()
+                            const u = galleryVideoUrlInput.trim()
+                            if (u) {
+                              setGalleryVideoUrls((prev) => [...prev, u])
+                              setGalleryVideoUrlInput("")
+                            }
+                          }
+                        }}
+                        placeholder="https://…"
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="icon"
+                        className="shrink-0 self-start sm:self-auto"
+                        onClick={() => {
+                          const u = galleryVideoUrlInput.trim()
+                          if (u) {
+                            setGalleryVideoUrls((prev) => [...prev, u])
+                            setGalleryVideoUrlInput("")
+                          }
+                        }}
+                      >
+                        <IconPlus className="h-4 w-4" />
+                      </Button>
+                    </div>
+                    {galleryVideoUrls.length > 0 && (
+                      <ul className="space-y-1 text-xs">
+                        {galleryVideoUrls.map((url, i) => (
+                          <li
+                            key={`${url}-${i}`}
+                            className="flex items-center justify-between gap-2 rounded border px-2 py-1"
+                          >
+                            <span className="min-w-0 truncate">{url}</span>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="icon"
+                              className="h-7 w-7 shrink-0"
+                              onClick={() =>
+                                setGalleryVideoUrls((prev) => prev.filter((_, j) => j !== i))
+                              }
+                            >
+                              <IconX className="h-3 w-3" />
+                            </Button>
+                          </li>
+                        ))}
+                      </ul>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
 
             {contentKind !== "case_study" && (
               <Card>

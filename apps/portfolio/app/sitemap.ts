@@ -2,6 +2,7 @@ import { MetadataRoute } from "next"
 import { unstable_cache } from "next/cache"
 import { supabase } from "@/lib/supabase"
 import { getCachedCaseStudies } from "@/lib/supabase/cached-case-studies"
+import { getCachedAllProjects } from "@/lib/supabase/cached-projects"
 
 const BASE_URL = "https://rashodkorala.com"
 
@@ -29,11 +30,17 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE_URL}/`, lastModified: new Date(), changeFrequency: "weekly", priority: 1 },
     { url: `${BASE_URL}/work`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.9 },
     { url: `${BASE_URL}/view`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.8 },
+    { url: `${BASE_URL}/blog`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.75 },
+    { url: `${BASE_URL}/projects`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.85 },
     { url: `${BASE_URL}/about`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.7 },
     { url: `${BASE_URL}/contact`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.6 },
   ]
 
-  const [caseStudies, blogs] = await Promise.all([getCachedCaseStudies(), getCachedBlogSlugs()])
+  const [caseStudies, blogs, projects] = await Promise.all([
+    getCachedCaseStudies(),
+    getCachedBlogSlugs(),
+    getCachedAllProjects(),
+  ])
 
   const caseStudyRoutes: MetadataRoute.Sitemap = caseStudies.map((caseStudy) => ({
     url: `${BASE_URL}/work/${caseStudy.slug}`,
@@ -49,5 +56,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.7,
   }))
 
-  return [...staticRoutes, ...caseStudyRoutes, ...blogRoutes]
+  const projectRoutes: MetadataRoute.Sitemap = projects.map((project) => ({
+    url: `${BASE_URL}/projects/${project.slug}`,
+    lastModified: new Date(project.updated_at),
+    changeFrequency: "monthly",
+    priority: 0.75,
+  }))
+
+  return [...staticRoutes, ...caseStudyRoutes, ...blogRoutes, ...projectRoutes]
 }

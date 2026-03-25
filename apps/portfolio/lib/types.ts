@@ -36,6 +36,7 @@ export interface CaseStudyLink {
 }
 
 export interface CaseStudyResult {
+  text?: string;
   title?: string;
   value?: string;
   description?: string;
@@ -46,28 +47,40 @@ export interface CaseStudyMetric {
   value?: string;
 }
 
+/** Mirrors `case_studies` from Supabase (snake_case). */
 export interface CaseStudy {
   id: string;
   user_id: string;
   title: string;
   slug: string;
   summary?: string | null;
+  /** Legacy field; CMS uses `summary` */
   lede?: string | null;
+  type?: string | null;
   role?: string | null;
   timeline?: string | null;
+  subject_name?: string | null;
+  industry?: string | null;
+  audience?: string | null;
   category?: CaseStudyCategory | null;
   sort_order?: number | null;
   status: CaseStudyStatus;
   featured?: boolean | null;
   published_at?: string | null;
   tags?: string[] | null;
+  skills?: string[] | null;
   stack?: string[] | null;
   cover_url?: string | null;
   gallery_urls?: string[] | null;
+  gallery_video_urls?: string[] | null;
   links?: CaseStudyLink[] | null;
+  /** CMS shape: `{ text: string }[]`; legacy: title/value/description */
   results?: CaseStudyResult[] | null;
   metrics?: CaseStudyMetric[] | null;
   mdx_path?: string | null;
+  seo_title?: string | null;
+  seo_description?: string | null;
+  views?: number | null;
   updated_at: string;
   created_at: string;
 }

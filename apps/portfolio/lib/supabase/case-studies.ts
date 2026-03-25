@@ -6,7 +6,7 @@ export async function getAllCaseStudies(): Promise<CaseStudy[]> {
     .from("case_studies")
     .select("*")
     .eq("status", "published")
-    .order("sort_order", { ascending: true })
+    .order("featured", { ascending: false })
     .order("published_at", { ascending: false });
 
   if (error) {

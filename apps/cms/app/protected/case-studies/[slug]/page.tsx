@@ -1,9 +1,6 @@
 import { getCaseStudyBySlugAdmin, fetchMdxFromStorage } from "@/lib/actions/case-studies"
-import { CaseStudyForm } from "@/components/case-studies/case-study-form"
-import { Button } from "@/components/ui/button"
+import { BlogEditor } from "@/components/blogs/blog-editor"
 import { createClient } from "@/lib/supabase/server"
-import { IconArrowLeft } from "@tabler/icons-react"
-import Link from "next/link"
 import { notFound, redirect } from "next/navigation"
 
 export default async function EditCaseStudyPage({
@@ -11,7 +8,6 @@ export default async function EditCaseStudyPage({
 }: {
   params: Promise<{ slug: string }>
 }) {
-  // Check authentication first
   const supabase = await createClient()
   const {
     data: { user },
@@ -28,7 +24,6 @@ export default async function EditCaseStudyPage({
     notFound()
   }
 
-  // Fetch MDX content from storage
   let mdxContent = ""
   let mdxWarning: string | null = null
 
@@ -45,35 +40,13 @@ export default async function EditCaseStudyPage({
   }
 
   return (
-    <div className="space-y-6 px-4">
-      <div className="flex items-center gap-4">
-        <Link href="/protected/case-studies">
-          <Button variant="ghost" size="sm">
-            <IconArrowLeft className="h-4 w-4 mr-2" />
-            Back to Case Studies
-          </Button>
-        </Link>
-      </div>
-
-      <div>
-        <h1 className="text-3xl font-bold">Edit Case Study</h1>
-        <p className="text-muted-foreground">
-          Update your case study metadata and content
-        </p>
-      </div>
-
-      {mdxWarning && (
-        <div className="rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
-          {mdxWarning}
-        </div>
-      )}
-
-      <CaseStudyForm caseStudy={caseStudy} mdxContent={mdxContent} />
-    </div>
+    <BlogEditor
+      caseStudy={caseStudy}
+      markdownContent={mdxContent}
+      mdxWarning={mdxWarning}
+      initialKind="case_study"
+      lockKind
+      backHref="/protected/case-studies"
+    />
   )
 }
-
-
-
-
-
