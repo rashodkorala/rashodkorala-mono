@@ -124,9 +124,21 @@ export default async function ProtectedCaseStudiesPage({
               {caseStudies.map((caseStudy) => (
                 <TableRow key={caseStudy.id}>
                   <TableCell className="font-medium">
-                    <div className="flex items-center gap-2">
-                      {caseStudy.featured && <span className="text-yellow-500">*</span>}
-                      {caseStudy.title}
+                    <div className="flex items-center justify-between gap-4">
+                      <div className="flex items-center gap-2 min-w-0">
+                        {caseStudy.featured && <span className="text-yellow-500">*</span>}
+                        <span className="truncate">{caseStudy.title}</span>
+                      </div>
+                      {caseStudy.coverUrl ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={caseStudy.coverUrl}
+                          alt={`${caseStudy.title} cover`}
+                          className="h-10 w-16 rounded-md object-cover border shrink-0"
+                        />
+                      ) : (
+                        <div className="h-10 w-16 rounded-md border bg-muted shrink-0" />
+                      )}
                     </div>
                   </TableCell>
                   <TableCell>

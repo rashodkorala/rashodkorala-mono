@@ -2,6 +2,8 @@ export const CASE_STUDY_MDX_TEMPLATE = `# Overview
 
 Provide a brief introduction to the project or case study.
 
+> **Hybrid workflow:** Keep the full narrative in this document. For scannable outcomes (numbers, CTAs, link chips) that match your portfolio layout, also use **Structured highlights** in the form: Links, Key Results, and Metrics.
+
 ## Context
 
 Background information and setting for the work.
@@ -49,6 +51,8 @@ Describe your methodology and process.
 ---
 
 # Results
+
+Tell the outcome story in prose and bullets here. Repeat or mirror your **Key Results** / **Metrics** form fields only if you want the same points in the written narrative.
 
 ## Outcomes
 

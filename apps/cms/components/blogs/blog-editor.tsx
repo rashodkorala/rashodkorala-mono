@@ -17,22 +17,69 @@ import {
 } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Separator } from "@/components/ui/separator"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { IconArrowLeft, IconDeviceFloppy, IconEye, IconTrash, IconCode, IconPhoto } from "@tabler/icons-react"
+import {
+  IconArrowLeft,
+  IconDeviceFloppy,
+  IconEye,
+  IconTrash,
+  IconCode,
+  IconPhoto,
+  IconPlus,
+  IconX,
+} from "@tabler/icons-react"
 import type { Blog, BlogInsert, BlogUpdate, BlogStatus, TargetApp } from "@/lib/types/blog"
+import type { UnifiedContentKind } from "@/lib/types/unified-content"
+import { UNIFIED_KIND_LABELS, inferKindFromBlogCategory } from "@/lib/types/unified-content"
+import type {
+  CaseStudyType,
+  Link as CaseStudyLink,
+  Result,
+  Metric,
+} from "@/lib/types/case-study"
 import { createBlog, updateBlog, deleteBlog, uploadBlogMedia } from "@/lib/actions/blogs"
+import { createOrUpdateCaseStudy, uploadMedia } from "@/lib/actions/case-studies"
 import { generateSlug } from "@/lib/utils/slug"
 import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm"
 
+function defaultCaseStudyExtras() {
+  return {
+    type: "problem-solving" as CaseStudyType,
+    subjectName: "",
+    subjectType: "",
+    industry: "",
+    audience: "",
+    role: "",
+    teamSize: "",
+    timeline: "",
+    tags: [] as string[],
+    skills: [] as string[],
+    stack: [] as string[],
+    links: [] as CaseStudyLink[],
+    results: [] as Result[],
+    metrics: [] as Metric[],
+  }
+}
+
 interface BlogEditorProps {
   blog?: Blog | null
   markdownContent?: string
+  /** When creating content, start as this kind (e.g. case study from Case Studies → New). */
+  initialKind?: UnifiedContentKind
+  /** If true, user cannot change content kind (e.g. editing an existing post). */
+  lockKind?: boolean
+  /** Back navigation target (default: The View list). */
+  backHref?: string
 }
 
-export function BlogEditor({ blog, markdownContent = "" }: BlogEditorProps) {
+export function BlogEditor({
+  blog,
+  markdownContent = "",
+  initialKind = "the_view",
+  lockKind = false,
+  backHref = "/protected/blogs",
+}: BlogEditorProps) {
   const router = useRouter()
   const supabase = createClient()
   const isEditing = !!blog
@@ -46,6 +93,7 @@ export function BlogEditor({ blog, markdownContent = "" }: BlogEditorProps) {
     featuredVideoUrl: "",
     status: "draft",
     targetApp: "portfolio",
+    publishedAt: null,
     authorName: "",
     category: "",
     tags: [],
@@ -64,6 +112,11 @@ export function BlogEditor({ blog, markdownContent = "" }: BlogEditorProps) {
   const [isUploadingImage, setIsUploadingImage] = useState(false)
   const contentTextareaRef = useRef<HTMLTextAreaElement | null>(null)
 
+  const [contentKind, setContentKind] = useState<UnifiedContentKind>(initialKind)
+  const [csExtra, setCsExtra] = useState(defaultCaseStudyExtras)
+
+  const kindLocked = lockKind || isEditing
+
   useEffect(() => {
     if (blog) {
       setFormData({
@@ -75,6 +128,7 @@ export function BlogEditor({ blog, markdownContent = "" }: BlogEditorProps) {
         featuredVideoUrl: blog.featuredVideoUrl || "",
         status: blog.status,
         targetApp: blog.targetApp || "portfolio",
+        publishedAt: blog.publishedAt ?? null,
         authorName: blog.authorName || "",
         category: blog.category || "",
         tags: blog.tags || [],
@@ -82,10 +136,22 @@ export function BlogEditor({ blog, markdownContent = "" }: BlogEditorProps) {
         seoDescription: blog.seoDescription || "",
         featured: blog.featured,
       })
+      setContentKind(inferKindFromBlogCategory(blog.category))
       setAutoGenerateSlug(false)
       setImagePreview(blog.featuredImageUrl || "")
+    } else {
+      setContentKind(initialKind)
     }
-  }, [blog, markdownContent])
+  }, [blog, markdownContent, initialKind])
+
+  const [csTagInput, setCsTagInput] = useState("")
+  const [csStackInput, setCsStackInput] = useState("")
+  const [csSkillInput, setCsSkillInput] = useState("")
+  const [linkLabelInput, setLinkLabelInput] = useState("")
+  const [linkUrlInput, setLinkUrlInput] = useState("")
+  const [resultInput, setResultInput] = useState("")
+  const [metricLabelInput, setMetricLabelInput] = useState("")
+  const [metricValueInput, setMetricValueInput] = useState("")
 
   // Auto-generate slug from title
   useEffect(() => {
@@ -155,7 +221,8 @@ export function BlogEditor({ blog, markdownContent = "" }: BlogEditorProps) {
 
     setIsUploadingImage(true)
     try {
-      const imageUrl = await uploadBlogMedia(file)
+      const imageUrl =
+        contentKind === "case_study" ? await uploadMedia(file) : await uploadBlogMedia(file)
 
       // Insert markdown image syntax at cursor position
       const textarea = contentTextareaRef.current
@@ -212,7 +279,59 @@ export function BlogEditor({ blog, markdownContent = "" }: BlogEditorProps) {
         throw new Error("You must be logged in")
       }
 
-      // Upload image if selected
+      // New case study → case_studies table + case-studies-mdx (same MDX + image UX as The View)
+      if (contentKind === "case_study") {
+        if (isEditing) {
+          toast.error("Edit case studies from Case Studies → edit, or create a new one here.")
+          return
+        }
+
+        let coverUrl: string | null = formData.featuredImageUrl || null
+        if (imageFile) {
+          coverUrl = await uploadMedia(imageFile)
+        }
+
+        await createOrUpdateCaseStudy(
+          {
+            title: formData.title.trim(),
+            slug: (formData.slug || generateSlug(formData.title)).trim(),
+            summary: formData.excerpt?.trim() || "",
+            type: csExtra.type,
+            status: formData.status ?? "draft",
+            featured: formData.featured ?? false,
+            publishedAt:
+              formData.publishedAt ??
+              (formData.status === "published" ? new Date().toISOString() : null),
+            subjectName: csExtra.subjectName,
+            subjectType: csExtra.subjectType,
+            industry: csExtra.industry,
+            audience: csExtra.audience,
+            role: csExtra.role,
+            teamSize: csExtra.teamSize,
+            timeline: csExtra.timeline,
+            tags: csExtra.tags,
+            skills: csExtra.skills,
+            stack: csExtra.stack,
+            coverUrl,
+            galleryUrls: [],
+            galleryVideoUrls: [],
+            links: csExtra.links,
+            results: csExtra.results,
+            metrics: csExtra.metrics,
+            mdxContent: formData.mdxContent,
+            seoTitle: formData.seoTitle?.trim() || "",
+            seoDescription: formData.seoDescription?.trim() || "",
+          },
+          undefined
+        )
+
+        toast.success("Case study created")
+        router.push("/protected/case-studies")
+        router.refresh()
+        return
+      }
+
+      // Blog-like rows (The View, Insight, Project write-up)
       let featuredImageUrl = formData.featuredImageUrl
       if (imageFile) {
         const extension = imageFile.name.split(".").pop() ?? "jpg"
@@ -237,10 +356,15 @@ export function BlogEditor({ blog, markdownContent = "" }: BlogEditorProps) {
         featuredImageUrl = publicUrl
       }
 
+      let category: string | null = formData.category?.trim() || null
+      if (contentKind === "insight") category = "insight"
+      if (contentKind === "project_writeup") category = "project"
+
       const blogData: BlogInsert = {
         ...formData,
         featuredImageUrl,
         slug: formData.slug || generateSlug(formData.title),
+        category,
       }
 
       if (isEditing && blog) {
@@ -249,17 +373,17 @@ export function BlogEditor({ blog, markdownContent = "" }: BlogEditorProps) {
           ...blogData,
         }
         await updateBlog(updateData)
-        toast.success("The View post updated successfully")
+        toast.success("Post updated successfully")
       } else {
         await createBlog(blogData)
-        toast.success("The View post created successfully")
+        toast.success("Post created successfully")
       }
 
       router.push("/protected/blogs")
       router.refresh()
     } catch (error) {
-      console.error("Error saving blog:", error)
-      toast.error(error instanceof Error ? error.message : "Failed to save post")
+      console.error("Error saving:", error)
+      toast.error(error instanceof Error ? error.message : "Failed to save")
     } finally {
       setIsLoading(false)
     }
@@ -282,44 +406,59 @@ export function BlogEditor({ blog, markdownContent = "" }: BlogEditorProps) {
     }
   }
 
+  const headerTitle =
+    isEditing
+      ? "Edit post"
+      : contentKind === "case_study"
+        ? "New case study"
+        : contentKind === "insight"
+          ? "New insight"
+          : contentKind === "project_writeup"
+            ? "New project write-up"
+            : "New The View post"
+
+  const headerSubtitle = kindLocked
+    ? UNIFIED_KIND_LABELS[contentKind]
+    : "Choose where this content lives, then write in Markdown with image uploads."
+
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen w-full min-w-0 max-w-full overflow-x-hidden">
       {/* Header */}
-      <div className="sticky top-0 z-10 bg-background border-b">
-        <div className="flex items-center justify-between px-6 py-4">
-          <div className="flex items-center gap-4">
-            <Link href="/protected/blogs">
+      <div className="sticky top-0 z-10 border-b bg-background">
+        <div className="flex flex-col gap-3 px-3 py-3 sm:flex-row sm:items-start sm:justify-between sm:gap-4 sm:px-4 sm:py-4">
+          <div className="flex min-w-0 flex-1 items-start gap-2 sm:gap-4">
+            <Link href={backHref} className="shrink-0">
               <Button variant="ghost" size="icon">
                 <IconArrowLeft className="h-5 w-5" />
               </Button>
             </Link>
-            <div>
-              <h1 className="text-xl font-semibold">
-                {isEditing ? "Edit The View Post" : "New The View Post"}
-              </h1>
-              <p className="text-sm text-muted-foreground">
-                {isEditing ? "Update your post" : "Create a new post"}
+            <div className="min-w-0 flex-1">
+              <h1 className="text-lg font-semibold sm:text-xl">{headerTitle}</h1>
+              <p className="break-words text-xs text-muted-foreground sm:text-sm">
+                {headerSubtitle}
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex shrink-0 flex-wrap items-center justify-end gap-2">
             {isEditing && (
               <Button
                 type="button"
                 variant="destructive"
+                className="min-w-0 flex-1 sm:flex-initial"
                 onClick={handleDelete}
                 disabled={isDeleting}
               >
-                <IconTrash className="h-4 w-4 mr-2" />
+                <IconTrash className="h-4 w-4 sm:mr-2" />
                 {isDeleting ? "Deleting..." : "Delete"}
               </Button>
             )}
             <Button
               type="submit"
               form="blog-form"
+              className="min-w-0 flex-1 sm:flex-initial"
               disabled={isLoading}
             >
-              <IconDeviceFloppy className="h-4 w-4 mr-2" />
+              <IconDeviceFloppy className="h-4 w-4 sm:mr-2" />
               {isLoading ? "Saving..." : isEditing ? "Update" : "Publish"}
             </Button>
           </div>
@@ -327,10 +466,14 @@ export function BlogEditor({ blog, markdownContent = "" }: BlogEditorProps) {
       </div>
 
       {/* Content */}
-      <form id="blog-form" onSubmit={handleSubmit} className="max-w-5xl mx-auto p-6">
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <form
+        id="blog-form"
+        onSubmit={handleSubmit}
+        className="mx-auto box-border w-full max-w-5xl min-w-0 px-3 py-4 sm:px-6 sm:py-6"
+      >
+        <div className="grid min-w-0 grid-cols-1 gap-6 lg:grid-cols-3">
           {/* Main Content */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="min-w-0 space-y-6 lg:col-span-2">
             <Card>
               <CardHeader>
                 <CardTitle>Content</CardTitle>
@@ -350,21 +493,27 @@ export function BlogEditor({ blog, markdownContent = "" }: BlogEditorProps) {
                 </div>
 
                 <div className="space-y-2">
-                  <Label htmlFor="excerpt">Excerpt</Label>
+                  <Label htmlFor="excerpt">
+                    {contentKind === "case_study" ? "Summary" : "Excerpt"}
+                  </Label>
                   <Textarea
                     id="excerpt"
                     value={formData.excerpt || ""}
                     onChange={(e) => setFormData({ ...formData, excerpt: e.target.value })}
-                    placeholder="Brief summary of your post..."
+                    placeholder={
+                      contentKind === "case_study"
+                        ? "Short summary for listings and cards"
+                        : "Brief summary of your post..."
+                    }
                     rows={2}
                   />
                 </div>
 
                 {/* Markdown Editor with Write/Preview toggle */}
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <Label>Content * (Markdown)</Label>
-                    <div className="flex items-center gap-2">
+                <div className="min-w-0 space-y-2">
+                  <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                    <Label className="shrink-0">Content * (Markdown)</Label>
+                    <div className="flex flex-wrap items-center gap-2">
                       {mdxView === "write" && (
                         <div className="relative">
                           <input
@@ -422,11 +571,11 @@ export function BlogEditor({ blog, markdownContent = "" }: BlogEditorProps) {
                       onChange={(e) => setFormData({ ...formData, mdxContent: e.target.value })}
                       placeholder="Write your post content in Markdown... Use the 'Upload Image' button to insert images, or use markdown syntax: ![alt text](image-url)"
                       rows={24}
-                      className="font-mono text-sm"
+                      className="min-h-[240px] w-full min-w-0 max-w-full font-mono text-sm break-words"
                       required
                     />
                   ) : (
-                    <div className="border rounded-md p-4 min-h-[600px] prose prose-lg dark:prose-invert max-w-none">
+                    <div className="max-w-full min-h-[min(600px,70vh)] overflow-x-auto rounded-md border p-4 prose prose-lg max-w-none dark:prose-invert prose-p:break-words prose-pre:max-w-full prose-pre:overflow-x-auto">
                       {formData.mdxContent.trim() ? (
                         <ReactMarkdown remarkPlugins={[remarkGfm]}>
                           {formData.mdxContent}
@@ -471,7 +620,554 @@ export function BlogEditor({ blog, markdownContent = "" }: BlogEditorProps) {
           </div>
 
           {/* Sidebar */}
-          <div className="space-y-6">
+          <div className="min-w-0 space-y-6">
+            {!kindLocked && !isEditing && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Content destination</CardTitle>
+                  <CardDescription>
+                    Same editor everywhere: MDX, inline images, SEO. Case studies save to Work; others save to The View list.
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-2">
+                  <Label htmlFor="content-kind">Publish as</Label>
+                  <Select
+                    value={contentKind}
+                    onValueChange={(value: UnifiedContentKind) => {
+                      setContentKind(value)
+                      if (value !== "case_study") {
+                        setCsExtra(defaultCaseStudyExtras())
+                      }
+                    }}
+                  >
+                    <SelectTrigger id="content-kind">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="the_view">{UNIFIED_KIND_LABELS.the_view}</SelectItem>
+                      <SelectItem value="insight">{UNIFIED_KIND_LABELS.insight}</SelectItem>
+                      <SelectItem value="project_writeup">{UNIFIED_KIND_LABELS.project_writeup}</SelectItem>
+                      <SelectItem value="case_study">{UNIFIED_KIND_LABELS.case_study}</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </CardContent>
+              </Card>
+            )}
+
+            {contentKind === "case_study" && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Case study details</CardTitle>
+                  <CardDescription>Structured fields for portfolio; narrative stays in the editor.</CardDescription>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="space-y-2">
+                    <Label>Type</Label>
+                    <Select
+                      value={csExtra.type}
+                      onValueChange={(value: CaseStudyType) =>
+                        setCsExtra((prev) => ({ ...prev, type: value }))
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="problem-solving">Problem-solving</SelectItem>
+                        <SelectItem value="descriptive">Descriptive</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="cs-subject">Subject / client</Label>
+                    <Input
+                      id="cs-subject"
+                      value={csExtra.subjectName}
+                      onChange={(e) =>
+                        setCsExtra((prev) => ({ ...prev, subjectName: e.target.value }))
+                      }
+                      placeholder="Company or product name"
+                    />
+                  </div>
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                    <div className="space-y-2">
+                      <Label htmlFor="cs-role">Your role</Label>
+                      <Input
+                        id="cs-role"
+                        value={csExtra.role}
+                        onChange={(e) =>
+                          setCsExtra((prev) => ({ ...prev, role: e.target.value }))
+                        }
+                        placeholder="Lead engineer"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="cs-timeline">Timeline</Label>
+                      <Input
+                        id="cs-timeline"
+                        value={csExtra.timeline}
+                        onChange={(e) =>
+                          setCsExtra((prev) => ({ ...prev, timeline: e.target.value }))
+                        }
+                        placeholder="3 months"
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Tags</Label>
+                    <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-stretch">
+                      <Input
+                        className="min-w-0 flex-1"
+                        value={csTagInput}
+                        onChange={(e) => setCsTagInput(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            e.preventDefault()
+                            const t = csTagInput.trim()
+                            if (t && !csExtra.tags.includes(t)) {
+                              setCsExtra((prev) => ({ ...prev, tags: [...prev.tags, t] }))
+                              setCsTagInput("")
+                            }
+                          }
+                        }}
+                        placeholder="Add tag, Enter"
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="icon"
+                        className="shrink-0 self-start sm:self-auto"
+                        onClick={() => {
+                          const t = csTagInput.trim()
+                          if (t && !csExtra.tags.includes(t)) {
+                            setCsExtra((prev) => ({ ...prev, tags: [...prev.tags, t] }))
+                            setCsTagInput("")
+                          }
+                        }}
+                      >
+                        <IconPlus className="h-4 w-4" />
+                      </Button>
+                    </div>
+                    {csExtra.tags.length > 0 && (
+                      <div className="flex flex-wrap gap-2 pt-1">
+                        {csExtra.tags.map((tag, i) => (
+                          <span
+                            key={`${tag}-${i}`}
+                            className="inline-flex items-center gap-1 rounded-md bg-muted px-2 py-1 text-xs"
+                          >
+                            {tag}
+                            <button
+                              type="button"
+                              className="text-muted-foreground hover:text-foreground"
+                              onClick={() =>
+                                setCsExtra((prev) => ({
+                                  ...prev,
+                                  tags: prev.tags.filter((_, j) => j !== i),
+                                }))
+                              }
+                            >
+                              <IconX className="h-3 w-3" />
+                            </button>
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Stack</Label>
+                    <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-stretch">
+                      <Input
+                        className="min-w-0 flex-1"
+                        value={csStackInput}
+                        onChange={(e) => setCsStackInput(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            e.preventDefault()
+                            const t = csStackInput.trim()
+                            if (t && !csExtra.stack.includes(t)) {
+                              setCsExtra((prev) => ({ ...prev, stack: [...prev.stack, t] }))
+                              setCsStackInput("")
+                            }
+                          }
+                        }}
+                        placeholder="Next.js, …"
+                      />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="icon"
+                        className="shrink-0 self-start sm:self-auto"
+                        onClick={() => {
+                          const t = csStackInput.trim()
+                          if (t && !csExtra.stack.includes(t)) {
+                            setCsExtra((prev) => ({ ...prev, stack: [...prev.stack, t] }))
+                            setCsStackInput("")
+                          }
+                        }}
+                      >
+                        <IconPlus className="h-4 w-4" />
+                      </Button>
+                    </div>
+                    {csExtra.stack.length > 0 && (
+                      <div className="flex flex-wrap gap-2 pt-1">
+                        {csExtra.stack.map((s, i) => (
+                          <span
+                            key={`${s}-${i}`}
+                            className="inline-flex items-center gap-1 rounded-md bg-muted px-2 py-1 text-xs"
+                          >
+                            {s}
+                            <button
+                              type="button"
+                              className="text-muted-foreground hover:text-foreground"
+                              onClick={() =>
+                                setCsExtra((prev) => ({
+                                  ...prev,
+                                  stack: prev.stack.filter((_, j) => j !== i),
+                                }))
+                              }
+                            >
+                              <IconX className="h-3 w-3" />
+                            </button>
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+
+                  <details className="rounded-md border text-sm">
+                    <summary className="cursor-pointer px-3 py-2 font-medium">More context & highlights</summary>
+                    <div className="space-y-3 border-t p-3">
+                      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                        <div className="space-y-1">
+                          <Label className="text-xs">Subject type</Label>
+                          <Input
+                            value={csExtra.subjectType}
+                            onChange={(e) =>
+                              setCsExtra((prev) => ({ ...prev, subjectType: e.target.value }))
+                            }
+                            placeholder="Web app"
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <Label className="text-xs">Team size</Label>
+                          <Input
+                            value={csExtra.teamSize}
+                            onChange={(e) =>
+                              setCsExtra((prev) => ({ ...prev, teamSize: e.target.value }))
+                            }
+                            placeholder="5"
+                          />
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                        <div className="space-y-1">
+                          <Label className="text-xs">Industry</Label>
+                          <Input
+                            value={csExtra.industry}
+                            onChange={(e) =>
+                              setCsExtra((prev) => ({ ...prev, industry: e.target.value }))
+                            }
+                          />
+                        </div>
+                        <div className="space-y-1">
+                          <Label className="text-xs">Audience</Label>
+                          <Input
+                            value={csExtra.audience}
+                            onChange={(e) =>
+                              setCsExtra((prev) => ({ ...prev, audience: e.target.value }))
+                            }
+                          />
+                        </div>
+                      </div>
+                      <div className="space-y-1">
+                        <Label className="text-xs">Skills</Label>
+                        <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-stretch">
+                          <Input
+                            className="min-w-0 flex-1"
+                            value={csSkillInput}
+                            onChange={(e) => setCsSkillInput(e.target.value)}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") {
+                                e.preventDefault()
+                                const t = csSkillInput.trim()
+                                if (t && !csExtra.skills.includes(t)) {
+                                  setCsExtra((prev) => ({ ...prev, skills: [...prev.skills, t] }))
+                                  setCsSkillInput("")
+                                }
+                              }
+                            }}
+                            placeholder="Skill, Enter"
+                          />
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="icon"
+                            className="shrink-0 self-start sm:self-auto"
+                            onClick={() => {
+                              const t = csSkillInput.trim()
+                              if (t && !csExtra.skills.includes(t)) {
+                                setCsExtra((prev) => ({ ...prev, skills: [...prev.skills, t] }))
+                                setCsSkillInput("")
+                              }
+                            }}
+                          >
+                            <IconPlus className="h-4 w-4" />
+                          </Button>
+                        </div>
+                        {csExtra.skills.length > 0 && (
+                          <div className="flex flex-wrap gap-1 pt-1">
+                            {csExtra.skills.map((sk, i) => (
+                              <span
+                                key={`${sk}-${i}`}
+                                className="inline-flex items-center gap-1 rounded bg-muted px-2 py-0.5 text-xs"
+                              >
+                                {sk}
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    setCsExtra((prev) => ({
+                                      ...prev,
+                                      skills: prev.skills.filter((_, j) => j !== i),
+                                    }))
+                                  }
+                                >
+                                  <IconX className="h-3 w-3" />
+                                </button>
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                      <div className="space-y-1">
+                        <Label className="text-xs">Links</Label>
+                        <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-stretch">
+                          <Input
+                            className="min-w-0 sm:min-w-[100px] sm:flex-1"
+                            value={linkLabelInput}
+                            onChange={(e) => setLinkLabelInput(e.target.value)}
+                            placeholder="Label"
+                          />
+                          <Input
+                            className="min-w-0 sm:min-w-[140px] sm:flex-[2]"
+                            value={linkUrlInput}
+                            onChange={(e) => setLinkUrlInput(e.target.value)}
+                            placeholder="https://"
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") {
+                                e.preventDefault()
+                                if (linkLabelInput.trim() && linkUrlInput.trim()) {
+                                  setCsExtra((prev) => ({
+                                    ...prev,
+                                    links: [
+                                      ...prev.links,
+                                      { label: linkLabelInput.trim(), url: linkUrlInput.trim() },
+                                    ],
+                                  }))
+                                  setLinkLabelInput("")
+                                  setLinkUrlInput("")
+                                }
+                              }
+                            }}
+                          />
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="icon"
+                            className="shrink-0 self-start sm:self-auto"
+                            onClick={() => {
+                              if (linkLabelInput.trim() && linkUrlInput.trim()) {
+                                setCsExtra((prev) => ({
+                                  ...prev,
+                                  links: [
+                                    ...prev.links,
+                                    { label: linkLabelInput.trim(), url: linkUrlInput.trim() },
+                                  ],
+                                }))
+                                setLinkLabelInput("")
+                                setLinkUrlInput("")
+                              }
+                            }}
+                          >
+                            <IconPlus className="h-4 w-4" />
+                          </Button>
+                        </div>
+                        {csExtra.links.map((link, i) => (
+                          <div
+                            key={`${link.url}-${i}`}
+                            className="flex items-center justify-between rounded border px-2 py-1 text-xs"
+                          >
+                            <span className="truncate">
+                              {link.label} — {link.url}
+                            </span>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="icon"
+                              className="h-7 w-7 shrink-0"
+                              onClick={() =>
+                                setCsExtra((prev) => ({
+                                  ...prev,
+                                  links: prev.links.filter((_, j) => j !== i),
+                                }))
+                              }
+                            >
+                              <IconX className="h-3 w-3" />
+                            </Button>
+                          </div>
+                        ))}
+                      </div>
+                      <div className="space-y-1">
+                        <Label className="text-xs">Key results (one line each)</Label>
+                        <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-stretch">
+                          <Input
+                            className="min-w-0 flex-1"
+                            value={resultInput}
+                            onChange={(e) => setResultInput(e.target.value)}
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") {
+                                e.preventDefault()
+                                if (resultInput.trim()) {
+                                  setCsExtra((prev) => ({
+                                    ...prev,
+                                    results: [...prev.results, { text: resultInput.trim() }],
+                                  }))
+                                  setResultInput("")
+                                }
+                              }
+                            }}
+                            placeholder="−40% latency"
+                          />
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="icon"
+                            className="shrink-0 self-start sm:self-auto"
+                            onClick={() => {
+                              if (resultInput.trim()) {
+                                setCsExtra((prev) => ({
+                                  ...prev,
+                                  results: [...prev.results, { text: resultInput.trim() }],
+                                }))
+                                setResultInput("")
+                              }
+                            }}
+                          >
+                            <IconPlus className="h-4 w-4" />
+                          </Button>
+                        </div>
+                        {csExtra.results.map((r, i) => (
+                          <div
+                            key={`${r.text}-${i}`}
+                            className="flex items-center justify-between rounded border px-2 py-1 text-xs"
+                          >
+                            <span className="truncate">{r.text}</span>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="icon"
+                              className="h-7 w-7"
+                              onClick={() =>
+                                setCsExtra((prev) => ({
+                                  ...prev,
+                                  results: prev.results.filter((_, j) => j !== i),
+                                }))
+                              }
+                            >
+                              <IconX className="h-3 w-3" />
+                            </Button>
+                          </div>
+                        ))}
+                      </div>
+                      <div className="space-y-1">
+                        <Label className="text-xs">Metrics</Label>
+                        <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-stretch">
+                          <Input
+                            className="min-w-0 flex-1"
+                            value={metricLabelInput}
+                            onChange={(e) => setMetricLabelInput(e.target.value)}
+                            placeholder="Label"
+                          />
+                          <Input
+                            className="min-w-0 flex-1"
+                            value={metricValueInput}
+                            onChange={(e) => setMetricValueInput(e.target.value)}
+                            placeholder="Value"
+                            onKeyDown={(e) => {
+                              if (e.key === "Enter") {
+                                e.preventDefault()
+                                if (metricLabelInput.trim() && metricValueInput.trim()) {
+                                  setCsExtra((prev) => ({
+                                    ...prev,
+                                    metrics: [
+                                      ...prev.metrics,
+                                      {
+                                        label: metricLabelInput.trim(),
+                                        value: metricValueInput.trim(),
+                                      },
+                                    ],
+                                  }))
+                                  setMetricLabelInput("")
+                                  setMetricValueInput("")
+                                }
+                              }
+                            }}
+                          />
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="icon"
+                            className="shrink-0 self-start sm:self-auto"
+                            onClick={() => {
+                              if (metricLabelInput.trim() && metricValueInput.trim()) {
+                                setCsExtra((prev) => ({
+                                  ...prev,
+                                  metrics: [
+                                    ...prev.metrics,
+                                    {
+                                      label: metricLabelInput.trim(),
+                                      value: metricValueInput.trim(),
+                                    },
+                                  ],
+                                }))
+                                setMetricLabelInput("")
+                                setMetricValueInput("")
+                              }
+                            }}
+                          >
+                            <IconPlus className="h-4 w-4" />
+                          </Button>
+                        </div>
+                        {csExtra.metrics.map((m, i) => (
+                          <div
+                            key={`${m.label}-${i}`}
+                            className="flex items-center justify-between rounded border px-2 py-1 text-xs"
+                          >
+                            <span>
+                              {m.label}: {m.value}
+                            </span>
+                            <Button
+                              type="button"
+                              variant="ghost"
+                              size="icon"
+                              className="h-7 w-7"
+                              onClick={() =>
+                                setCsExtra((prev) => ({
+                                  ...prev,
+                                  metrics: prev.metrics.filter((_, j) => j !== i),
+                                }))
+                              }
+                            >
+                              <IconX className="h-3 w-3" />
+                            </Button>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </details>
+                </CardContent>
+              </Card>
+            )}
+
             <Card>
               <CardHeader>
                 <CardTitle>Publish Settings</CardTitle>
@@ -496,27 +1192,52 @@ export function BlogEditor({ blog, markdownContent = "" }: BlogEditorProps) {
                   </Select>
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="targetApp">Publish To *</Label>
-                  <Select
-                    value={formData.targetApp}
-                    onValueChange={(value: TargetApp) =>
-                      setFormData({ ...formData, targetApp: value })
-                    }
-                  >
-                    <SelectTrigger id="targetApp">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="portfolio">Portfolio</SelectItem>
-                      <SelectItem value="photos">Photos</SelectItem>
-                      <SelectItem value="both">Both Apps</SelectItem>
-                    </SelectContent>
-                  </Select>
-                  <p className="text-xs text-muted-foreground">
-                    Choose which app(s) will display this post
-                  </p>
-                </div>
+                {contentKind === "case_study" && (
+                  <div className="space-y-2">
+                    <Label htmlFor="publishedAt">Published date</Label>
+                    <Input
+                      id="publishedAt"
+                      type="datetime-local"
+                      value={
+                        formData.publishedAt
+                          ? new Date(formData.publishedAt).toISOString().slice(0, 16)
+                          : ""
+                      }
+                      onChange={(e) =>
+                        setFormData({
+                          ...formData,
+                          publishedAt: e.target.value
+                            ? new Date(e.target.value).toISOString()
+                            : null,
+                        })
+                      }
+                    />
+                  </div>
+                )}
+
+                {contentKind !== "case_study" && (
+                  <div className="space-y-2">
+                    <Label htmlFor="targetApp">Publish To *</Label>
+                    <Select
+                      value={formData.targetApp}
+                      onValueChange={(value: TargetApp) =>
+                        setFormData({ ...formData, targetApp: value })
+                      }
+                    >
+                      <SelectTrigger id="targetApp">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="portfolio">Portfolio</SelectItem>
+                        <SelectItem value="photos">Photos</SelectItem>
+                        <SelectItem value="both">Both Apps</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <p className="text-xs text-muted-foreground">
+                      Choose which app(s) will display this post
+                    </p>
+                  </div>
+                )}
 
                 <div className="flex items-center gap-2">
                   <Checkbox
@@ -527,7 +1248,7 @@ export function BlogEditor({ blog, markdownContent = "" }: BlogEditorProps) {
                     }
                   />
                   <Label htmlFor="featured" className="cursor-pointer">
-                    Featured post
+                    {contentKind === "case_study" ? "Featured case study" : "Featured post"}
                   </Label>
                 </div>
               </CardContent>
@@ -562,7 +1283,9 @@ export function BlogEditor({ blog, markdownContent = "" }: BlogEditorProps) {
                     disabled={autoGenerateSlug && !isEditing}
                   />
                   <p className="text-xs text-muted-foreground">
-                    /blog/{formData.slug || "your-post-slug"}
+                    {contentKind === "case_study"
+                      ? `Portfolio: /work/${formData.slug || "slug"}`
+                      : `/blog/${formData.slug || "your-post-slug"}`}
                   </p>
                 </div>
               </CardContent>
@@ -570,7 +1293,9 @@ export function BlogEditor({ blog, markdownContent = "" }: BlogEditorProps) {
 
             <Card>
               <CardHeader>
-                <CardTitle>Featured Image</CardTitle>
+                <CardTitle>
+                  {contentKind === "case_study" ? "Cover image" : "Featured image"}
+                </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <Input
@@ -608,72 +1333,91 @@ export function BlogEditor({ blog, markdownContent = "" }: BlogEditorProps) {
               </CardContent>
             </Card>
 
-            <Card>
-              <CardHeader>
-                <CardTitle>Organization</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="category">Category</Label>
-                  <Input
-                    id="category"
-                    value={formData.category || ""}
-                    onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                    placeholder="e.g., Technology, Design"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="authorName">Author Name</Label>
-                  <Input
-                    id="authorName"
-                    value={formData.authorName || ""}
-                    onChange={(e) => setFormData({ ...formData, authorName: e.target.value })}
-                    placeholder="Your name"
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="tags">Tags</Label>
-                  <div className="flex gap-2">
-                    <Input
-                      id="tags"
-                      value={tagInput}
-                      onChange={(e) => setTagInput(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                          e.preventDefault()
-                          addTag()
-                        }
-                      }}
-                      placeholder="Add a tag..."
-                    />
-                    <Button type="button" onClick={addTag} variant="outline" size="sm">
-                      Add
-                    </Button>
-                  </div>
-                  {formData.tags && formData.tags.length > 0 && (
-                    <div className="flex flex-wrap gap-2 mt-2">
-                      {formData.tags.map((tag, index) => (
-                        <div
-                          key={index}
-                          className="flex items-center gap-1 px-2 py-1 bg-muted rounded-md text-sm"
-                        >
-                          <span>{tag}</span>
-                          <button
-                            type="button"
-                            onClick={() => removeTag(index)}
-                            className="ml-1 text-muted-foreground hover:text-foreground"
-                          >
-                            ×
-                          </button>
-                        </div>
-                      ))}
+            {contentKind !== "case_study" && (
+              <Card>
+                <CardHeader>
+                  <CardTitle>Organization</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {contentKind === "the_view" ? (
+                    <div className="space-y-2">
+                      <Label htmlFor="category">Category</Label>
+                      <Input
+                        id="category"
+                        value={formData.category || ""}
+                        onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+                        placeholder="e.g., Technology, Design"
+                      />
+                    </div>
+                  ) : (
+                    <div className="rounded-md border bg-muted/40 px-3 py-2 text-sm text-muted-foreground">
+                      Category is set to{" "}
+                      <span className="font-medium text-foreground">
+                        {contentKind === "insight" ? "insight" : "project"}
+                      </span>{" "}
+                      for filtering in The View.
                     </div>
                   )}
-                </div>
-              </CardContent>
-            </Card>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="authorName">Author Name</Label>
+                    <Input
+                      id="authorName"
+                      value={formData.authorName || ""}
+                      onChange={(e) => setFormData({ ...formData, authorName: e.target.value })}
+                      placeholder="Your name"
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="tags">Tags</Label>
+                    <div className="flex min-w-0 flex-col gap-2 sm:flex-row sm:items-stretch">
+                      <Input
+                        id="tags"
+                        className="min-w-0 flex-1"
+                        value={tagInput}
+                        onChange={(e) => setTagInput(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") {
+                            e.preventDefault()
+                            addTag()
+                          }
+                        }}
+                        placeholder="Add a tag..."
+                      />
+                      <Button
+                        type="button"
+                        onClick={addTag}
+                        variant="outline"
+                        size="sm"
+                        className="shrink-0 self-start sm:self-auto"
+                      >
+                        Add
+                      </Button>
+                    </div>
+                    {formData.tags && formData.tags.length > 0 && (
+                      <div className="flex flex-wrap gap-2 mt-2">
+                        {formData.tags.map((tag, index) => (
+                          <div
+                            key={index}
+                            className="flex items-center gap-1 px-2 py-1 bg-muted rounded-md text-sm"
+                          >
+                            <span>{tag}</span>
+                            <button
+                              type="button"
+                              onClick={() => removeTag(index)}
+                              className="ml-1 text-muted-foreground hover:text-foreground"
+                            >
+                              ×
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            )}
           </div>
         </div>
       </form>

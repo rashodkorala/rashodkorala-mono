@@ -99,25 +99,41 @@ export function BlogsList({ blogs: initialBlogs }: BlogsListProps) {
   }
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="box-border w-full min-w-0 max-w-full space-y-6 p-3 sm:p-6">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+        <div className="min-w-0">
           <h1 className="text-2xl font-semibold">The View</h1>
-          <p className="text-muted-foreground">
+          <p className="text-muted-foreground text-sm sm:text-base">
             Manage your posts for Portfolio and Photos apps
           </p>
         </div>
-        <Link href="/protected/blogs/new">
-          <Button>
-            <IconPlus className="h-4 w-4 mr-2" />
-            New Post
-          </Button>
-        </Link>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button>
+              <IconPlus className="h-4 w-4 mr-2" />
+              New
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent align="end" className="w-56">
+            <DropdownMenuItem asChild>
+              <Link href="/protected/blogs/new">The View (blog)</Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link href="/protected/blogs/new?kind=insight">Insight</Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link href="/protected/blogs/new?kind=project">Project write-up</Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link href="/protected/case-studies/new">Case study</Link>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-5">
         <Card>
           <CardHeader className="pb-2">
             <CardDescription>Total</CardDescription>
@@ -162,7 +178,7 @@ export function BlogsList({ blogs: initialBlogs }: BlogsListProps) {
           />
         </div>
         <Select value={statusFilter} onValueChange={setStatusFilter}>
-          <SelectTrigger className="w-[150px]">
+          <SelectTrigger className="w-full sm:w-[150px]">
             <SelectValue placeholder="Status" />
           </SelectTrigger>
           <SelectContent>
@@ -173,7 +189,7 @@ export function BlogsList({ blogs: initialBlogs }: BlogsListProps) {
           </SelectContent>
         </Select>
         <Select value={targetFilter} onValueChange={setTargetFilter}>
-          <SelectTrigger className="w-[150px]">
+          <SelectTrigger className="w-full sm:w-[150px]">
             <SelectValue placeholder="Target App" />
           </SelectTrigger>
           <SelectContent>
@@ -185,8 +201,8 @@ export function BlogsList({ blogs: initialBlogs }: BlogsListProps) {
       </div>
 
       {/* Table */}
-      <Card>
-        <Table>
+      <Card className="min-w-0 overflow-hidden">
+        <Table className="min-w-[640px]">
           <TableHeader>
             <TableRow>
               <TableHead className="w-[40%]">Title</TableHead>

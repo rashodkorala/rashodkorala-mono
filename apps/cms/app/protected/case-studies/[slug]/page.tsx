@@ -29,7 +29,20 @@ export default async function EditCaseStudyPage({
   }
 
   // Fetch MDX content from storage
-  const mdxContent = await fetchMdxFromStorage(caseStudy.mdxPath)
+  let mdxContent = ""
+  let mdxWarning: string | null = null
+
+  try {
+    mdxContent = await fetchMdxFromStorage(caseStudy.mdxPath)
+  } catch (error) {
+    console.error("Failed to fetch case study MDX", {
+      slug,
+      mdxPath: caseStudy.mdxPath,
+      error,
+    })
+    mdxWarning =
+      "The original MDX file could not be loaded (likely from migration). You can still edit metadata and re-save content to repair this case study."
+  }
 
   return (
     <div className="space-y-6 px-4">
@@ -48,6 +61,12 @@ export default async function EditCaseStudyPage({
           Update your case study metadata and content
         </p>
       </div>
+
+      {mdxWarning && (
+        <div className="rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+          {mdxWarning}
+        </div>
+      )}
 
       <CaseStudyForm caseStudy={caseStudy} mdxContent={mdxContent} />
     </div>

@@ -16,7 +16,6 @@ import {
 import { Textarea } from "@/components/ui/textarea"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Card } from "@/components/ui/card"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { IconX, IconPlus, IconSparkles, IconEye, IconCode, IconLoader2 } from "@tabler/icons-react"
 import {
   AlertDialog,
@@ -429,169 +428,219 @@ Write 2-3 paragraphs per section. Use markdown headers (##), bullet points, and 
   return (
     <>
       <form onSubmit={handleSubmit} className="space-y-6">
-        <Tabs defaultValue="content" className="w-full">
-          <TabsList className="grid w-full grid-cols-5">
-            <TabsTrigger value="content">Content</TabsTrigger>
-            <TabsTrigger value="details">Details</TabsTrigger>
-            <TabsTrigger value="context">Context</TabsTrigger>
-            <TabsTrigger value="media">Media</TabsTrigger>
-            <TabsTrigger value="links">Links & Results</TabsTrigger>
-          </TabsList>
+        <Card className="p-6 space-y-6">
+          <div className="space-y-1">
+            <h2 className="text-lg font-semibold">Essentials</h2>
+            <p className="text-sm text-muted-foreground">
+              Hybrid content: write the full narrative in <span className="font-medium text-foreground">MDX</span> below; use{" "}
+              <span className="font-medium text-foreground">Links, results, and metrics</span> (optional section) for structured highlights the portfolio can render consistently.
+            </p>
+          </div>
 
-          {/* ── Content Tab ── */}
-          <TabsContent value="content" className="space-y-6">
-            <Card className="p-6 space-y-6">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="title">Title *</Label>
-                  <Input
-                    id="title"
-                    value={formData.title}
-                    onChange={(e) => handleTitleChange(e.target.value)}
-                    placeholder="My Amazing Project"
-                    required
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="slug">Slug *</Label>
-                  <Input
-                    id="slug"
-                    value={formData.slug}
-                    onChange={(e) => updateField("slug", e.target.value)}
-                    placeholder="my-amazing-project"
-                    required
-                  />
-                </div>
-              </div>
+          <div className="grid md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="title">Title *</Label>
+              <Input
+                id="title"
+                value={formData.title}
+                onChange={(e) => handleTitleChange(e.target.value)}
+                placeholder="Case study title"
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="slug">Slug *</Label>
+              <Input
+                id="slug"
+                value={formData.slug}
+                onChange={(e) => updateField("slug", e.target.value)}
+                placeholder="case-study-slug"
+                required
+              />
+            </div>
+          </div>
 
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <Label htmlFor="summary">Summary</Label>
-                  <AiButton field="summary" label="AI Generate" />
-                </div>
-                <Textarea
-                  id="summary"
-                  value={formData.summary}
-                  onChange={(e) => updateField("summary", e.target.value)}
-                  placeholder="Brief overview used for listings and SEO"
-                  rows={2}
+          <div className="grid md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label>Case Study Type</Label>
+              <Select
+                value={formData.type}
+                onValueChange={(value: "problem-solving" | "descriptive") => updateField("type", value)}
+              >
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="problem-solving">Problem-Solving</SelectItem>
+                  <SelectItem value="descriptive">Descriptive</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2">
+              <Label>Status</Label>
+              <Select
+                value={formData.status}
+                onValueChange={(value: "draft" | "published" | "archived") => updateField("status", value)}
+              >
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="draft">Draft</SelectItem>
+                  <SelectItem value="published">Published</SelectItem>
+                  <SelectItem value="archived">Archived</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+
+          <div className="grid md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="publishedAt">Published Date</Label>
+              <Input
+                id="publishedAt"
+                type="datetime-local"
+                value={formData.publishedAt ? new Date(formData.publishedAt).toISOString().slice(0, 16) : ""}
+                onChange={(e) =>
+                  updateField("publishedAt", e.target.value ? new Date(e.target.value).toISOString() : null)
+                }
+              />
+            </div>
+            <div className="flex items-end pb-2">
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="featured"
+                  checked={formData.featured}
+                  onCheckedChange={(checked) => updateField("featured", checked as boolean)}
                 />
+                <Label htmlFor="featured" className="cursor-pointer">Featured case study</Label>
               </div>
+            </div>
+          </div>
 
-              {/* MDX Editor with Write/Preview toggle */}
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <Label>MDX Content *</Label>
-                  <div className="flex items-center gap-2">
-                    <AiButton field="mdxContent" label="AI Generate" />
-                    <Button type="button" variant="outline" size="sm" onClick={insertTemplate}>
-                      Insert Template
-                    </Button>
-                    <div className="flex border rounded-md">
-                      <Button
-                        type="button"
-                        variant={mdxView === "write" ? "secondary" : "ghost"}
-                        size="sm"
-                        className="rounded-r-none h-7 px-2 text-xs"
-                        onClick={() => setMdxView("write")}
-                      >
-                        <IconCode className="h-3 w-3 mr-1" />
-                        Write
-                      </Button>
-                      <Button
-                        type="button"
-                        variant={mdxView === "preview" ? "secondary" : "ghost"}
-                        size="sm"
-                        className="rounded-l-none h-7 px-2 text-xs"
-                        onClick={() => setMdxView("preview")}
-                      >
-                        <IconEye className="h-3 w-3 mr-1" />
-                        Preview
-                      </Button>
-                    </div>
-                  </div>
+          <div className="space-y-2">
+            <div className="flex items-center justify-between">
+              <Label htmlFor="summary">Summary</Label>
+              <AiButton field="summary" label="AI Generate" />
+            </div>
+            <Textarea
+              id="summary"
+              value={formData.summary}
+              onChange={(e) => updateField("summary", e.target.value)}
+              placeholder="Brief overview used for listings and SEO"
+              rows={2}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <Label>MDX Content *</Label>
+              <div className="flex items-center gap-2">
+                <AiButton field="mdxContent" label="AI Generate" />
+                <Button type="button" variant="outline" size="sm" onClick={insertTemplate}>
+                  Insert Template
+                </Button>
+                <div className="flex border rounded-md">
+                  <Button
+                    type="button"
+                    variant={mdxView === "write" ? "secondary" : "ghost"}
+                    size="sm"
+                    className="rounded-r-none h-7 px-2 text-xs"
+                    onClick={() => setMdxView("write")}
+                  >
+                    <IconCode className="h-3 w-3 mr-1" />
+                    Write
+                  </Button>
+                  <Button
+                    type="button"
+                    variant={mdxView === "preview" ? "secondary" : "ghost"}
+                    size="sm"
+                    className="rounded-l-none h-7 px-2 text-xs"
+                    onClick={() => setMdxView("preview")}
+                  >
+                    <IconEye className="h-3 w-3 mr-1" />
+                    Preview
+                  </Button>
                 </div>
+              </div>
+            </div>
 
-                {mdxView === "write" ? (
-                  <Textarea
-                    value={formData.mdxContent}
-                    onChange={(e) => updateField("mdxContent", e.target.value)}
-                    placeholder="Write your case study content in Markdown..."
-                    rows={24}
-                    className="font-mono text-sm"
-                  />
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Images and rich story belong here (Markdown / MDX). Cover and gallery uploads live under <span className="font-medium text-foreground">Media</span> for listing cards and grids—no need to duplicate outcomes here if you already filled structured results/metrics.
+            </p>
+
+            {mdxView === "write" ? (
+              <Textarea
+                value={formData.mdxContent}
+                onChange={(e) => updateField("mdxContent", e.target.value)}
+                placeholder="Write your case study content in Markdown..."
+                rows={20}
+                className="font-mono text-sm"
+              />
+            ) : (
+              <div className="min-h-[320px] max-h-[560px] overflow-y-auto rounded-md border p-6 prose prose-invert prose-sm max-w-none">
+                {formData.mdxContent.trim() ? (
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                    {formData.mdxContent}
+                  </ReactMarkdown>
                 ) : (
-                  <div className="min-h-[400px] max-h-[600px] overflow-y-auto rounded-md border p-6 prose prose-invert prose-sm max-w-none">
-                    {formData.mdxContent.trim() ? (
-                      <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                        {formData.mdxContent}
-                      </ReactMarkdown>
-                    ) : (
-                      <p className="text-muted-foreground italic">Nothing to preview yet. Switch to Write and add content.</p>
-                    )}
-                  </div>
+                  <p className="text-muted-foreground italic">Nothing to preview yet. Switch to Write and add content.</p>
                 )}
               </div>
-            </Card>
-          </TabsContent>
+            )}
+          </div>
+        </Card>
 
-          {/* ── Details Tab ── */}
-          <TabsContent value="details" className="space-y-6">
-            <Card className="p-6 space-y-6">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label>Case Study Type</Label>
-                  <Select
-                    value={formData.type}
-                    onValueChange={(value: "problem-solving" | "descriptive") => updateField("type", value)}
-                  >
-                    <SelectTrigger><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="problem-solving">Problem-Solving</SelectItem>
-                      <SelectItem value="descriptive">Descriptive</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label>Status</Label>
-                  <Select
-                    value={formData.status}
-                    onValueChange={(value: "draft" | "published" | "archived") => updateField("status", value)}
-                  >
-                    <SelectTrigger><SelectValue /></SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="draft">Draft</SelectItem>
-                      <SelectItem value="published">Published</SelectItem>
-                      <SelectItem value="archived">Archived</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+        <details className="group rounded-lg border bg-card open:shadow-sm">
+          <summary className="cursor-pointer list-none p-4 flex items-center justify-between">
+            <div>
+              <p className="font-medium">Project Context (optional)</p>
+              <p className="text-sm text-muted-foreground">Subject, audience, role, timeline, stack, tags, and skills.</p>
+            </div>
+            <span className="text-xs text-muted-foreground group-open:hidden">Expand</span>
+            <span className="text-xs text-muted-foreground hidden group-open:inline">Collapse</span>
+          </summary>
+          <div className="border-t p-4 md:p-6 space-y-6">
+            <div className="grid md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Subject Name</Label>
+                <Input value={formData.subjectName} onChange={(e) => updateField("subjectName", e.target.value)} placeholder="Project or company name" />
               </div>
-
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="publishedAt">Published Date</Label>
-                  <Input
-                    id="publishedAt"
-                    type="datetime-local"
-                    value={formData.publishedAt ? new Date(formData.publishedAt).toISOString().slice(0, 16) : ""}
-                    onChange={(e) =>
-                      updateField("publishedAt", e.target.value ? new Date(e.target.value).toISOString() : null)
-                    }
-                  />
-                </div>
-                <div className="flex items-end pb-2">
-                  <div className="flex items-center space-x-2">
-                    <Checkbox
-                      id="featured"
-                      checked={formData.featured}
-                      onCheckedChange={(checked) => updateField("featured", checked as boolean)}
-                    />
-                    <Label htmlFor="featured" className="cursor-pointer">Featured case study</Label>
-                  </div>
-                </div>
+              <div className="space-y-2">
+                <Label>Subject Type</Label>
+                <Input value={formData.subjectType} onChange={(e) => updateField("subjectType", e.target.value)} placeholder="e.g., Web App, Mobile App" />
               </div>
-
+            </div>
+            <div className="grid md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <Label>Industry</Label>
+                <Input value={formData.industry} onChange={(e) => updateField("industry", e.target.value)} placeholder="e.g., B2B SaaS, E-commerce" />
+              </div>
+              <div className="space-y-2">
+                <Label>Audience</Label>
+                <Input value={formData.audience} onChange={(e) => updateField("audience", e.target.value)} placeholder="Target audience" />
+              </div>
+            </div>
+            <div className="grid md:grid-cols-3 gap-4">
+              <div className="space-y-2">
+                <Label>Your Role</Label>
+                <Input value={formData.role} onChange={(e) => updateField("role", e.target.value)} placeholder="e.g., Lead Developer" />
+              </div>
+              <div className="space-y-2">
+                <Label>Team Size</Label>
+                <Input value={formData.teamSize} onChange={(e) => updateField("teamSize", e.target.value)} placeholder="e.g., 5 people" />
+              </div>
+              <div className="space-y-2">
+                <Label>Timeline</Label>
+                <Input value={formData.timeline} onChange={(e) => updateField("timeline", e.target.value)} placeholder="e.g., 3 months" />
+              </div>
+            </div>
+            <ChipInput
+              label="Tech Stack"
+              items={formData.stack}
+              inputValue={stackInput}
+              onInputChange={setStackInput}
+              onAdd={() => addToArray("stack", stackInput, setStackInput)}
+              onRemove={(i) => removeFromArray("stack", i)}
+              placeholder="Add a technology and press Enter"
+            />
+            <div className="grid md:grid-cols-2 gap-4">
               <ChipInput
                 label="Tags"
                 items={formData.tags}
@@ -601,7 +650,6 @@ Write 2-3 paragraphs per section. Use markdown headers (##), bullet points, and 
                 onRemove={(i) => removeFromArray("tags", i)}
                 placeholder="Add a tag and press Enter"
               />
-
               <ChipInput
                 label="Skills"
                 items={formData.skills}
@@ -611,290 +659,218 @@ Write 2-3 paragraphs per section. Use markdown headers (##), bullet points, and 
                 onRemove={(i) => removeFromArray("skills", i)}
                 placeholder="Add a skill and press Enter"
               />
+            </div>
+          </div>
+        </details>
 
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <Label>SEO Title</Label>
-                  <AiButton field="seo" label="AI Generate SEO" />
+        <details className="group rounded-lg border bg-card open:shadow-sm">
+          <summary className="cursor-pointer list-none p-4 flex items-center justify-between">
+            <div>
+              <p className="font-medium">Media (optional)</p>
+              <p className="text-sm text-muted-foreground">Cover, gallery images, and gallery videos.</p>
+            </div>
+            <span className="text-xs text-muted-foreground group-open:hidden">Expand</span>
+            <span className="text-xs text-muted-foreground hidden group-open:inline">Collapse</span>
+          </summary>
+          <div className="border-t p-4 md:p-6 space-y-6">
+            <div className="space-y-2">
+              <Label>Cover Image</Label>
+              <Input type="file" accept="image/*" onChange={handleCoverImageUpload} />
+              {formData.coverUrl && (
+                <div className="mt-2">
+                  <img src={formData.coverUrl} alt="Cover preview" className="w-full max-w-md h-48 object-cover rounded-lg" />
                 </div>
+              )}
+            </div>
+            <div className="space-y-2">
+              <Label>Gallery Images</Label>
+              <Input type="file" accept="image/*" multiple onChange={handleGalleryImageUpload} />
+              {formData.galleryUrls.length > 0 && (
+                <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
+                  {formData.galleryUrls.map((url, index) => (
+                    <div key={index} className="relative">
+                      <img src={url} alt={`Gallery ${index + 1}`} className="w-full h-32 object-cover rounded-lg" />
+                      <Button
+                        type="button"
+                        variant="destructive"
+                        size="icon"
+                        className="absolute top-2 right-2 h-6 w-6"
+                        onClick={() => removeGalleryImage(index)}
+                      >
+                        <IconX className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+            <div className="space-y-2">
+              <Label>Gallery Videos</Label>
+              <Input type="file" accept="video/mp4,video/webm" multiple onChange={handleGalleryVideoUpload} />
+              <p className="text-xs text-muted-foreground">MP4 or WebM. Optional.</p>
+              {galleryVideoFiles.length > 0 && (
+                <div className="flex flex-wrap gap-2 mt-2">
+                  {galleryVideoFiles.map((file, index) => (
+                    <div key={index} className="flex items-center gap-2 rounded-lg border px-3 py-2 text-sm">
+                      <span className="truncate max-w-[180px]">{file.name}</span>
+                      <Button type="button" variant="ghost" size="sm" onClick={() => removeGalleryVideoFile(index)}>
+                        <IconX className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              )}
+              {formData.galleryVideoUrls?.length > 0 && (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                  {formData.galleryVideoUrls.map((url, index) => (
+                    <div key={index} className="relative">
+                      <video src={url} className="w-full h-32 object-cover rounded-lg" muted playsInline preload="metadata" />
+                      <Button
+                        type="button"
+                        variant="destructive"
+                        size="icon"
+                        className="absolute top-2 right-2 h-6 w-6"
+                        onClick={() => removeGalleryVideoUrl(index)}
+                      >
+                        <IconX className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </details>
+
+        <details className="group rounded-lg border bg-card open:shadow-sm">
+          <summary className="cursor-pointer list-none p-4 flex items-center justify-between">
+            <div>
+              <p className="font-medium">Structured highlights (optional)</p>
+              <p className="text-sm text-muted-foreground">
+                Links, key results, and metrics for consistent portfolio UI—complement the long-form story in MDX, don&apos;t replace it.
+              </p>
+            </div>
+            <span className="text-xs text-muted-foreground group-open:hidden">Expand</span>
+            <span className="text-xs text-muted-foreground hidden group-open:inline">Collapse</span>
+          </summary>
+          <div className="border-t p-4 md:p-6 space-y-6">
+            <div className="space-y-2">
+              <Label>Links</Label>
+              <div className="flex gap-2">
+                <Input value={linkLabelInput} onChange={(e) => setLinkLabelInput(e.target.value)} placeholder="Link label" />
                 <Input
-                  value={formData.seoTitle}
-                  onChange={(e) => updateField("seoTitle", e.target.value)}
-                  placeholder="SEO optimized title"
+                  value={linkUrlInput}
+                  onChange={(e) => setLinkUrlInput(e.target.value)}
+                  placeholder="https://example.com"
+                  onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addLink() } }}
                 />
+                <Button type="button" onClick={addLink} size="icon" variant="outline">
+                  <IconPlus className="h-4 w-4" />
+                </Button>
               </div>
-
-              <div className="space-y-2">
-                <Label>SEO Description</Label>
-                <Textarea
-                  value={formData.seoDescription}
-                  onChange={(e) => updateField("seoDescription", e.target.value)}
-                  placeholder="SEO meta description (max 160 characters)"
-                  rows={2}
+              {formData.links.length > 0 && (
+                <div className="space-y-2 mt-2">
+                  {formData.links.map((link, index) => (
+                    <div key={index} className="flex items-center justify-between p-2 bg-secondary rounded">
+                      <div>
+                        <span className="font-medium">{link.label}</span>
+                        <span className="text-sm text-muted-foreground ml-2">{link.url}</span>
+                      </div>
+                      <Button type="button" variant="ghost" size="icon" onClick={() => removeLink(index)}>
+                        <IconX className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+            <div className="space-y-2">
+              <Label>Key Results</Label>
+              <div className="flex gap-2">
+                <Input
+                  value={resultInput}
+                  onChange={(e) => setResultInput(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addResult() } }}
+                  placeholder="e.g., Reduced load time by 60%"
                 />
+                <Button type="button" onClick={addResult} size="icon" variant="outline">
+                  <IconPlus className="h-4 w-4" />
+                </Button>
               </div>
-            </Card>
-          </TabsContent>
-
-          {/* ── Context Tab ── */}
-          <TabsContent value="context" className="space-y-6">
-            <Card className="p-6 space-y-6">
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label>Subject Name</Label>
-                  <Input
-                    value={formData.subjectName}
-                    onChange={(e) => updateField("subjectName", e.target.value)}
-                    placeholder="Project or company name"
-                  />
+              {formData.results.length > 0 && (
+                <div className="space-y-2 mt-2">
+                  {formData.results.map((result, index) => (
+                    <div key={index} className="flex items-center justify-between p-2 bg-secondary rounded">
+                      <span className="text-sm">{result.text}</span>
+                      <Button type="button" variant="ghost" size="icon" onClick={() => removeResult(index)}>
+                        <IconX className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ))}
                 </div>
-                <div className="space-y-2">
-                  <Label>Subject Type</Label>
-                  <Input
-                    value={formData.subjectType}
-                    onChange={(e) => updateField("subjectType", e.target.value)}
-                    placeholder="e.g., Web App, Mobile App"
-                  />
-                </div>
+              )}
+            </div>
+            <div className="space-y-2">
+              <Label>Metrics</Label>
+              <div className="flex gap-2">
+                <Input value={metricLabelInput} onChange={(e) => setMetricLabelInput(e.target.value)} placeholder="Metric label (e.g., Load Time)" />
+                <Input
+                  value={metricValueInput}
+                  onChange={(e) => setMetricValueInput(e.target.value)}
+                  onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addMetric() } }}
+                  placeholder="Value (e.g., -60%)"
+                />
+                <Button type="button" onClick={addMetric} size="icon" variant="outline">
+                  <IconPlus className="h-4 w-4" />
+                </Button>
               </div>
+              {formData.metrics.length > 0 && (
+                <div className="grid md:grid-cols-2 gap-2 mt-2">
+                  {formData.metrics.map((metric, index) => (
+                    <div key={index} className="flex items-center justify-between p-2 bg-secondary rounded">
+                      <div>
+                        <span className="text-sm font-medium">{metric.label}</span>
+                        <span className="text-sm text-muted-foreground ml-2">{metric.value}</span>
+                      </div>
+                      <Button type="button" variant="ghost" size="icon" onClick={() => removeMetric(index)}>
+                        <IconX className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+        </details>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label>Industry</Label>
-                  <Input
-                    value={formData.industry}
-                    onChange={(e) => updateField("industry", e.target.value)}
-                    placeholder="e.g., B2B SaaS, E-commerce"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>Audience</Label>
-                  <Input
-                    value={formData.audience}
-                    onChange={(e) => updateField("audience", e.target.value)}
-                    placeholder="Target audience"
-                  />
-                </div>
+        <details className="group rounded-lg border bg-card open:shadow-sm">
+          <summary className="cursor-pointer list-none p-4 flex items-center justify-between">
+            <div>
+              <p className="font-medium">SEO (optional)</p>
+              <p className="text-sm text-muted-foreground">Meta title and description for search/social previews.</p>
+            </div>
+            <span className="text-xs text-muted-foreground group-open:hidden">Expand</span>
+            <span className="text-xs text-muted-foreground hidden group-open:inline">Collapse</span>
+          </summary>
+          <div className="border-t p-4 md:p-6 space-y-4">
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <Label>SEO Title</Label>
+                <AiButton field="seo" label="AI Generate SEO" />
               </div>
-
-              <div className="grid grid-cols-3 gap-4">
-                <div className="space-y-2">
-                  <Label>Your Role</Label>
-                  <Input
-                    value={formData.role}
-                    onChange={(e) => updateField("role", e.target.value)}
-                    placeholder="e.g., Lead Developer"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>Team Size</Label>
-                  <Input
-                    value={formData.teamSize}
-                    onChange={(e) => updateField("teamSize", e.target.value)}
-                    placeholder="e.g., 5 people"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label>Timeline</Label>
-                  <Input
-                    value={formData.timeline}
-                    onChange={(e) => updateField("timeline", e.target.value)}
-                    placeholder="e.g., 3 months"
-                  />
-                </div>
-              </div>
-
-              <ChipInput
-                label="Tech Stack"
-                items={formData.stack}
-                inputValue={stackInput}
-                onInputChange={setStackInput}
-                onAdd={() => addToArray("stack", stackInput, setStackInput)}
-                onRemove={(i) => removeFromArray("stack", i)}
-                placeholder="Add a technology and press Enter"
+              <Input value={formData.seoTitle} onChange={(e) => updateField("seoTitle", e.target.value)} placeholder="SEO optimized title" />
+            </div>
+            <div className="space-y-2">
+              <Label>SEO Description</Label>
+              <Textarea
+                value={formData.seoDescription}
+                onChange={(e) => updateField("seoDescription", e.target.value)}
+                placeholder="SEO meta description (max 160 characters)"
+                rows={2}
               />
-            </Card>
-          </TabsContent>
-
-          {/* ── Media Tab ── */}
-          <TabsContent value="media" className="space-y-6">
-            <Card className="p-6 space-y-6">
-              <div className="space-y-2">
-                <Label>Cover Image</Label>
-                <Input type="file" accept="image/*" onChange={handleCoverImageUpload} />
-                {formData.coverUrl && (
-                  <div className="mt-2">
-                    <img src={formData.coverUrl} alt="Cover preview" className="w-full max-w-md h-48 object-cover rounded-lg" />
-                  </div>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <Label>Gallery Images</Label>
-                <Input type="file" accept="image/*" multiple onChange={handleGalleryImageUpload} />
-                {formData.galleryUrls.length > 0 && (
-                  <div className="grid grid-cols-3 gap-4 mt-4">
-                    {formData.galleryUrls.map((url, index) => (
-                      <div key={index} className="relative">
-                        <img src={url} alt={`Gallery ${index + 1}`} className="w-full h-32 object-cover rounded-lg" />
-                        <Button
-                          type="button"
-                          variant="destructive"
-                          size="icon"
-                          className="absolute top-2 right-2 h-6 w-6"
-                          onClick={() => removeGalleryImage(index)}
-                        >
-                          <IconX className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                <Label>Gallery Videos</Label>
-                <Input type="file" accept="video/mp4,video/webm" multiple onChange={handleGalleryVideoUpload} />
-                <p className="text-xs text-muted-foreground">MP4 or WebM. Optional.</p>
-                {galleryVideoFiles.length > 0 && (
-                  <div className="flex flex-wrap gap-2 mt-2">
-                    {galleryVideoFiles.map((file, index) => (
-                      <div key={index} className="flex items-center gap-2 rounded-lg border px-3 py-2 text-sm">
-                        <span className="truncate max-w-[180px]">{file.name}</span>
-                        <Button type="button" variant="ghost" size="sm" onClick={() => removeGalleryVideoFile(index)}>
-                          <IconX className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-                {formData.galleryVideoUrls?.length > 0 && (
-                  <div className="grid grid-cols-2 gap-4 mt-4">
-                    {formData.galleryVideoUrls.map((url, index) => (
-                      <div key={index} className="relative">
-                        <video src={url} className="w-full h-32 object-cover rounded-lg" muted playsInline preload="metadata" />
-                        <Button
-                          type="button"
-                          variant="destructive"
-                          size="icon"
-                          className="absolute top-2 right-2 h-6 w-6"
-                          onClick={() => removeGalleryVideoUrl(index)}
-                        >
-                          <IconX className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </Card>
-          </TabsContent>
-
-          {/* ── Links & Results Tab ── */}
-          <TabsContent value="links" className="space-y-6">
-            <Card className="p-6 space-y-6">
-              {/* Links */}
-              <div className="space-y-2">
-                <Label>Links</Label>
-                <div className="flex gap-2">
-                  <Input
-                    value={linkLabelInput}
-                    onChange={(e) => setLinkLabelInput(e.target.value)}
-                    placeholder="Link label"
-                  />
-                  <Input
-                    value={linkUrlInput}
-                    onChange={(e) => setLinkUrlInput(e.target.value)}
-                    placeholder="https://example.com"
-                    onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addLink() } }}
-                  />
-                  <Button type="button" onClick={addLink} size="icon" variant="outline">
-                    <IconPlus className="h-4 w-4" />
-                  </Button>
-                </div>
-                {formData.links.length > 0 && (
-                  <div className="space-y-2 mt-2">
-                    {formData.links.map((link, index) => (
-                      <div key={index} className="flex items-center justify-between p-2 bg-secondary rounded">
-                        <div>
-                          <span className="font-medium">{link.label}</span>
-                          <span className="text-sm text-muted-foreground ml-2">{link.url}</span>
-                        </div>
-                        <Button type="button" variant="ghost" size="icon" onClick={() => removeLink(index)}>
-                          <IconX className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {/* Results */}
-              <div className="space-y-2">
-                <Label>Key Results</Label>
-                <div className="flex gap-2">
-                  <Input
-                    value={resultInput}
-                    onChange={(e) => setResultInput(e.target.value)}
-                    onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addResult() } }}
-                    placeholder="e.g., Reduced load time by 60%"
-                  />
-                  <Button type="button" onClick={addResult} size="icon" variant="outline">
-                    <IconPlus className="h-4 w-4" />
-                  </Button>
-                </div>
-                {formData.results.length > 0 && (
-                  <div className="space-y-2 mt-2">
-                    {formData.results.map((result, index) => (
-                      <div key={index} className="flex items-center justify-between p-2 bg-secondary rounded">
-                        <span className="text-sm">{result.text}</span>
-                        <Button type="button" variant="ghost" size="icon" onClick={() => removeResult(index)}>
-                          <IconX className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-
-              {/* Metrics */}
-              <div className="space-y-2">
-                <Label>Metrics</Label>
-                <div className="flex gap-2">
-                  <Input
-                    value={metricLabelInput}
-                    onChange={(e) => setMetricLabelInput(e.target.value)}
-                    placeholder="Metric label (e.g., Load Time)"
-                  />
-                  <Input
-                    value={metricValueInput}
-                    onChange={(e) => setMetricValueInput(e.target.value)}
-                    onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addMetric() } }}
-                    placeholder="Value (e.g., -60%)"
-                  />
-                  <Button type="button" onClick={addMetric} size="icon" variant="outline">
-                    <IconPlus className="h-4 w-4" />
-                  </Button>
-                </div>
-                {formData.metrics.length > 0 && (
-                  <div className="grid grid-cols-2 gap-2 mt-2">
-                    {formData.metrics.map((metric, index) => (
-                      <div key={index} className="flex items-center justify-between p-2 bg-secondary rounded">
-                        <div>
-                          <span className="text-sm font-medium">{metric.label}</span>
-                          <span className="text-sm text-muted-foreground ml-2">{metric.value}</span>
-                        </div>
-                        <Button type="button" variant="ghost" size="icon" onClick={() => removeMetric(index)}>
-                          <IconX className="h-4 w-4" />
-                        </Button>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </Card>
-          </TabsContent>
-        </Tabs>
+            </div>
+          </div>
+        </details>
 
         {/* Submit Buttons */}
         <div className="flex gap-4 justify-end pt-4 border-t">

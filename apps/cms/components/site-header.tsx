@@ -49,13 +49,13 @@ export function SiteHeader() {
         } as React.CSSProperties
       }
     >
-      <div className="flex w-full items-center gap-1 px-4 lg:gap-2 lg:px-6">
-        <SidebarTrigger className="-ml-1" />
+      <div className="flex w-full min-w-0 items-center gap-1 px-3 sm:px-4 lg:gap-2 lg:px-6">
+        <SidebarTrigger className="-ml-1 shrink-0" />
         <Separator
           orientation="vertical"
-          className="mx-2 data-[orientation=vertical]:h-4"
+          className="mx-2 shrink-0 data-[orientation=vertical]:h-4"
         />
-        <h1 className="text-base font-medium">{pageTitle}</h1>
+        <h1 className="min-w-0 truncate text-base font-medium">{pageTitle}</h1>
         <div className="ml-auto flex items-center gap-2">
           <Button variant="ghost" asChild size="sm" className="hidden sm:flex">
             <Link href="https://github.com/rashodkorala" target="_blank">

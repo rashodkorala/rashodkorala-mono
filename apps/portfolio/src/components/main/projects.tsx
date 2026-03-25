@@ -36,16 +36,16 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="flex-1">
             <div className="flex items-center gap-4 mb-3">
-              <span className="text-sm text-black/30 dark:text-white/30 font-mono">{getYear()}</span>
+              <span className="text-[11px] uppercase tracking-[0.08em] text-black/40 dark:text-white/40">{getYear()}</span>
               {project.tech && project.tech.length > 0 && (
                 <div className="flex gap-2 flex-wrap">
                   {project.tech.slice(0, 3).map(tag => (
-                    <span key={tag} className="text-xs px-2 py-1 border border-black/10 dark:border-white/10 rounded-full text-black/50 dark:text-white/50">
+                    <span key={tag} className="text-[11px] uppercase tracking-[0.08em] px-2 py-1 border border-black/10 dark:border-white/10 rounded-full text-black/50 dark:text-white/50">
                       {tag}
                     </span>
                   ))}
                   {project.tech.length > 3 && (
-                    <span className="text-xs px-2 py-1 border border-black/10 dark:border-white/10 rounded-full text-black/50 dark:text-white/50">
+                    <span className="text-[11px] uppercase tracking-[0.08em] px-2 py-1 border border-black/10 dark:border-white/10 rounded-full text-black/50 dark:text-white/50">
                       +{project.tech.length - 3}
                     </span>
                   )}
@@ -64,7 +64,7 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
             </h3>
 
             {project.subtitle && (
-              <p className="text-black/50 dark:text-white/50 font-light max-w-xl">
+              <p className="text-black/60 dark:text-white/60 leading-relaxed max-w-xl">
                 {project.subtitle}
               </p>
             )}
@@ -170,7 +170,7 @@ const Projects: React.FC<ProjectsProps> = ({ initialProjects = [] }) => {
           transition={{ duration: 0.8 }}
           className="mb-16"
         >
-          <p className="text-sm tracking-[0.3em] uppercase text-black/40 dark:text-white/40 mb-4">
+          <p className="text-[11px] tracking-[0.08em] uppercase text-black/40 dark:text-white/40 mb-4">
             Work
           </p>
           <h2 className="text-4xl md:text-5xl font-light tracking-tight text-black dark:text-white">
