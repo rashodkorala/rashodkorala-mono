@@ -1,19 +1,19 @@
-export type MediaFileType = "image" | "video" | "document" | "audio" | "other"
+export type MediaType = "image" | "video" | "document" | "audio"
 
-// Database schema (snake_case)
-export interface MediaDB {
+// Database schema (snake_case) — matches media_library table
+export interface MediaLibraryDB {
   id: string
   user_id: string
-  title: string
-  description: string | null
-  file_url: string
-  file_type: MediaFileType
-  file_size: number | null
-  mime_type: string | null
+  bucket: string
+  path: string
+  public_url: string
+  media_type: MediaType
+  width: number | null
+  height: number | null
+  bytes: number | null
   alt_text: string | null
-  tags: string[] | null
   folder: string | null
-  featured: boolean
+  tags: string[] | null
   created_at: string
   updated_at: string
 }
@@ -22,37 +22,38 @@ export interface MediaDB {
 export interface MediaItem {
   id: string
   userId: string
-  title: string
-  description: string | null
-  fileUrl: string
-  fileType: MediaFileType
-  fileSize: number | null
-  mimeType: string | null
+  bucket: string
+  path: string
+  publicUrl: string
+  mediaType: MediaType
+  width: number | null
+  height: number | null
+  bytes: number | null
   altText: string | null
-  tags: string[] | null
   folder: string | null
-  featured: boolean
+  tags: string[] | null
   createdAt: string
   updatedAt: string
 }
 
-// Alias for backward compatibility
 export type Media = MediaItem
 
 export interface MediaInsert {
-  title: string
-  description?: string | null
-  fileUrl: string
-  fileType: MediaFileType
-  fileSize?: number | null
-  mimeType?: string | null
+  bucket?: string
+  path: string
+  publicUrl: string
+  mediaType: MediaType
+  width?: number | null
+  height?: number | null
+  bytes?: number | null
   altText?: string | null
-  tags?: string[] | null
   folder?: string | null
-  featured?: boolean
+  tags?: string[] | null
 }
 
-export interface MediaUpdate extends Partial<MediaInsert> {
+export interface MediaUpdate extends Partial<Omit<MediaInsert, "path" | "bucket">> {
   id: string
+  altText?: string | null
+  folder?: string | null
+  tags?: string[] | null
 }
-

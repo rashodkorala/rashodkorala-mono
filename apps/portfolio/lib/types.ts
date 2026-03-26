@@ -1,23 +1,23 @@
 export type ProjectCategory = 'startup' | 'client' | 'personal' | 'school';
 export type ProjectStatus = 'draft' | 'published' | 'archived';
 
+// Matches new `projects` table (renamed from projects_archived)
 export interface Project {
-  id: string; // UUID
-  user_id: string; // UUID
-  slug: string; // URL-friendly slug (e.g., "getfit", "small-business-website")
+  id: string;
+  user_id: string;
+  slug: string;
   title: string;
   subtitle?: string;
   problem?: string;
   solution?: string;
-  roles?: string[]; // Array of roles
-  features?: string[]; // Array of features
-  tech?: string[]; // Array of technologies
+  roles?: string[];
+  features?: string[];
+  tech?: string[];
   live_url?: string;
   github_url?: string;
-  case_study_url?: string;
   cover_image_url?: string;
-  gallery_image_urls?: string[]; // Array of gallery image URLs
-  gallery_video_urls?: string[]; // Array of gallery video URLs
+  gallery_image_urls?: string[];
+  gallery_video_urls?: string[];
   category?: ProjectCategory;
   status: ProjectStatus;
   featured: boolean;
@@ -29,48 +29,38 @@ export interface Project {
 export type CaseStudyCategory = 'startup' | 'client' | 'personal' | 'school';
 export type CaseStudyStatus = 'draft' | 'published' | 'archived';
 
-export interface CaseStudyLink {
-  label: string;
-  url: string;
-  type?: string;
-}
-
-export interface CaseStudyResult {
-  title?: string;
-  value?: string;
-  description?: string;
-}
-
-export interface CaseStudyMetric {
-  label?: string;
-  value?: string;
-}
-
+// Matches new `case_studies` table
 export interface CaseStudy {
   id: string;
   user_id: string;
+  project_id?: string | null;
   title: string;
   slug: string;
-  summary?: string | null;
   lede?: string | null;
-  role?: string | null;
-  subject_type?: string | null;
-  subject_name?: string | null;
-  timeline?: string | null;
-  category?: CaseStudyCategory | null;
-  sort_order?: number | null;
+  summary?: string | null;
+  content_md: string;
+  type: 'problem-solving' | 'descriptive';
   status: CaseStudyStatus;
-  featured?: boolean | null;
+  category?: CaseStudyCategory | null;
+  featured: boolean;
+  sort_order: number;
+  role?: string | null;
+  team_size?: string | null;
+  timeline?: string | null;
+  industry?: string | null;
+  audience?: string | null;
+  tags: string[];
+  skills: string[];
+  stack: string[];
+  results: { text: string }[];
+  metrics: { label: string; value: string }[];
+  links: { label: string; url: string }[];
+  cover_path?: string | null;
+  gallery_paths: string[];
+  seo_title?: string | null;
+  seo_description?: string | null;
+  views: number;
   published_at?: string | null;
-  tags?: string[] | null;
-  stack?: string[] | null;
-  cover_url?: string | null;
-  gallery_urls?: string[] | null;
-  links?: CaseStudyLink[] | null;
-  results?: CaseStudyResult[] | null;
-  metrics?: CaseStudyMetric[] | null;
-  mdx_path?: string | null;
-  updated_at: string;
   created_at: string;
+  updated_at: string;
 }
-

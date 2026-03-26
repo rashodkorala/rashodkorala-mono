@@ -14,7 +14,7 @@ function asObjectArray<T extends Record<string, unknown>>(value: unknown): T[] {
   return value.filter((item): item is T => typeof item === "object" && item !== null);
 }
 
-function sanitizeMdxForFullRender(content: string): string {
+function sanitizeMdForRender(content: string): string {
   if (!content) return "";
 
   return content
@@ -41,15 +41,15 @@ const caseStudyMarkdownConfig: MarkdownParserConfig = {
   imgBorder: "border-ink/10 dark:border-[#2f2c2a]",
 };
 
-export default function CaseStudyPage({ caseStudy, mdxContent }: { caseStudy: CaseStudy; mdxContent: string }) {
+export default function CaseStudyPage({ caseStudy }: { caseStudy: CaseStudy }) {
   const tags = asStringArray(caseStudy.tags);
   const stack = asStringArray(caseStudy.stack);
-  const gallery = asStringArray(caseStudy.gallery_urls);
+  const gallery = asStringArray(caseStudy.gallery_paths);
   const links = asObjectArray<{ label?: string; url?: string; type?: string }>(caseStudy.links);
-  const results = asObjectArray<{ title?: string; value?: string; description?: string }>(caseStudy.results);
+  const results = asObjectArray<{ text?: string }>(caseStudy.results);
   const metrics = asObjectArray<{ label?: string; value?: string }>(caseStudy.metrics);
-  const mdxHtml = mdxContent
-    ? renderMarkdown(sanitizeMdxForFullRender(mdxContent), caseStudyMarkdownConfig)
+  const mdHtml = caseStudy.content_md
+    ? renderMarkdown(sanitizeMdForRender(caseStudy.content_md), caseStudyMarkdownConfig)
     : "";
 
   return (
@@ -63,11 +63,6 @@ export default function CaseStudyPage({ caseStudy, mdxContent }: { caseStudy: Ca
       </Link>
 
       <div className="mt-8 flex flex-wrap items-center gap-2">
-        {caseStudy.subject_type && (
-          <span className="text-[11px] uppercase tracking-[0.08em] px-2.5 py-1 rounded-full border border-ink/10 text-ink/45 dark:border-[#33302d] dark:text-[#b1aaa3]">
-            {caseStudy.subject_type}
-          </span>
-        )}
         {tags.map((tag) => (
           <span key={tag} className="text-[11px] uppercase tracking-[0.08em] px-2.5 py-1 rounded-full border border-ink/10 text-ink/45 dark:border-[#33302d] dark:text-[#b1aaa3]">
             {tag}
@@ -84,8 +79,6 @@ export default function CaseStudyPage({ caseStudy, mdxContent }: { caseStudy: Ca
       {caseStudy.summary && <p className="mt-3 text-lg text-muted_ink font-light dark:text-[#b8afa8]">{caseStudy.summary}</p>}
 
       <div className="mt-8 flex flex-wrap items-center gap-4 text-sm text-ink/40 border-y border-ink/10 py-4 dark:text-[#a9a29b] dark:border-[#2e2b29]">
-        {caseStudy.subject_name && <span>Subject: {caseStudy.subject_name}</span>}
-        {caseStudy.subject_name && <span className="w-px h-4 bg-ink/10 dark:bg-[#34312e]" />}
         <span>Role: {caseStudy.role || "N/A"}</span>
         <span className="w-px h-4 bg-ink/10 dark:bg-[#34312e]" />
         <span>Timeline: {caseStudy.timeline || "N/A"}</span>
@@ -94,16 +87,16 @@ export default function CaseStudyPage({ caseStudy, mdxContent }: { caseStudy: Ca
             <span key={`${link.label}-${link.url}`} className="flex items-center gap-2">
               <span className="w-px h-4 bg-ink/10 dark:bg-[#34312e]" />
               <a href={link.url} target="_blank" rel="noreferrer" className="hover:text-ink transition-colors dark:hover:text-[#f0ebe4]">
-                {link.label || link.type || "Link"}
+                {link.label || "Link"}
               </a>
             </span>
           ) : null
         )}
       </div>
 
-      {caseStudy.cover_url && (
+      {caseStudy.cover_path && (
         <div className="mt-8 relative w-full aspect-video rounded-2xl overflow-hidden border border-ink/10 dark:border-[#2f2c2a]">
-          <Image src={caseStudy.cover_url} alt={caseStudy.title} fill className="object-cover saturate-95 dark:brightness-[0.86] dark:saturate-90" priority />
+          <Image src={caseStudy.cover_path} alt={caseStudy.title} fill className="object-cover saturate-95 dark:brightness-[0.86] dark:saturate-90" priority />
         </div>
       )}
 
@@ -111,10 +104,10 @@ export default function CaseStudyPage({ caseStudy, mdxContent }: { caseStudy: Ca
         <p className="mt-8 text-[16px] leading-[1.9] text-muted_ink max-w-2xl dark:text-[#b8afa8]">{caseStudy.lede}</p>
       )}
 
-      {mdxHtml && (
+      {mdHtml && (
         <section
           className="mt-14"
-          dangerouslySetInnerHTML={{ __html: mdxHtml }}
+          dangerouslySetInnerHTML={{ __html: mdHtml }}
         />
       )}
 
@@ -124,8 +117,7 @@ export default function CaseStudyPage({ caseStudy, mdxContent }: { caseStudy: Ca
           <div className="mt-4 grid md:grid-cols-3 gap-4">
             {results.slice(0, 3).map((item, idx) => (
               <div key={idx} className="bg-ink/[0.03] border border-ink/8 rounded-2xl p-5 dark:bg-[#181615] dark:border-[#2f2c2a]">
-                <p className="text-lg text-ink/85 dark:text-[#e0dbd5]">{item.title || item.value || "Outcome"}</p>
-                {item.description && <p className="text-ink/45 mt-2 dark:text-[#aba39c]">{item.description}</p>}
+                <p className="text-lg text-ink/85 dark:text-[#e0dbd5]">{item.text || "Outcome"}</p>
               </div>
             ))}
           </div>

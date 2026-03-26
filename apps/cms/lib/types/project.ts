@@ -15,7 +15,6 @@ export interface ProjectDB {
   tech: string[] | null
   live_url: string | null
   github_url: string | null
-  case_study_url: string | null
   cover_image_url: string | null
   gallery_image_urls: string[] | null
   gallery_video_urls: string[] | null
@@ -41,7 +40,6 @@ export interface Project {
   tech: string[] | null
   liveUrl: string | null
   githubUrl: string | null
-  caseStudyUrl: string | null
   coverImageUrl: string | null
   galleryImageUrls: string[] | null
   galleryVideoUrls: string[] | null
@@ -64,7 +62,6 @@ export interface ProjectInsert {
   tech?: string[] | null
   liveUrl?: string | null
   githubUrl?: string | null
-  caseStudyUrl?: string | null
   coverImageUrl?: string | null
   galleryImageUrls?: string[] | null
   galleryVideoUrls?: string[] | null

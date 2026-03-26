@@ -1,6 +1,12 @@
 import { supabase } from "../supabase";
 import type { CaseStudy } from "../types";
 
+function resolveCoverPath(cs: any): string | null {
+  if (!cs.cover_path) return null;
+  const { data } = supabase.storage.from("media").getPublicUrl(cs.cover_path);
+  return data.publicUrl;
+}
+
 export async function getAllCaseStudies(): Promise<CaseStudy[]> {
   const { data, error } = await supabase
     .from("case_studies")
@@ -14,7 +20,10 @@ export async function getAllCaseStudies(): Promise<CaseStudy[]> {
     throw error;
   }
 
-  return (data || []) as CaseStudy[];
+  return (data || []).map((row: any) => ({
+    ...row,
+    cover_path: resolveCoverPath(row),
+  })) as CaseStudy[];
 }
 
 export async function getCaseStudyBySlug(slug: string): Promise<CaseStudy | null> {
@@ -30,5 +39,9 @@ export async function getCaseStudyBySlug(slug: string): Promise<CaseStudy | null
     return null;
   }
 
-  return data as CaseStudy;
+  if (!data) return null;
+  return {
+    ...data,
+    cover_path: resolveCoverPath(data),
+  } as CaseStudy;
 }

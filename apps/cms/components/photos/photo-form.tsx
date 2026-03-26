@@ -25,9 +25,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import type { Photo, PhotoInsert, CameraSettings } from "@/lib/types/photo"
-import type { Story } from "@/lib/types/story"
 import { createPhoto, updatePhoto } from "@/lib/actions/photos"
-import { getStories } from "@/lib/actions/stories"
 
 interface PhotoFormProps {
   photo?: Photo | null
@@ -50,7 +48,6 @@ export function PhotoForm({ photo, open, onOpenChange }: PhotoFormProps) {
     cameraSettings: null,
     tags: [],
     featured: false,
-    storyId: null,
   })
 
   const [isLoading, setIsLoading] = useState(false)
@@ -66,15 +63,6 @@ export function PhotoForm({ photo, open, onOpenChange }: PhotoFormProps) {
     camera: "",
     lens: "",
   })
-  const [stories, setStories] = useState<Story[]>([])
-
-  useEffect(() => {
-    if (!open) return
-    getStories()
-      .then(setStories)
-      .catch(() => setStories([]))
-  }, [open])
-
   useEffect(() => {
     if (photo) {
       setFormData({
@@ -87,7 +75,6 @@ export function PhotoForm({ photo, open, onOpenChange }: PhotoFormProps) {
         cameraSettings: photo.cameraSettings,
         tags: photo.tags || [],
         featured: photo.featured,
-        storyId: photo.storyId ?? null,
       })
       setCameraSettings(photo.cameraSettings || {
         aperture: "",
@@ -110,7 +97,6 @@ export function PhotoForm({ photo, open, onOpenChange }: PhotoFormProps) {
         cameraSettings: null,
         tags: [],
         featured: false,
-        storyId: null,
       })
       setCameraSettings({
         aperture: "",
@@ -347,7 +333,7 @@ export function PhotoForm({ photo, open, onOpenChange }: PhotoFormProps) {
           <DialogTitle>{isEditing ? "Edit Photo" : "New Photo"}</DialogTitle>
           <DialogDescription>
             {isEditing
-              ? "Change title, story, or other details anytime — use Story to add this image to a visual story on the Photos site."
+              ? "Change title or other details anytime."
               : "Pick an image and save. Add a title or other details anytime."}
           </DialogDescription>
         </DialogHeader>
@@ -460,34 +446,6 @@ export function PhotoForm({ photo, open, onOpenChange }: PhotoFormProps) {
             <Label htmlFor="featured" className="cursor-pointer">
               Featured photo (show on frontend)
             </Label>
-          </div>
-
-          <div className="flex flex-col gap-3">
-            <Label htmlFor="story">Story (optional)</Label>
-            <Select
-              value={formData.storyId ?? "__none__"}
-              onValueChange={(value) =>
-                setFormData({
-                  ...formData,
-                  storyId: value === "__none__" ? null : value,
-                })
-              }
-            >
-              <SelectTrigger id="story" className="w-full">
-                <SelectValue placeholder="No story" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="__none__">No story</SelectItem>
-                {stories.map((s) => (
-                  <SelectItem key={s.id} value={s.id}>
-                    {s.title}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <p className="text-xs text-muted-foreground">
-              Group this photo under a visual story on the Photos site.
-            </p>
           </div>
 
           <details className="group rounded-lg border p-4 [&_summary::-webkit-details-marker]:hidden">

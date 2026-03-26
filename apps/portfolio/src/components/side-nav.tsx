@@ -8,7 +8,6 @@ import { motion } from "framer-motion";
 const sections = [
   { id: "about", label: "About", href: "/" },
   { id: "work", label: "Work", href: "/work" },
-  { id: "view", label: "The View", href: "/view" },
   { id: "photography", label: "Photography", href: "https://photos.rashodkorala.com" },
   { id: "contact", label: "Contact", href: "/contact" },
 ];
@@ -22,8 +21,6 @@ export default function SideNav() {
       setActive("about");
     } else if (pathname.startsWith("/work") || pathname.startsWith("/projects")) {
       setActive("work");
-    } else if (pathname.startsWith("/view") || pathname.startsWith("/blog")) {
-      setActive("view");
     } else {
       const match = sections.find(
         (s) => s.href !== "/" && pathname.startsWith(s.href)
@@ -65,7 +62,7 @@ export default function SideNav() {
                   }`}
                 />
                 <span className="text-[13px] tracking-[0.06em] font-light">
-                  {id === "view" ? <>The <em className="italic">View</em></> : label}
+                  {label}
                 </span>
               </Link>
             </li>

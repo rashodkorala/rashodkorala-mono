@@ -4,138 +4,137 @@ import { createClient } from "@/lib/supabase/server"
 import { revalidatePath } from "next/cache"
 import type { CaseStudy, CaseStudyDB, CaseStudyFormData } from "@/lib/types/case-study"
 
-const CASE_STUDIES_CONTENT_PREFIX = "case-studies"
-const CASE_STUDIES_MEDIA_PREFIX = "case-studies"
-
-function transformCaseStudy(caseStudy: CaseStudyDB): CaseStudy {
+function transformCaseStudy(cs: CaseStudyDB): CaseStudy {
   return {
-    id: caseStudy.id,
-    userId: caseStudy.user_id,
-    title: caseStudy.title,
-    slug: caseStudy.slug,
-    summary: caseStudy.summary,
-    type: caseStudy.type,
-    status: caseStudy.status,
-    featured: caseStudy.featured,
-    publishedAt: caseStudy.published_at,
-    subjectName: caseStudy.subject_name,
-    subjectType: caseStudy.subject_type,
-    industry: caseStudy.industry,
-    audience: caseStudy.audience,
-    role: caseStudy.role,
-    teamSize: caseStudy.team_size,
-    timeline: caseStudy.timeline,
-    tags: caseStudy.tags || [],
-    skills: caseStudy.skills || [],
-    stack: caseStudy.stack || [],
-    coverUrl: caseStudy.cover_url,
-    galleryUrls: caseStudy.gallery_urls || [],
-    galleryVideoUrls: caseStudy.gallery_video_urls || [],
-    links: caseStudy.links || [],
-    results: caseStudy.results || [],
-    metrics: caseStudy.metrics || [],
-    mdxPath: caseStudy.mdx_path,
-    seoTitle: caseStudy.seo_title,
-    seoDescription: caseStudy.seo_description,
-    views: caseStudy.views,
-    createdAt: caseStudy.created_at,
-    updatedAt: caseStudy.updated_at,
+    id: cs.id,
+    userId: cs.user_id,
+    projectId: cs.project_id,
+    title: cs.title,
+    slug: cs.slug,
+    lede: cs.lede,
+    summary: cs.summary,
+    contentMd: cs.content_md,
+    type: cs.type,
+    status: cs.status,
+    category: cs.category,
+    featured: cs.featured,
+    sortOrder: cs.sort_order,
+    role: cs.role,
+    teamSize: cs.team_size,
+    timeline: cs.timeline,
+    industry: cs.industry,
+    audience: cs.audience,
+    tags: cs.tags || [],
+    skills: cs.skills || [],
+    stack: cs.stack || [],
+    results: cs.results || [],
+    metrics: cs.metrics || [],
+    links: cs.links || [],
+    coverPath: cs.cover_path,
+    galleryPaths: cs.gallery_paths || [],
+    seoTitle: cs.seo_title,
+    seoDescription: cs.seo_description,
+    views: cs.views,
+    publishedAt: cs.published_at,
+    createdAt: cs.created_at,
+    updatedAt: cs.updated_at,
   }
 }
 
-function slugify(text: string): string {
-  return text
-    .toLowerCase()
-    .replace(/[^\w\s-]/g, "")
-    .replace(/\s+/g, "-")
-    .replace(/-+/g, "-")
-    .trim()
+export function getCoverUrl(coverPath: string): string {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!
+  return `${supabaseUrl}/storage/v1/object/public/media/${coverPath}`
 }
 
-function toCaseStudiesContentPath(path: string): string {
-  return path.startsWith(`${CASE_STUDIES_CONTENT_PREFIX}/`)
-    ? path
-    : `${CASE_STUDIES_CONTENT_PREFIX}/${path}`
-}
-
-// Upload MDX content to storage
-export async function uploadMdxToStorage(slug: string, content: string): Promise<string> {
+export async function uploadCaseStudyMedia(file: File, slug: string): Promise<string> {
   const supabase = await createClient()
 
   const {
     data: { user },
   } = await supabase.auth.getUser()
+  if (!user) throw new Error("Unauthorized")
 
-  if (!user) {
-    throw new Error("Unauthorized")
-  }
+  const ext = file.name.split(".").pop()
+  const uuid = crypto.randomUUID()
+  const path = `case-studies/${slug}/assets/${uuid}.${ext}`
 
-  const fileName = `${slug}.mdx`
-  const filePath = `${CASE_STUDIES_CONTENT_PREFIX}/${user.id}/${fileName}`
+  const { error } = await supabase.storage.from("media").upload(path, file)
+  if (error) throw new Error(`Failed to upload media: ${error.message}`)
 
-  // Upload or update the file
-  const { error } = await supabase.storage
-    .from("content")
-    .upload(filePath, content, {
-      contentType: "text/markdown",
-      upsert: true,
-    })
-
-  if (error) {
-    throw new Error(`Failed to upload MDX: ${error.message}`)
-  }
-
-  return filePath
+  return path
 }
 
-// Fetch MDX content from storage
-export async function fetchMdxFromStorage(mdxPath: string): Promise<string> {
-  const supabase = await createClient()
-
-  const normalizedPath = toCaseStudiesContentPath(mdxPath)
-  const { data, error } = await supabase.storage
-    .from("content")
-    .download(normalizedPath)
-
-  if (error) {
-    throw new Error(`Failed to fetch MDX: ${error.message}`)
-  }
-
-  return await data.text()
-}
-
-// Upload media to storage
-export async function uploadMedia(file: File): Promise<string> {
+export async function getCaseStudies(status?: string): Promise<CaseStudy[]> {
   const supabase = await createClient()
 
   const {
     data: { user },
   } = await supabase.auth.getUser()
+  if (!user) throw new Error("Unauthorized")
 
-  if (!user) {
-    throw new Error("Unauthorized")
+  let query = supabase
+    .from("case_studies")
+    .select("*")
+    .eq("user_id", user.id)
+    .order("sort_order", { ascending: true })
+    .order("created_at", { ascending: false })
+
+  if (status) {
+    query = query.eq("status", status)
   }
 
-  const fileExt = file.name.split(".").pop()
-  const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`
-  const filePath = `${CASE_STUDIES_MEDIA_PREFIX}/${user.id}/${fileName}`
+  const { data, error } = await query
+  if (error) throw new Error(`Failed to fetch case studies: ${error.message}`)
 
-  const { error } = await supabase.storage
-    .from("media")
-    .upload(filePath, file)
-
-  if (error) {
-    throw new Error(`Failed to upload media: ${error.message}`)
-  }
-
-  const {
-    data: { publicUrl },
-  } = supabase.storage.from("media").getPublicUrl(filePath)
-
-  return publicUrl
+  return (data || []).map(transformCaseStudy)
 }
 
-// Create or update case study
+export async function getCaseStudyById(id: string): Promise<CaseStudy | null> {
+  const supabase = await createClient()
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  if (!user) throw new Error("Unauthorized")
+
+  const { data, error } = await supabase
+    .from("case_studies")
+    .select("*")
+    .eq("id", id)
+    .eq("user_id", user.id)
+    .single()
+
+  if (error) {
+    if (error.code === "PGRST116") return null
+    throw new Error(`Failed to fetch case study: ${error.message}`)
+  }
+
+  return data ? transformCaseStudy(data) : null
+}
+
+export async function getCaseStudyBySlug(slug: string): Promise<CaseStudy | null> {
+  const supabase = await createClient()
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  if (!user) throw new Error("Unauthorized")
+
+  const { data, error } = await supabase
+    .from("case_studies")
+    .select("*")
+    .eq("slug", slug)
+    .eq("user_id", user.id)
+    .single()
+
+  if (error) {
+    if (error.code === "PGRST116") return null
+    throw new Error(`Failed to fetch case study: ${error.message}`)
+  }
+
+  return data ? transformCaseStudy(data) : null
+}
+
 export async function createOrUpdateCaseStudy(
   formData: CaseStudyFormData,
   existingId?: string
@@ -145,252 +144,134 @@ export async function createOrUpdateCaseStudy(
   const {
     data: { user },
   } = await supabase.auth.getUser()
+  if (!user) throw new Error("Unauthorized")
 
-  if (!user) {
-    throw new Error("Unauthorized")
+  // Handle cover upload
+  let coverPath: string | null = null
+  if (formData.coverFile) {
+    const ext = formData.coverFile.name.split(".").pop()
+    const uuid = crypto.randomUUID()
+    coverPath = `case-studies/${formData.slug}/cover/${uuid}.${ext}`
+    const { error: uploadError } = await supabase.storage
+      .from("media")
+      .upload(coverPath, formData.coverFile, { upsert: true })
+    if (uploadError) throw new Error(`Failed to upload cover: ${uploadError.message}`)
   }
 
-  // Upload MDX to storage
-  const mdxPath = await uploadMdxToStorage(formData.slug, formData.mdxContent)
+  // Handle gallery uploads
+  const galleryPaths: string[] = []
+  for (const file of formData.galleryFiles || []) {
+    const ext = file.name.split(".").pop()
+    const uuid = crypto.randomUUID()
+    const path = `case-studies/${formData.slug}/assets/${uuid}.${ext}`
+    const { error: uploadError } = await supabase.storage.from("media").upload(path, file)
+    if (uploadError) throw new Error(`Failed to upload gallery image: ${uploadError.message}`)
+    galleryPaths.push(path)
+  }
 
-  const caseStudyData = {
+  const payload = {
     user_id: user.id,
+    project_id: formData.projectId || null,
     title: formData.title,
     slug: formData.slug,
+    lede: formData.lede || null,
     summary: formData.summary || null,
+    content_md: formData.contentMd,
     type: formData.type,
     status: formData.status,
+    category: formData.category || null,
     featured: formData.featured,
-    published_at: formData.status === "published" && !formData.publishedAt
-      ? new Date().toISOString()
-      : formData.publishedAt,
-    subject_name: formData.subjectName || null,
-    subject_type: formData.subjectType || null,
-    industry: formData.industry || null,
-    audience: formData.audience || null,
+    sort_order: formData.sortOrder,
     role: formData.role || null,
     team_size: formData.teamSize || null,
     timeline: formData.timeline || null,
+    industry: formData.industry || null,
+    audience: formData.audience || null,
     tags: formData.tags || [],
     skills: formData.skills || [],
     stack: formData.stack || [],
-    cover_url: formData.coverUrl || null,
-    gallery_urls: formData.galleryUrls || [],
-    gallery_video_urls: formData.galleryVideoUrls || [],
-    links: formData.links || [],
     results: formData.results || [],
     metrics: formData.metrics || [],
-    mdx_path: mdxPath,
+    links: formData.links || [],
+    cover_path: coverPath,
+    gallery_paths: galleryPaths,
     seo_title: formData.seoTitle || null,
     seo_description: formData.seoDescription || null,
+    published_at:
+      formData.status === "published" && !formData.publishedAt
+        ? new Date().toISOString()
+        : formData.publishedAt || null,
   }
 
   let data
   let error
 
   if (existingId) {
-    // Update existing
     const result = await supabase
       .from("case_studies")
-      .update(caseStudyData)
+      .update(payload)
       .eq("id", existingId)
       .eq("user_id", user.id)
       .select()
       .single()
-
     data = result.data
     error = result.error
   } else {
-    // Create new
     const result = await supabase
       .from("case_studies")
-      .insert({ ...caseStudyData, views: 0 })
+      .insert({ ...payload, views: 0 })
       .select()
       .single()
-
     data = result.data
     error = result.error
   }
 
-  if (error) {
-    throw new Error(`Failed to save case study: ${error.message}`)
-  }
+  if (error) throw new Error(`Failed to save case study: ${error.message}`)
 
-  revalidatePath("/protected/work")
-  revalidatePath(`/protected/work/${formData.slug}`)
   revalidatePath("/protected/case-studies")
-  revalidatePath(`/protected/case-studies/${formData.slug}`)
+  revalidatePath("/protected/work")
 
   return transformCaseStudy(data)
 }
 
-// Get all case studies for admin
-export async function getCaseStudies(status?: string): Promise<CaseStudy[]> {
-  const supabase = await createClient()
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
-  if (!user) {
-    throw new Error("Unauthorized")
-  }
-
-  let query = supabase
-    .from("case_studies")
-    .select("*")
-    .eq("user_id", user.id)
-    .order("created_at", { ascending: false })
-
-  if (status) {
-    query = query.eq("status", status)
-  }
-
-  const { data, error } = await query
-
-  if (error) {
-    throw new Error(`Failed to fetch case studies: ${error.message}`)
-  }
-
-  return (data || []).map(transformCaseStudy)
-}
-
-// Get published case studies for public
-export async function getPublishedCaseStudies(): Promise<CaseStudy[]> {
-  const supabase = await createClient()
-
-  const { data, error } = await supabase
-    .from("case_studies")
-    .select("*")
-    .eq("status", "published")
-    .order("featured", { ascending: false })
-    .order("published_at", { ascending: false })
-
-  if (error) {
-    throw new Error(`Failed to fetch published case studies: ${error.message}`)
-  }
-
-  return (data || []).map(transformCaseStudy)
-}
-
-// Get single case study by ID (admin)
-export async function getCaseStudy(id: string): Promise<CaseStudy | null> {
-  const supabase = await createClient()
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
-  if (!user) {
-    throw new Error("Unauthorized")
-  }
-
-  const { data, error } = await supabase
-    .from("case_studies")
-    .select("*")
-    .eq("id", id)
-    .eq("user_id", user.id)
-    .single()
-
-  if (error) {
-    if (error.code === "PGRST116") {
-      return null
-    }
-    throw new Error(`Failed to fetch case study: ${error.message}`)
-  }
-
-  return data ? transformCaseStudy(data) : null
-}
-
-// Get single case study by slug (admin)
-export async function getCaseStudyBySlugAdmin(slug: string): Promise<CaseStudy | null> {
-  const supabase = await createClient()
-
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
-  if (!user) {
-    throw new Error("Unauthorized")
-  }
-
-  const { data, error } = await supabase
-    .from("case_studies")
-    .select("*")
-    .eq("slug", slug)
-    .eq("user_id", user.id)
-    .single()
-
-  if (error) {
-    if (error.code === "PGRST116") {
-      return null
-    }
-    throw new Error(`Failed to fetch case study: ${error.message}`)
-  }
-
-  return data ? transformCaseStudy(data) : null
-}
-
-// Get single published case study by slug (public)
-export async function getCaseStudyBySlug(slug: string): Promise<CaseStudy | null> {
-  const supabase = await createClient()
-
-  const { data, error } = await supabase
-    .from("case_studies")
-    .select("*")
-    .eq("slug", slug)
-    .eq("status", "published")
-    .single()
-
-  if (error) {
-    if (error.code === "PGRST116") {
-      return null
-    }
-    throw new Error(`Failed to fetch case study: ${error.message}`)
-  }
-
-  return data ? transformCaseStudy(data) : null
-}
-
-// Delete case study
 export async function deleteCaseStudy(id: string): Promise<void> {
   const supabase = await createClient()
 
   const {
     data: { user },
   } = await supabase.auth.getUser()
+  if (!user) throw new Error("Unauthorized")
 
-  if (!user) {
-    throw new Error("Unauthorized")
+  // Get slug to delete storage files
+  const cs = await getCaseStudyById(id)
+  if (cs) {
+    const { data: coverFiles } = await supabase.storage
+      .from("media")
+      .list(`case-studies/${cs.slug}/cover`)
+    if (coverFiles?.length) {
+      await supabase.storage
+        .from("media")
+        .remove(coverFiles.map((f) => `case-studies/${cs.slug}/cover/${f.name}`))
+    }
+
+    const { data: assetFiles } = await supabase.storage
+      .from("media")
+      .list(`case-studies/${cs.slug}/assets`)
+    if (assetFiles?.length) {
+      await supabase.storage
+        .from("media")
+        .remove(assetFiles.map((f) => `case-studies/${cs.slug}/assets/${f.name}`))
+    }
   }
 
-  // Get the case study to find the mdx_path
-  const caseStudy = await getCaseStudy(id)
-
-  if (caseStudy) {
-    // Delete MDX file from storage
-    const normalizedPath = toCaseStudiesContentPath(caseStudy.mdxPath)
-    await supabase.storage
-      .from("content")
-      .remove([normalizedPath])
-  }
-
-  // Delete from database
   const { error } = await supabase
     .from("case_studies")
     .delete()
     .eq("id", id)
     .eq("user_id", user.id)
 
-  if (error) {
-    throw new Error(`Failed to delete case study: ${error.message}`)
-  }
+  if (error) throw new Error(`Failed to delete case study: ${error.message}`)
 
-  revalidatePath("/protected/work")
   revalidatePath("/protected/case-studies")
+  revalidatePath("/protected/work")
 }
-
-
-
-
-
