@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { unstable_cache } from "next/cache";
 import { supabase } from "@/lib/supabase";
 import BlogList from "@/src/components/blog/blogList";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
 
 export const revalidate = 3600;
 
@@ -46,23 +48,26 @@ export default async function ViewPage() {
   const blogs = await getBlogs();
 
   return (
-    <div className="min-h-screen bg-white dark:bg-black text-black dark:text-white">
-      <div className="px-6 pb-24">
-        <div className="max-w-6xl mx-auto">
-          <div className="pt-24 mb-16">
-            <p className="text-[11px] uppercase tracking-[0.08em] text-black/40 dark:text-white/40 mb-3">
-              The View
-            </p>
-            <h1 className="text-4xl md:text-5xl font-light tracking-tight mb-4">
-              how I view <span className="font-medium">things</span>
-            </h1>
-            <p className="text-lg text-black/50 dark:text-white/50 font-light max-w-3xl">
-              Opinions, observations, and technology writing.
-            </p>
-          </div>
+    <div className="min-h-screen bg-black text-white py-12 px-6 md:px-12">
+      <div className="max-w-4xl">
+        <Link
+          href="/"
+          className="inline-flex items-center gap-2 text-sm text-white/40 hover:text-white transition-colors group mb-12"
+        >
+          <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" strokeWidth={1.5} />
+          Back
+        </Link>
 
-          <BlogList blogs={blogs} basePath="/view" />
+        <div className="mb-12">
+          <h1 className="text-3xl md:text-4xl font-light tracking-tight mb-4">
+            The View
+          </h1>
+          <p className="text-white/40 font-light max-w-2xl">
+            Opinions, observations, and technology writing.
+          </p>
         </div>
+
+        <BlogList blogs={blogs} basePath="/view" />
       </div>
     </div>
   );

@@ -4,8 +4,6 @@ import '@/styles/globals.css'
 import { PostHogProvider } from '@rashodkorala/posthog-next'
 import { Geist_Mono, Geist } from 'next/font/google';
 import Footer from '@/src/components/footer';
-import Navbar from '@/src/components/navbar';
-import Provider from '@/lib/provider';
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -75,20 +73,13 @@ export default function RootLayout({
     children: React.ReactNode
 }) {
     return (
-        <>
-            <html lang="en" suppressHydrationWarning  >
-                <body className={`${geistSans.variable} ${geistMono.variable}`}>
-                    <PostHogProvider app="portfolio">
-                        <Provider>
-                            <Navbar />
-                            <main className='max-w-[2800px] mx-auto'>
-                                {children}
-                                <Footer />
-                            </main>
-                        </Provider>
-                    </PostHogProvider>
-                </body>
-            </html>
-        </>
+        <html lang="en" className="dark">
+            <body className={`${geistSans.variable} ${geistMono.variable} bg-black text-white`}>
+                <PostHogProvider app="portfolio">
+                    {children}
+                    <Footer />
+                </PostHogProvider>
+            </body>
+        </html>
     )
 }

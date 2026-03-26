@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { motion, useInView } from 'framer-motion';
-import { ArrowUpRight } from 'lucide-react';
+import { ArrowUpRight, ArrowLeft } from 'lucide-react';
 
 import { getAllProjects } from '@/lib/supabase/projects';
 import { Project } from '@/lib/types';
@@ -14,7 +14,6 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-50px" });
 
-  // Get year from created_at or updated_at
   const getYear = () => {
     if (project.created_at) {
       return new Date(project.created_at).getFullYear().toString();
@@ -28,24 +27,24 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
         ref={ref}
         initial={{ opacity: 0, y: 40 }}
         animate={isInView ? { opacity: 1, y: 0 } : {}}
-        transition={{ duration: 0.6, delay: index * 0.1 }}
+        transition={{ duration: 0.6, delay: index * 0.08 }}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
-        className="group border-t border-black/10 dark:border-white/10 py-8 md:py-12 cursor-pointer"
+        className="group border-t border-white/10 py-8 cursor-pointer"
       >
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div className="flex-1">
-            <div className="flex items-center gap-4 mb-3">
-              <span className="text-[11px] uppercase tracking-[0.08em] text-black/40 dark:text-white/40">{getYear()}</span>
+        <div className="grid md:grid-cols-[1fr_180px] gap-6 items-start">
+          <div>
+            <div className="flex items-center gap-3 mb-3 flex-wrap">
+              <span className="text-[11px] uppercase tracking-[0.08em] text-white/25 font-mono">{getYear()}</span>
               {project.tech && project.tech.length > 0 && (
                 <div className="flex gap-2 flex-wrap">
                   {project.tech.slice(0, 3).map(tag => (
-                    <span key={tag} className="text-[11px] uppercase tracking-[0.08em] px-2 py-1 border border-black/10 dark:border-white/10 rounded-full text-black/50 dark:text-white/50">
+                    <span key={tag} className="text-[11px] uppercase tracking-[0.08em] px-2.5 py-1 border border-white/10 rounded-full text-white/30">
                       {tag}
                     </span>
                   ))}
                   {project.tech.length > 3 && (
-                    <span className="text-[11px] uppercase tracking-[0.08em] px-2 py-1 border border-black/10 dark:border-white/10 rounded-full text-black/50 dark:text-white/50">
+                    <span className="text-[11px] uppercase tracking-[0.08em] px-2.5 py-1 border border-white/10 rounded-full text-white/30">
                       +{project.tech.length - 3}
                     </span>
                   )}
@@ -53,18 +52,18 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
               )}
             </div>
 
-            <h3 className="text-2xl md:text-3xl font-light tracking-tight mb-2 flex items-center gap-3 text-black dark:text-white">
+            <h3 className="text-xl md:text-2xl font-light tracking-tight mb-2 flex items-center gap-2">
               {project.title}
               <motion.span
                 animate={{ x: isHovered ? 4 : 0, y: isHovered ? -4 : 0 }}
                 transition={{ duration: 0.2 }}
               >
-                <ArrowUpRight className="w-5 h-5 text-black/30 dark:text-white/30 group-hover:text-black dark:group-hover:text-white transition-colors" strokeWidth={1.5} />
+                <ArrowUpRight className="w-4 h-4 text-white/15 group-hover:text-white transition-colors" strokeWidth={1.5} />
               </motion.span>
             </h3>
 
             {project.subtitle && (
-              <p className="text-black/60 dark:text-white/60 leading-relaxed max-w-xl">
+              <p className="text-white/40 leading-relaxed max-w-lg text-[15px]">
                 {project.subtitle}
               </p>
             )}
@@ -73,14 +72,14 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
           {project.cover_image_url && (
             <motion.div
               animate={{ scale: isHovered ? 1 : 0.95, opacity: isHovered ? 1 : 0.7 }}
-              className="relative w-full md:w-48 h-32 bg-black/5 dark:bg-white/5 rounded-lg overflow-hidden"
+              className="relative w-full h-28 bg-white/5 rounded-lg overflow-hidden"
             >
               <Image
                 src={project.cover_image_url}
                 alt={project.title}
                 fill
                 className="object-cover"
-                sizes="(max-width: 768px) 100vw, 192px"
+                sizes="180px"
               />
             </motion.div>
           )}
@@ -119,20 +118,19 @@ const Projects: React.FC<ProjectsProps> = ({ initialProjects = [] }) => {
         setIsLoading(false);
       }
     }
-
     fetchProjects();
   }, [initialProjects]);
 
   if (isLoading) {
     return (
-      <section ref={ref} className="bg-white dark:bg-black text-black dark:text-white py-24 px-6">
-        <div className="max-w-6xl mx-auto">
+      <section ref={ref} className="bg-black text-white py-12 px-6 md:px-12">
+        <div className="max-w-4xl">
           <div className="space-y-8">
             {[...Array(4)].map((_, index) => (
-              <div key={index} className="animate-pulse border-t border-black/10 dark:border-white/10 py-8 md:py-12">
-                <div className="h-6 bg-black/5 dark:bg-white/5 rounded w-1/4 mb-4" />
-                <div className="h-8 bg-black/5 dark:bg-white/5 rounded w-1/2 mb-2" />
-                <div className="h-4 bg-black/5 dark:bg-white/5 rounded w-3/4" />
+              <div key={index} className="animate-pulse border-t border-white/10 py-8">
+                <div className="h-4 bg-white/5 rounded w-1/4 mb-4" />
+                <div className="h-6 bg-white/5 rounded w-1/2 mb-2" />
+                <div className="h-4 bg-white/5 rounded w-3/4" />
               </div>
             ))}
           </div>
@@ -143,14 +141,14 @@ const Projects: React.FC<ProjectsProps> = ({ initialProjects = [] }) => {
 
   if (error) {
     return (
-      <section ref={ref} className="bg-white dark:bg-black text-black dark:text-white py-24 px-6">
-        <div className="max-w-6xl mx-auto">
+      <section ref={ref} className="bg-black text-white py-12 px-6 md:px-12">
+        <div className="max-w-4xl">
           <div className="flex items-center justify-center min-h-[60vh]">
             <div className="text-center space-y-4">
-              <p className="text-red-600 dark:text-red-400 text-lg">{error}</p>
+              <p className="text-red-400 text-lg">{error}</p>
               <button
                 onClick={() => window.location.reload()}
-                className="px-6 py-2 bg-black text-white dark:bg-white dark:text-black rounded hover:bg-black/80 dark:hover:bg-white/80 transition-colors"
+                className="px-6 py-2 bg-white text-black rounded hover:bg-white/80 transition-colors"
               >
                 Try Again
               </button>
@@ -162,20 +160,25 @@ const Projects: React.FC<ProjectsProps> = ({ initialProjects = [] }) => {
   }
 
   return (
-    <section ref={ref} className="bg-white dark:bg-black text-black dark:text-white py-24 px-6">
-      <div className="max-w-6xl mx-auto">
+    <section ref={ref} className="bg-black text-white py-12 px-6 md:px-12">
+      <div className="max-w-4xl">
+        <Link
+          href="/"
+          className="inline-flex items-center gap-2 text-sm text-white/40 hover:text-white transition-colors group mb-12"
+        >
+          <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" strokeWidth={1.5} />
+          Back
+        </Link>
+
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.8 }}
-          className="mb-16"
+          className="mb-12"
         >
-          <p className="text-[11px] tracking-[0.08em] uppercase text-black/40 dark:text-white/40 mb-3">
-            Projects
-          </p>
-          <h2 className="text-4xl md:text-5xl font-light tracking-tight text-black dark:text-white">
-            Selected <span className="font-medium">projects</span>
-          </h2>
+          <h1 className="text-3xl md:text-4xl font-light tracking-tight">
+            All Projects
+          </h1>
         </motion.div>
 
         <div>
@@ -185,7 +188,7 @@ const Projects: React.FC<ProjectsProps> = ({ initialProjects = [] }) => {
             ))
           ) : (
             <div className="flex items-center justify-center min-h-[40vh]">
-              <p className="text-black/50 dark:text-white/50 font-light">No projects found</p>
+              <p className="text-white/30 font-light">No projects found</p>
             </div>
           )}
         </div>

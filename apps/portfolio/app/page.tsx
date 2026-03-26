@@ -1,11 +1,12 @@
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, ArrowRight, Mail, Github, Linkedin } from "lucide-react";
 import { Metadata } from "next";
 import { getCachedCaseStudies } from "@/lib/supabase/cached-case-studies";
 import { getCachedAllProjects } from "@/lib/supabase/cached-projects";
 import { unstable_cache } from "next/cache";
 import { supabase } from "@/lib/supabase";
+import SideNav from "@/src/components/side-nav";
 
 export const revalidate = 3600;
 
@@ -34,7 +35,7 @@ interface BlogPost {
   tags: string[] | null;
 }
 
-const getRecentBlogs = unstable_cache(
+const getBlogs = unstable_cache(
   async (): Promise<BlogPost[]> => {
     const { data, error } = await supabase
       .from("blogs")
@@ -58,237 +59,201 @@ export default async function Index() {
   const [caseStudies, projects, blogs] = await Promise.all([
     getCachedCaseStudies(),
     getCachedAllProjects(),
-    getRecentBlogs(),
+    getBlogs(),
   ]);
 
-  const featuredCaseStudies = caseStudies.slice(0, 3);
-  const featuredProjects = projects.slice(0, 3);
+  const recentWork = caseStudies.slice(0, 3);
+  const recentProjects = projects.slice(0, 3);
 
   return (
-    <>
-      {/* Hero */}
-      <section className="py-24 md:py-32 px-6">
-        <div className="max-w-6xl mx-auto">
-          <p className="text-[11px] uppercase tracking-[0.3em] text-black/40 dark:text-white/40 mb-6">
-            Software Developer
-          </p>
-          <h1 className="text-5xl md:text-7xl lg:text-8xl font-light tracking-tight leading-[1.05]">
-            Building products
-            <br />
-            <span className="font-medium">that matter</span>
-          </h1>
-          <p className="mt-8 text-lg md:text-xl text-black/50 dark:text-white/50 font-light max-w-2xl leading-relaxed">
-            Full-stack engineer specializing in creating elegant, performant applications.
-            Currently focused on building a startup reimagining how people interact with technology.
-          </p>
-        </div>
-      </section>
+    <div className="relative">
+      <SideNav />
 
-      {/* Case Studies */}
-      <section className="py-16 px-6 border-t border-black/5 dark:border-white/5">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex items-end justify-between mb-12">
-            <div>
-              <p className="text-[11px] uppercase tracking-[0.08em] text-black/40 dark:text-white/40 mb-3">
-                Case Studies
-              </p>
-              <h2 className="text-3xl md:text-4xl font-light tracking-tight">
-                Selected <span className="font-medium">work</span>
-              </h2>
+      {/* Main content — offset on large screens for side nav */}
+      <div className="lg:ml-56">
+        {/* Header */}
+        <header className="pt-16 pb-24 px-6 md:px-12">
+          <div className="max-w-4xl">
+            <h1 className="text-4xl md:text-5xl font-light tracking-tight leading-[1.15] mb-6">
+              Rashod Korala
+            </h1>
+            <p className="text-lg text-white/50 font-light max-w-xl leading-relaxed">
+              Full-stack engineer building elegant, performant applications.
+              Currently focused on a startup reimagining how people interact with technology.
+            </p>
+            <div className="flex items-center gap-5 mt-6">
+              <a href="mailto:hello@rashodkorala.com" className="text-white/40 hover:text-white transition-colors">
+                <Mail className="w-[18px] h-[18px]" strokeWidth={1.5} />
+              </a>
+              <a href="https://github.com/rashodkorala" target="_blank" rel="noopener noreferrer" className="text-white/40 hover:text-white transition-colors">
+                <Github className="w-[18px] h-[18px]" strokeWidth={1.5} />
+              </a>
+              <a href="https://linkedin.com/in/rashodk" target="_blank" rel="noopener noreferrer" className="text-white/40 hover:text-white transition-colors">
+                <Linkedin className="w-[18px] h-[18px]" strokeWidth={1.5} />
+              </a>
             </div>
-            <Link
-              href="/work"
-              className="hidden sm:inline-flex items-center gap-1.5 text-sm text-black/40 dark:text-white/40 hover:text-black dark:hover:text-white transition-colors group"
-            >
-              View all
-              <ArrowUpRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" strokeWidth={1.5} />
-            </Link>
           </div>
+        </header>
 
-          <div className="space-y-0">
-            {featuredCaseStudies.map((item) => (
-              <Link
-                key={item.id}
-                href={`/work/${item.slug}`}
-                className="block border-t border-black/10 dark:border-white/10 py-8 group"
-              >
-                <div className="grid md:grid-cols-[1fr_200px] gap-6 items-center">
-                  <div>
-                    <div className="flex items-center gap-2 mb-2">
-                      {item.category && (
-                        <span className="text-[11px] px-2 py-1 rounded-full border border-black/10 dark:border-white/10 text-black/60 dark:text-white/60 uppercase tracking-[0.08em]">
-                          {item.category}
-                        </span>
+        {/* Work / Case Studies */}
+        <section id="work" className="px-6 md:px-12 pb-24">
+          <div className="max-w-4xl">
+            <h2 className="text-3xl md:text-4xl font-light tracking-tight mb-12">
+              Work
+            </h2>
+
+            <div>
+              {recentWork.map((item) => (
+                <Link
+                  key={item.id}
+                  href={`/work/${item.slug}`}
+                  className="block border-t border-white/10 py-8 group"
+                >
+                  <div className="grid md:grid-cols-[1fr_180px] gap-6 items-start">
+                    <div>
+                      <div className="flex items-center gap-2 mb-3 flex-wrap">
+                        {item.category && (
+                          <span className="text-[11px] px-2.5 py-1 rounded-full border border-white/10 text-white/60 uppercase tracking-[0.08em]">
+                            {item.category}
+                          </span>
+                        )}
+                        {item.tags?.slice(0, 2).map((tag: string) => (
+                          <span
+                            key={tag}
+                            className="text-[11px] px-2.5 py-1 rounded-full border border-white/10 text-white/30 uppercase tracking-[0.08em]"
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                      <h3 className="text-xl md:text-2xl font-light tracking-tight flex items-center gap-2">
+                        {item.title}
+                        <ArrowUpRight className="w-4 h-4 text-white/15 group-hover:text-white transition-colors" strokeWidth={1.5} />
+                      </h3>
+                      {item.summary && (
+                        <p className="text-white/40 mt-2 font-light leading-relaxed max-w-lg text-[15px]">
+                          {item.summary}
+                        </p>
                       )}
-                      {item.tags?.slice(0, 2).map((tag: string) => (
-                        <span
-                          key={tag}
-                          className="text-[11px] px-2 py-1 rounded-full border border-black/10 dark:border-white/10 text-black/40 dark:text-white/40 uppercase tracking-[0.08em]"
-                        >
-                          {tag}
-                        </span>
-                      ))}
                     </div>
-
-                    <h3 className="text-2xl md:text-3xl font-light tracking-tight flex items-center gap-2">
-                      {item.title}
-                      <ArrowUpRight className="w-4 h-4 text-black/20 dark:text-white/20 group-hover:text-black dark:group-hover:text-white transition-colors" strokeWidth={1.5} />
-                    </h3>
-                    {item.summary && (
-                      <p className="text-black/50 dark:text-white/50 mt-2 font-light max-w-xl">
-                        {item.summary}
-                      </p>
+                    {item.cover_url && (
+                      <div className="relative w-full h-28 rounded-lg overflow-hidden border border-white/10">
+                        <Image src={item.cover_url} alt={item.title} fill className="object-cover opacity-70 group-hover:opacity-100 transition-opacity" sizes="180px" />
+                      </div>
                     )}
                   </div>
+                </Link>
+              ))}
+              {recentWork.length === 0 && (
+                <p className="text-white/30 font-light py-8 border-t border-white/10">No case studies yet.</p>
+              )}
+            </div>
 
-                  {item.cover_url && (
-                    <div className="relative w-full h-32 rounded-lg overflow-hidden border border-black/10 dark:border-white/10">
-                      <Image
-                        src={item.cover_url}
-                        alt={item.title}
-                        fill
-                        className="object-cover opacity-80 group-hover:opacity-100 transition-opacity"
-                        sizes="200px"
-                      />
-                    </div>
-                  )}
-                </div>
+            {caseStudies.length > 3 && (
+              <Link
+                href="/work"
+                className="inline-flex items-center gap-2 mt-4 text-sm text-white/40 hover:text-white transition-colors group"
+              >
+                View all work
+                <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" strokeWidth={1.5} />
               </Link>
-            ))}
+            )}
           </div>
+        </section>
 
-          <Link
-            href="/work"
-            className="sm:hidden inline-flex items-center gap-1.5 text-sm text-black/40 dark:text-white/40 hover:text-black dark:hover:text-white transition-colors mt-6 group"
-          >
-            View all case studies
-            <ArrowUpRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" strokeWidth={1.5} />
-          </Link>
-        </div>
-      </section>
+        {/* Projects */}
+        <section id="projects" className="px-6 md:px-12 pb-24">
+          <div className="max-w-4xl">
+            <h2 className="text-3xl md:text-4xl font-light tracking-tight mb-12">
+              Projects
+            </h2>
 
-      {/* Projects */}
-      <section className="py-16 px-6 border-t border-black/5 dark:border-white/5">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex items-end justify-between mb-12">
             <div>
-              <p className="text-[11px] uppercase tracking-[0.08em] text-black/40 dark:text-white/40 mb-3">
-                Projects
-              </p>
-              <h2 className="text-3xl md:text-4xl font-light tracking-tight">
-                Things I&apos;ve <span className="font-medium">built</span>
-              </h2>
-            </div>
-            <Link
-              href="/projects"
-              className="hidden sm:inline-flex items-center gap-1.5 text-sm text-black/40 dark:text-white/40 hover:text-black dark:hover:text-white transition-colors group"
-            >
-              View all
-              <ArrowUpRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" strokeWidth={1.5} />
-            </Link>
-          </div>
-
-          <div className="space-y-0">
-            {featuredProjects.map((project) => (
-              <Link
-                key={project.id}
-                href={`/projects/${project.slug}`}
-                className="block border-t border-black/10 dark:border-white/10 py-8 group"
-              >
-                <div className="grid md:grid-cols-[1fr_200px] gap-6 items-center">
-                  <div>
-                    <div className="flex items-center gap-3 mb-2">
-                      <span className="text-[11px] uppercase tracking-[0.08em] text-black/30 dark:text-white/30">
-                        {project.created_at
-                          ? new Date(project.created_at).getFullYear()
-                          : new Date().getFullYear()}
-                      </span>
-                      {project.tech?.slice(0, 3).map((tag: string) => (
-                        <span
-                          key={tag}
-                          className="text-[11px] uppercase tracking-[0.08em] px-2 py-1 border border-black/10 dark:border-white/10 rounded-full text-black/40 dark:text-white/40"
-                        >
-                          {tag}
+              {recentProjects.map((project) => (
+                <Link
+                  key={project.id}
+                  href={`/projects/${project.slug}`}
+                  className="block border-t border-white/10 py-8 group"
+                >
+                  <div className="grid md:grid-cols-[1fr_180px] gap-6 items-start">
+                    <div>
+                      <div className="flex items-center gap-3 mb-3 flex-wrap">
+                        <span className="text-[11px] uppercase tracking-[0.08em] text-white/25 font-mono">
+                          {project.created_at
+                            ? new Date(project.created_at).getFullYear()
+                            : new Date().getFullYear()}
                         </span>
-                      ))}
+                        {project.tech?.slice(0, 3).map((tag: string) => (
+                          <span
+                            key={tag}
+                            className="text-[11px] uppercase tracking-[0.08em] px-2.5 py-1 border border-white/10 rounded-full text-white/30"
+                          >
+                            {tag}
+                          </span>
+                        ))}
+                      </div>
+                      <h3 className="text-xl md:text-2xl font-light tracking-tight flex items-center gap-2">
+                        {project.title}
+                        <ArrowUpRight className="w-4 h-4 text-white/15 group-hover:text-white transition-colors" strokeWidth={1.5} />
+                      </h3>
+                      {project.subtitle && (
+                        <p className="text-white/40 mt-2 font-light leading-relaxed max-w-lg text-[15px]">
+                          {project.subtitle}
+                        </p>
+                      )}
                     </div>
-
-                    <h3 className="text-2xl md:text-3xl font-light tracking-tight flex items-center gap-2">
-                      {project.title}
-                      <ArrowUpRight className="w-4 h-4 text-black/20 dark:text-white/20 group-hover:text-black dark:group-hover:text-white transition-colors" strokeWidth={1.5} />
-                    </h3>
-                    {project.subtitle && (
-                      <p className="text-black/50 dark:text-white/50 mt-2 font-light max-w-xl">
-                        {project.subtitle}
-                      </p>
+                    {project.cover_image_url && (
+                      <div className="relative w-full h-28 rounded-lg overflow-hidden border border-white/10">
+                        <Image src={project.cover_image_url} alt={project.title} fill className="object-cover opacity-70 group-hover:opacity-100 transition-opacity" sizes="180px" />
+                      </div>
                     )}
                   </div>
-
-                  {project.cover_image_url && (
-                    <div className="relative w-full h-32 rounded-lg overflow-hidden border border-black/10 dark:border-white/10">
-                      <Image
-                        src={project.cover_image_url}
-                        alt={project.title}
-                        fill
-                        className="object-cover opacity-80 group-hover:opacity-100 transition-opacity"
-                        sizes="200px"
-                      />
-                    </div>
-                  )}
-                </div>
-              </Link>
-            ))}
-          </div>
-
-          <Link
-            href="/projects"
-            className="sm:hidden inline-flex items-center gap-1.5 text-sm text-black/40 dark:text-white/40 hover:text-black dark:hover:text-white transition-colors mt-6 group"
-          >
-            View all projects
-            <ArrowUpRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" strokeWidth={1.5} />
-          </Link>
-        </div>
-      </section>
-
-      {/* Blog */}
-      {blogs.length > 0 && (
-        <section className="py-16 px-6 border-t border-black/5 dark:border-white/5">
-          <div className="max-w-6xl mx-auto">
-            <div className="flex items-end justify-between mb-12">
-              <div>
-                <p className="text-[11px] uppercase tracking-[0.08em] text-black/40 dark:text-white/40 mb-3">
-                  The View
-                </p>
-                <h2 className="text-3xl md:text-4xl font-light tracking-tight">
-                  Recent <span className="font-medium">writing</span>
-                </h2>
-              </div>
-              <Link
-                href="/blog"
-                className="hidden sm:inline-flex items-center gap-1.5 text-sm text-black/40 dark:text-white/40 hover:text-black dark:hover:text-white transition-colors group"
-              >
-                Read all
-                <ArrowUpRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" strokeWidth={1.5} />
-              </Link>
+                </Link>
+              ))}
+              {recentProjects.length === 0 && (
+                <p className="text-white/30 font-light py-8 border-t border-white/10">No projects yet.</p>
+              )}
             </div>
 
-            <div className="space-y-0">
+            {projects.length > 3 && (
+              <Link
+                href="/projects"
+                className="inline-flex items-center gap-2 mt-4 text-sm text-white/40 hover:text-white transition-colors group"
+              >
+                View all projects
+                <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" strokeWidth={1.5} />
+              </Link>
+            )}
+          </div>
+        </section>
+
+        {/* Blog */}
+        <section id="blog" className="px-6 md:px-12 pb-24">
+          <div className="max-w-4xl">
+            <h2 className="text-3xl md:text-4xl font-light tracking-tight mb-12">
+              Blog
+            </h2>
+
+            <div>
               {blogs.map((post) => (
                 <Link
                   key={post.id}
                   href={`/blog/${post.slug}`}
-                  className="block border-t border-black/10 dark:border-white/10 py-8 group"
+                  className="block border-t border-white/10 py-8 group"
                 >
-                  <div className="flex items-center gap-3 mb-2">
-                    <span className="text-[11px] text-black/30 dark:text-white/30 font-mono">
+                  <div className="flex items-center gap-3 mb-3 flex-wrap">
+                    <span className="text-[11px] text-white/25 font-mono">
                       {post.published_at
-                        ? new Date(post.published_at).getFullYear()
-                        : new Date().getFullYear()}
+                        ? new Date(post.published_at).toLocaleDateString("en-US", {
+                            year: "numeric",
+                            month: "short",
+                          })
+                        : ""}
                     </span>
                     {post.tags?.slice(0, 2).map((tag: string) => (
                       <span
                         key={tag}
-                        className="text-[11px] px-2 py-1 border border-black/10 dark:border-white/10 rounded-full text-black/40 dark:text-white/40"
+                        className="text-[11px] px-2.5 py-1 border border-white/10 rounded-full text-white/30"
                       >
                         {tag}
                       </span>
@@ -296,57 +261,81 @@ export default async function Index() {
                   </div>
                   <h3 className="text-xl md:text-2xl font-light tracking-tight flex items-center gap-2">
                     {post.title}
-                    <ArrowUpRight className="w-4 h-4 text-black/20 dark:text-white/20 group-hover:text-black dark:group-hover:text-white transition-colors" strokeWidth={1.5} />
+                    <ArrowUpRight className="w-4 h-4 text-white/15 group-hover:text-white transition-colors" strokeWidth={1.5} />
                   </h3>
                   {post.excerpt && (
-                    <p className="text-black/50 dark:text-white/50 mt-2 font-light max-w-2xl">
+                    <p className="text-white/40 mt-2 font-light leading-relaxed max-w-lg text-[15px]">
                       {post.excerpt}
                     </p>
                   )}
                 </Link>
               ))}
+              {blogs.length === 0 && (
+                <p className="text-white/30 font-light py-8 border-t border-white/10">No posts yet.</p>
+              )}
             </div>
 
             <Link
               href="/blog"
-              className="sm:hidden inline-flex items-center gap-1.5 text-sm text-black/40 dark:text-white/40 hover:text-black dark:hover:text-white transition-colors mt-6 group"
+              className="inline-flex items-center gap-2 mt-4 text-sm text-white/40 hover:text-white transition-colors group"
             >
-              Read all posts
-              <ArrowUpRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" strokeWidth={1.5} />
+              View all posts
+              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" strokeWidth={1.5} />
             </Link>
           </div>
         </section>
-      )}
 
-      {/* About CTA */}
-      <section className="py-24 px-6 border-t border-black/5 dark:border-white/5">
-        <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-16 items-center">
-          <div>
-            <p className="text-[11px] uppercase tracking-[0.3em] text-black/40 dark:text-white/40 mb-4">
+        {/* About */}
+        <section id="about" className="px-6 md:px-12 pb-24">
+          <div className="max-w-4xl">
+            <h2 className="text-3xl md:text-4xl font-light tracking-tight mb-12">
               About
-            </p>
-            <h2 className="text-3xl md:text-4xl font-light tracking-tight mb-6">
-              Where curiosity
-              <br />
-              <span className="font-medium">meets execution</span>
             </h2>
+
+            <div className="space-y-6 text-[17px] text-white/50 font-light leading-[1.8] max-w-2xl">
+              <p>
+                Five years of building web and mobile applications. A journey that started with
+                curiosity about how things work, naturally leading to a deep connection with code
+                and craft.
+              </p>
+              <p>
+                Specializing in creating elegant, performant applications across the full stack.
+                The belief is simple: the best software is invisible, working seamlessly,
+                integrating into lives without friction.
+              </p>
+              <p>
+                Beyond coding, time is spent building a startup, mentoring junior developers, and
+                exploring new cities with a camera.
+              </p>
+            </div>
+
+            <div className="mt-12 grid sm:grid-cols-2 gap-8">
+              {[
+                { category: "Languages", items: ["JavaScript", "TypeScript", "Python", "Go", "Swift"] },
+                { category: "Frontend", items: ["React", "Next.js", "Tailwind CSS", "Framer Motion"] },
+                { category: "Backend", items: ["Node.js", "PostgreSQL", "Redis", "GraphQL"] },
+                { category: "Cloud", items: ["AWS", "Kubernetes", "Docker", "CI/CD"] },
+              ].map((skill) => (
+                <div key={skill.category}>
+                  <h3 className="text-sm text-white/30 uppercase tracking-[0.08em] mb-3">
+                    {skill.category}
+                  </h3>
+                  <div className="flex flex-wrap gap-2">
+                    {skill.items.map((item) => (
+                      <span
+                        key={item}
+                        className="px-3 py-1.5 border border-white/10 rounded-full text-[13px] text-white/50"
+                      >
+                        {item}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
-          <div className="space-y-6">
-            <p className="text-lg text-black/60 dark:text-white/60 font-light leading-relaxed">
-              A software engineer with a deep love for building products that solve real problems.
-              Years of experience across the full stack, specializing in creating elegant,
-              performant applications.
-            </p>
-            <Link
-              href="/about"
-              className="inline-flex items-center gap-2 text-sm text-black/50 dark:text-white/50 hover:text-black dark:hover:text-white transition-colors group"
-            >
-              Learn more
-              <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" strokeWidth={1.5} />
-            </Link>
-          </div>
-        </div>
-      </section>
-    </>
+        </section>
+      </div>
+    </div>
   );
 }

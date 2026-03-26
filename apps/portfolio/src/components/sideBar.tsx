@@ -65,13 +65,6 @@ export default function Sidebar() {
                             >
                                 About
                             </Link>
-                            <Link
-                                href="/contact"
-                                className="transform transition-transform duration-300 ease-in-out hover:scale-105"
-                                onClick={closeMenu}
-                            >
-                                Contact
-                            </Link>
                         </div>
 
                         {/* Social Links */}
