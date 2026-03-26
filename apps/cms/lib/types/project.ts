@@ -1,5 +1,9 @@
-export type ProjectCategory = "startup" | "client" | "personal" | "school"
-export type ProjectStatus = "draft" | "published" | "archived"
+export type ProjectMediaType = "image" | "video"
+
+export interface ProjectMediaItem {
+  type: ProjectMediaType
+  url: string
+}
 
 // Database schema (snake_case)
 export interface ProjectDB {
@@ -7,21 +11,14 @@ export interface ProjectDB {
   user_id: string
   slug: string
   title: string
-  subtitle: string | null
-  problem: string | null
-  solution: string | null
-  roles: string[] | null
-  features: string[] | null
-  tech: string[] | null
+  short_description: string | null
+  cover_image: string | null
+  project_media: ProjectMediaItem[] | null
+  role: string | null
+  timeline: string | null
+  tech_stack: string[] | null
   live_url: string | null
   github_url: string | null
-  cover_image_url: string | null
-  gallery_image_urls: string[] | null
-  gallery_video_urls: string[] | null
-  category: ProjectCategory | null
-  status: ProjectStatus
-  featured: boolean
-  sort_order: number
   created_at: string
   updated_at: string
 }
@@ -32,21 +29,14 @@ export interface Project {
   userId: string
   slug: string
   title: string
-  subtitle: string | null
-  problem: string | null
-  solution: string | null
-  roles: string[] | null
-  features: string[] | null
-  tech: string[] | null
+  shortDescription: string | null
+  coverImage: string | null
+  projectMedia: ProjectMediaItem[]
+  role: string | null
+  timeline: string | null
+  techStack: string[]
   liveUrl: string | null
   githubUrl: string | null
-  coverImageUrl: string | null
-  galleryImageUrls: string[] | null
-  galleryVideoUrls: string[] | null
-  category: ProjectCategory | null
-  status: ProjectStatus
-  featured: boolean
-  sortOrder: number
   createdAt: string
   updatedAt: string
 }
@@ -54,23 +44,29 @@ export interface Project {
 export interface ProjectInsert {
   slug: string
   title: string
-  subtitle?: string | null
-  problem?: string | null
-  solution?: string | null
-  roles?: string[] | null
-  features?: string[] | null
-  tech?: string[] | null
+  shortDescription?: string | null
+  coverImage?: string | null
+  projectMedia?: ProjectMediaItem[] | null
+  role?: string | null
+  timeline?: string | null
+  techStack?: string[] | null
   liveUrl?: string | null
   githubUrl?: string | null
-  coverImageUrl?: string | null
-  galleryImageUrls?: string[] | null
-  galleryVideoUrls?: string[] | null
-  category?: ProjectCategory | null
-  status?: ProjectStatus
-  featured?: boolean
-  sortOrder?: number
 }
 
 export interface ProjectUpdate extends Partial<ProjectInsert> {
   id: string
+}
+
+export interface ProjectFormData {
+  title: string
+  slug: string
+  shortDescription: string
+  role: string
+  timeline: string
+  techStack: string[]
+  liveUrl: string
+  githubUrl: string
+  coverImageFile?: File | null
+  mediaFiles?: File[]
 }

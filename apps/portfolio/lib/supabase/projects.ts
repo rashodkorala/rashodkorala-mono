@@ -30,7 +30,15 @@ export async function getProjectBySlug(slug: string): Promise<Project | null> {
     return null;
   }
 
-  return data as Project;
+  if (!data) return null;
+
+  const { data: caseStudies } = await supabase
+    .from('case_studies')
+    .select('id, slug, title, summary, cover_path, status')
+    .eq('project_id', data.id)
+    .eq('status', 'published');
+
+  return { ...data, relatedCaseStudies: caseStudies || [] } as Project;
 }
 
 export async function getFeaturedProjects(): Promise<Project[]> {

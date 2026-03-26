@@ -1,5 +1,11 @@
 export type ProjectCategory = 'startup' | 'client' | 'personal' | 'school';
 export type ProjectStatus = 'draft' | 'published' | 'archived';
+export type ProjectMediaType = 'image' | 'video';
+
+export interface ProjectMediaItem {
+  type: ProjectMediaType;
+  url: string;
+}
 
 // Matches new `projects` table (renamed from projects_archived)
 export interface Project {
@@ -7,6 +13,12 @@ export interface Project {
   user_id: string;
   slug: string;
   title: string;
+  short_description?: string | null;
+  cover_image?: string | null;
+  project_media?: ProjectMediaItem[] | null;
+  role?: string | null;
+  timeline?: string | null;
+  tech_stack?: string[] | null;
   subtitle?: string;
   problem?: string;
   solution?: string;
@@ -18,12 +30,14 @@ export interface Project {
   cover_image_url?: string;
   gallery_image_urls?: string[];
   gallery_video_urls?: string[];
+  content_md?: string;
   category?: ProjectCategory;
   status: ProjectStatus;
   featured: boolean;
   sort_order: number;
   created_at: string;
   updated_at: string;
+  relatedCaseStudies?: CaseStudy[];
 }
 
 export type CaseStudyCategory = 'startup' | 'client' | 'personal' | 'school';
@@ -36,6 +50,12 @@ export interface CaseStudy {
   project_id?: string | null;
   title: string;
   slug: string;
+  problem?: string | null;
+  approach?: string | null;
+  solution?: string | null;
+  impact?: string | null;
+  learnings?: string | null;
+  before_after?: { beforeImage?: string | null; afterImage?: string | null } | null;
   lede?: string | null;
   summary?: string | null;
   content_md: string;
@@ -63,4 +83,5 @@ export interface CaseStudy {
   published_at?: string | null;
   created_at: string;
   updated_at: string;
+  relatedProjects?: Project[];
 }

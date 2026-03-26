@@ -21,16 +21,12 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
 import { Button } from "@/components/ui/button"
-import { IconDotsVertical, IconEye, IconEdit, IconTrash } from "@tabler/icons-react"
-import { deleteCaseStudy } from "@/lib/actions/case-studies"
-import type { CaseStudy } from "@/lib/types/case-study"
+import { IconDotsVertical, IconEdit, IconEye, IconTrash } from "@tabler/icons-react"
+import { deleteProject } from "@/lib/actions/projects"
+import type { Project } from "@/lib/types/project"
 import Link from "next/link"
 
-interface CaseStudyActionsProps {
-  caseStudy: CaseStudy
-}
-
-export function CaseStudyActions({ caseStudy }: CaseStudyActionsProps) {
+export function ProjectActions({ project }: { project: Project }) {
   const router = useRouter()
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
@@ -38,13 +34,12 @@ export function CaseStudyActions({ caseStudy }: CaseStudyActionsProps) {
   const handleDelete = async () => {
     setIsDeleting(true)
     try {
-      await deleteCaseStudy(caseStudy.id)
-      toast.success("Case study deleted successfully")
+      await deleteProject(project.id)
+      toast.success("Project deleted")
       router.refresh()
       setIsDeleteDialogOpen(false)
     } catch (error) {
-      console.error("Error deleting case study:", error)
-      toast.error(error instanceof Error ? error.message : "Failed to delete case study")
+      toast.error(error instanceof Error ? error.message : "Failed to delete project")
     } finally {
       setIsDeleting(false)
     }
@@ -60,13 +55,13 @@ export function CaseStudyActions({ caseStudy }: CaseStudyActionsProps) {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuItem asChild>
-            <Link href={`/protected/work/view/${caseStudy.slug}`}>
+            <Link href={`/protected/work/projects/view/${project.slug}`}>
               <IconEye className="h-4 w-4 mr-2" />
               View
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
-            <Link href={`/protected/work/${caseStudy.slug}`}>
+            <Link href={`/protected/work/projects/${project.slug}`}>
               <IconEdit className="h-4 w-4 mr-2" />
               Edit
             </Link>
@@ -87,8 +82,7 @@ export function CaseStudyActions({ caseStudy }: CaseStudyActionsProps) {
           <AlertDialogHeader>
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              This will permanently delete the case study "{caseStudy.title}". This action cannot be
-              undone.
+              This will permanently delete &quot;{project.title}&quot;. This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -106,7 +100,3 @@ export function CaseStudyActions({ caseStudy }: CaseStudyActionsProps) {
     </>
   )
 }
-
-
-
-

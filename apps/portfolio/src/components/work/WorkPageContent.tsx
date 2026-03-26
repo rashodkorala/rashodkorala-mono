@@ -28,11 +28,6 @@ function CaseStudyCard({ item, index }: { item: CaseStudy; index: number }) {
       >
         <div>
           <div className="flex items-center gap-2 mb-2 flex-wrap">
-            {item.subject_type && (
-              <span className="text-[10px] px-2 py-0.5 rounded-full border border-ink/10 text-ink/55 uppercase tracking-[0.08em] dark:border-[#3b3734] dark:text-[#c0b8b1]">
-                {item.subject_type}
-              </span>
-            )}
             {item.category && (
               <span className="text-[10px] px-2 py-0.5 rounded-full border border-ink/10 text-ink/55 uppercase tracking-[0.08em] dark:border-[#3b3734] dark:text-[#c0b8b1]">
                 {item.category}
@@ -55,9 +50,9 @@ function CaseStudyCard({ item, index }: { item: CaseStudy; index: number }) {
             <p className="text-muted_ink/80 mt-1.5 font-light leading-relaxed max-w-lg text-[14px] dark:text-[#b5ada6]">{item.summary}</p>
           )}
         </div>
-        {item.cover_url && (
+        {item.cover_path && (
           <div className="relative w-full h-24 rounded-lg overflow-hidden border border-ink/8 dark:border-[#33302d]">
-            <Image src={item.cover_url} alt={item.title} fill className="object-cover opacity-75 group-hover:opacity-100 transition-opacity dark:brightness-[0.9]" sizes="160px" />
+            <Image src={item.cover_path} alt={item.title} fill className="object-cover opacity-75 group-hover:opacity-100 transition-opacity dark:brightness-[0.9]" sizes="160px" />
           </div>
         )}
       </motion.div>
@@ -76,7 +71,7 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
   };
 
   return (
-    <Link href={`/projects/${project.slug}`}>
+    <Link href={`/work/${project.slug}`}>
       <motion.div
         ref={ref}
         initial={{ opacity: 0, y: 20 }}
@@ -90,16 +85,16 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
           <div>
             <div className="flex items-center gap-2.5 mb-2 flex-wrap">
               <span className="text-[11px] uppercase tracking-[0.08em] text-ink/35 font-mono dark:text-[#8f8781]">{getYear()}</span>
-              {project.tech && project.tech.length > 0 && (
+              {(project.tech_stack || project.tech) && (project.tech_stack || project.tech || []).length > 0 && (
                 <div className="flex gap-1.5 flex-wrap">
-                  {project.tech.slice(0, 3).map(tag => (
+                  {(project.tech_stack || project.tech || []).slice(0, 3).map(tag => (
                     <span key={tag} className="text-[10px] uppercase tracking-[0.08em] px-2 py-0.5 border border-ink/8 rounded-full text-ink/35 dark:border-[#34312e] dark:text-[#9f9791]">
                       {tag}
                     </span>
                   ))}
-                  {project.tech.length > 3 && (
+                  {(project.tech_stack || project.tech || []).length > 3 && (
                     <span className="text-[10px] uppercase tracking-[0.08em] px-2 py-0.5 border border-ink/8 rounded-full text-ink/35 dark:border-[#34312e] dark:text-[#9f9791]">
-                      +{project.tech.length - 3}
+                      +{(project.tech_stack || project.tech || []).length - 3}
                     </span>
                   )}
                 </div>
@@ -111,16 +106,16 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
                 <ArrowUpRight className="w-3.5 h-3.5 text-ink/20 group-hover:text-ink transition-colors dark:text-[#77706a] dark:group-hover:text-[#e2ddd6]" strokeWidth={1.5} />
               </motion.span>
             </h3>
-            {project.subtitle && (
-              <p className="text-muted_ink/80 leading-relaxed max-w-lg text-[14px] dark:text-[#b5ada6]">{project.subtitle}</p>
+            {(project.short_description || project.subtitle) && (
+              <p className="text-muted_ink/80 leading-relaxed max-w-lg text-[14px] dark:text-[#b5ada6]">{project.short_description || project.subtitle}</p>
             )}
           </div>
-          {project.cover_image_url && (
+          {(project.cover_image || project.cover_image_url) && (
             <motion.div
               animate={{ scale: isHovered ? 1 : 0.95, opacity: isHovered ? 1 : 0.7 }}
               className="relative w-full h-24 bg-ink/5 rounded-lg overflow-hidden dark:bg-[#1a1716]"
             >
-              <Image src={project.cover_image_url} alt={project.title} fill className="object-cover dark:brightness-[0.9]" sizes="160px" />
+              <Image src={project.cover_image || project.cover_image_url!} alt={project.title} fill className="object-cover dark:brightness-[0.9]" sizes="160px" />
             </motion.div>
           )}
         </div>

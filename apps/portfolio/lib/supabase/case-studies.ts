@@ -40,8 +40,16 @@ export async function getCaseStudyBySlug(slug: string): Promise<CaseStudy | null
   }
 
   if (!data) return null;
-  return {
-    ...data,
-    cover_path: resolveCoverPath(data),
-  } as CaseStudy;
+
+  const projects = data.project_id
+    ? (
+        await supabase
+          .from('projects')
+          .select('*')
+          .eq('id', data.project_id)
+          .eq('status', 'published')
+      ).data || []
+    : [];
+
+  return { ...data, cover_path: resolveCoverPath(data), relatedProjects: projects } as CaseStudy;
 }

@@ -1,41 +1,21 @@
 "use client"
 
-import { useState, useCallback } from "react"
+import { useRef, useState } from "react"
 import { useRouter } from "next/navigation"
 import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Card } from "@/components/ui/card"
-import { IconX, IconPlus, IconSparkles, IconEye, IconCode, IconLoader2 } from "@tabler/icons-react"
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from "@/components/ui/alert-dialog"
+import { IconX } from "@tabler/icons-react"
 import type { CaseStudy, CaseStudyFormData } from "@/lib/types/case-study"
-import { createOrUpdateCaseStudy, uploadMedia } from "@/lib/actions/case-studies"
-import { CASE_STUDY_MDX_TEMPLATE } from "@/lib/constants/case-study-template"
-import ReactMarkdown from "react-markdown"
-import remarkGfm from "remark-gfm"
+import { createOrUpdateCaseStudy } from "@/lib/actions/case-studies"
 
 interface CaseStudyFormProps {
   caseStudy?: CaseStudy
-  mdxContent?: string
+  availableProjects?: { id: string; title: string; slug: string }[]
 }
 
 function slugify(text: string): string {
@@ -47,60 +27,38 @@ function slugify(text: string): string {
     .trim()
 }
 
-export function CaseStudyForm({ caseStudy, mdxContent = "" }: CaseStudyFormProps) {
+export function CaseStudyForm({ caseStudy, availableProjects }: CaseStudyFormProps) {
   const router = useRouter()
   const isEditing = !!caseStudy
 
+  const [linkedProjectIds, setLinkedProjectIds] = useState<string[]>(
+    caseStudy?.projectId ? [caseStudy.projectId] : []
+  )
+
   const [formData, setFormData] = useState<CaseStudyFormData>({
+    projectId: caseStudy?.projectId || null,
     title: caseStudy?.title || "",
     slug: caseStudy?.slug || "",
-    summary: caseStudy?.summary || "",
-    type: caseStudy?.type || "problem-solving",
-    status: caseStudy?.status || "draft",
+    contentMd: caseStudy?.contentMd || "",
     featured: caseStudy?.featured || false,
-    publishedAt: caseStudy?.publishedAt || null,
-    subjectName: caseStudy?.subjectName || "",
-    subjectType: caseStudy?.subjectType || "",
-    industry: caseStudy?.industry || "",
-    audience: caseStudy?.audience || "",
-    role: caseStudy?.role || "",
-    teamSize: caseStudy?.teamSize || "",
-    timeline: caseStudy?.timeline || "",
     tags: caseStudy?.tags || [],
-    skills: caseStudy?.skills || [],
-    stack: caseStudy?.stack || [],
-    coverUrl: caseStudy?.coverUrl || null,
-    galleryUrls: caseStudy?.galleryUrls || [],
-    galleryVideoUrls: caseStudy?.galleryVideoUrls || [],
-    links: caseStudy?.links || [],
-    results: caseStudy?.results || [],
-    metrics: caseStudy?.metrics || [],
-    mdxContent: mdxContent,
-    seoTitle: caseStudy?.seoTitle || "",
-    seoDescription: caseStudy?.seoDescription || "",
+    galleryFiles: [],
+    beforeImageFile: null,
+    afterImageFile: null,
+    order: caseStudy?.order ?? 0,
   })
 
   const [isLoading, setIsLoading] = useState(false)
-  const [coverImageFile, setCoverImageFile] = useState<File | null>(null)
-  const [galleryImageFiles, setGalleryImageFiles] = useState<File[]>([])
-  const [galleryVideoFiles, setGalleryVideoFiles] = useState<File[]>([])
-  const [mdxView, setMdxView] = useState<"write" | "preview">("write")
-  const [showTemplateConfirm, setShowTemplateConfirm] = useState(false)
-  const [aiLoading, setAiLoading] = useState<Record<string, boolean>>({})
+  const [isUploadingInlineImage, setIsUploadingInlineImage] = useState(false)
+  const markdownTextareaRef = useRef<HTMLTextAreaElement | null>(null)
+  const inlineImageInputRef = useRef<HTMLInputElement | null>(null)
 
-  // Array field inputs
-  const [stackInput, setStackInput] = useState("")
-  const [tagInput, setTagInput] = useState("")
-  const [skillInput, setSkillInput] = useState("")
-  const [linkLabelInput, setLinkLabelInput] = useState("")
-  const [linkUrlInput, setLinkUrlInput] = useState("")
-  const [resultInput, setResultInput] = useState("")
-  const [metricLabelInput, setMetricLabelInput] = useState("")
-  const [metricValueInput, setMetricValueInput] = useState("")
+  const [galleryFiles, setGalleryFiles] = useState<File[]>([])
+  const [galleryPreviewUrls, setGalleryPreviewUrls] = useState<string[]>(
+    caseStudy?.gallery || []
+  )
 
-  const updateField = useCallback(<K extends keyof CaseStudyFormData>(key: K, value: CaseStudyFormData[K]) => {
-    setFormData(prev => ({ ...prev, [key]: value }))
-  }, [])
+  const [tagsCsv, setTagsCsv] = useState((caseStudy?.tags || []).join(", "))
 
   const handleTitleChange = (title: string) => {
     setFormData(prev => ({
@@ -110,20 +68,10 @@ export function CaseStudyForm({ caseStudy, mdxContent = "" }: CaseStudyFormProps
     }))
   }
 
-  // ── Image handlers ──
-  const handleCoverImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-    setCoverImageFile(file)
-    const reader = new FileReader()
-    reader.onloadend = () => updateField("coverUrl", reader.result as string)
-    reader.readAsDataURL(file)
-  }
-
   const handleGalleryImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || [])
     if (files.length === 0) return
-    setGalleryImageFiles(prev => [...prev, ...files])
+    setGalleryFiles(prev => [...prev, ...files])
     const previews = await Promise.all(
       files.map(
         (file) =>
@@ -134,178 +82,79 @@ export function CaseStudyForm({ caseStudy, mdxContent = "" }: CaseStudyFormProps
           })
       )
     )
-    setFormData(prev => ({ ...prev, galleryUrls: [...prev.galleryUrls, ...previews] }))
+    setGalleryPreviewUrls(prev => [...prev, ...previews])
   }
 
   const removeGalleryImage = (index: number) => {
-    setFormData(prev => ({ ...prev, galleryUrls: prev.galleryUrls.filter((_, i) => i !== index) }))
-    setGalleryImageFiles(prev => prev.filter((_, i) => i !== index))
+    setGalleryPreviewUrls(prev => prev.filter((_, i) => i !== index))
+    setGalleryFiles(prev => prev.filter((_, i) => i !== index))
   }
 
-  const handleGalleryVideoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = Array.from(e.target.files || [])
-    if (files.length === 0) return
-    const valid = files.filter(f => f.type.startsWith("video/"))
-    setGalleryVideoFiles(prev => [...prev, ...valid])
-    e.target.value = ""
+  const syncTagsFromCsv = (value: string) => {
+    setTagsCsv(value)
+    const tags = value
+      .split(",")
+      .map((t) => t.trim())
+      .filter(Boolean)
+    setFormData((prev) => ({ ...prev, tags }))
   }
 
-  const removeGalleryVideoFile = (index: number) => {
-    setGalleryVideoFiles(prev => prev.filter((_, i) => i !== index))
-  }
-
-  const removeGalleryVideoUrl = (index: number) => {
-    setFormData(prev => ({ ...prev, galleryVideoUrls: prev.galleryVideoUrls.filter((_, i) => i !== index) }))
-  }
-
-  // ── Template insert with confirmation ──
-  const insertTemplate = () => {
-    if (formData.mdxContent.trim()) {
-      setShowTemplateConfirm(true)
-    } else {
-      updateField("mdxContent", CASE_STUDY_MDX_TEMPLATE)
-      toast.success("Template inserted")
-    }
-  }
-
-  const confirmInsertTemplate = () => {
-    updateField("mdxContent", CASE_STUDY_MDX_TEMPLATE)
-    setShowTemplateConfirm(false)
-    toast.success("Template inserted")
-  }
-
-  // ── Array field helpers ──
-  const addToArray = (key: "stack" | "tags" | "skills", value: string, setter: (v: string) => void) => {
-    if (value.trim()) {
-      setFormData(prev => ({ ...prev, [key]: [...prev[key], value.trim()] }))
-      setter("")
-    }
-  }
-
-  const removeFromArray = (key: "stack" | "tags" | "skills", index: number) => {
-    setFormData(prev => ({ ...prev, [key]: prev[key].filter((_, i) => i !== index) }))
-  }
-
-  const addLink = () => {
-    if (linkLabelInput.trim() && linkUrlInput.trim()) {
-      setFormData(prev => ({
-        ...prev,
-        links: [...prev.links, { label: linkLabelInput.trim(), url: linkUrlInput.trim() }],
-      }))
-      setLinkLabelInput("")
-      setLinkUrlInput("")
-    }
-  }
-
-  const removeLink = (index: number) => {
-    setFormData(prev => ({ ...prev, links: prev.links.filter((_, i) => i !== index) }))
-  }
-
-  const addResult = () => {
-    if (resultInput.trim()) {
-      setFormData(prev => ({
-        ...prev,
-        results: [...prev.results, { text: resultInput.trim() }],
-      }))
-      setResultInput("")
-    }
-  }
-
-  const removeResult = (index: number) => {
-    setFormData(prev => ({ ...prev, results: prev.results.filter((_, i) => i !== index) }))
-  }
-
-  const addMetric = () => {
-    if (metricLabelInput.trim() && metricValueInput.trim()) {
-      setFormData(prev => ({
-        ...prev,
-        metrics: [...prev.metrics, { label: metricLabelInput.trim(), value: metricValueInput.trim() }],
-      }))
-      setMetricLabelInput("")
-      setMetricValueInput("")
-    }
-  }
-
-  const removeMetric = (index: number) => {
-    setFormData(prev => ({ ...prev, metrics: prev.metrics.filter((_, i) => i !== index) }))
-  }
-
-  // ── AI Generation ──
-  const generateAI = async (field: string) => {
-    if (!formData.title) {
-      toast.error("Please add a title first")
+  const insertMarkdownAtCursor = (snippet: string) => {
+    const textarea = markdownTextareaRef.current
+    if (!textarea) {
+      setFormData((prev) => ({ ...prev, contentMd: `${prev.contentMd}\n${snippet}`.trim() }))
       return
     }
 
-    setAiLoading(prev => ({ ...prev, [field]: true }))
+    const start = textarea.selectionStart ?? formData.contentMd.length
+    const end = textarea.selectionEnd ?? formData.contentMd.length
+    const next =
+      formData.contentMd.slice(0, start) +
+      snippet +
+      formData.contentMd.slice(end)
+    setFormData((prev) => ({ ...prev, contentMd: next }))
 
+    requestAnimationFrame(() => {
+      textarea.focus()
+      const cursor = start + snippet.length
+      textarea.setSelectionRange(cursor, cursor)
+    })
+  }
+
+  const handleInlineImageAttach = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    if (!formData.slug.trim()) {
+      toast.error("Add a slug before attaching inline images")
+      return
+    }
+
+    setIsUploadingInlineImage(true)
     try {
-      const context = [
-        formData.summary && `Summary: ${formData.summary}`,
-        formData.subjectName && `Subject: ${formData.subjectName}`,
-        formData.industry && `Industry: ${formData.industry}`,
-        formData.role && `Role: ${formData.role}`,
-        formData.stack.length > 0 && `Tech: ${formData.stack.join(", ")}`,
-      ].filter(Boolean).join(". ")
-
-      if (field === "mdxContent") {
-        const response = await fetch("/api/generate-project-content", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            type: "problem",
-            title: formData.title,
-            subtitle: formData.summary,
-            context: `Generate a full case study in markdown format for: ${formData.title}. ${context}.
-Include these sections: Overview, Context, Problem & Goals, Approach, Challenges & Tradeoffs, Results, Key Takeaways, Next Steps.
-Write 2-3 paragraphs per section. Use markdown headers (##), bullet points, and numbered lists. Be specific and engaging.`,
-          }),
-        })
-
-        if (!response.ok) throw new Error("Failed to generate content")
-        const data = await response.json()
-        updateField("mdxContent", data.content)
-        toast.success("Work item content generated")
-      } else if (field === "summary") {
-        const response = await fetch("/api/generate-project-content", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            type: "subtitle",
-            title: formData.title,
-            context: `Write a compelling 1-2 sentence summary for this case study. ${context}`,
-          }),
-        })
-
-        if (!response.ok) throw new Error("Failed to generate summary")
-        const data = await response.json()
-        updateField("summary", data.content)
-        toast.success("Summary generated")
-      } else if (field === "seo") {
-        const response = await fetch("/api/generate-project-content", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            type: "subtitle",
-            title: formData.title,
-            context: `Write an SEO-optimized meta description (max 160 chars) for a case study about: ${formData.title}. ${context}`,
-          }),
-        })
-
-        if (!response.ok) throw new Error("Failed to generate SEO")
-        const data = await response.json()
-        updateField("seoTitle", formData.title)
-        updateField("seoDescription", data.content)
-        toast.success("SEO fields generated")
+      const body = new FormData()
+      body.append("file", file)
+      body.append("slug", formData.slug)
+      const response = await fetch("/api/case-studies/upload-inline-image", {
+        method: "POST",
+        body,
+      })
+      if (!response.ok) {
+        const payload = await response.json().catch(() => ({ error: "Failed to upload inline image" }))
+        throw new Error(payload.error || "Failed to upload inline image")
       }
-    } catch {
-      toast.error("AI generation failed. Make sure OPENAI_API_KEY is configured.")
+      const payload = await response.json()
+      const publicUrl: string = payload.publicUrl
+      const alt = file.name.replace(/\.[^/.]+$/, "")
+      insertMarkdownAtCursor(`\n![${alt}](${publicUrl})\n`)
+      toast.success("Image uploaded and inserted into markdown")
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Failed to attach image")
     } finally {
-      setAiLoading(prev => ({ ...prev, [field]: false }))
+      setIsUploadingInlineImage(false)
+      if (inlineImageInputRef.current) inlineImageInputRef.current.value = ""
     }
   }
 
-  // ── Submit ──
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
@@ -314,595 +163,143 @@ Write 2-3 paragraphs per section. Use markdown headers (##), bullet points, and 
       return
     }
 
-    if (!formData.mdxContent.trim()) {
-      toast.error("Please add MDX content")
-      return
-    }
-
     setIsLoading(true)
 
     try {
-      let coverUrl = formData.coverUrl
-      if (coverImageFile) {
-        coverUrl = await uploadMedia(coverImageFile)
-      }
+      await createOrUpdateCaseStudy({ ...formData, galleryFiles }, caseStudy?.id, linkedProjectIds)
 
-      const galleryUrls = formData.galleryUrls.filter((url) => url.startsWith("http"))
-      for (const file of galleryImageFiles) {
-        const url = await uploadMedia(file)
-        galleryUrls.push(url)
-      }
-
-      const galleryVideoUrls = [...(formData.galleryVideoUrls || [])]
-      for (const file of galleryVideoFiles) {
-        const url = await uploadMedia(file)
-        galleryVideoUrls.push(url)
-      }
-
-      await createOrUpdateCaseStudy({ ...formData, coverUrl, galleryUrls, galleryVideoUrls }, caseStudy?.id)
-
-      toast.success(isEditing ? "Work item updated" : "Work item created")
+      toast.success(isEditing ? "Case study updated" : "Case study created")
       router.push("/protected/work")
       router.refresh()
     } catch (error) {
-      console.error("Error saving work item:", error)
-      toast.error(error instanceof Error ? error.message : "Failed to save work item")
+      console.error("Error saving case study:", error)
+      toast.error(error instanceof Error ? error.message : "Failed to save case study")
     } finally {
       setIsLoading(false)
     }
   }
 
-  // ── Chip input component ──
-  const ChipInput = ({
-    label,
-    items,
-    inputValue,
-    onInputChange,
-    onAdd,
-    onRemove,
-    placeholder,
-  }: {
-    label: string
-    items: string[]
-    inputValue: string
-    onInputChange: (v: string) => void
-    onAdd: () => void
-    onRemove: (i: number) => void
-    placeholder: string
-  }) => (
-    <div className="space-y-2">
-      <Label>{label}</Label>
-      <div className="flex gap-2">
-        <Input
-          value={inputValue}
-          onChange={(e) => onInputChange(e.target.value)}
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              e.preventDefault()
-              onAdd()
-            }
-          }}
-          placeholder={placeholder}
-        />
-        <Button type="button" onClick={onAdd} size="icon" variant="outline">
-          <IconPlus className="h-4 w-4" />
-        </Button>
-      </div>
-      {items.length > 0 && (
-        <div className="flex flex-wrap gap-2 mt-2">
-          {items.map((item, index) => (
-            <div
-              key={index}
-              className="flex items-center gap-1 bg-secondary px-2 py-1 rounded-md text-sm"
-            >
-              {item}
-              <button type="button" onClick={() => onRemove(index)} className="hover:text-destructive">
-                <IconX className="h-3 w-3" />
-              </button>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  )
-
-  // ── AI button helper ──
-  const AiButton = ({ field, label }: { field: string; label: string }) => (
-    <Button
-      type="button"
-      variant="ghost"
-      size="sm"
-      className="text-xs h-6 px-2 text-muted-foreground hover:text-primary"
-      onClick={() => generateAI(field)}
-      disabled={aiLoading[field]}
-    >
-      {aiLoading[field] ? (
-        <IconLoader2 className="h-3 w-3 mr-1 animate-spin" />
-      ) : (
-        <IconSparkles className="h-3 w-3 mr-1" />
-      )}
-      {label}
-    </Button>
-  )
-
   return (
-    <>
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <Card className="p-6 space-y-6">
-          <div className="space-y-1">
-            <h2 className="text-lg font-semibold">Essentials</h2>
-            <p className="text-sm text-muted-foreground">
-              Hybrid content: write the full narrative in <span className="font-medium text-foreground">MDX</span> below; use{" "}
-              <span className="font-medium text-foreground">Links, results, and metrics</span> (optional section) for structured highlights the portfolio can render consistently.
-            </p>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="title">Title *</Label>
-              <Input
-                id="title"
-                value={formData.title}
-                onChange={(e) => handleTitleChange(e.target.value)}
-                placeholder="Work item title"
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="slug">Slug *</Label>
-              <Input
-                id="slug"
-                value={formData.slug}
-                onChange={(e) => updateField("slug", e.target.value)}
-                placeholder="case-study-slug"
-                required
-              />
-            </div>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label>Work Type</Label>
-              <Select
-                value={formData.type}
-                onValueChange={(value: "problem-solving" | "descriptive") => updateField("type", value)}
-              >
-                <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="problem-solving">Problem-Solving</SelectItem>
-                  <SelectItem value="descriptive">Descriptive</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="space-y-2">
-              <Label>Status</Label>
-              <Select
-                value={formData.status}
-                onValueChange={(value: "draft" | "published" | "archived") => updateField("status", value)}
-              >
-                <SelectTrigger><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="draft">Draft</SelectItem>
-                  <SelectItem value="published">Published</SelectItem>
-                  <SelectItem value="archived">Archived</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-
-          <div className="grid md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="publishedAt">Published Date</Label>
-              <Input
-                id="publishedAt"
-                type="datetime-local"
-                value={formData.publishedAt ? new Date(formData.publishedAt).toISOString().slice(0, 16) : ""}
-                onChange={(e) =>
-                  updateField("publishedAt", e.target.value ? new Date(e.target.value).toISOString() : null)
-                }
-              />
-            </div>
-            <div className="flex items-end pb-2">
-              <div className="flex items-center space-x-2">
-                <Checkbox
-                  id="featured"
-                  checked={formData.featured}
-                  onCheckedChange={(checked) => updateField("featured", checked as boolean)}
-                />
-                <Label htmlFor="featured" className="cursor-pointer">Featured work item</Label>
-              </div>
-            </div>
-          </div>
-
+    <form onSubmit={handleSubmit} className="space-y-6">
+      <Card className="p-6 space-y-6">
+        <h2 className="text-lg font-semibold">Case Study</h2>
+        <div className="grid md:grid-cols-2 gap-4">
           <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <Label htmlFor="summary">Summary</Label>
-              <AiButton field="summary" label="AI Generate" />
-            </div>
-            <Textarea
-              id="summary"
-              value={formData.summary}
-              onChange={(e) => updateField("summary", e.target.value)}
-              placeholder="Brief overview used for listings and SEO"
-              rows={2}
-            />
+            <Label htmlFor="title">Title *</Label>
+            <Input id="title" value={formData.title} onChange={(e) => handleTitleChange(e.target.value)} required />
           </div>
-
           <div className="space-y-2">
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <Label>MDX Content *</Label>
-              <div className="flex items-center gap-2">
-                <AiButton field="mdxContent" label="AI Generate" />
-                <Button type="button" variant="outline" size="sm" onClick={insertTemplate}>
-                  Insert Template
-                </Button>
-                <div className="flex border rounded-md">
-                  <Button
-                    type="button"
-                    variant={mdxView === "write" ? "secondary" : "ghost"}
-                    size="sm"
-                    className="rounded-r-none h-7 px-2 text-xs"
-                    onClick={() => setMdxView("write")}
-                  >
-                    <IconCode className="h-3 w-3 mr-1" />
-                    Write
-                  </Button>
-                  <Button
-                    type="button"
-                    variant={mdxView === "preview" ? "secondary" : "ghost"}
-                    size="sm"
-                    className="rounded-l-none h-7 px-2 text-xs"
-                    onClick={() => setMdxView("preview")}
-                  >
-                    <IconEye className="h-3 w-3 mr-1" />
-                    Preview
-                  </Button>
-                </div>
-              </div>
-            </div>
-
-            <p className="text-xs text-muted-foreground leading-relaxed">
-              Images and rich story belong here (Markdown / MDX). Cover and gallery uploads live under <span className="font-medium text-foreground">Media</span> for listing cards and grids—no need to duplicate outcomes here if you already filled structured results/metrics.
-            </p>
-
-            {mdxView === "write" ? (
-              <Textarea
-                value={formData.mdxContent}
-                onChange={(e) => updateField("mdxContent", e.target.value)}
-                placeholder="Write your work item content in Markdown..."
-                rows={20}
-                className="font-mono text-sm"
-              />
-            ) : (
-              <div className="min-h-[320px] max-h-[560px] overflow-y-auto rounded-md border p-6 prose prose-invert prose-sm max-w-none">
-                {formData.mdxContent.trim() ? (
-                  <ReactMarkdown remarkPlugins={[remarkGfm]}>
-                    {formData.mdxContent}
-                  </ReactMarkdown>
-                ) : (
-                  <p className="text-muted-foreground italic">Nothing to preview yet. Switch to Write and add content.</p>
-                )}
-              </div>
-            )}
+            <Label htmlFor="slug">Slug *</Label>
+            <Input id="slug" value={formData.slug} onChange={(e) => setFormData((p) => ({ ...p, slug: e.target.value }))} required />
           </div>
-        </Card>
-
-        <details className="group rounded-lg border bg-card open:shadow-sm">
-          <summary className="cursor-pointer list-none p-4 flex items-center justify-between">
-            <div>
-              <p className="font-medium">Project Context (optional)</p>
-              <p className="text-sm text-muted-foreground">Subject, audience, role, timeline, stack, tags, and skills.</p>
-            </div>
-            <span className="text-xs text-muted-foreground group-open:hidden">Expand</span>
-            <span className="text-xs text-muted-foreground hidden group-open:inline">Collapse</span>
-          </summary>
-          <div className="border-t p-4 md:p-6 space-y-6">
-            <div className="grid md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>Subject Name</Label>
-                <Input value={formData.subjectName} onChange={(e) => updateField("subjectName", e.target.value)} placeholder="Project or company name" />
-              </div>
-              <div className="space-y-2">
-                <Label>Subject Type</Label>
-                <Input value={formData.subjectType} onChange={(e) => updateField("subjectType", e.target.value)} placeholder="e.g., Web App, Mobile App" />
-              </div>
-            </div>
-            <div className="grid md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>Industry</Label>
-                <Input value={formData.industry} onChange={(e) => updateField("industry", e.target.value)} placeholder="e.g., B2B SaaS, E-commerce" />
-              </div>
-              <div className="space-y-2">
-                <Label>Audience</Label>
-                <Input value={formData.audience} onChange={(e) => updateField("audience", e.target.value)} placeholder="Target audience" />
-              </div>
-            </div>
-            <div className="grid md:grid-cols-3 gap-4">
-              <div className="space-y-2">
-                <Label>Your Role</Label>
-                <Input value={formData.role} onChange={(e) => updateField("role", e.target.value)} placeholder="e.g., Lead Developer" />
-              </div>
-              <div className="space-y-2">
-                <Label>Team Size</Label>
-                <Input value={formData.teamSize} onChange={(e) => updateField("teamSize", e.target.value)} placeholder="e.g., 5 people" />
-              </div>
-              <div className="space-y-2">
-                <Label>Timeline</Label>
-                <Input value={formData.timeline} onChange={(e) => updateField("timeline", e.target.value)} placeholder="e.g., 3 months" />
-              </div>
-            </div>
-            <ChipInput
-              label="Tech Stack"
-              items={formData.stack}
-              inputValue={stackInput}
-              onInputChange={setStackInput}
-              onAdd={() => addToArray("stack", stackInput, setStackInput)}
-              onRemove={(i) => removeFromArray("stack", i)}
-              placeholder="Add a technology and press Enter"
-            />
-            <div className="grid md:grid-cols-2 gap-4">
-              <ChipInput
-                label="Tags"
-                items={formData.tags}
-                inputValue={tagInput}
-                onInputChange={setTagInput}
-                onAdd={() => addToArray("tags", tagInput, setTagInput)}
-                onRemove={(i) => removeFromArray("tags", i)}
-                placeholder="Add a tag and press Enter"
-              />
-              <ChipInput
-                label="Skills"
-                items={formData.skills}
-                inputValue={skillInput}
-                onInputChange={setSkillInput}
-                onAdd={() => addToArray("skills", skillInput, setSkillInput)}
-                onRemove={(i) => removeFromArray("skills", i)}
-                placeholder="Add a skill and press Enter"
-              />
-            </div>
-          </div>
-        </details>
-
-        <details className="group rounded-lg border bg-card open:shadow-sm">
-          <summary className="cursor-pointer list-none p-4 flex items-center justify-between">
-            <div>
-              <p className="font-medium">Media (optional)</p>
-              <p className="text-sm text-muted-foreground">Cover, gallery images, and gallery videos.</p>
-            </div>
-            <span className="text-xs text-muted-foreground group-open:hidden">Expand</span>
-            <span className="text-xs text-muted-foreground hidden group-open:inline">Collapse</span>
-          </summary>
-          <div className="border-t p-4 md:p-6 space-y-6">
-            <div className="space-y-2">
-              <Label>Cover Image</Label>
-              <Input type="file" accept="image/*" onChange={handleCoverImageUpload} />
-              {formData.coverUrl && (
-                <div className="mt-2">
-                  <img src={formData.coverUrl} alt="Cover preview" className="w-full max-w-md h-48 object-cover rounded-lg" />
-                </div>
-              )}
-            </div>
-            <div className="space-y-2">
-              <Label>Gallery Images</Label>
-              <Input type="file" accept="image/*" multiple onChange={handleGalleryImageUpload} />
-              {formData.galleryUrls.length > 0 && (
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mt-4">
-                  {formData.galleryUrls.map((url, index) => (
-                    <div key={index} className="relative">
-                      <img src={url} alt={`Gallery ${index + 1}`} className="w-full h-32 object-cover rounded-lg" />
-                      <Button
-                        type="button"
-                        variant="destructive"
-                        size="icon"
-                        className="absolute top-2 right-2 h-6 w-6"
-                        onClick={() => removeGalleryImage(index)}
-                      >
-                        <IconX className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-            <div className="space-y-2">
-              <Label>Gallery Videos</Label>
-              <Input type="file" accept="video/mp4,video/webm" multiple onChange={handleGalleryVideoUpload} />
-              <p className="text-xs text-muted-foreground">MP4 or WebM. Optional.</p>
-              {galleryVideoFiles.length > 0 && (
-                <div className="flex flex-wrap gap-2 mt-2">
-                  {galleryVideoFiles.map((file, index) => (
-                    <div key={index} className="flex items-center gap-2 rounded-lg border px-3 py-2 text-sm">
-                      <span className="truncate max-w-[180px]">{file.name}</span>
-                      <Button type="button" variant="ghost" size="sm" onClick={() => removeGalleryVideoFile(index)}>
-                        <IconX className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              )}
-              {formData.galleryVideoUrls?.length > 0 && (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
-                  {formData.galleryVideoUrls.map((url, index) => (
-                    <div key={index} className="relative">
-                      <video src={url} className="w-full h-32 object-cover rounded-lg" muted playsInline preload="metadata" />
-                      <Button
-                        type="button"
-                        variant="destructive"
-                        size="icon"
-                        className="absolute top-2 right-2 h-6 w-6"
-                        onClick={() => removeGalleryVideoUrl(index)}
-                      >
-                        <IconX className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-        </details>
-
-        <details className="group rounded-lg border bg-card open:shadow-sm">
-          <summary className="cursor-pointer list-none p-4 flex items-center justify-between">
-            <div>
-              <p className="font-medium">Structured highlights (optional)</p>
-              <p className="text-sm text-muted-foreground">
-                Links, key results, and metrics for consistent portfolio UI—complement the long-form story in MDX, don&apos;t replace it.
-              </p>
-            </div>
-            <span className="text-xs text-muted-foreground group-open:hidden">Expand</span>
-            <span className="text-xs text-muted-foreground hidden group-open:inline">Collapse</span>
-          </summary>
-          <div className="border-t p-4 md:p-6 space-y-6">
-            <div className="space-y-2">
-              <Label>Links</Label>
-              <div className="flex gap-2">
-                <Input value={linkLabelInput} onChange={(e) => setLinkLabelInput(e.target.value)} placeholder="Link label" />
-                <Input
-                  value={linkUrlInput}
-                  onChange={(e) => setLinkUrlInput(e.target.value)}
-                  placeholder="https://example.com"
-                  onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addLink() } }}
-                />
-                <Button type="button" onClick={addLink} size="icon" variant="outline">
-                  <IconPlus className="h-4 w-4" />
-                </Button>
-              </div>
-              {formData.links.length > 0 && (
-                <div className="space-y-2 mt-2">
-                  {formData.links.map((link, index) => (
-                    <div key={index} className="flex items-center justify-between p-2 bg-secondary rounded">
-                      <div>
-                        <span className="font-medium">{link.label}</span>
-                        <span className="text-sm text-muted-foreground ml-2">{link.url}</span>
-                      </div>
-                      <Button type="button" variant="ghost" size="icon" onClick={() => removeLink(index)}>
-                        <IconX className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-            <div className="space-y-2">
-              <Label>Key Results</Label>
-              <div className="flex gap-2">
-                <Input
-                  value={resultInput}
-                  onChange={(e) => setResultInput(e.target.value)}
-                  onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addResult() } }}
-                  placeholder="e.g., Reduced load time by 60%"
-                />
-                <Button type="button" onClick={addResult} size="icon" variant="outline">
-                  <IconPlus className="h-4 w-4" />
-                </Button>
-              </div>
-              {formData.results.length > 0 && (
-                <div className="space-y-2 mt-2">
-                  {formData.results.map((result, index) => (
-                    <div key={index} className="flex items-center justify-between p-2 bg-secondary rounded">
-                      <span className="text-sm">{result.text}</span>
-                      <Button type="button" variant="ghost" size="icon" onClick={() => removeResult(index)}>
-                        <IconX className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-            <div className="space-y-2">
-              <Label>Metrics</Label>
-              <div className="flex gap-2">
-                <Input value={metricLabelInput} onChange={(e) => setMetricLabelInput(e.target.value)} placeholder="Metric label (e.g., Load Time)" />
-                <Input
-                  value={metricValueInput}
-                  onChange={(e) => setMetricValueInput(e.target.value)}
-                  onKeyDown={(e) => { if (e.key === "Enter") { e.preventDefault(); addMetric() } }}
-                  placeholder="Value (e.g., -60%)"
-                />
-                <Button type="button" onClick={addMetric} size="icon" variant="outline">
-                  <IconPlus className="h-4 w-4" />
-                </Button>
-              </div>
-              {formData.metrics.length > 0 && (
-                <div className="grid md:grid-cols-2 gap-2 mt-2">
-                  {formData.metrics.map((metric, index) => (
-                    <div key={index} className="flex items-center justify-between p-2 bg-secondary rounded">
-                      <div>
-                        <span className="text-sm font-medium">{metric.label}</span>
-                        <span className="text-sm text-muted-foreground ml-2">{metric.value}</span>
-                      </div>
-                      <Button type="button" variant="ghost" size="icon" onClick={() => removeMetric(index)}>
-                        <IconX className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-        </details>
-
-        <details className="group rounded-lg border bg-card open:shadow-sm">
-          <summary className="cursor-pointer list-none p-4 flex items-center justify-between">
-            <div>
-              <p className="font-medium">SEO (optional)</p>
-              <p className="text-sm text-muted-foreground">Meta title and description for search/social previews.</p>
-            </div>
-            <span className="text-xs text-muted-foreground group-open:hidden">Expand</span>
-            <span className="text-xs text-muted-foreground hidden group-open:inline">Collapse</span>
-          </summary>
-          <div className="border-t p-4 md:p-6 space-y-4">
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <Label>SEO Title</Label>
-                <AiButton field="seo" label="AI Generate SEO" />
-              </div>
-              <Input value={formData.seoTitle} onChange={(e) => updateField("seoTitle", e.target.value)} placeholder="SEO optimized title" />
-            </div>
-            <div className="space-y-2">
-              <Label>SEO Description</Label>
-              <Textarea
-                value={formData.seoDescription}
-                onChange={(e) => updateField("seoDescription", e.target.value)}
-                placeholder="SEO meta description (max 160 characters)"
-                rows={2}
-              />
-            </div>
-          </div>
-        </details>
-
-        {/* Submit Buttons */}
-        <div className="flex gap-4 justify-end pt-4 border-t">
-          <Button
-            type="button"
-            variant="outline"
-            onClick={() => router.push("/protected/work")}
-            disabled={isLoading}
-          >
-            Cancel
-          </Button>
-          <Button type="submit" disabled={isLoading}>
-            {isLoading ? "Saving..." : isEditing ? "Update Work Item" : "Create Work Item"}
-          </Button>
         </div>
-      </form>
+        <div className="grid md:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label>Project</Label>
+            <select
+              className="w-full border rounded-md p-2 bg-background"
+              value={linkedProjectIds[0] || ""}
+              onChange={(e) => setLinkedProjectIds(e.target.value ? [e.target.value] : [])}
+            >
+              <option value="">No project linked</option>
+              {(availableProjects || []).map((p) => (
+                <option key={p.id} value={p.id}>{p.title}</option>
+              ))}
+            </select>
+          </div>
+          <div className="space-y-2">
+            <Label>Order</Label>
+            <Input type="number" value={formData.order} onChange={(e) => setFormData((p) => ({ ...p, order: parseInt(e.target.value, 10) || 0 }))} />
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          <Checkbox checked={formData.featured} onCheckedChange={(c) => setFormData((p) => ({ ...p, featured: Boolean(c) }))} />
+          <Label>Featured</Label>
+        </div>
+      </Card>
 
-      {/* Template overwrite confirmation */}
-      <AlertDialog open={showTemplateConfirm} onOpenChange={setShowTemplateConfirm}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Replace existing content?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This will replace your current MDX content with the template. This action cannot be undone.
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmInsertTemplate}>Replace</AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    </>
+      <Card className="p-6 space-y-4">
+        <div className="flex items-center justify-between gap-3">
+          <h3 className="font-semibold">Content (Markdown)</h3>
+          <div className="flex items-center gap-2">
+            <input
+              ref={inlineImageInputRef}
+              type="file"
+              accept="image/*"
+              className="hidden"
+              onChange={handleInlineImageAttach}
+            />
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              disabled={isUploadingInlineImage}
+              onClick={() => inlineImageInputRef.current?.click()}
+            >
+              {isUploadingInlineImage ? "Uploading..." : "Attach image"}
+            </Button>
+          </div>
+        </div>
+        <Textarea
+          ref={markdownTextareaRef}
+          rows={16}
+          value={formData.contentMd}
+          onChange={(e) => setFormData((p) => ({ ...p, contentMd: e.target.value }))}
+          placeholder="Write case study content in markdown. Use 'Attach image' to upload and insert image markdown."
+          className="font-mono text-sm"
+        />
+      </Card>
+
+      <Card className="p-6 space-y-4">
+        <h3 className="font-semibold">Media</h3>
+        <div className="space-y-2">
+          <Label>Gallery</Label>
+          <Input type="file" accept="image/*" multiple onChange={handleGalleryImageUpload} />
+          {galleryPreviewUrls.length > 0 && (
+            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+              {galleryPreviewUrls.map((url, i) => (
+                <div key={i} className="relative">
+                  <img src={url} alt={`Gallery ${i + 1}`} className="w-full h-24 object-cover rounded" />
+                  <button type="button" onClick={() => removeGalleryImage(i)} className="absolute top-1 right-1 rounded bg-black/60 p-1">
+                    <IconX className="h-3 w-3 text-white" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+        <div className="grid md:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label>Before Image</Label>
+            <Input type="file" accept="image/*" onChange={(e) => setFormData((p) => ({ ...p, beforeImageFile: e.target.files?.[0] || null }))} />
+          </div>
+          <div className="space-y-2">
+            <Label>After Image</Label>
+            <Input type="file" accept="image/*" onChange={(e) => setFormData((p) => ({ ...p, afterImageFile: e.target.files?.[0] || null }))} />
+          </div>
+        </div>
+      </Card>
+
+      <Card className="p-6 space-y-4">
+        <h3 className="font-semibold">Tags</h3>
+        <Input
+          value={tagsCsv}
+          onChange={(e) => syncTagsFromCsv(e.target.value)}
+          placeholder="ui, conversion, redesign"
+        />
+        {formData.tags.length > 0 && (
+          <div className="flex flex-wrap gap-2">
+            {formData.tags.map((tag, i) => (
+              <span key={`${tag}-${i}`} className="bg-secondary px-2 py-1 rounded text-sm">{tag}</span>
+            ))}
+          </div>
+        )}
+      </Card>
+
+      <div className="flex gap-3 justify-end">
+        <Button type="button" variant="outline" onClick={() => router.push("/protected/work")} disabled={isLoading}>Cancel</Button>
+        <Button type="submit" disabled={isLoading}>{isLoading ? "Saving..." : isEditing ? "Update Case Study" : "Create Case Study"}</Button>
+      </div>
+    </form>
   )
 }
