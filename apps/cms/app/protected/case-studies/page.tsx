@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button"
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { getCaseStudies } from "@/lib/actions/case-studies"
+import { getWorkItems } from "@/lib/actions/work"
 import { createClient } from "@/lib/supabase/server"
 import Link from "next/link"
 import { redirect } from "next/navigation"
@@ -14,7 +14,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { CaseStudyActions } from "@/components/case-studies/case-study-actions"
 import { CaseStudyFilters } from "@/components/case-studies/case-study-filters"
 
 export default async function ProtectedCaseStudiesPage({
@@ -34,14 +33,14 @@ export default async function ProtectedCaseStudiesPage({
   const params = await searchParams
   const statusFilter = params.status || "all"
 
-  const caseStudies = await getCaseStudies(statusFilter === "all" ? undefined : statusFilter)
-  const allCaseStudies = statusFilter === "all" ? caseStudies : await getCaseStudies()
+  const workItems = await getWorkItems(statusFilter === "all" ? undefined : statusFilter)
+  const allWorkItems = statusFilter === "all" ? workItems : await getWorkItems()
 
   const stats = {
-    total: allCaseStudies.length,
-    published: allCaseStudies.filter((cs) => cs.status === "published").length,
-    draft: allCaseStudies.filter((cs) => cs.status === "draft").length,
-    views: allCaseStudies.reduce((sum, cs) => sum + cs.views, 0),
+    total: allWorkItems.length,
+    published: allWorkItems.filter((item) => item.status === "published").length,
+    draft: allWorkItems.filter((item) => item.status === "draft").length,
+    views: 0,
   }
 
   return (
@@ -80,15 +79,15 @@ export default async function ProtectedCaseStudiesPage({
         </Card>
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-2xl">{stats.views}</CardTitle>
-            <CardDescription>Total Views</CardDescription>
+            <CardTitle className="text-2xl">-</CardTitle>
+            <CardDescription>Views (n/a)</CardDescription>
           </CardHeader>
         </Card>
       </div>
 
       <CaseStudyFilters currentStatus={statusFilter} />
 
-      {caseStudies.length === 0 ? (
+      {workItems.length === 0 ? (
         <Card className="p-12">
           <div className="text-center space-y-4">
             <h3 className="text-lg font-semibold">
@@ -114,26 +113,25 @@ export default async function ProtectedCaseStudiesPage({
               <TableRow>
                 <TableHead>Title</TableHead>
                 <TableHead>Type</TableHead>
+                <TableHead>Target</TableHead>
                 <TableHead>Status</TableHead>
-                <TableHead>Views</TableHead>
                 <TableHead>Updated</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {caseStudies.map((caseStudy) => (
-                <TableRow key={caseStudy.id}>
+              {workItems.map((item) => (
+                <TableRow key={item.id}>
                   <TableCell className="font-medium">
                     <div className="flex items-center justify-between gap-4">
                       <div className="flex items-center gap-2 min-w-0">
-                        {caseStudy.featured && <span className="text-yellow-500">*</span>}
-                        <span className="truncate">{caseStudy.title}</span>
+                        {item.featured && <span className="text-yellow-500">*</span>}
+                        <span className="truncate">{item.title}</span>
                       </div>
-                      {caseStudy.coverUrl ? (
+                      {item.coverImageUrl ? (
                         // eslint-disable-next-line @next/next/no-img-element
                         <img
-                          src={caseStudy.coverUrl}
-                          alt={`${caseStudy.title} cover`}
+                          src={item.coverImageUrl}
+                          alt={`${item.title} cover`}
                           className="h-10 w-16 rounded-md object-cover border shrink-0"
                         />
                       ) : (
@@ -143,28 +141,27 @@ export default async function ProtectedCaseStudiesPage({
                   </TableCell>
                   <TableCell>
                     <Badge variant="outline">
-                      {caseStudy.subjectType || (caseStudy.type === "problem-solving" ? "Problem-Solving" : "Descriptive")}
+                      {item.category || "Work"}
                     </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <Badge variant="outline">{item.targetApp}</Badge>
                   </TableCell>
                   <TableCell>
                     <Badge
                       variant={
-                        caseStudy.status === "published"
+                        item.status === "published"
                           ? "default"
-                          : caseStudy.status === "draft"
+                          : item.status === "draft"
                             ? "secondary"
                             : "outline"
                       }
                     >
-                      {caseStudy.status}
+                      {item.status}
                     </Badge>
                   </TableCell>
-                  <TableCell>{caseStudy.views}</TableCell>
                   <TableCell>
-                    {new Date(caseStudy.updatedAt).toLocaleDateString()}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <CaseStudyActions caseStudy={caseStudy} />
+                    {new Date(item.updatedAt).toLocaleDateString()}
                   </TableCell>
                 </TableRow>
               ))}

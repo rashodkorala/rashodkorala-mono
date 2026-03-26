@@ -58,6 +58,15 @@ export default function Sidebar() {
                             >
                                 About
                             </Link>
+                            <Link
+                                href="https://photos.rashodkorala.com"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="transform transition-transform duration-300 ease-in-out hover:scale-105"
+                                onClick={closeMenu}
+                            >
+                                Photography
+                            </Link>
                         </div>
 
                         {/* Social Links */}

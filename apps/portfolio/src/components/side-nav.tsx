@@ -9,6 +9,7 @@ const sections = [
   { id: "about", label: "About", href: "/" },
   { id: "work", label: "Work", href: "/work" },
   { id: "view", label: "The View", href: "/view" },
+  { id: "photography", label: "Photography", href: "https://photos.rashodkorala.com" },
   { id: "contact", label: "Contact", href: "/contact" },
 ];
 
@@ -48,6 +49,8 @@ export default function SideNav() {
             <li key={id}>
               <Link
                 href={href}
+                target={href.startsWith("http") ? "_blank" : undefined}
+                rel={href.startsWith("http") ? "noopener noreferrer" : undefined}
                 className={`flex items-center gap-3 transition-all duration-500 group ${
                   active === id
                     ? "text-ink/80 dark:text-[#d7d2cc]"

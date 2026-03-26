@@ -8,14 +8,16 @@ const OpeningAnimation = () => {
     const router = useRouter();
     const [animationStage, setAnimationStage] = useState<'first' | 'second' | 'third' | 'complete'>('first');
 
+    const completeIntro = () => {
+        sessionStorage.setItem('hasSeenOpeningAnimation', 'true');
+        router.replace('/');
+    };
+
     useEffect(() => {
         const firstTimer = setTimeout(() => setAnimationStage('second'), 2000);
         const secondTimer = setTimeout(() => setAnimationStage('third'), 4500);
         const thirdTimer = setTimeout(() => setAnimationStage('complete'), 7500);
-        const navigateTimer = setTimeout(() => {
-            sessionStorage.setItem('hasSeenOpeningAnimation', 'true');
-            router.push('/');
-        }, 8500);
+        const navigateTimer = setTimeout(() => completeIntro(), 8500);
 
         return () => {
             clearTimeout(firstTimer);
@@ -32,6 +34,13 @@ const OpeningAnimation = () => {
             transition={{ duration: 0.8 }}
             className="fixed inset-0 z-[9999] bg-background flex items-center justify-center"
         >
+            <button
+                type="button"
+                onClick={completeIntro}
+                className="absolute top-5 right-5 md:top-8 md:right-8 text-xs md:text-sm tracking-[0.08em] uppercase text-muted-foreground hover:text-foreground transition-colors"
+            >
+                Skip intro
+            </button>
             <div className="relative font-light">
                 <AnimatePresence mode="wait">
 

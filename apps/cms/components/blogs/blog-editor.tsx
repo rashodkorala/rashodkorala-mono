@@ -38,7 +38,8 @@ import type {
   Metric,
 } from "@/lib/types/case-study"
 import { createBlog, updateBlog, deleteBlog, uploadBlogMedia } from "@/lib/actions/blogs"
-import { createOrUpdateCaseStudy, uploadMedia } from "@/lib/actions/case-studies"
+import { uploadMedia } from "@/lib/actions/case-studies"
+import { createWorkItem } from "@/lib/actions/work"
 import { generateSlug } from "@/lib/utils/slug"
 import ReactMarkdown from "react-markdown"
 import remarkGfm from "remark-gfm"
@@ -299,39 +300,18 @@ export function BlogEditor({
           coverUrl = await uploadMedia(imageFile)
         }
 
-        await createOrUpdateCaseStudy(
-          {
-            title: formData.title.trim(),
-            slug: (formData.slug || generateSlug(formData.title)).trim(),
-            summary: formData.excerpt?.trim() || "",
-            type: csExtra.type,
-            status: formData.status ?? "draft",
-            featured: formData.featured ?? false,
-            publishedAt:
-              formData.publishedAt ??
-              (formData.status === "published" ? new Date().toISOString() : null),
-            subjectName: csExtra.subjectName,
-            subjectType: csExtra.subjectType,
-            industry: csExtra.industry,
-            audience: csExtra.audience,
-            role: csExtra.role,
-            teamSize: csExtra.teamSize,
-            timeline: csExtra.timeline,
-            tags: csExtra.tags,
-            skills: csExtra.skills,
-            stack: csExtra.stack,
-            coverUrl,
-            galleryUrls: [],
-            galleryVideoUrls: [],
-            links: csExtra.links,
-            results: csExtra.results,
-            metrics: csExtra.metrics,
-            mdxContent: formData.mdxContent,
-            seoTitle: formData.seoTitle?.trim() || "",
-            seoDescription: formData.seoDescription?.trim() || "",
-          },
-          undefined
-        )
+        await createWorkItem({
+          title: formData.title.trim(),
+          slug: (formData.slug || generateSlug(formData.title)).trim(),
+          subtitle: formData.excerpt?.trim() || null,
+          description: formData.mdxContent.trim(),
+          status: formData.status ?? "draft",
+          targetApp: formData.targetApp ?? "portfolio",
+          featured: formData.featured ?? false,
+          coverImageUrl: coverUrl,
+          tech: csExtra.stack,
+          category: csExtra.subjectType || null,
+        })
 
         toast.success("Work item created")
         router.push("/protected/work")
@@ -1256,11 +1236,25 @@ export function BlogEditor({
 
                 {contentKind === "case_study" ? (
                   <div className="space-y-2">
-                    <Label>Publish To</Label>
-                    <div className="rounded-md border bg-muted/40 px-3 py-2 text-sm text-muted-foreground">
-                      Work items currently publish to{" "}
-                      <span className="font-medium text-foreground">Portfolio</span>.
-                    </div>
+                    <Label htmlFor="targetApp">Publish To *</Label>
+                    <Select
+                      value={formData.targetApp}
+                      onValueChange={(value: TargetApp) =>
+                        setFormData({ ...formData, targetApp: value })
+                      }
+                    >
+                      <SelectTrigger id="targetApp">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="portfolio">Portfolio</SelectItem>
+                        <SelectItem value="photos">Photos</SelectItem>
+                        <SelectItem value="both">Both Apps</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <p className="text-xs text-muted-foreground">
+                      Choose which app(s) will display this work item
+                    </p>
                   </div>
                 ) : (
                   <div className="space-y-2">
