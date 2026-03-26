@@ -38,7 +38,7 @@
 
 @layer base {
   body {
-    @apply bg-black text-white;
+    @apply antialiased;
   }
 }
 
