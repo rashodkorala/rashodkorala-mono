@@ -1,5 +1,4 @@
 import { Metadata } from "next";
-import SideNav from "@/src/components/side-nav";
 import HomeHero from "@/src/components/home-hero";
 
 export const metadata: Metadata = {
@@ -14,10 +13,5 @@ export const metadata: Metadata = {
 };
 
 export default function Index() {
-  return (
-    <>
-      <SideNav />
-      <HomeHero />
-    </>
-  );
+  return <HomeHero />;
 }

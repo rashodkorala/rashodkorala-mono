@@ -27,17 +27,17 @@ function BlogCard({ post, index, basePath }: { post: BlogPost; index: number; ba
     <Link href={`${basePath}/${post.slug}`}>
       <motion.div
         ref={ref}
-        initial={{ opacity: 0, y: 40 }}
+        initial={{ opacity: 0, y: 20 }}
         animate={isInView ? { opacity: 1, y: 0 } : {}}
         transition={{ duration: 0.6, delay: index * 0.08 }}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
-        className="group border-t border-white/8 py-7 cursor-pointer"
+        className="group border-t border-ink/8 py-7 cursor-pointer"
       >
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-6">
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2.5 mb-2 flex-wrap">
-              <span className="text-[11px] text-white/20 font-mono whitespace-nowrap">
+              <span className="text-[11px] text-ink/25 font-mono whitespace-nowrap">
                 {post.published_at
                   ? new Date(post.published_at).getFullYear().toString()
                   : new Date().getFullYear().toString()}
@@ -45,7 +45,7 @@ function BlogCard({ post, index, basePath }: { post: BlogPost; index: number; ba
               {post.tags && post.tags.length > 0 && (
                 <div className="flex gap-1.5 flex-wrap">
                   {post.tags.slice(0, 3).map(tag => (
-                    <span key={tag} className="text-[10px] px-2 py-0.5 border border-white/8 rounded-full text-white/25 whitespace-nowrap">
+                    <span key={tag} className="text-[10px] px-2 py-0.5 border border-ink/8 rounded-full text-ink/30 whitespace-nowrap">
                       {tag}
                     </span>
                   ))}
@@ -60,12 +60,12 @@ function BlogCard({ post, index, basePath }: { post: BlogPost; index: number; ba
                 animate={{ x: isHovered ? 4 : 0, y: isHovered ? -4 : 0 }}
                 transition={{ duration: 0.2 }}
               >
-                <ArrowUpRight className="w-3.5 h-3.5 text-white/10 group-hover:text-white transition-colors" strokeWidth={1.5} />
+                <ArrowUpRight className="w-3.5 h-3.5 text-ink/10 group-hover:text-ink transition-colors" strokeWidth={1.5} />
               </motion.span>
             </h3>
 
             {post.excerpt && (
-              <p className="text-white/35 font-light max-w-lg break-words text-[14px]">
+              <p className="text-muted_ink/70 font-light max-w-lg break-words text-[14px]">
                 {post.excerpt}
               </p>
             )}
@@ -74,7 +74,7 @@ function BlogCard({ post, index, basePath }: { post: BlogPost; index: number; ba
           {post.featured_image_url && (
             <motion.div
               animate={{ scale: isHovered ? 1 : 0.95, opacity: isHovered ? 1 : 0.7 }}
-              className="relative w-full md:w-40 h-24 bg-white/5 rounded-lg overflow-hidden flex-shrink-0"
+              className="relative w-full md:w-40 h-24 bg-ink/5 rounded-lg overflow-hidden flex-shrink-0"
             >
               <Image
                 src={post.featured_image_url}
@@ -110,7 +110,7 @@ export default function BlogList({ blogs, basePath = "/blog" }: BlogListProps) {
         transition={{ duration: 0.8 }}
         className="flex items-center justify-center min-h-[40vh]"
       >
-        <p className="text-white/30 font-light">No posts yet. Check back soon!</p>
+        <p className="text-ink/30 font-light">No posts yet. Check back soon!</p>
       </motion.div>
     );
   }

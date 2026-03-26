@@ -1,8 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ArrowLeft, Code, Coffee, Globe, Camera } from "lucide-react";
-import Link from "next/link";
+import { Code, Coffee, Globe, Camera } from "lucide-react";
 
 const skills = [
   { category: "Languages", items: ["JavaScript", "TypeScript", "Python", "Go", "Swift"] },
@@ -20,130 +19,102 @@ const interests = [
 
 export default function About() {
   return (
-    <div className="min-h-screen bg-black text-white">
-      <motion.div
-        initial={{ opacity: 0, y: -20 }}
+    <div className="max-w-3xl py-12 md:py-16">
+      <motion.h1
+        initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="px-6 md:px-12 py-8"
+        transition={{ duration: 0.8 }}
+        className="font-serif text-4xl md:text-5xl tracking-tight mb-12"
       >
-        <div className="max-w-4xl">
-          <Link href="/" className="inline-flex items-center gap-2 text-white/40 hover:text-white transition-colors group">
-            <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" strokeWidth={1.5} />
-            <span className="text-sm font-light">Back to home</span>
-          </Link>
+        About
+      </motion.h1>
+
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, delay: 0.1 }}
+        className="max-w-2xl mb-16"
+      >
+        <div className="space-y-5 text-[15px] text-muted_ink font-light leading-[1.8]">
+          <p>
+            Five years of building web and mobile applications. A journey that started with curiosity about how things work, naturally leading to a deep connection with code and craft.
+          </p>
+          <p>
+            Specializing in creating elegant, performant applications across the full stack. The belief is simple: the best software is invisible, working seamlessly, integrating into lives without friction.
+          </p>
+          <p>
+            Beyond coding, time is spent building a startup, mentoring junior developers, and exploring new cities with a camera. Open source isn&apos;t just a practice but a way of giving back to the community that made growth possible.
+          </p>
         </div>
       </motion.div>
 
-      <div className="px-6 md:px-12 pb-24">
-        <div className="max-w-4xl">
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.1 }}
-            className="mb-20"
-          >
-            <h1 className="text-3xl md:text-5xl font-light tracking-tight mb-8">
-              About
-            </h1>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="max-w-3xl mb-24"
-          >
-            <div className="space-y-6 text-[17px] text-white/50 font-light leading-[1.8]">
-              <p>
-                Five years of building web and mobile applications. A journey that started with curiosity about how things work, naturally leading to a deep connection with code and craft.
-              </p>
-              <p>
-                Specializing in creating elegant, performant applications across the full stack. The belief is simple: the best software is invisible, working seamlessly, integrating into lives without friction.
-              </p>
-              <p>
-                Beyond coding, time is spent building a startup, mentoring junior developers, and exploring new cities with a camera. Open source isn&apos;t just a practice but a way of giving back to the community that made growth possible.
-              </p>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, delay: 0.2 }}
+        className="mb-16"
+      >
+        <h2 className="text-[11px] tracking-[0.15em] uppercase text-ink/30 mb-8">
+          Technical Skills
+        </h2>
+        <div className="grid md:grid-cols-2 gap-10">
+          {skills.map((skill) => (
+            <div key={skill.category}>
+              <h3 className="text-lg font-light mb-3">{skill.category}</h3>
+              <div className="flex flex-wrap gap-2">
+                {skill.items.map(item => (
+                  <span
+                    key={item}
+                    className="px-3 py-1.5 border border-ink/10 rounded-full text-[13px] text-ink/50 hover:bg-ink hover:text-cream transition-colors"
+                  >
+                    {item}
+                  </span>
+                ))}
+              </div>
             </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.3 }}
-            className="mb-24"
-          >
-            <h2 className="text-sm tracking-[0.08em] uppercase text-white/30 mb-8">
-              Technical Skills
-            </h2>
-            <div className="grid md:grid-cols-2 gap-12">
-              {skills.map((skill, i) => (
-                <motion.div
-                  key={skill.category}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.4 + i * 0.1 }}
-                >
-                  <h3 className="text-xl font-light mb-4">{skill.category}</h3>
-                  <div className="flex flex-wrap gap-2">
-                    {skill.items.map(item => (
-                      <span
-                        key={item}
-                        className="px-3 py-1.5 border border-white/10 rounded-full text-[13px] text-white/50 hover:bg-white hover:text-black transition-colors"
-                      >
-                        {item}
-                      </span>
-                    ))}
-                  </div>
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.5 }}
-            className="mb-24"
-          >
-            <h2 className="text-sm tracking-[0.08em] uppercase text-white/30 mb-8">
-              Beyond Code
-            </h2>
-            <div className="grid md:grid-cols-2 gap-6">
-              {interests.map((interest, i) => (
-                <motion.div
-                  key={interest.title}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.6, delay: 0.6 + i * 0.1 }}
-                  className="p-6 border border-white/10 rounded-lg hover:border-white/20 transition-colors"
-                >
-                  <interest.icon className="w-6 h-6 text-white/30 mb-4" strokeWidth={1.5} />
-                  <h3 className="text-lg font-light mb-2">{interest.title}</h3>
-                  <p className="text-sm text-white/40 font-light">{interest.description}</p>
-                </motion.div>
-              ))}
-            </div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 40 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.7 }}
-            className="border-t border-white/10 pt-16 text-center"
-          >
-            <p className="text-lg text-white/40 font-light mb-6">
-              Interested in working together?
-            </p>
-            <a
-              href="mailto:hello@rashodkorala.com"
-              className="inline-flex items-center gap-2 px-6 py-3 border border-white/15 rounded-full text-sm hover:bg-white hover:text-black transition-colors"
-            >
-              Get in touch
-            </a>
-          </motion.div>
+          ))}
         </div>
-      </div>
+      </motion.div>
+
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, delay: 0.3 }}
+        className="mb-16"
+      >
+        <h2 className="text-[11px] tracking-[0.15em] uppercase text-ink/30 mb-8">
+          Beyond Code
+        </h2>
+        <div className="grid md:grid-cols-2 gap-4">
+          {interests.map((interest) => (
+            <div
+              key={interest.title}
+              className="p-5 border border-ink/8 rounded-lg hover:border-ink/15 transition-colors"
+            >
+              <interest.icon className="w-5 h-5 text-ink/30 mb-3" strokeWidth={1.5} />
+              <h3 className="text-base font-light mb-1">{interest.title}</h3>
+              <p className="text-[13px] text-ink/40 font-light">{interest.description}</p>
+            </div>
+          ))}
+        </div>
+      </motion.div>
+
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.8, delay: 0.4 }}
+        className="border-t border-ink/10 pt-12 text-center"
+      >
+        <p className="text-sm text-ink/40 font-light mb-5">
+          Interested in working together?
+        </p>
+        <a
+          href="mailto:hello@rashodkorala.com"
+          className="inline-flex items-center gap-2 px-6 py-3 border border-ink/15 rounded-full text-sm hover:bg-ink hover:text-cream transition-colors"
+        >
+          Get in touch
+        </a>
+      </motion.div>
     </div>
   );
 }

@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { unstable_cache } from "next/cache";
 import { supabase } from "@/lib/supabase";
 import BlogPostContent from "@/src/components/blog/blogPostContent";
+import PageShell from "@/src/components/page-shell";
 
 export const revalidate = 3600;
 
@@ -82,5 +83,5 @@ export default async function ViewPostPage({ params }: PageProps) {
   const blog = await getBlog(slug);
   if (!blog) notFound();
 
-  return <BlogPostContent blog={blog} backHref="/view" backLabel="Back to The View" />;
+  return <PageShell><BlogPostContent blog={blog} backHref="/view" backLabel="Back to The View" /></PageShell>;
 }

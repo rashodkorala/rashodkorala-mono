@@ -16,7 +16,6 @@ const sections = [
 export default function SideNav() {
   const pathname = usePathname();
   const [active, setActive] = useState("");
-  const isHome = pathname === "/";
 
   useEffect(() => {
     const match = sections.find(
@@ -24,10 +23,10 @@ export default function SideNav() {
     );
     if (match) {
       setActive(match.id);
-    } else if (isHome) {
+    } else if (pathname === "/") {
       setActive("about");
     }
-  }, [pathname, isHome]);
+  }, [pathname]);
 
   return (
     <motion.nav
@@ -47,23 +46,15 @@ export default function SideNav() {
               href={href}
               className={`flex items-center gap-3 transition-all duration-500 group ${
                 active === id
-                  ? isHome
-                    ? "text-[#2b2b2b]/80"
-                    : "text-white/90"
-                  : isHome
-                    ? "text-[#2b2b2b]/25 hover:text-[#2b2b2b]/50"
-                    : "text-white/20 hover:text-white/50"
+                  ? "text-ink/80"
+                  : "text-ink/25 hover:text-ink/50"
               }`}
             >
               <span
                 className={`h-px transition-all duration-500 ${
                   active === id
-                    ? isHome
-                      ? "w-8 bg-[#2b2b2b]/40"
-                      : "w-8 bg-white/60"
-                    : isHome
-                      ? "w-0 group-hover:w-4 bg-[#2b2b2b]/20"
-                      : "w-0 group-hover:w-4 bg-white/30"
+                    ? "w-8 bg-ink/40"
+                    : "w-0 group-hover:w-4 bg-ink/20"
                 }`}
               />
               <span className="text-[13px] tracking-[0.06em] font-light">

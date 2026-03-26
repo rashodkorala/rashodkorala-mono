@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import CaseStudiesList from "@/src/components/work/CaseStudiesList";
+import PageShell from "@/src/components/page-shell";
 import { getCachedCaseStudies } from "@/lib/supabase/cached-case-studies";
 
 export const revalidate = 3600;
@@ -11,5 +12,9 @@ export const metadata: Metadata = {
 
 export default async function WorkPage() {
   const items = await getCachedCaseStudies();
-  return <CaseStudiesList items={items} />;
+  return (
+    <PageShell>
+      <CaseStudiesList items={items} />
+    </PageShell>
+  );
 }

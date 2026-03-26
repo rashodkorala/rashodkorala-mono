@@ -3,6 +3,7 @@ import { notFound } from "next/navigation"
 import { unstable_cache } from "next/cache"
 import { supabase } from "@/lib/supabase"
 import BlogPostContent from "@/src/components/blog/blogPostContent"
+import PageShell from "@/src/components/page-shell"
 
 export const revalidate = 3600
 
@@ -96,5 +97,5 @@ export default async function BlogPostPage({ params }: PageProps) {
     notFound()
   }
 
-  return <BlogPostContent blog={blog} />
+  return <PageShell><BlogPostContent blog={blog} /></PageShell>
 }

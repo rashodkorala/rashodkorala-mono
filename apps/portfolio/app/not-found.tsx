@@ -7,22 +7,24 @@ export const metadata: Metadata = {
 
 export default function NotFound() {
   return (
-    <div className="min-h-screen flex flex-col items-start justify-end pb-24 px-6">
-      <p className="text-xs sm:text-sm tracking-[0.3em] uppercase text-black/40 dark:text-white/40 mb-4">
-        Error
-      </p>
-      <h1 className="text-[clamp(6rem,20vw,18rem)] font-light leading-none tracking-tight text-black dark:text-white mb-6">
-        404
-      </h1>
-      <p className="text-lg sm:text-xl text-black/50 dark:text-white/50 font-light mb-10 max-w-md">
-        This page doesn&apos;t exist. It may have been moved or removed.
-      </p>
-      <Link
-        href="/"
-        className="inline-flex items-center gap-2 px-6 py-3 border border-black/20 dark:border-white/20 rounded-full text-sm hover:bg-black hover:text-white dark:hover:bg-white dark:hover:text-black transition-colors"
-      >
-        Back to home
-      </Link>
+    <div className="h-screen overflow-hidden bg-cream text-ink">
+      <div className="h-full overflow-y-auto lg:ml-48 px-6 md:px-12 lg:px-14 flex flex-col items-start justify-end pb-24">
+        <p className="text-xs sm:text-sm tracking-[0.3em] uppercase text-ink/40 mb-4">
+          Error
+        </p>
+        <h1 className="text-[clamp(6rem,20vw,18rem)] font-serif font-light leading-none tracking-tight mb-6">
+          404
+        </h1>
+        <p className="text-lg sm:text-xl text-muted_ink font-light mb-10 max-w-md">
+          This page doesn&apos;t exist. It may have been moved or removed.
+        </p>
+        <Link
+          href="/"
+          className="inline-flex items-center gap-2 px-6 py-3 border border-ink/20 rounded-full text-sm hover:bg-ink hover:text-cream transition-colors"
+        >
+          Back to home
+        </Link>
+      </div>
     </div>
   )
 }

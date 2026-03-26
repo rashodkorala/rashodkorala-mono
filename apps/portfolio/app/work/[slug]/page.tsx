@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { getCachedCaseStudyBySlug } from "@/lib/supabase/cached-case-studies";
 import { supabase } from "@/lib/supabase";
 import CaseStudyPage from "@/src/components/work/CaseStudyPage";
+import PageShell from "@/src/components/page-shell";
 
 export const revalidate = 3600;
 
@@ -43,5 +44,5 @@ export default async function WorkDetailPage({
   if (!caseStudy) notFound();
 
   const mdxContent = await getCaseStudyMdx(caseStudy.mdx_path);
-  return <CaseStudyPage caseStudy={caseStudy} mdxContent={mdxContent} />;
+  return <PageShell><CaseStudyPage caseStudy={caseStudy} mdxContent={mdxContent} /></PageShell>;
 }

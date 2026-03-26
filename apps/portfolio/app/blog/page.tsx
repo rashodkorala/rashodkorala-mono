@@ -2,18 +2,13 @@ import { Metadata } from "next"
 import { unstable_cache } from "next/cache"
 import { supabase } from "@/lib/supabase"
 import BlogList from "@/src/components/blog/blogList"
-import Link from "next/link"
-import { ArrowLeft } from "lucide-react"
+import PageShell from "@/src/components/page-shell"
 
 export const revalidate = 3600
 
 export const metadata: Metadata = {
   title: "Blog",
   description: "Thoughts, insights, and perspectives on software development, design, and technology",
-  openGraph: {
-    title: "Blog | Rashod Korala",
-    description: "Thoughts, insights, and perspectives on software development, design, and technology",
-  },
 }
 
 interface BlogPost {
@@ -50,27 +45,16 @@ export default async function BlogPage() {
   const blogs = await getBlogs()
 
   return (
-    <div className="min-h-screen bg-black text-white py-12 px-6 md:px-12">
-      <div className="max-w-4xl">
-        <Link
-          href="/"
-          className="inline-flex items-center gap-2 text-sm text-white/40 hover:text-white transition-colors group mb-12"
-        >
-          <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" strokeWidth={1.5} />
-          Back
-        </Link>
-
-        <div className="mb-12">
-          <h1 className="text-3xl md:text-4xl font-light tracking-tight mb-4">
-            All Posts
-          </h1>
-          <p className="text-white/40 font-light max-w-2xl">
-            Thoughts, insights, and perspectives on software development, design, and technology.
-          </p>
-        </div>
-
+    <PageShell>
+      <div className="max-w-3xl py-12 md:py-16">
+        <h1 className="font-serif text-4xl md:text-5xl tracking-tight mb-4">
+          Blog
+        </h1>
+        <p className="text-muted_ink font-light max-w-2xl mb-12">
+          Thoughts, insights, and perspectives on software development, design, and technology.
+        </p>
         <BlogList blogs={blogs} />
       </div>
-    </div>
+    </PageShell>
   )
 }

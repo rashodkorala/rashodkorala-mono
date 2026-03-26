@@ -3,7 +3,7 @@ import '@/styles/globals.css'
 
 import { PostHogProvider } from '@rashodkorala/posthog-next'
 import { Geist_Mono, Geist, Playfair_Display } from 'next/font/google';
-import ConditionalFooter from '@/src/components/conditional-footer';
+import SideNav from '@/src/components/side-nav';
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -80,10 +80,10 @@ export default function RootLayout({
 }) {
     return (
         <html lang="en">
-            <body className={`${geistSans.variable} ${geistMono.variable} ${playfair.variable}`}>
+            <body className={`${geistSans.variable} ${geistMono.variable} ${playfair.variable} bg-cream`}>
                 <PostHogProvider app="portfolio">
+                    <SideNav />
                     {children}
-                    <ConditionalFooter />
                 </PostHogProvider>
             </body>
         </html>

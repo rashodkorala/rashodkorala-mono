@@ -1,5 +1,6 @@
 import { Metadata } from "next"
 import ProjectComp from "@/src/components/main/projectComp"
+import PageShell from "@/src/components/page-shell"
 import { getCachedProjectBySlug } from "@/lib/supabase/cached-projects"
 import { notFound } from "next/navigation"
 
@@ -38,8 +39,8 @@ export default async function ProjectPage({ params }: { params: Promise<{ slug: 
         notFound();
     }
     return (
-        <div>
+        <PageShell>
             <ProjectComp projectSlug={slug} initialProject={initialProject} />
-        </div>
+        </PageShell>
     )
 }

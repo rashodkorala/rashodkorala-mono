@@ -12,6 +12,9 @@ module.exports = {
         serif: ['var(--font-playfair)', 'Georgia', 'serif'],
       },
       colors: {
+        cream: "#ece8e1",
+        ink: "#2b2b2b",
+        muted_ink: "#6b6560",
         systemGray: "#8E8E93",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
