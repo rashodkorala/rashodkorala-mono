@@ -13,7 +13,7 @@ export default function PageShell({ children }: PageShellProps) {
     <div className="h-screen overflow-hidden bg-cream text-ink dark:bg-[#121110] dark:text-[#d7d2cc]">
       <div
         ref={scrollRef}
-        className="h-full overflow-y-auto lg:ml-48 px-6 md:px-12 lg:px-14 scrollbar-hide"
+        className="h-full overflow-y-auto lg:ml-48 px-6 md:px-12 lg:px-14 pt-16 lg:pt-20 scrollbar-hide"
       >
         {children}
       </div>

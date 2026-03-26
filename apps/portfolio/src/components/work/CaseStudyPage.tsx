@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import type { CaseStudy } from "@/lib/types";
+import { renderMarkdown, type MarkdownParserConfig } from "@rashodkorala/theView";
 
 function asStringArray(value: unknown): string[] {
   if (!Array.isArray(value)) return [];
@@ -13,23 +14,32 @@ function asObjectArray<T extends Record<string, unknown>>(value: unknown): T[] {
   return value.filter((item): item is T => typeof item === "object" && item !== null);
 }
 
-function parseSection(markdown: string, title: string): string {
-  const rx = new RegExp(`##\\s+${title}\\s*\\n([\\s\\S]*?)(?=\\n##\\s+|$)`, "i");
-  const match = markdown.match(rx);
-  return match?.[1]?.trim() || "";
+function sanitizeMdxForFullRender(content: string): string {
+  if (!content) return "";
+
+  return content
+    .replace(/\{\/\*[\s\S]*?\*\/\}/g, "\n") // Remove JSX comments like {/* ... */}
+    .replace(/<[^>\n]+\/>/g, "\n") // Remove self-closing JSX tags
+    .replace(/<\/?[A-Za-z][^>\n]*>/g, "\n") // Remove remaining JSX/HTML tags
+    .replace(/[ \t]+\n/g, "\n")
+    .replace(/\n{3,}/g, "\n\n")
+    .replace(/[ \t]{2,}/g, " ")
+    .trim();
 }
 
-function parseBullets(section: string): string[] {
-  return section.split("\n").map((l) => l.trim()).filter((l) => l.startsWith("- ")).map((l) => l.replace(/^- /, "").trim());
-}
-
-function parseProcessSteps(section: string): Array<{ title: string; description: string }> {
-  return section.split("\n").map((l) => l.trim()).filter((l) => /^\d+\.\s+\*\*.+\*\*\s+—\s+.+$/.test(l)).map((line) => {
-    const cleaned = line.replace(/^\d+\.\s+/, "");
-    const [titlePart, descriptionPart] = cleaned.split("—");
-    return { title: titlePart.replace(/\*\*/g, "").trim(), description: (descriptionPart || "").trim() };
-  });
-}
+const caseStudyMarkdownConfig: MarkdownParserConfig = {
+  h1: "font-['Times_New_Roman','Times',serif] text-3xl md:text-4xl font-light tracking-tight mt-12 mb-5 text-ink dark:text-[#efe9e2]",
+  h2: "font-['Times_New_Roman','Times',serif] text-2xl md:text-3xl font-light tracking-tight mt-12 mb-5 text-ink dark:text-[#e6dfd8]",
+  h3: "font-['Times_New_Roman','Times',serif] text-xl md:text-2xl font-light tracking-tight mt-8 mb-4 text-ink dark:text-[#ddd6cf]",
+  p: "font-['Helvetica_Neue','Helvetica','Arial',sans-serif] text-[16px] leading-[1.9] text-ink/75 dark:text-[#c2bab3] mb-4",
+  strong: "font-medium text-ink dark:text-[#f0ebe4]",
+  em: "italic",
+  code: "font-mono text-ink/85 dark:text-[#d7cfc8] bg-ink/5 dark:bg-[#1a1817] px-2 py-0.5 rounded text-sm",
+  pre: "bg-ink/[0.04] dark:bg-[#171514] border border-ink/10 dark:border-[#2f2c2a] rounded-lg p-4 overflow-x-auto my-6",
+  a: "text-ink dark:text-[#ece7df] underline decoration-ink/20 dark:decoration-[#7a736d] hover:decoration-ink/60 dark:hover:decoration-[#b1aaa3] transition-colors",
+  img: "w-full h-auto rounded-lg object-cover",
+  imgBorder: "border-ink/10 dark:border-[#2f2c2a]",
+};
 
 export default function CaseStudyPage({ caseStudy, mdxContent }: { caseStudy: CaseStudy; mdxContent: string }) {
   const tags = asStringArray(caseStudy.tags);
@@ -38,16 +48,12 @@ export default function CaseStudyPage({ caseStudy, mdxContent }: { caseStudy: Ca
   const links = asObjectArray<{ label?: string; url?: string; type?: string }>(caseStudy.links);
   const results = asObjectArray<{ title?: string; value?: string; description?: string }>(caseStudy.results);
   const metrics = asObjectArray<{ label?: string; value?: string }>(caseStudy.metrics);
-
-  const challenge = parseSection(mdxContent, "Challenge");
-  const approach = parseSection(mdxContent, "Approach");
-  const process = parseSection(mdxContent, "Process");
-  const learned = parseSection(mdxContent, "What I learned");
-  const processSteps = parseProcessSteps(process);
-  const learnings = parseBullets(learned);
+  const mdxHtml = mdxContent
+    ? renderMarkdown(sanitizeMdxForFullRender(mdxContent), caseStudyMarkdownConfig)
+    : "";
 
   return (
-    <div className="max-w-4xl py-12 md:py-16">
+    <div className="max-w-4xl py-12 md:py-16 font-['Helvetica_Neue','Helvetica','Arial',sans-serif]">
       <Link
         href="/work"
         className="inline-flex items-center gap-2 text-sm text-ink/45 hover:text-ink transition-colors group dark:text-[#a8a29d] dark:hover:text-[#e0dbd5]"
@@ -69,7 +75,7 @@ export default function CaseStudyPage({ caseStudy, mdxContent }: { caseStudy: Ca
         )}
       </div>
 
-      <h1 className="mt-5 font-serif text-3xl md:text-5xl tracking-tight text-ink dark:text-[#f0ebe4]">{caseStudy.title}</h1>
+      <h1 className="mt-5 font-['Times_New_Roman','Times',serif] text-3xl md:text-5xl tracking-tight text-ink dark:text-[#f0ebe4]">{caseStudy.title}</h1>
       {caseStudy.summary && <p className="mt-3 text-lg text-muted_ink font-light dark:text-[#b8afa8]">{caseStudy.summary}</p>}
 
       <div className="mt-8 flex flex-wrap items-center gap-4 text-sm text-ink/40 border-y border-ink/10 py-4 dark:text-[#a9a29b] dark:border-[#2e2b29]">
@@ -98,43 +104,12 @@ export default function CaseStudyPage({ caseStudy, mdxContent }: { caseStudy: Ca
         <p className="mt-8 text-[16px] leading-[1.9] text-muted_ink max-w-2xl dark:text-[#b8afa8]">{caseStudy.lede}</p>
       )}
 
-      <section className="mt-14 space-y-12">
-        {challenge && (
-          <div>
-            <p className="text-[11px] uppercase tracking-[0.15em] text-ink/35 dark:text-[#8b847f]">Challenge</p>
-            <p className="mt-3 leading-8 text-ink/65 dark:text-[#c8c0b9]">{challenge}</p>
-          </div>
-        )}
-        {approach && (
-          <div>
-            <p className="text-[11px] uppercase tracking-[0.15em] text-ink/35 dark:text-[#8b847f]">Approach</p>
-            <p className="mt-3 leading-8 text-ink/65 dark:text-[#c8c0b9]">{approach}</p>
-          </div>
-        )}
-        {processSteps.length > 0 && (
-          <div>
-            <p className="text-[11px] uppercase tracking-[0.15em] text-ink/35 dark:text-[#8b847f]">Process</p>
-            <ol className="mt-4 grid gap-3 md:grid-cols-2">
-              {processSteps.map((step, idx) => (
-                <li key={`${step.title}-${idx}`} className="bg-ink/[0.03] border border-ink/8 rounded-2xl p-5 dark:bg-[#181615] dark:border-[#2f2c2a]">
-                  <p className="font-medium text-ink/85 dark:text-[#e0dbd5]">{idx + 1}. {step.title}</p>
-                  <p className="text-ink/45 mt-2 dark:text-[#aba39c]">{step.description}</p>
-                </li>
-              ))}
-            </ol>
-          </div>
-        )}
-        {learnings.length > 0 && (
-          <div>
-            <p className="text-[11px] uppercase tracking-[0.15em] text-ink/35 dark:text-[#8b847f]">What I learned</p>
-            <ul className="mt-3 space-y-2 text-ink/65 dark:text-[#c8c0b9]">
-              {learnings.map((item) => (
-                <li key={item}>- {item}</li>
-              ))}
-            </ul>
-          </div>
-        )}
-      </section>
+      {mdxHtml && (
+        <section
+          className="mt-14"
+          dangerouslySetInnerHTML={{ __html: mdxHtml }}
+        />
+      )}
 
       {results.length > 0 && (
         <section className="mt-12">

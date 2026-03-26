@@ -20,8 +20,8 @@ const socials = [
 
 export default function HomeHero() {
   return (
-    <div className="h-screen overflow-hidden bg-cream text-ink">
-      <div className="h-full lg:ml-48 flex flex-col px-6 md:px-12 lg:px-14 py-10 md:py-12">
+    <div className="h-screen overflow-hidden bg-cream text-ink dark:bg-[#121110] dark:text-[#e6e1da]">
+      <div className="h-full lg:ml-48 flex flex-col px-6 md:px-12 lg:px-14 pt-16 lg:pt-20 pb-10 md:pb-12">
         <div className="relative flex-1 flex flex-col lg:flex-row gap-8 lg:gap-12 min-h-0">
 
           {/* Left column */}
@@ -54,7 +54,7 @@ export default function HomeHero() {
                 animate="visible"
               >
                 <motion.p
-                  className="text-[14px] leading-[1.75] font-light text-muted_ink"
+                  className="text-[14px] leading-[1.75] font-light text-muted_ink dark:text-[#b6aea7]"
                   variants={reveal}
                   custom={0.55}
                 >
@@ -67,7 +67,7 @@ export default function HomeHero() {
                 </motion.p>
 
                 <motion.p
-                  className="text-[14px] leading-[1.75] font-light text-muted_ink mt-5"
+                  className="text-[14px] leading-[1.75] font-light text-muted_ink mt-5 dark:text-[#b6aea7]"
                   variants={reveal}
                   custom={0.7}
                 >
@@ -94,10 +94,10 @@ export default function HomeHero() {
                   href={social.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="relative text-[14px] tracking-[0.01em] text-ink transition-opacity hover:opacity-60"
+                  className="relative text-[14px] tracking-[0.01em] text-ink transition-opacity hover:opacity-60 dark:text-[#dfd9d2]"
                 >
                   {social.label}
-                  <span className="absolute -bottom-1 left-0 w-full h-px bg-ink/25" />
+                  <span className="absolute -bottom-1 left-0 w-full h-px bg-ink/25 dark:bg-[#625d58]" />
                 </a>
               ))}
             </motion.div>
@@ -110,9 +110,9 @@ export default function HomeHero() {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 1.4, delay: 0.3, ease }}
           >
-            <div className="relative w-full h-full bg-ink/[0.06]">
+            <div className="relative w-full h-full bg-ink/[0.06] dark:bg-[#171514]">
               <div className="absolute inset-0 flex items-center justify-center">
-                <span className="font-serif text-[16rem] select-none leading-none opacity-[0.06] italic text-ink">
+                <span className="font-serif text-[16rem] select-none leading-none opacity-[0.06] italic text-ink dark:text-[#f2ece4]">
                   R
                 </span>
               </div>

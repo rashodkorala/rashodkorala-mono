@@ -49,10 +49,10 @@ export default async function ViewPage() {
   return (
     <PageShell>
       <div className="max-w-3xl py-12 md:py-16">
-        <h1 className="font-serif text-4xl md:text-5xl tracking-tight mb-4">
-          The View
+        <h1 className="font-['Times_New_Roman','Times',serif] text-4xl md:text-5xl tracking-tight mb-4 text-ink dark:text-[#f0ebe4]">
+          The <em className="italic">View</em>
         </h1>
-        <p className="text-muted_ink font-light max-w-2xl mb-12">
+        <p className="font-['Helvetica_Neue','Helvetica','Arial',sans-serif] text-muted_ink font-light max-w-2xl mb-12 dark:text-[#b5ada6]">
           Opinions, observations, and technology writing.
         </p>
         <BlogList blogs={blogs} basePath="/view" />

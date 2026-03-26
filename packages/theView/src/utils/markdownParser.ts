@@ -20,6 +20,9 @@ export function renderMarkdown(content: string, config: MarkdownParserConfig): s
   // Code blocks
   html = html.replace(/```([\s\S]*?)```/gim, `<pre class="${config.pre}"><code class="text-sm font-mono">$1</code></pre>`)
 
+  // Horizontal rules
+  html = html.replace(/^\s*---\s*$/gim, `<hr class="my-8 border-0 border-t border-black/10" />`)
+
   // Inline code
   html = html.replace(/`([^`]+)`/gim, `<code class="${config.code}">$1</code>`)
 
@@ -38,6 +41,45 @@ export function renderMarkdown(content: string, config: MarkdownParserConfig): s
 
   // Links (must come after images to avoid conflicts)
   html = html.replace(/\[([^\]]+)\]\(([^)]+)\)/gim, `<a href="$2" class="${config.a}">$1</a>`)
+
+  // Markdown tables
+  html = html.replace(/((?:^\|.*\|\s*$\n?){2,})/gim, (tableBlock) => {
+    const lines = tableBlock
+      .trim()
+      .split("\n")
+      .map((line) => line.trim())
+      .filter(Boolean)
+
+    if (lines.length < 2) return tableBlock
+
+    const separatorLine = lines[1]
+    const isSeparator = /^\|?\s*:?-{3,}:?\s*(\|\s*:?-{3,}:?\s*)+\|?$/.test(separatorLine)
+    if (!isSeparator) return tableBlock
+
+    const parseRow = (line: string) =>
+      line
+        .replace(/^\||\|$/g, "")
+        .split("|")
+        .map((cell) => cell.trim())
+
+    const headers = parseRow(lines[0])
+    const bodyRows = lines.slice(2).map(parseRow).filter((row) => row.length > 0)
+
+    const thead = `<thead><tr>${headers
+      .map((cell) => `<th class="px-3 py-2 text-left font-medium border-b border-black/10">${cell}</th>`)
+      .join("")}</tr></thead>`
+
+    const tbody = `<tbody>${bodyRows
+      .map(
+        (row) =>
+          `<tr>${row
+            .map((cell) => `<td class="px-3 py-2 align-top border-b border-black/5">${cell}</td>`)
+            .join("")}</tr>`
+      )
+      .join("")}</tbody>`
+
+    return `<div class="my-8 overflow-x-auto"><table class="w-full border-collapse text-sm">${thead}${tbody}</table></div>`
+  })
 
   // Split by double newlines for paragraphs
   const paragraphs = html.split(/\n\n+/)

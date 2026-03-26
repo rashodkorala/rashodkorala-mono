@@ -4,12 +4,11 @@ import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import ThemeToggle from "@/src/components/theme-toggle";
 
 const sections = [
   { id: "about", label: "About", href: "/" },
   { id: "work", label: "Work", href: "/work" },
-  { id: "blog", label: "Blog", href: "/blog" },
+  { id: "view", label: "The View", href: "/view" },
   { id: "contact", label: "Contact", href: "/contact" },
 ];
 
@@ -22,6 +21,8 @@ export default function SideNav() {
       setActive("about");
     } else if (pathname.startsWith("/work") || pathname.startsWith("/projects")) {
       setActive("work");
+    } else if (pathname.startsWith("/view") || pathname.startsWith("/blog")) {
+      setActive("view");
     } else {
       const match = sections.find(
         (s) => s.href !== "/" && pathname.startsWith(s.href)
@@ -32,7 +33,7 @@ export default function SideNav() {
 
   return (
     <motion.nav
-      className="hidden lg:flex flex-col justify-between fixed left-0 top-0 h-screen w-48 pl-8 py-12 z-50"
+      className="hidden lg:flex flex-col justify-end fixed left-0 top-0 h-screen w-48 pl-8 py-12 z-50"
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{
@@ -43,7 +44,7 @@ export default function SideNav() {
     >
       <div className="flex-1 flex items-center">
         <ul className="space-y-7">
-          {sections.map(({ id, label, href }) => (
+          {sections.map(({ id, href, label }) => (
             <li key={id}>
               <Link
                 href={href}
@@ -61,16 +62,12 @@ export default function SideNav() {
                   }`}
                 />
                 <span className="text-[13px] tracking-[0.06em] font-light">
-                  {label}
+                  {id === "view" ? <>The <em className="italic">View</em></> : label}
                 </span>
               </Link>
             </li>
           ))}
         </ul>
-      </div>
-
-      <div className="pl-11">
-        <ThemeToggle />
       </div>
     </motion.nav>
   );
