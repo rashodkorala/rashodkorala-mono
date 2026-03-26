@@ -30,21 +30,21 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
         transition={{ duration: 0.6, delay: index * 0.08 }}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
-        className="group border-t border-white/10 py-8 cursor-pointer"
+        className="group border-t border-white/8 py-7 cursor-pointer"
       >
-        <div className="grid md:grid-cols-[1fr_180px] gap-6 items-start">
+        <div className="grid md:grid-cols-[1fr_160px] gap-5 items-start">
           <div>
-            <div className="flex items-center gap-3 mb-3 flex-wrap">
-              <span className="text-[11px] uppercase tracking-[0.08em] text-white/25 font-mono">{getYear()}</span>
+            <div className="flex items-center gap-2.5 mb-2 flex-wrap">
+              <span className="text-[11px] uppercase tracking-[0.08em] text-white/20 font-mono">{getYear()}</span>
               {project.tech && project.tech.length > 0 && (
-                <div className="flex gap-2 flex-wrap">
+                <div className="flex gap-1.5 flex-wrap">
                   {project.tech.slice(0, 3).map(tag => (
-                    <span key={tag} className="text-[11px] uppercase tracking-[0.08em] px-2.5 py-1 border border-white/10 rounded-full text-white/30">
+                    <span key={tag} className="text-[10px] uppercase tracking-[0.08em] px-2 py-0.5 border border-white/8 rounded-full text-white/25">
                       {tag}
                     </span>
                   ))}
                   {project.tech.length > 3 && (
-                    <span className="text-[11px] uppercase tracking-[0.08em] px-2.5 py-1 border border-white/10 rounded-full text-white/30">
+                    <span className="text-[10px] uppercase tracking-[0.08em] px-2 py-0.5 border border-white/8 rounded-full text-white/25">
                       +{project.tech.length - 3}
                     </span>
                   )}
@@ -52,18 +52,18 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
               )}
             </div>
 
-            <h3 className="text-xl md:text-2xl font-light tracking-tight mb-2 flex items-center gap-2">
+            <h3 className="text-lg md:text-xl font-normal tracking-tight mb-1.5 flex items-center gap-2">
               {project.title}
               <motion.span
                 animate={{ x: isHovered ? 4 : 0, y: isHovered ? -4 : 0 }}
                 transition={{ duration: 0.2 }}
               >
-                <ArrowUpRight className="w-4 h-4 text-white/15 group-hover:text-white transition-colors" strokeWidth={1.5} />
+                <ArrowUpRight className="w-3.5 h-3.5 text-white/10 group-hover:text-white transition-colors" strokeWidth={1.5} />
               </motion.span>
             </h3>
 
             {project.subtitle && (
-              <p className="text-white/40 leading-relaxed max-w-lg text-[15px]">
+              <p className="text-white/35 leading-relaxed max-w-lg text-[14px]">
                 {project.subtitle}
               </p>
             )}
@@ -72,14 +72,14 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
           {project.cover_image_url && (
             <motion.div
               animate={{ scale: isHovered ? 1 : 0.95, opacity: isHovered ? 1 : 0.7 }}
-              className="relative w-full h-28 bg-white/5 rounded-lg overflow-hidden"
+              className="relative w-full h-24 bg-white/5 rounded-lg overflow-hidden"
             >
               <Image
                 src={project.cover_image_url}
                 alt={project.title}
                 fill
                 className="object-cover"
-                sizes="180px"
+                sizes="160px"
               />
             </motion.div>
           )}

@@ -23,12 +23,12 @@ export default function Footer() {
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.8 }}
           >
-            <p className="text-sm tracking-[0.3em] uppercase text-white/30 mb-4">
+            <h2 className="text-[13px] uppercase tracking-[0.15em] text-white/30 mb-6">
               Contact
-            </p>
-            <h2 className="text-3xl md:text-4xl font-light tracking-tight mb-6">
-              Let&apos;s work <span className="font-medium">together</span>
             </h2>
+            <p className="text-2xl md:text-3xl font-light tracking-tight mb-6">
+              Let&apos;s work <span className="font-medium">together</span>
+            </p>
             <p className="text-white/40 font-light mb-8 leading-relaxed">
               Have a project in mind or want to discuss opportunities?
               I&apos;m always open to interesting conversations.
@@ -52,7 +52,7 @@ export default function Footer() {
             transition={{ duration: 0.8, delay: 0.2 }}
             className="md:text-right"
           >
-            <p className="text-sm tracking-[0.3em] uppercase text-white/30 mb-6">
+            <p className="text-[13px] uppercase tracking-[0.15em] text-white/30 mb-6">
               Connect
             </p>
 
