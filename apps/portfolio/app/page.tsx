@@ -95,6 +95,57 @@ export default async function Index() {
           </div>
         </header>
 
+        {/* About */}
+        <section id="about" className="px-6 md:px-12 pb-24">
+          <div className="max-w-4xl">
+            <h2 className="text-3xl md:text-4xl font-light tracking-tight mb-12">
+              About
+            </h2>
+
+            <div className="space-y-6 text-[17px] text-white/50 font-light leading-[1.8] max-w-2xl">
+              <p>
+                Five years of building web and mobile applications. A journey that started with
+                curiosity about how things work, naturally leading to a deep connection with code
+                and craft.
+              </p>
+              <p>
+                Specializing in creating elegant, performant applications across the full stack.
+                The belief is simple: the best software is invisible, working seamlessly,
+                integrating into lives without friction.
+              </p>
+              <p>
+                Beyond coding, time is spent building a startup, mentoring junior developers, and
+                exploring new cities with a camera.
+              </p>
+            </div>
+
+            <div className="mt-12 grid sm:grid-cols-2 gap-8">
+              {[
+                { category: "Languages", items: ["JavaScript", "TypeScript", "Python", "Go", "Swift"] },
+                { category: "Frontend", items: ["React", "Next.js", "Tailwind CSS", "Framer Motion"] },
+                { category: "Backend", items: ["Node.js", "PostgreSQL", "Redis", "GraphQL"] },
+                { category: "Cloud", items: ["AWS", "Kubernetes", "Docker", "CI/CD"] },
+              ].map((skill) => (
+                <div key={skill.category}>
+                  <h3 className="text-sm text-white/30 uppercase tracking-[0.08em] mb-3">
+                    {skill.category}
+                  </h3>
+                  <div className="flex flex-wrap gap-2">
+                    {skill.items.map((item) => (
+                      <span
+                        key={item}
+                        className="px-3 py-1.5 border border-white/10 rounded-full text-[13px] text-white/50"
+                      >
+                        {item}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </section>
+
         {/* Work / Case Studies */}
         <section id="work" className="px-6 md:px-12 pb-24">
           <div className="max-w-4xl">
@@ -285,56 +336,6 @@ export default async function Index() {
           </div>
         </section>
 
-        {/* About */}
-        <section id="about" className="px-6 md:px-12 pb-24">
-          <div className="max-w-4xl">
-            <h2 className="text-3xl md:text-4xl font-light tracking-tight mb-12">
-              About
-            </h2>
-
-            <div className="space-y-6 text-[17px] text-white/50 font-light leading-[1.8] max-w-2xl">
-              <p>
-                Five years of building web and mobile applications. A journey that started with
-                curiosity about how things work, naturally leading to a deep connection with code
-                and craft.
-              </p>
-              <p>
-                Specializing in creating elegant, performant applications across the full stack.
-                The belief is simple: the best software is invisible, working seamlessly,
-                integrating into lives without friction.
-              </p>
-              <p>
-                Beyond coding, time is spent building a startup, mentoring junior developers, and
-                exploring new cities with a camera.
-              </p>
-            </div>
-
-            <div className="mt-12 grid sm:grid-cols-2 gap-8">
-              {[
-                { category: "Languages", items: ["JavaScript", "TypeScript", "Python", "Go", "Swift"] },
-                { category: "Frontend", items: ["React", "Next.js", "Tailwind CSS", "Framer Motion"] },
-                { category: "Backend", items: ["Node.js", "PostgreSQL", "Redis", "GraphQL"] },
-                { category: "Cloud", items: ["AWS", "Kubernetes", "Docker", "CI/CD"] },
-              ].map((skill) => (
-                <div key={skill.category}>
-                  <h3 className="text-sm text-white/30 uppercase tracking-[0.08em] mb-3">
-                    {skill.category}
-                  </h3>
-                  <div className="flex flex-wrap gap-2">
-                    {skill.items.map((item) => (
-                      <span
-                        key={item}
-                        className="px-3 py-1.5 border border-white/10 rounded-full text-[13px] text-white/50"
-                      >
-                        {item}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
       </div>
     </div>
   );
