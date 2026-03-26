@@ -2,8 +2,8 @@ import { Metadata } from 'next'
 import '@/styles/globals.css'
 
 import { PostHogProvider } from '@rashodkorala/posthog-next'
-import { Geist_Mono, Geist } from 'next/font/google';
-import Footer from '@/src/components/footer';
+import { Geist_Mono, Geist, Playfair_Display } from 'next/font/google';
+import ConditionalFooter from '@/src/components/conditional-footer';
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -19,6 +19,12 @@ const geistMono = Geist_Mono({
     display: "swap",
     adjustFontFallback: true,
     fallback: ['ui-monospace', 'monospace'],
+});
+
+const playfair = Playfair_Display({
+    variable: "--font-playfair",
+    subsets: ["latin"],
+    display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -74,10 +80,10 @@ export default function RootLayout({
 }) {
     return (
         <html lang="en" className="dark">
-            <body className={`${geistSans.variable} ${geistMono.variable} bg-black text-white`}>
+            <body className={`${geistSans.variable} ${geistMono.variable} ${playfair.variable} bg-black text-white`}>
                 <PostHogProvider app="portfolio">
                     {children}
-                    <Footer />
+                    <ConditionalFooter />
                 </PostHogProvider>
             </body>
         </html>
