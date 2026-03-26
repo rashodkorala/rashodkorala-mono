@@ -69,40 +69,39 @@ export default async function Index() {
     <div className="relative">
       <SideNav />
 
-      {/* Main content — offset on large screens for side nav */}
       <div className="lg:ml-56">
         {/* Header */}
-        <header className="pt-16 pb-24 px-6 md:px-12">
+        <header className="pt-20 pb-28 px-6 md:px-12">
           <div className="max-w-4xl">
-            <h1 className="text-4xl md:text-5xl font-light tracking-tight leading-[1.15] mb-6">
+            <h1 className="text-5xl md:text-6xl font-medium tracking-tight leading-[1.1] mb-5">
               Rashod Korala
             </h1>
-            <p className="text-lg text-white/50 font-light max-w-xl leading-relaxed">
+            <p className="text-base text-white/40 font-light max-w-lg leading-relaxed">
               Full-stack engineer building elegant, performant applications.
               Currently focused on a startup reimagining how people interact with technology.
             </p>
-            <div className="flex items-center gap-5 mt-6">
-              <a href="mailto:hello@rashodkorala.com" className="text-white/40 hover:text-white transition-colors">
-                <Mail className="w-[18px] h-[18px]" strokeWidth={1.5} />
+            <div className="flex items-center gap-5 mt-5">
+              <a href="mailto:hello@rashodkorala.com" className="text-white/30 hover:text-white transition-colors">
+                <Mail className="w-4 h-4" strokeWidth={1.5} />
               </a>
-              <a href="https://github.com/rashodkorala" target="_blank" rel="noopener noreferrer" className="text-white/40 hover:text-white transition-colors">
-                <Github className="w-[18px] h-[18px]" strokeWidth={1.5} />
+              <a href="https://github.com/rashodkorala" target="_blank" rel="noopener noreferrer" className="text-white/30 hover:text-white transition-colors">
+                <Github className="w-4 h-4" strokeWidth={1.5} />
               </a>
-              <a href="https://linkedin.com/in/rashodk" target="_blank" rel="noopener noreferrer" className="text-white/40 hover:text-white transition-colors">
-                <Linkedin className="w-[18px] h-[18px]" strokeWidth={1.5} />
+              <a href="https://linkedin.com/in/rashodk" target="_blank" rel="noopener noreferrer" className="text-white/30 hover:text-white transition-colors">
+                <Linkedin className="w-4 h-4" strokeWidth={1.5} />
               </a>
             </div>
           </div>
         </header>
 
         {/* About */}
-        <section id="about" className="px-6 md:px-12 pb-24">
+        <section id="about" className="px-6 md:px-12 pb-20">
           <div className="max-w-4xl">
-            <h2 className="text-3xl md:text-4xl font-light tracking-tight mb-12">
+            <h2 className="text-[13px] uppercase tracking-[0.15em] text-white/30 mb-8">
               About
             </h2>
 
-            <div className="space-y-6 text-[17px] text-white/50 font-light leading-[1.8] max-w-2xl">
+            <div className="space-y-5 text-[15px] text-white/50 font-light leading-[1.8] max-w-xl">
               <p>
                 Five years of building web and mobile applications. A journey that started with
                 curiosity about how things work, naturally leading to a deep connection with code
@@ -110,8 +109,8 @@ export default async function Index() {
               </p>
               <p>
                 Specializing in creating elegant, performant applications across the full stack.
-                The belief is simple: the best software is invisible, working seamlessly,
-                integrating into lives without friction.
+                The best software is invisible — working seamlessly, integrating into lives
+                without friction.
               </p>
               <p>
                 Beyond coding, time is spent building a startup, mentoring junior developers, and
@@ -119,7 +118,7 @@ export default async function Index() {
               </p>
             </div>
 
-            <div className="mt-12 grid sm:grid-cols-2 gap-8">
+            <div className="mt-10 grid sm:grid-cols-2 gap-6">
               {[
                 { category: "Languages", items: ["JavaScript", "TypeScript", "Python", "Go", "Swift"] },
                 { category: "Frontend", items: ["React", "Next.js", "Tailwind CSS", "Framer Motion"] },
@@ -127,14 +126,14 @@ export default async function Index() {
                 { category: "Cloud", items: ["AWS", "Kubernetes", "Docker", "CI/CD"] },
               ].map((skill) => (
                 <div key={skill.category}>
-                  <h3 className="text-sm text-white/30 uppercase tracking-[0.08em] mb-3">
+                  <h3 className="text-[11px] text-white/25 uppercase tracking-[0.1em] mb-2.5">
                     {skill.category}
                   </h3>
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-wrap gap-1.5">
                     {skill.items.map((item) => (
                       <span
                         key={item}
-                        className="px-3 py-1.5 border border-white/10 rounded-full text-[13px] text-white/50"
+                        className="px-2.5 py-1 border border-white/8 rounded-full text-[12px] text-white/40"
                       >
                         {item}
                       </span>
@@ -147,9 +146,9 @@ export default async function Index() {
         </section>
 
         {/* Work / Case Studies */}
-        <section id="work" className="px-6 md:px-12 pb-24">
+        <section id="work" className="px-6 md:px-12 pb-20 pt-8">
           <div className="max-w-4xl">
-            <h2 className="text-3xl md:text-4xl font-light tracking-tight mb-12">
+            <h2 className="text-[13px] uppercase tracking-[0.15em] text-white/30 mb-8">
               Work
             </h2>
 
@@ -158,64 +157,64 @@ export default async function Index() {
                 <Link
                   key={item.id}
                   href={`/work/${item.slug}`}
-                  className="block border-t border-white/10 py-8 group"
+                  className="block border-t border-white/8 py-7 group"
                 >
-                  <div className="grid md:grid-cols-[1fr_180px] gap-6 items-start">
+                  <div className="grid md:grid-cols-[1fr_160px] gap-5 items-start">
                     <div>
-                      <div className="flex items-center gap-2 mb-3 flex-wrap">
+                      <div className="flex items-center gap-2 mb-2 flex-wrap">
                         {item.category && (
-                          <span className="text-[11px] px-2.5 py-1 rounded-full border border-white/10 text-white/60 uppercase tracking-[0.08em]">
+                          <span className="text-[10px] px-2 py-0.5 rounded-full border border-white/10 text-white/50 uppercase tracking-[0.08em]">
                             {item.category}
                           </span>
                         )}
                         {item.tags?.slice(0, 2).map((tag: string) => (
                           <span
                             key={tag}
-                            className="text-[11px] px-2.5 py-1 rounded-full border border-white/10 text-white/30 uppercase tracking-[0.08em]"
+                            className="text-[10px] px-2 py-0.5 rounded-full border border-white/8 text-white/25 uppercase tracking-[0.08em]"
                           >
                             {tag}
                           </span>
                         ))}
                       </div>
-                      <h3 className="text-xl md:text-2xl font-light tracking-tight flex items-center gap-2">
+                      <h3 className="text-lg md:text-xl font-normal tracking-tight flex items-center gap-2">
                         {item.title}
-                        <ArrowUpRight className="w-4 h-4 text-white/15 group-hover:text-white transition-colors" strokeWidth={1.5} />
+                        <ArrowUpRight className="w-3.5 h-3.5 text-white/10 group-hover:text-white transition-colors" strokeWidth={1.5} />
                       </h3>
                       {item.summary && (
-                        <p className="text-white/40 mt-2 font-light leading-relaxed max-w-lg text-[15px]">
+                        <p className="text-white/35 mt-1.5 font-light leading-relaxed max-w-lg text-[14px]">
                           {item.summary}
                         </p>
                       )}
                     </div>
                     {item.cover_url && (
-                      <div className="relative w-full h-28 rounded-lg overflow-hidden border border-white/10">
-                        <Image src={item.cover_url} alt={item.title} fill className="object-cover opacity-70 group-hover:opacity-100 transition-opacity" sizes="180px" />
+                      <div className="relative w-full h-24 rounded-lg overflow-hidden border border-white/8">
+                        <Image src={item.cover_url} alt={item.title} fill className="object-cover opacity-60 group-hover:opacity-100 transition-opacity" sizes="160px" />
                       </div>
                     )}
                   </div>
                 </Link>
               ))}
               {recentWork.length === 0 && (
-                <p className="text-white/30 font-light py-8 border-t border-white/10">No case studies yet.</p>
+                <p className="text-white/25 font-light py-6 border-t border-white/8 text-sm">No case studies yet.</p>
               )}
             </div>
 
             {caseStudies.length > 3 && (
               <Link
                 href="/work"
-                className="inline-flex items-center gap-2 mt-4 text-sm text-white/40 hover:text-white transition-colors group"
+                className="inline-flex items-center gap-2 mt-3 text-[13px] text-white/30 hover:text-white transition-colors group"
               >
                 View all work
-                <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" strokeWidth={1.5} />
+                <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" strokeWidth={1.5} />
               </Link>
             )}
           </div>
         </section>
 
         {/* Projects */}
-        <section id="projects" className="px-6 md:px-12 pb-24">
+        <section id="projects" className="px-6 md:px-12 pb-20 pt-8">
           <div className="max-w-4xl">
-            <h2 className="text-3xl md:text-4xl font-light tracking-tight mb-12">
+            <h2 className="text-[13px] uppercase tracking-[0.15em] text-white/30 mb-8">
               Projects
             </h2>
 
@@ -224,12 +223,12 @@ export default async function Index() {
                 <Link
                   key={project.id}
                   href={`/projects/${project.slug}`}
-                  className="block border-t border-white/10 py-8 group"
+                  className="block border-t border-white/8 py-7 group"
                 >
-                  <div className="grid md:grid-cols-[1fr_180px] gap-6 items-start">
+                  <div className="grid md:grid-cols-[1fr_160px] gap-5 items-start">
                     <div>
-                      <div className="flex items-center gap-3 mb-3 flex-wrap">
-                        <span className="text-[11px] uppercase tracking-[0.08em] text-white/25 font-mono">
+                      <div className="flex items-center gap-2.5 mb-2 flex-wrap">
+                        <span className="text-[11px] uppercase tracking-[0.08em] text-white/20 font-mono">
                           {project.created_at
                             ? new Date(project.created_at).getFullYear()
                             : new Date().getFullYear()}
@@ -237,51 +236,51 @@ export default async function Index() {
                         {project.tech?.slice(0, 3).map((tag: string) => (
                           <span
                             key={tag}
-                            className="text-[11px] uppercase tracking-[0.08em] px-2.5 py-1 border border-white/10 rounded-full text-white/30"
+                            className="text-[10px] uppercase tracking-[0.08em] px-2 py-0.5 border border-white/8 rounded-full text-white/25"
                           >
                             {tag}
                           </span>
                         ))}
                       </div>
-                      <h3 className="text-xl md:text-2xl font-light tracking-tight flex items-center gap-2">
+                      <h3 className="text-lg md:text-xl font-normal tracking-tight flex items-center gap-2">
                         {project.title}
-                        <ArrowUpRight className="w-4 h-4 text-white/15 group-hover:text-white transition-colors" strokeWidth={1.5} />
+                        <ArrowUpRight className="w-3.5 h-3.5 text-white/10 group-hover:text-white transition-colors" strokeWidth={1.5} />
                       </h3>
                       {project.subtitle && (
-                        <p className="text-white/40 mt-2 font-light leading-relaxed max-w-lg text-[15px]">
+                        <p className="text-white/35 mt-1.5 font-light leading-relaxed max-w-lg text-[14px]">
                           {project.subtitle}
                         </p>
                       )}
                     </div>
                     {project.cover_image_url && (
-                      <div className="relative w-full h-28 rounded-lg overflow-hidden border border-white/10">
-                        <Image src={project.cover_image_url} alt={project.title} fill className="object-cover opacity-70 group-hover:opacity-100 transition-opacity" sizes="180px" />
+                      <div className="relative w-full h-24 rounded-lg overflow-hidden border border-white/8">
+                        <Image src={project.cover_image_url} alt={project.title} fill className="object-cover opacity-60 group-hover:opacity-100 transition-opacity" sizes="160px" />
                       </div>
                     )}
                   </div>
                 </Link>
               ))}
               {recentProjects.length === 0 && (
-                <p className="text-white/30 font-light py-8 border-t border-white/10">No projects yet.</p>
+                <p className="text-white/25 font-light py-6 border-t border-white/8 text-sm">No projects yet.</p>
               )}
             </div>
 
             {projects.length > 3 && (
               <Link
                 href="/projects"
-                className="inline-flex items-center gap-2 mt-4 text-sm text-white/40 hover:text-white transition-colors group"
+                className="inline-flex items-center gap-2 mt-3 text-[13px] text-white/30 hover:text-white transition-colors group"
               >
                 View all projects
-                <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" strokeWidth={1.5} />
+                <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" strokeWidth={1.5} />
               </Link>
             )}
           </div>
         </section>
 
         {/* Blog */}
-        <section id="blog" className="px-6 md:px-12 pb-24">
+        <section id="blog" className="px-6 md:px-12 pb-20 pt-8">
           <div className="max-w-4xl">
-            <h2 className="text-3xl md:text-4xl font-light tracking-tight mb-12">
+            <h2 className="text-[13px] uppercase tracking-[0.15em] text-white/30 mb-8">
               Blog
             </h2>
 
@@ -290,10 +289,10 @@ export default async function Index() {
                 <Link
                   key={post.id}
                   href={`/blog/${post.slug}`}
-                  className="block border-t border-white/10 py-8 group"
+                  className="block border-t border-white/8 py-7 group"
                 >
-                  <div className="flex items-center gap-3 mb-3 flex-wrap">
-                    <span className="text-[11px] text-white/25 font-mono">
+                  <div className="flex items-center gap-2.5 mb-2 flex-wrap">
+                    <span className="text-[11px] text-white/20 font-mono">
                       {post.published_at
                         ? new Date(post.published_at).toLocaleDateString("en-US", {
                             year: "numeric",
@@ -304,34 +303,34 @@ export default async function Index() {
                     {post.tags?.slice(0, 2).map((tag: string) => (
                       <span
                         key={tag}
-                        className="text-[11px] px-2.5 py-1 border border-white/10 rounded-full text-white/30"
+                        className="text-[10px] px-2 py-0.5 border border-white/8 rounded-full text-white/25"
                       >
                         {tag}
                       </span>
                     ))}
                   </div>
-                  <h3 className="text-xl md:text-2xl font-light tracking-tight flex items-center gap-2">
+                  <h3 className="text-lg md:text-xl font-normal tracking-tight flex items-center gap-2">
                     {post.title}
-                    <ArrowUpRight className="w-4 h-4 text-white/15 group-hover:text-white transition-colors" strokeWidth={1.5} />
+                    <ArrowUpRight className="w-3.5 h-3.5 text-white/10 group-hover:text-white transition-colors" strokeWidth={1.5} />
                   </h3>
                   {post.excerpt && (
-                    <p className="text-white/40 mt-2 font-light leading-relaxed max-w-lg text-[15px]">
+                    <p className="text-white/35 mt-1.5 font-light leading-relaxed max-w-lg text-[14px]">
                       {post.excerpt}
                     </p>
                   )}
                 </Link>
               ))}
               {blogs.length === 0 && (
-                <p className="text-white/30 font-light py-8 border-t border-white/10">No posts yet.</p>
+                <p className="text-white/25 font-light py-6 border-t border-white/8 text-sm">No posts yet.</p>
               )}
             </div>
 
             <Link
               href="/blog"
-              className="inline-flex items-center gap-2 mt-4 text-sm text-white/40 hover:text-white transition-colors group"
+              className="inline-flex items-center gap-2 mt-3 text-[13px] text-white/30 hover:text-white transition-colors group"
             >
               View all posts
-              <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-1 transition-transform" strokeWidth={1.5} />
+              <ArrowRight className="w-3 h-3 group-hover:translate-x-1 transition-transform" strokeWidth={1.5} />
             </Link>
           </div>
         </section>
