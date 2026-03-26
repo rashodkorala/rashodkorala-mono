@@ -2,12 +2,12 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { unstable_cache } from "next/cache";
 import { supabase } from "@/lib/supabase";
-import BlogPostContent from "@/src/components/blog/blogPostContent";
+import ViewPostContent from "@/src/components/blog/blogPostContent";
 import PageShell from "@/src/components/page-shell";
 
 export const revalidate = 3600;
 
-interface BlogPost {
+interface ViewPost {
   id: string;
   title: string;
   slug: string;
@@ -27,9 +27,9 @@ interface PageProps {
   params: Promise<{ slug: string }>;
 }
 
-async function getBlogUncached(slug: string): Promise<BlogPost | null> {
+async function getViewPostUncached(slug: string): Promise<ViewPost | null> {
   const { data, error } = await supabase
-    .from("blogs")
+    .from("view_posts")
     .select("*")
     .eq("slug", slug)
     .eq("status", "published")
@@ -37,16 +37,23 @@ async function getBlogUncached(slug: string): Promise<BlogPost | null> {
     .single();
 
   if (error || !data) {
-    console.error("Error fetching blog:", error);
+    console.error("Error fetching view post:", error);
     return null;
   }
 
   let markdownContent = "";
   if (data.mdx_path) {
+    const mdxPath = data.mdx_path.startsWith("the-view/") ? data.mdx_path : `the-view/${data.mdx_path}`;
     const { data: markdownData, error: markdownError } = await supabase.storage
-      .from("blogs-mdx")
-      .download(data.mdx_path);
-    if (!markdownError && markdownData) {
+      .from("content")
+      .download(mdxPath);
+    if (markdownError) {
+      console.error("Error downloading view post markdown:", {
+        slug,
+        mdxPath,
+        message: markdownError.message,
+      });
+    } else if (markdownData) {
       markdownContent = await markdownData.text();
     }
   }
@@ -54,34 +61,34 @@ async function getBlogUncached(slug: string): Promise<BlogPost | null> {
   return { ...data, content: markdownContent };
 }
 
-function getBlog(slug: string) {
-  return unstable_cache(() => getBlogUncached(slug), ["view-blog-portfolio", slug], {
+function getViewPost(slug: string) {
+  return unstable_cache(() => getViewPostUncached(slug), ["view-post-portfolio-v2", slug], {
     revalidate: 3600,
-    tags: ["blogs-portfolio", `blog-${slug}`],
+    tags: ["view-posts-portfolio", `view-post-${slug}`],
   })();
 }
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const blog = await getBlog(slug);
+  const viewPost = await getViewPost(slug);
 
-  if (!blog) return { title: "Post Not Found | The View" };
+  if (!viewPost) return { title: "Post Not Found | The View" };
 
   return {
-    title: blog.seo_title || blog.title,
-    description: blog.seo_description || blog.excerpt || undefined,
+    title: viewPost.seo_title || viewPost.title,
+    description: viewPost.seo_description || viewPost.excerpt || undefined,
     openGraph: {
-      title: blog.seo_title || blog.title,
-      description: blog.seo_description || blog.excerpt || undefined,
-      images: blog.featured_image_url ? [blog.featured_image_url] : undefined,
+      title: viewPost.seo_title || viewPost.title,
+      description: viewPost.seo_description || viewPost.excerpt || undefined,
+      images: viewPost.featured_image_url ? [viewPost.featured_image_url] : undefined,
     },
   };
 }
 
 export default async function ViewPostPage({ params }: PageProps) {
   const { slug } = await params;
-  const blog = await getBlog(slug);
-  if (!blog) notFound();
+  const viewPost = await getViewPost(slug);
+  if (!viewPost) notFound();
 
-  return <PageShell><BlogPostContent blog={blog} backHref="/view" backLabel="Back to The View" /></PageShell>;
+  return <PageShell><ViewPostContent post={viewPost} backHref="/view" backLabel="Back to The View" /></PageShell>;
 }

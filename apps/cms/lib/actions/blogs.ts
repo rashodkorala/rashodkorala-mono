@@ -4,6 +4,9 @@ import { createClient } from "@/lib/supabase/server"
 import { revalidatePath } from "next/cache"
 import type { Blog, BlogDB, BlogInsert, BlogUpdate, TargetApp } from "@/lib/types/blog"
 
+const VIEW_CONTENT_PREFIX = "the-view"
+const VIEW_MEDIA_PREFIX = "the-view"
+
 function transformBlog(blog: BlogDB): Blog {
   return {
     id: blog.id,
@@ -38,6 +41,10 @@ function slugify(text: string): string {
     .trim()
 }
 
+function toViewContentPath(path: string): string {
+  return path.startsWith(`${VIEW_CONTENT_PREFIX}/`) ? path : `${VIEW_CONTENT_PREFIX}/${path}`
+}
+
 // Upload markdown content to storage
 export async function uploadMarkdownToStorage(slug: string, content: string): Promise<string> {
   const supabase = await createClient()
@@ -51,11 +58,11 @@ export async function uploadMarkdownToStorage(slug: string, content: string): Pr
   }
 
   const fileName = `${slug}.md`
-  const filePath = `${user.id}/${fileName}`
+  const filePath = `${VIEW_CONTENT_PREFIX}/${user.id}/${fileName}`
 
   // Upload or update the file
   const { error } = await supabase.storage
-    .from("blogs-mdx")
+    .from("content")
     .upload(filePath, content, {
       contentType: "text/markdown",
       upsert: true,
@@ -72,9 +79,10 @@ export async function uploadMarkdownToStorage(slug: string, content: string): Pr
 export async function fetchMarkdownFromStorage(mdxPath: string): Promise<string> {
   const supabase = await createClient()
 
+  const normalizedPath = toViewContentPath(mdxPath)
   const { data, error } = await supabase.storage
-    .from("blogs-mdx")
-    .download(mdxPath)
+    .from("content")
+    .download(normalizedPath)
 
   if (error) {
     throw new Error(`Failed to fetch markdown: ${error.message}`)
@@ -97,10 +105,10 @@ export async function uploadBlogMedia(file: File): Promise<string> {
 
   const fileExt = file.name.split(".").pop()
   const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`
-  const filePath = `${user.id}/${fileName}`
+  const filePath = `${VIEW_MEDIA_PREFIX}/${user.id}/${fileName}`
 
   const { error } = await supabase.storage
-    .from("blogs-media")
+    .from("media")
     .upload(filePath, file)
 
   if (error) {
@@ -109,7 +117,7 @@ export async function uploadBlogMedia(file: File): Promise<string> {
 
   const {
     data: { publicUrl },
-  } = supabase.storage.from("blogs-media").getPublicUrl(filePath)
+  } = supabase.storage.from("media").getPublicUrl(filePath)
 
   return publicUrl
 }
@@ -126,7 +134,7 @@ export async function getBlogs(status?: string, targetApp?: TargetApp): Promise<
   }
 
   let query = supabase
-    .from("blogs")
+    .from("view_posts")
     .select("*")
     .eq("user_id", user.id)
     .order("created_at", { ascending: false })
@@ -160,7 +168,7 @@ export async function getBlog(id: string): Promise<Blog | null> {
   }
 
   const { data, error } = await supabase
-    .from("blogs")
+    .from("view_posts")
     .select("*")
     .eq("id", id)
     .eq("user_id", user.id)
@@ -188,7 +196,7 @@ export async function getBlogBySlug(slug: string): Promise<Blog | null> {
   }
 
   const { data, error } = await supabase
-    .from("blogs")
+    .from("view_posts")
     .select("*")
     .eq("slug", slug)
     .eq("user_id", user.id)
@@ -221,7 +229,7 @@ export async function createBlog(blog: BlogInsert): Promise<Blog> {
   const mdxPath = await uploadMarkdownToStorage(slug, blog.mdxContent)
 
   const { data, error } = await supabase
-    .from("blogs")
+    .from("view_posts")
     .insert({
       user_id: user.id,
       title: blog.title,
@@ -317,7 +325,7 @@ export async function updateBlog(blog: BlogUpdate): Promise<Blog> {
   if (blog.featured !== undefined) updateData.featured = blog.featured
 
   const { data, error } = await supabase
-    .from("blogs")
+    .from("view_posts")
     .update(updateData)
     .eq("id", blog.id)
     .eq("user_id", user.id)
@@ -349,14 +357,15 @@ export async function deleteBlog(id: string): Promise<void> {
 
   if (blog && blog.mdxPath) {
     // Delete markdown file from storage
+    const normalizedPath = toViewContentPath(blog.mdxPath)
     await supabase.storage
-      .from("blogs-mdx")
-      .remove([blog.mdxPath])
+      .from("content")
+      .remove([normalizedPath])
   }
 
   // Delete from database
   const { error } = await supabase
-    .from("blogs")
+    .from("view_posts")
     .delete()
     .eq("id", id)
     .eq("user_id", user.id)

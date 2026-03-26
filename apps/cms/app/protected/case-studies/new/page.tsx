@@ -16,7 +16,7 @@ export default async function NewCaseStudyPage() {
     <BlogEditor
       initialKind="case_study"
       lockKind
-      backHref="/protected/case-studies"
+      backHref="/protected/work"
     />
   )
 }

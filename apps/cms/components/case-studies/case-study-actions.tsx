@@ -39,12 +39,12 @@ export function CaseStudyActions({ caseStudy }: CaseStudyActionsProps) {
     setIsDeleting(true)
     try {
       await deleteCaseStudy(caseStudy.id)
-      toast.success("Case study deleted successfully")
+      toast.success("Work item deleted successfully")
       router.refresh()
       setIsDeleteDialogOpen(false)
     } catch (error) {
-      console.error("Error deleting case study:", error)
-      toast.error(error instanceof Error ? error.message : "Failed to delete case study")
+      console.error("Error deleting work item:", error)
+      toast.error(error instanceof Error ? error.message : "Failed to delete work item")
     } finally {
       setIsDeleting(false)
     }
@@ -60,13 +60,13 @@ export function CaseStudyActions({ caseStudy }: CaseStudyActionsProps) {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuItem asChild>
-            <Link href={`/protected/case-studies/view/${caseStudy.slug}`}>
+            <Link href={`/protected/work/view/${caseStudy.slug}`}>
               <IconEye className="h-4 w-4 mr-2" />
               View
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
-            <Link href={`/protected/case-studies/${caseStudy.slug}`}>
+            <Link href={`/protected/work/${caseStudy.slug}`}>
               <IconEdit className="h-4 w-4 mr-2" />
               Edit
             </Link>
@@ -87,7 +87,7 @@ export function CaseStudyActions({ caseStudy }: CaseStudyActionsProps) {
           <AlertDialogHeader>
             <AlertDialogTitle>Are you sure?</AlertDialogTitle>
             <AlertDialogDescription>
-              This will permanently delete the case study "{caseStudy.title}". This action cannot be
+              This will permanently delete the work item "{caseStudy.title}". This action cannot be
               undone.
             </AlertDialogDescription>
           </AlertDialogHeader>

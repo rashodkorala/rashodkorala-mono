@@ -33,8 +33,8 @@ const data = {
       icon: IconDashboard,
     },
     {
-      title: "Case Studies",
-      url: "/protected/case-studies",
+      title: "Work",
+      url: "/protected/work",
       icon: IconBriefcase,
     },
     {

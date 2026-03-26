@@ -75,7 +75,7 @@ export default function CaseStudyDetail() {
       <div className="min-h-screen bg-white dark:bg-white flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-black mx-auto mb-4"></div>
-          <p className="text-black/50">Loading case study...</p>
+          <p className="text-black/50">Loading work item...</p>
         </div>
       </div>
     )
@@ -85,13 +85,13 @@ export default function CaseStudyDetail() {
     return (
       <div className="min-h-screen bg-white dark:bg-white flex items-center justify-center">
         <div className="text-center">
-          <p className="text-black/50 mb-4">Case study not found</p>
+          <p className="text-black/50 mb-4">Work item not found</p>
           <Link
-            href="/protected/case-studies"
+            href="/protected/work"
             className="inline-flex items-center gap-2 text-sm text-black/50 hover:text-black transition-colors"
           >
             <IconArrowLeft className="w-4 h-4" strokeWidth={1.5} />
-            Back to case studies
+            Back to work
           </Link>
         </div>
       </div>
@@ -113,11 +113,11 @@ export default function CaseStudyDetail() {
       >
         <div className="max-w-6xl mx-auto">
           <Link
-            href="/protected/case-studies"
+            href="/protected/work"
             className="inline-flex items-center gap-2 text-black/50 hover:text-black transition-colors group"
           >
             <IconArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" strokeWidth={1.5} />
-            <span className="text-sm font-light">Back to case studies</span>
+            <span className="text-sm font-light">Back to work</span>
           </Link>
         </div>
       </motion.div>

@@ -126,7 +126,7 @@ export function BlogsList({ blogs: initialBlogs }: BlogsListProps) {
               <Link href="/protected/blogs/new?kind=project">Project write-up</Link>
             </DropdownMenuItem>
             <DropdownMenuItem asChild>
-              <Link href="/protected/case-studies/new">Case study</Link>
+              <Link href="/protected/work/new">Work item</Link>
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

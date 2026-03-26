@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
     // If slug is provided, fetch single blog
     if (slug) {
       const { data, error } = await supabase
-        .from("blogs")
+        .from("view_posts")
         .select("*")
         .eq("slug", slug)
         .eq("status", "published")
@@ -36,9 +36,10 @@ export async function GET(request: NextRequest) {
       let markdownContent = ""
       if (data.mdx_path) {
         try {
+          const mdxPath = data.mdx_path.startsWith("the-view/") ? data.mdx_path : `the-view/${data.mdx_path}`
           const { data: markdownData, error: markdownError } = await supabase.storage
-            .from("blogs-mdx")
-            .download(data.mdx_path)
+            .from("content")
+            .download(mdxPath)
 
           if (!markdownError && markdownData) {
             markdownContent = await markdownData.text()
@@ -77,7 +78,7 @@ export async function GET(request: NextRequest) {
 
     // Fetch list of blogs
     let query = supabase
-      .from("blogs")
+      .from("view_posts")
       .select("*")
       .eq("status", "published")
       .order("published_at", { ascending: false })

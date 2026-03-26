@@ -4,6 +4,9 @@ import { createClient } from "@/lib/supabase/server"
 import { revalidatePath } from "next/cache"
 import type { CaseStudy, CaseStudyDB, CaseStudyFormData } from "@/lib/types/case-study"
 
+const CASE_STUDIES_CONTENT_PREFIX = "case-studies"
+const CASE_STUDIES_MEDIA_PREFIX = "case-studies"
+
 function transformCaseStudy(caseStudy: CaseStudyDB): CaseStudy {
   return {
     id: caseStudy.id,
@@ -49,6 +52,12 @@ function slugify(text: string): string {
     .trim()
 }
 
+function toCaseStudiesContentPath(path: string): string {
+  return path.startsWith(`${CASE_STUDIES_CONTENT_PREFIX}/`)
+    ? path
+    : `${CASE_STUDIES_CONTENT_PREFIX}/${path}`
+}
+
 // Upload MDX content to storage
 export async function uploadMdxToStorage(slug: string, content: string): Promise<string> {
   const supabase = await createClient()
@@ -62,11 +71,11 @@ export async function uploadMdxToStorage(slug: string, content: string): Promise
   }
 
   const fileName = `${slug}.mdx`
-  const filePath = `${user.id}/${fileName}`
+  const filePath = `${CASE_STUDIES_CONTENT_PREFIX}/${user.id}/${fileName}`
 
   // Upload or update the file
   const { error } = await supabase.storage
-    .from("case-studies-mdx")
+    .from("content")
     .upload(filePath, content, {
       contentType: "text/markdown",
       upsert: true,
@@ -83,9 +92,10 @@ export async function uploadMdxToStorage(slug: string, content: string): Promise
 export async function fetchMdxFromStorage(mdxPath: string): Promise<string> {
   const supabase = await createClient()
 
+  const normalizedPath = toCaseStudiesContentPath(mdxPath)
   const { data, error } = await supabase.storage
-    .from("case-studies-mdx")
-    .download(mdxPath)
+    .from("content")
+    .download(normalizedPath)
 
   if (error) {
     throw new Error(`Failed to fetch MDX: ${error.message}`)
@@ -108,10 +118,10 @@ export async function uploadMedia(file: File): Promise<string> {
 
   const fileExt = file.name.split(".").pop()
   const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`
-  const filePath = `${user.id}/${fileName}`
+  const filePath = `${CASE_STUDIES_MEDIA_PREFIX}/${user.id}/${fileName}`
 
   const { error } = await supabase.storage
-    .from("case-studies-media")
+    .from("media")
     .upload(filePath, file)
 
   if (error) {
@@ -120,7 +130,7 @@ export async function uploadMedia(file: File): Promise<string> {
 
   const {
     data: { publicUrl },
-  } = supabase.storage.from("case-studies-media").getPublicUrl(filePath)
+  } = supabase.storage.from("media").getPublicUrl(filePath)
 
   return publicUrl
 }
@@ -206,6 +216,8 @@ export async function createOrUpdateCaseStudy(
     throw new Error(`Failed to save case study: ${error.message}`)
   }
 
+  revalidatePath("/protected/work")
+  revalidatePath(`/protected/work/${formData.slug}`)
   revalidatePath("/protected/case-studies")
   revalidatePath(`/protected/case-studies/${formData.slug}`)
 
@@ -357,9 +369,10 @@ export async function deleteCaseStudy(id: string): Promise<void> {
 
   if (caseStudy) {
     // Delete MDX file from storage
+    const normalizedPath = toCaseStudiesContentPath(caseStudy.mdxPath)
     await supabase.storage
-      .from("case-studies-mdx")
-      .remove([caseStudy.mdxPath])
+      .from("content")
+      .remove([normalizedPath])
   }
 
   // Delete from database
@@ -373,6 +386,7 @@ export async function deleteCaseStudy(id: string): Promise<void> {
     throw new Error(`Failed to delete case study: ${error.message}`)
   }
 
+  revalidatePath("/protected/work")
   revalidatePath("/protected/case-studies")
 }
 

@@ -54,6 +54,8 @@ export interface CaseStudy {
   summary?: string | null;
   lede?: string | null;
   role?: string | null;
+  subject_type?: string | null;
+  subject_name?: string | null;
   timeline?: string | null;
   category?: CaseStudyCategory | null;
   sort_order?: number | null;

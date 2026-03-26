@@ -41,24 +41,24 @@ export default async function EditCaseStudyPage({
       error,
     })
     mdxWarning =
-      "The original MDX file could not be loaded (likely from migration). You can still edit metadata and re-save content to repair this case study."
+      "The original MDX file could not be loaded (likely from migration). You can still edit metadata and re-save content to repair this work item."
   }
 
   return (
     <div className="space-y-6 px-4">
       <div className="flex items-center gap-4">
-        <Link href="/protected/case-studies">
+        <Link href="/protected/work">
           <Button variant="ghost" size="sm">
             <IconArrowLeft className="h-4 w-4 mr-2" />
-            Back to Case Studies
+            Back to Work
           </Button>
         </Link>
       </div>
 
       <div>
-        <h1 className="text-3xl font-bold">Edit Case Study</h1>
+        <h1 className="text-3xl font-bold">Edit Work Item</h1>
         <p className="text-muted-foreground">
-          Update your case study metadata and content
+          Update your work item metadata and content
         </p>
       </div>
 

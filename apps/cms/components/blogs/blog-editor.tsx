@@ -62,10 +62,18 @@ function defaultCaseStudyExtras() {
   }
 }
 
+const WORK_TYPE_PRESETS = [
+  "Case Study",
+  "Project",
+  "Commercial Photography",
+  "Personal Project",
+  "Client Work",
+]
+
 interface BlogEditorProps {
   blog?: Blog | null
   markdownContent?: string
-  /** When creating content, start as this kind (e.g. case study from Case Studies → New). */
+  /** When creating content, start as this kind (e.g. work item from Work → New). */
   initialKind?: UnifiedContentKind
   /** If true, user cannot change content kind (e.g. editing an existing post). */
   lockKind?: boolean
@@ -279,10 +287,10 @@ export function BlogEditor({
         throw new Error("You must be logged in")
       }
 
-      // New case study → case_studies table + case-studies-mdx (same MDX + image UX as The View)
+      // New work item → case_studies table + content/case-studies path (same MDX + image UX as The View)
       if (contentKind === "case_study") {
         if (isEditing) {
-          toast.error("Edit case studies from Case Studies → edit, or create a new one here.")
+          toast.error("Edit work items from Work → edit, or create a new one here.")
           return
         }
 
@@ -325,8 +333,8 @@ export function BlogEditor({
           undefined
         )
 
-        toast.success("Case study created")
-        router.push("/protected/case-studies")
+        toast.success("Work item created")
+        router.push("/protected/work")
         router.refresh()
         return
       }
@@ -336,7 +344,7 @@ export function BlogEditor({
       if (imageFile) {
         const extension = imageFile.name.split(".").pop() ?? "jpg"
         const fileName = `${crypto.randomUUID()}.${extension}`
-        const filePath = `blogs/${fileName}`
+        const filePath = `the-view/${fileName}`
 
         const { error: uploadError } = await supabase.storage
           .from("media")
@@ -410,7 +418,7 @@ export function BlogEditor({
     isEditing
       ? "Edit post"
       : contentKind === "case_study"
-        ? "New case study"
+        ? "New work item"
         : contentKind === "insight"
           ? "New insight"
           : contentKind === "project_writeup"
@@ -626,7 +634,7 @@ export function BlogEditor({
                 <CardHeader>
                   <CardTitle>Content destination</CardTitle>
                   <CardDescription>
-                    Same editor everywhere: MDX, inline images, SEO. Case studies save to Work; others save to The View list.
+                    Same editor everywhere: MDX, inline images, SEO. Work items save to Work; other content saves to The View.
                   </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-2">
@@ -657,12 +665,14 @@ export function BlogEditor({
             {contentKind === "case_study" && (
               <Card>
                 <CardHeader>
-                  <CardTitle>Case study details</CardTitle>
-                  <CardDescription>Structured fields for portfolio; narrative stays in the editor.</CardDescription>
+                  <CardTitle>Work item details</CardTitle>
+                  <CardDescription>
+                    Structured fields for portfolio; narrative stays in the editor. Use tags and category to describe the work type.
+                  </CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="space-y-2">
-                    <Label>Type</Label>
+                    <Label>Work format</Label>
                     <Select
                       value={csExtra.type}
                       onValueChange={(value: CaseStudyType) =>
@@ -674,9 +684,38 @@ export function BlogEditor({
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="problem-solving">Problem-solving</SelectItem>
-                        <SelectItem value="descriptive">Descriptive</SelectItem>
+                        <SelectItem value="descriptive">Descriptive / narrative</SelectItem>
                       </SelectContent>
                     </Select>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="cs-work-type">Work type</Label>
+                    <Input
+                      id="cs-work-type"
+                      value={csExtra.subjectType}
+                      onChange={(e) =>
+                        setCsExtra((prev) => ({ ...prev, subjectType: e.target.value }))
+                      }
+                      placeholder="Case Study, Project, Commercial Photography, etc."
+                    />
+                    <div className="flex flex-wrap gap-2">
+                      {WORK_TYPE_PRESETS.map((type) => (
+                        <Button
+                          key={type}
+                          type="button"
+                          variant={csExtra.subjectType === type ? "secondary" : "outline"}
+                          size="sm"
+                          onClick={() =>
+                            setCsExtra((prev) => ({ ...prev, subjectType: type }))
+                          }
+                        >
+                          {type}
+                        </Button>
+                      ))}
+                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      Pick a preset or type your own custom value.
+                    </p>
                   </div>
                   <div className="space-y-2">
                     <Label htmlFor="cs-subject">Subject / client</Label>
@@ -839,13 +878,13 @@ export function BlogEditor({
                     <div className="space-y-3 border-t p-3">
                       <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
                         <div className="space-y-1">
-                          <Label className="text-xs">Subject type</Label>
+                          <Label className="text-xs">Work category</Label>
                           <Input
                             value={csExtra.subjectType}
                             onChange={(e) =>
                               setCsExtra((prev) => ({ ...prev, subjectType: e.target.value }))
                             }
-                            placeholder="Web app"
+                            placeholder="Client project, commercial photography, personal project"
                           />
                         </div>
                         <div className="space-y-1">
@@ -1215,7 +1254,15 @@ export function BlogEditor({
                   </div>
                 )}
 
-                {contentKind !== "case_study" && (
+                {contentKind === "case_study" ? (
+                  <div className="space-y-2">
+                    <Label>Publish To</Label>
+                    <div className="rounded-md border bg-muted/40 px-3 py-2 text-sm text-muted-foreground">
+                      Work items currently publish to{" "}
+                      <span className="font-medium text-foreground">Portfolio</span>.
+                    </div>
+                  </div>
+                ) : (
                   <div className="space-y-2">
                     <Label htmlFor="targetApp">Publish To *</Label>
                     <Select
@@ -1248,7 +1295,7 @@ export function BlogEditor({
                     }
                   />
                   <Label htmlFor="featured" className="cursor-pointer">
-                    {contentKind === "case_study" ? "Featured case study" : "Featured post"}
+                    {contentKind === "case_study" ? "Featured work item" : "Featured post"}
                   </Label>
                 </div>
               </CardContent>

@@ -48,13 +48,13 @@ export default async function ProtectedCaseStudiesPage({
     <div className="space-y-6 px-4">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Case Studies</h1>
-          <p className="text-muted-foreground">Manage your case studies</p>
+          <h1 className="text-3xl font-bold">Work</h1>
+          <p className="text-muted-foreground">Manage your work items</p>
         </div>
-        <Link href="/protected/case-studies/new">
+        <Link href="/protected/work/new">
           <Button>
             <IconPlus className="h-4 w-4 mr-2" />
-            New Case Study
+            New Work Item
           </Button>
         </Link>
       </div>
@@ -92,17 +92,17 @@ export default async function ProtectedCaseStudiesPage({
         <Card className="p-12">
           <div className="text-center space-y-4">
             <h3 className="text-lg font-semibold">
-              {statusFilter === "all" ? "No case studies yet" : `No ${statusFilter} case studies`}
+              {statusFilter === "all" ? "No work items yet" : `No ${statusFilter} work items`}
             </h3>
             <p className="text-muted-foreground">
               {statusFilter === "all"
-                ? "Get started by creating your first case study"
-                : "Try a different filter or create a new case study"}
+                ? "Get started by creating your first work item"
+                : "Try a different filter or create a new work item"}
             </p>
-            <Link href="/protected/case-studies/new">
+            <Link href="/protected/work/new">
               <Button>
                 <IconPlus className="h-4 w-4 mr-2" />
-                Create Case Study
+                Create Work Item
               </Button>
             </Link>
           </div>
@@ -143,7 +143,7 @@ export default async function ProtectedCaseStudiesPage({
                   </TableCell>
                   <TableCell>
                     <Badge variant="outline">
-                      {caseStudy.type === "problem-solving" ? "Problem-Solving" : "Descriptive"}
+                      {caseStudy.subjectType || (caseStudy.type === "problem-solving" ? "Problem-Solving" : "Descriptive")}
                     </Badge>
                   </TableCell>
                   <TableCell>

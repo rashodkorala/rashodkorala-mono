@@ -9,7 +9,8 @@ export const revalidate = 3600;
 
 async function getCaseStudyMdx(mdxPath: string | null | undefined): Promise<string> {
   if (!mdxPath) return "";
-  const { data, error } = await supabase.storage.from("case-studies-mdx").download(mdxPath);
+  const normalizedPath = mdxPath.startsWith("case-studies/") ? mdxPath : `case-studies/${mdxPath}`;
+  const { data, error } = await supabase.storage.from("content").download(normalizedPath);
   if (error || !data) return "";
   return data.text();
 }

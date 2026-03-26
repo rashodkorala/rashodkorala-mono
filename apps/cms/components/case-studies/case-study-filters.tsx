@@ -16,7 +16,7 @@ export function CaseStudyFilters({ currentStatus }: { currentStatus: string }) {
   const setFilter = (status: string) => {
     const params = new URLSearchParams()
     if (status !== "all") params.set("status", status)
-    router.push(`/protected/case-studies${params.toString() ? `?${params}` : ""}`)
+    router.push(`/protected/work${params.toString() ? `?${params}` : ""}`)
   }
 
   return (

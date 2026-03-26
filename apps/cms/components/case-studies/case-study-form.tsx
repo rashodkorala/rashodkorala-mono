@@ -265,7 +265,7 @@ Write 2-3 paragraphs per section. Use markdown headers (##), bullet points, and 
         if (!response.ok) throw new Error("Failed to generate content")
         const data = await response.json()
         updateField("mdxContent", data.content)
-        toast.success("Case study content generated")
+        toast.success("Work item content generated")
       } else if (field === "summary") {
         const response = await fetch("/api/generate-project-content", {
           method: "POST",
@@ -341,12 +341,12 @@ Write 2-3 paragraphs per section. Use markdown headers (##), bullet points, and 
 
       await createOrUpdateCaseStudy({ ...formData, coverUrl, galleryUrls, galleryVideoUrls }, caseStudy?.id)
 
-      toast.success(isEditing ? "Case study updated" : "Case study created")
-      router.push("/protected/case-studies")
+      toast.success(isEditing ? "Work item updated" : "Work item created")
+      router.push("/protected/work")
       router.refresh()
     } catch (error) {
-      console.error("Error saving case study:", error)
-      toast.error(error instanceof Error ? error.message : "Failed to save case study")
+      console.error("Error saving work item:", error)
+      toast.error(error instanceof Error ? error.message : "Failed to save work item")
     } finally {
       setIsLoading(false)
     }
@@ -444,7 +444,7 @@ Write 2-3 paragraphs per section. Use markdown headers (##), bullet points, and 
                 id="title"
                 value={formData.title}
                 onChange={(e) => handleTitleChange(e.target.value)}
-                placeholder="Case study title"
+                placeholder="Work item title"
                 required
               />
             </div>
@@ -462,7 +462,7 @@ Write 2-3 paragraphs per section. Use markdown headers (##), bullet points, and 
 
           <div className="grid md:grid-cols-2 gap-4">
             <div className="space-y-2">
-              <Label>Case Study Type</Label>
+              <Label>Work Type</Label>
               <Select
                 value={formData.type}
                 onValueChange={(value: "problem-solving" | "descriptive") => updateField("type", value)}
@@ -509,7 +509,7 @@ Write 2-3 paragraphs per section. Use markdown headers (##), bullet points, and 
                   checked={formData.featured}
                   onCheckedChange={(checked) => updateField("featured", checked as boolean)}
                 />
-                <Label htmlFor="featured" className="cursor-pointer">Featured case study</Label>
+                <Label htmlFor="featured" className="cursor-pointer">Featured work item</Label>
               </div>
             </div>
           </div>
@@ -569,7 +569,7 @@ Write 2-3 paragraphs per section. Use markdown headers (##), bullet points, and 
               <Textarea
                 value={formData.mdxContent}
                 onChange={(e) => updateField("mdxContent", e.target.value)}
-                placeholder="Write your case study content in Markdown..."
+                placeholder="Write your work item content in Markdown..."
                 rows={20}
                 className="font-mono text-sm"
               />
@@ -877,13 +877,13 @@ Write 2-3 paragraphs per section. Use markdown headers (##), bullet points, and 
           <Button
             type="button"
             variant="outline"
-            onClick={() => router.push("/protected/case-studies")}
+            onClick={() => router.push("/protected/work")}
             disabled={isLoading}
           >
             Cancel
           </Button>
           <Button type="submit" disabled={isLoading}>
-            {isLoading ? "Saving..." : isEditing ? "Update Case Study" : "Create Case Study"}
+            {isLoading ? "Saving..." : isEditing ? "Update Work Item" : "Create Work Item"}
           </Button>
         </div>
       </form>

@@ -63,6 +63,11 @@ export default function CaseStudyPage({ caseStudy, mdxContent }: { caseStudy: Ca
       </Link>
 
       <div className="mt-8 flex flex-wrap items-center gap-2">
+        {caseStudy.subject_type && (
+          <span className="text-[11px] uppercase tracking-[0.08em] px-2.5 py-1 rounded-full border border-ink/10 text-ink/45 dark:border-[#33302d] dark:text-[#b1aaa3]">
+            {caseStudy.subject_type}
+          </span>
+        )}
         {tags.map((tag) => (
           <span key={tag} className="text-[11px] uppercase tracking-[0.08em] px-2.5 py-1 rounded-full border border-ink/10 text-ink/45 dark:border-[#33302d] dark:text-[#b1aaa3]">
             {tag}
@@ -79,6 +84,8 @@ export default function CaseStudyPage({ caseStudy, mdxContent }: { caseStudy: Ca
       {caseStudy.summary && <p className="mt-3 text-lg text-muted_ink font-light dark:text-[#b8afa8]">{caseStudy.summary}</p>}
 
       <div className="mt-8 flex flex-wrap items-center gap-4 text-sm text-ink/40 border-y border-ink/10 py-4 dark:text-[#a9a29b] dark:border-[#2e2b29]">
+        {caseStudy.subject_name && <span>Subject: {caseStudy.subject_name}</span>}
+        {caseStudy.subject_name && <span className="w-px h-4 bg-ink/10 dark:bg-[#34312e]" />}
         <span>Role: {caseStudy.role || "N/A"}</span>
         <span className="w-px h-4 bg-ink/10 dark:bg-[#34312e]" />
         <span>Timeline: {caseStudy.timeline || "N/A"}</span>

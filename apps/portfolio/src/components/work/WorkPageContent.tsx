@@ -28,6 +28,11 @@ function CaseStudyCard({ item, index }: { item: CaseStudy; index: number }) {
       >
         <div>
           <div className="flex items-center gap-2 mb-2 flex-wrap">
+            {item.subject_type && (
+              <span className="text-[10px] px-2 py-0.5 rounded-full border border-ink/10 text-ink/55 uppercase tracking-[0.08em] dark:border-[#3b3734] dark:text-[#c0b8b1]">
+                {item.subject_type}
+              </span>
+            )}
             {item.category && (
               <span className="text-[10px] px-2 py-0.5 rounded-full border border-ink/10 text-ink/55 uppercase tracking-[0.08em] dark:border-[#3b3734] dark:text-[#c0b8b1]">
                 {item.category}
@@ -147,7 +152,7 @@ export default function WorkPageContent({ caseStudies, projects }: WorkPageConte
             transition={{ duration: 0.6, delay: 0.1 }}
             className="text-[11px] uppercase tracking-[0.12em] text-ink/35 font-mono mb-6 dark:text-[#8f8781]"
           >
-            Case Studies
+            Work Items
           </motion.h2>
           <div>
             {caseStudies.map((item, index) => (

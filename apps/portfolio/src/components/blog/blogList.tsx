@@ -6,7 +6,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { ArrowUpRight } from "lucide-react";
 
-interface BlogPost {
+interface ViewPost {
   id: string
   title: string
   slug: string
@@ -18,7 +18,7 @@ interface BlogPost {
   tags: string[] | null
 }
 
-function BlogCard({ post, index, basePath }: { post: BlogPost; index: number; basePath: string }) {
+function ViewPostCard({ post, index, basePath }: { post: ViewPost; index: number; basePath: string }) {
   const [isHovered, setIsHovered] = useState(false);
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-50px" });
@@ -92,16 +92,16 @@ function BlogCard({ post, index, basePath }: { post: BlogPost; index: number; ba
   );
 }
 
-interface BlogListProps {
-  blogs: BlogPost[];
+interface ViewPostListProps {
+  posts: ViewPost[];
   basePath?: string;
 }
 
-export default function BlogList({ blogs, basePath = "/view" }: BlogListProps) {
+export default function ViewPostList({ posts, basePath = "/view" }: ViewPostListProps) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
-  if (blogs.length === 0) {
+  if (posts.length === 0) {
     return (
       <motion.div
         ref={ref}
@@ -117,8 +117,8 @@ export default function BlogList({ blogs, basePath = "/view" }: BlogListProps) {
 
   return (
     <div ref={ref}>
-      {blogs.map((post, index) => (
-        <BlogCard key={post.id} post={post} index={index} basePath={basePath} />
+      {posts.map((post, index) => (
+        <ViewPostCard key={post.id} post={post} index={index} basePath={basePath} />
       ))}
     </div>
   );

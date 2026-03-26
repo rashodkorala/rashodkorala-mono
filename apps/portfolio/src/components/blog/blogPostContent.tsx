@@ -1,7 +1,7 @@
 import {
   BlogPostContent as SharedBlogPostContent,
   portfolioTheme,
-  type BlogPost,
+  type BlogPost as ViewPost,
   type ThemeConfig,
 } from "@rashodkorala/theView"
 
@@ -59,14 +59,14 @@ const viewDetailTheme: ThemeConfig = {
   },
 }
 
-export default function BlogPostContent({
-  blog,
+export default function ViewPostContent({
+  post,
   backHref,
   backLabel,
 }: {
-  blog: BlogPost
+  post: ViewPost
   backHref?: string
   backLabel?: string
 }) {
-  return <SharedBlogPostContent blog={blog} theme={viewDetailTheme} backHref={backHref} backLabel={backLabel} />
+  return <SharedBlogPostContent blog={post} theme={viewDetailTheme} backHref={backHref} backLabel={backLabel} />
 }
