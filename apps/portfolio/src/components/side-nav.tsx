@@ -3,13 +3,14 @@
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
+import { motion } from "framer-motion";
 
 const sections = [
   { id: "about", label: "About", href: "/about" },
   { id: "work", label: "Work", href: "/work" },
   { id: "projects", label: "Projects", href: "/projects" },
   { id: "blog", label: "Blog", href: "/blog" },
-  { id: "footer", label: "Contact", href: "mailto:hello@rashodkorala.com" },
+  { id: "contact", label: "Contact", href: "mailto:hello@rashodkorala.com" },
 ];
 
 export default function SideNav() {
@@ -17,7 +18,9 @@ export default function SideNav() {
   const [active, setActive] = useState("");
 
   useEffect(() => {
-    const match = sections.find((s) => pathname.startsWith(s.href) && s.href !== "mailto:hello@rashodkorala.com");
+    const match = sections.find(
+      (s) => pathname.startsWith(s.href) && !s.href.startsWith("mailto:")
+    );
     if (match) {
       setActive(match.id);
     } else if (pathname === "/") {
@@ -26,26 +29,37 @@ export default function SideNav() {
   }, [pathname]);
 
   return (
-    <nav className="hidden lg:flex flex-col justify-center fixed left-0 top-0 h-screen w-56 pl-10 z-50">
-      <ul className="space-y-6">
+    <motion.nav
+      className="hidden lg:flex flex-col justify-center fixed left-0 top-0 h-screen w-56 pl-10 z-50"
+      initial={{ opacity: 0, x: -20 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.8, delay: 0.5, ease: [0.25, 0.1, 0.25, 1] as [number, number, number, number] }}
+    >
+      <ul className="space-y-7">
         {sections.map(({ id, label, href }) => (
           <li key={id}>
             <Link
               href={href}
-              className={`flex items-center gap-3 text-left transition-colors duration-200 ${
+              className={`flex items-center gap-3 transition-all duration-500 group ${
                 active === id
-                  ? "text-white"
-                  : "text-white/30 hover:text-white/60"
+                  ? "text-white/90"
+                  : "text-white/20 hover:text-white/50"
               }`}
             >
-              {active === id && (
-                <span className="w-6 h-px bg-white inline-block" />
-              )}
-              <span className="text-[15px] font-light">{label}</span>
+              <span
+                className={`h-px transition-all duration-500 ${
+                  active === id
+                    ? "w-8 bg-white/60"
+                    : "w-0 group-hover:w-4 bg-white/30"
+                }`}
+              />
+              <span className="text-[13px] tracking-[0.06em] font-light">
+                {label}
+              </span>
             </Link>
           </li>
         ))}
       </ul>
-    </nav>
+    </motion.nav>
   );
 }
