@@ -6,7 +6,7 @@ import Link from "next/link";
 import { motion } from "framer-motion";
 
 const sections = [
-  { id: "about", label: "About", href: "/about" },
+  { id: "about", label: "About", href: "/" },
   { id: "work", label: "Work", href: "/work" },
   { id: "projects", label: "Projects", href: "/projects" },
   { id: "blog", label: "Blog", href: "/blog" },
