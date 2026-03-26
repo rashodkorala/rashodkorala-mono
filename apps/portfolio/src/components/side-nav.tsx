@@ -7,6 +7,7 @@ const sections = [
   { id: "projects", label: "Projects" },
   { id: "blog", label: "Blog" },
   { id: "about", label: "About" },
+  { id: "footer", label: "Contact" },
 ];
 
 export default function SideNav() {
