@@ -32,20 +32,20 @@ function BlogCard({ post, index, basePath }: { post: BlogPost; index: number; ba
         transition={{ duration: 0.6, delay: index * 0.08 }}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
-        className="group border-t border-white/10 py-8 cursor-pointer"
+        className="group border-t border-white/8 py-7 cursor-pointer"
       >
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-6">
           <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-3 mb-3 flex-wrap">
-              <span className="text-[11px] text-white/25 font-mono whitespace-nowrap">
+            <div className="flex items-center gap-2.5 mb-2 flex-wrap">
+              <span className="text-[11px] text-white/20 font-mono whitespace-nowrap">
                 {post.published_at
                   ? new Date(post.published_at).getFullYear().toString()
                   : new Date().getFullYear().toString()}
               </span>
               {post.tags && post.tags.length > 0 && (
-                <div className="flex gap-2 flex-wrap">
+                <div className="flex gap-1.5 flex-wrap">
                   {post.tags.slice(0, 3).map(tag => (
-                    <span key={tag} className="text-[11px] px-2.5 py-1 border border-white/10 rounded-full text-white/30 whitespace-nowrap">
+                    <span key={tag} className="text-[10px] px-2 py-0.5 border border-white/8 rounded-full text-white/25 whitespace-nowrap">
                       {tag}
                     </span>
                   ))}
@@ -53,19 +53,19 @@ function BlogCard({ post, index, basePath }: { post: BlogPost; index: number; ba
               )}
             </div>
 
-            <h3 className="text-xl md:text-2xl font-light tracking-tight mb-2 flex items-start sm:items-center gap-2">
+            <h3 className="text-lg md:text-xl font-normal tracking-tight mb-1.5 flex items-start sm:items-center gap-2">
               <span className="flex-1 min-w-0 break-words">{post.title}</span>
               <motion.span
                 className="flex-shrink-0 mt-1 sm:mt-0"
                 animate={{ x: isHovered ? 4 : 0, y: isHovered ? -4 : 0 }}
                 transition={{ duration: 0.2 }}
               >
-                <ArrowUpRight className="w-4 h-4 text-white/15 group-hover:text-white transition-colors" strokeWidth={1.5} />
+                <ArrowUpRight className="w-3.5 h-3.5 text-white/10 group-hover:text-white transition-colors" strokeWidth={1.5} />
               </motion.span>
             </h3>
 
             {post.excerpt && (
-              <p className="text-white/40 font-light max-w-xl break-words text-[15px]">
+              <p className="text-white/35 font-light max-w-lg break-words text-[14px]">
                 {post.excerpt}
               </p>
             )}
@@ -74,7 +74,7 @@ function BlogCard({ post, index, basePath }: { post: BlogPost; index: number; ba
           {post.featured_image_url && (
             <motion.div
               animate={{ scale: isHovered ? 1 : 0.95, opacity: isHovered ? 1 : 0.7 }}
-              className="relative w-full md:w-44 h-32 bg-white/5 rounded-lg overflow-hidden flex-shrink-0"
+              className="relative w-full md:w-40 h-24 bg-white/5 rounded-lg overflow-hidden flex-shrink-0"
             >
               <Image
                 src={post.featured_image_url}

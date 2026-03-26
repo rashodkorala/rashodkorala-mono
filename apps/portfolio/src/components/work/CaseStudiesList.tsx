@@ -42,41 +42,41 @@ export default function CaseStudiesList({ items }: CaseStudiesListProps) {
             <Link
               key={item.id}
               href={`/work/${item.slug}`}
-              className="block border-t border-white/10 py-8 group"
+              className="block border-t border-white/8 py-7 group"
             >
               <motion.div
                 initial={{ opacity: 0, y: 30 }}
                 animate={isInView ? { opacity: 1, y: 0 } : {}}
                 transition={{ duration: 0.6, delay: index * 0.08 }}
-                className="grid md:grid-cols-[1fr_180px] gap-6 items-start"
+                className="grid md:grid-cols-[1fr_160px] gap-5 items-start"
               >
                 <div>
-                  <div className="flex items-center gap-2 mb-3 flex-wrap">
+                  <div className="flex items-center gap-2 mb-2 flex-wrap">
                     {item.category && (
-                      <span className="text-[11px] px-2.5 py-1 rounded-full border border-white/10 text-white/60 uppercase tracking-[0.08em]">
+                      <span className="text-[10px] px-2 py-0.5 rounded-full border border-white/10 text-white/50 uppercase tracking-[0.08em]">
                         {item.category}
                       </span>
                     )}
                     {item.tags?.slice(0, 2).map((tag) => (
                       <span
                         key={tag}
-                        className="text-[11px] px-2.5 py-1 rounded-full border border-white/10 text-white/30 uppercase tracking-[0.08em]"
+                        className="text-[10px] px-2 py-0.5 rounded-full border border-white/8 text-white/25 uppercase tracking-[0.08em]"
                       >
                         {tag}
                       </span>
                     ))}
                   </div>
-                  <h2 className="text-xl md:text-2xl font-light tracking-tight flex items-center gap-2">
+                  <h2 className="text-lg md:text-xl font-normal tracking-tight flex items-center gap-2">
                     {item.title}
-                    <ArrowUpRight className="w-4 h-4 text-white/15 group-hover:text-white transition-colors" strokeWidth={1.5} />
+                    <ArrowUpRight className="w-3.5 h-3.5 text-white/10 group-hover:text-white transition-colors" strokeWidth={1.5} />
                   </h2>
                   {item.summary && (
-                    <p className="text-white/40 mt-2 font-light leading-relaxed text-[15px]">{item.summary}</p>
+                    <p className="text-white/35 mt-1.5 font-light leading-relaxed max-w-lg text-[14px]">{item.summary}</p>
                   )}
                 </div>
                 {item.cover_url && (
-                  <div className="relative w-full h-28 rounded-lg overflow-hidden border border-white/10">
-                    <Image src={item.cover_url} alt={item.title} fill className="object-cover opacity-70 group-hover:opacity-100 transition-opacity" sizes="180px" />
+                  <div className="relative w-full h-24 rounded-lg overflow-hidden border border-white/8">
+                    <Image src={item.cover_url} alt={item.title} fill className="object-cover opacity-60 group-hover:opacity-100 transition-opacity" sizes="160px" />
                   </div>
                 )}
               </motion.div>
