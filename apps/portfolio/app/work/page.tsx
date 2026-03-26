@@ -1,20 +1,24 @@
 import type { Metadata } from "next";
-import CaseStudiesList from "@/src/components/work/CaseStudiesList";
+import WorkPageContent from "@/src/components/work/WorkPageContent";
 import PageShell from "@/src/components/page-shell";
 import { getCachedCaseStudies } from "@/lib/supabase/cached-case-studies";
+import { getCachedAllProjects } from "@/lib/supabase/cached-projects";
 
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
   title: "Work",
-  description: "Narrative-first case studies: problem, process, and outcomes.",
+  description: "Case studies and projects by Rashod Korala.",
 };
 
 export default async function WorkPage() {
-  const items = await getCachedCaseStudies();
+  const [caseStudies, projects] = await Promise.all([
+    getCachedCaseStudies(),
+    getCachedAllProjects(),
+  ]);
   return (
     <PageShell>
-      <CaseStudiesList items={items} />
+      <WorkPageContent caseStudies={caseStudies} projects={projects} />
     </PageShell>
   );
 }

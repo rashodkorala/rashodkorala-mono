@@ -83,9 +83,9 @@ const ProjectComp = ({ projectSlug, initialProject = null }: ProjectCompProps) =
         className="px-6 md:px-12 py-8"
       >
         <div className="max-w-4xl">
-          <Link href="/projects" className="inline-flex items-center gap-2 text-ink/40 hover:text-ink transition-colors group">
+          <Link href="/work" className="inline-flex items-center gap-2 text-ink/40 hover:text-ink transition-colors group">
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" strokeWidth={1.5} />
-            <span className="text-sm font-light">Back to projects</span>
+            <span className="text-sm font-light">Back to work</span>
           </Link>
         </div>
       </motion.div>
@@ -215,8 +215,8 @@ const ProjectComp = ({ projectSlug, initialProject = null }: ProjectCompProps) =
             className="mt-24 pt-16 border-t border-ink/10 text-center"
           >
             <p className="text-sm text-ink/30 mb-6">Interested in more?</p>
-            <Link href="/projects" className="inline-flex items-center gap-2 text-xl font-light hover:text-ink/60 transition-colors">
-              View all projects
+            <Link href="/work" className="inline-flex items-center gap-2 text-xl font-light hover:text-ink/60 transition-colors">
+              View all work
               <ArrowLeft className="w-5 h-5 rotate-180" strokeWidth={1.5} />
             </Link>
           </motion.div>

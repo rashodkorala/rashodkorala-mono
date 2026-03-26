@@ -4,6 +4,7 @@ import '@/styles/globals.css'
 import { PostHogProvider } from '@rashodkorala/posthog-next'
 import { Geist_Mono, Geist, Playfair_Display } from 'next/font/google';
 import SideNav from '@/src/components/side-nav';
+import ThemeToggle from '@/src/components/theme-toggle';
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -79,9 +80,12 @@ export default function RootLayout({
     children: React.ReactNode
 }) {
     return (
-        <html lang="en">
-            <body className={`${geistSans.variable} ${geistMono.variable} ${playfair.variable} bg-cream`}>
+        <html lang="en" suppressHydrationWarning data-theme="light">
+            <body className={`${geistSans.variable} ${geistMono.variable} ${playfair.variable} bg-cream dark:bg-[#121110]`}>
                 <PostHogProvider app="portfolio">
+                    <div className='fixed right-4 top-4 z-50 lg:hidden'>
+                        <ThemeToggle />
+                    </div>
                     <SideNav />
                     {children}
                 </PostHogProvider>
