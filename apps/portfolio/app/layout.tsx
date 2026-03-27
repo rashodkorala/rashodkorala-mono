@@ -2,9 +2,8 @@ import { Metadata } from 'next'
 import '@/styles/globals.css'
 
 import { PostHogProvider } from '@rashodkorala/posthog-next'
-import { Geist_Mono, Geist, Playfair_Display } from 'next/font/google';
+import { Geist_Mono, Geist, Playfair_Display, Cormorant_Garamond, DM_Sans } from 'next/font/google';
 import SideNav from '@/src/components/side-nav';
-import TopBar from '@/src/components/top-bar';
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -25,6 +24,21 @@ const geistMono = Geist_Mono({
 const playfair = Playfair_Display({
     variable: "--font-playfair",
     subsets: ["latin"],
+    weight: ["400", "700", "900"],
+    display: "swap",
+});
+
+const cormorant = Cormorant_Garamond({
+    variable: "--font-cormorant",
+    subsets: ["latin"],
+    weight: ["400", "600", "700"],
+    display: "swap",
+});
+
+const dmSans = DM_Sans({
+    variable: "--font-dm-sans",
+    subsets: ["latin"],
+    weight: ["300", "400", "500"],
     display: "swap",
 });
 
@@ -80,10 +94,9 @@ export default function RootLayout({
     children: React.ReactNode
 }) {
     return (
-        <html lang="en" className="dark" suppressHydrationWarning>
-            <body className={`${geistSans.variable} ${geistMono.variable} ${playfair.variable}`}>
+        <html lang="en" className="bg-page text-body" suppressHydrationWarning>
+            <body className={`${geistSans.variable} ${geistMono.variable} ${playfair.variable} ${cormorant.variable} ${dmSans.variable}`}>
                 <PostHogProvider app="portfolio">
-                    <TopBar />
                     <SideNav />
                     {children}
                 </PostHogProvider>

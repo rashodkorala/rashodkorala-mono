@@ -1,202 +1,305 @@
 "use client";
 
+import React, { useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowUpRight } from "lucide-react";
 import { motion, useInView } from "framer-motion";
-import { useRef, useState } from "react";
-import type { CaseStudy } from "@/lib/types";
 import type { Project } from "@/lib/types";
+import type { CaseStudy } from "@/lib/types";
+
+const serif = "var(--font-cormorant), 'Georgia', serif";
+const sans  = "var(--font-dm-sans), system-ui, sans-serif";
+
+/**
+ * Cycling 12-column grid pattern — 6 slots per cycle:
+ *   0 → span-7  wide (4/3)
+ *   1 → span-5  tall (3/4)
+ *   2 → span-4  square
+ *   3 → span-8  wide (4/3)
+ *   4 → span-6  square
+ *   5 → span-6  square
+ */
+const GRID_PATTERN = [
+  { span: 7, aspect: "4 / 3"  },
+  { span: 5, aspect: "3 / 4"  },
+  { span: 4, aspect: "1 / 1"  },
+  { span: 8, aspect: "4 / 3"  },
+  { span: 6, aspect: "1 / 1"  },
+  { span: 6, aspect: "1 / 1"  },
+] as const;
 
 interface WorkPageContentProps {
   caseStudies: CaseStudy[];
   projects: Project[];
 }
 
-function CaseStudyCard({ item, index }: { item: CaseStudy; index: number }) {
+/** Minimal tonal SVG placeholder shown when a project has no cover image */
+function CoverPlaceholder({ fill, initial }: { fill: string; initial: string }) {
+  return (
+    <svg
+      viewBox="0 0 500 500"
+      xmlns="http://www.w3.org/2000/svg"
+      style={{ width: "100%", height: "100%", display: "block", position: "absolute", inset: 0 }}
+      preserveAspectRatio="xMidYMid slice"
+    >
+      <rect width="500" height="500" fill={fill} />
+      <rect x="0" y="0" width="500" height="280" fill="#cdc7be" opacity="0.5" />
+      {/* Minimal abstract figure */}
+      <ellipse cx="250" cy="460" rx="170" ry="88" fill="#7a7870" opacity="0.7" />
+      <rect x="172" y="258" width="156" height="240" rx="14" fill="#8c8a84" opacity="0.8" />
+      <rect x="214" y="155" width="72" height="108" rx="16" fill="#b4b0a8" />
+      <ellipse cx="250" cy="142" rx="78" ry="85" fill="#bcb8b0" />
+      <ellipse cx="250" cy="90"  rx="76" ry="60" fill="#222018" />
+      {/* First letter of project */}
+      <text
+        x="250" y="320"
+        textAnchor="middle"
+        fontFamily="Georgia, serif"
+        fontSize="96"
+        fontWeight="700"
+        fill="#f0ede8"
+        opacity="0.18"
+        letterSpacing="-2"
+      >
+        {initial}
+      </text>
+    </svg>
+  );
+}
+
+// Soft tones that cycle for placeholders
+const PLACEHOLDER_FILLS = ["#b8b0a6", "#a8a49c", "#d8d2c8", "#c4beb6", "#b0aca4", "#cac4bc"];
+
+function ProjectCard({
+  project,
+  index,
+}: {
+  project: Project;
+  index: number;
+}) {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-50px" });
+  const isInView = useInView(ref, { once: true, margin: "-40px" });
+  const slot = GRID_PATTERN[index % GRID_PATTERN.length];
+  const num  = String(index + 1).padStart(2, "0");
+
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const raw = project.cover_image;
+  const coverSrc = raw
+    ? raw.startsWith("http")
+      ? raw
+      : supabaseUrl
+        ? `${supabaseUrl}/storage/v1/object/public/media/${raw}`
+        : null
+    : null;
 
   return (
-    <Link href={`/work/${item.slug}`} className="block border-t border-line-subtle py-7 group">
-      <motion.div
-        ref={ref}
-        initial={{ opacity: 0, y: 20 }}
-        animate={isInView ? { opacity: 1, y: 0 } : {}}
-        transition={{ duration: 0.6, delay: index * 0.08 }}
-        className="grid md:grid-cols-[1fr_160px] gap-5 items-start"
-      >
-        <div>
-          <div className="flex items-center gap-2 mb-2 flex-wrap">
-            {item.tags?.slice(0, 2).map((tag) => (
-              <span
-                key={tag}
-                className="text-[10px] px-2 py-0.5 rounded-full border border-line-subtle text-label uppercase tracking-[0.08em]"
-              >
-                {tag}
-              </span>
-            ))}
-          </div>
-          <h3 className="text-lg md:text-xl font-normal tracking-tight flex items-center gap-2 text-title">
-            {item.title}
-            <ArrowUpRight className="w-3.5 h-3.5 text-icon group-hover:text-icon-hover transition-colors" strokeWidth={1.5} />
-          </h3>
-          {item.content_md && (
-            <p className="text-body-secondary mt-1.5 font-light leading-relaxed max-w-lg text-[14px]">
-              {item.content_md.slice(0, 140)}{item.content_md.length > 140 ? "..." : ""}
+    <motion.div
+      ref={ref}
+      initial={{ opacity: 0, y: 21 }}
+      animate={isInView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.65, delay: (index % 6) * 0.07, ease: [0.16, 1, 0.3, 1] }}
+      className={`pf-item span-${slot.span}`}
+      style={{ overflow: "hidden", cursor: "pointer" }}
+    >
+      <Link href={`/work/projects/${project.slug}`} style={{ textDecoration: "none", display: "block" }}>
+        {/* Image */}
+        <div className="group" style={{
+          width: "100%",
+          aspectRatio: slot.aspect,
+          overflow: "hidden",
+          backgroundColor: PLACEHOLDER_FILLS[index % PLACEHOLDER_FILLS.length],
+          position: "relative",
+          display: "block",
+        }}>
+          {coverSrc ? (
+            <Image
+              src={coverSrc}
+              alt={project.title}
+              fill
+              className="object-cover transition-transform duration-700 group-hover:scale-[1.04]"
+              sizes="(max-width: 720px) 100vw, (max-width: 1080px) 50vw, 40vw"
+            />
+          ) : (
+            <CoverPlaceholder
+              fill={PLACEHOLDER_FILLS[index % PLACEHOLDER_FILLS.length]}
+              initial={project.title.charAt(0)}
+            />
+          )}
+
+          {/* Number badge */}
+          <span style={{
+            position: "absolute",
+            top: "clamp(8px, 1vw, 14px)",
+            left: "clamp(8px, 1vw, 14px)",
+            fontSize: "11px",
+            color: "#f0ede8",
+            fontFamily: sans,
+            opacity: 0.7,
+            letterSpacing: "0.06em",
+            zIndex: 1,
+          }}>
+            {num}
+          </span>
+        </div>
+
+        {/* Title + subtitle */}
+        <div style={{ padding: "clamp(8px, 1vw, 14px) 0 clamp(16px, 2vw, 28px)" }}>
+          <p style={{
+            fontFamily: serif,
+            fontSize: "clamp(16px, 1.5vw, 22px)",
+            color: "#1a1a1a",
+            fontWeight: 600,
+            margin: "0 0 3px",
+            letterSpacing: "-0.015em",
+            lineHeight: 1.15,
+          }}>
+            {project.title}
+          </p>
+          {project.subtitle && (
+            <p style={{
+              fontSize: "clamp(11px, 0.85vw, 13px)",
+              color: "#8a8a7a",
+              fontFamily: sans,
+              margin: 0,
+              letterSpacing: "0.02em",
+              lineHeight: 1.5,
+            }}>
+              {project.subtitle}
             </p>
           )}
         </div>
-        {item.gallery?.[0] && (
-          <div className="relative w-full h-24 rounded-lg overflow-hidden border border-line-subtle">
-            <Image src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/media/${item.gallery[0]}`} alt={item.title} fill className="object-cover opacity-75 group-hover:opacity-100 transition-opacity dark:brightness-[0.9]" sizes="160px" />
+      </Link>
+    </motion.div>
+  );
+}
+
+export default function WorkPageContent({ projects }: WorkPageContentProps) {
+  const ref = useRef(null);
+  const isInView = useInView(ref, { once: true, margin: "-80px" });
+
+  const yearRange = projects.length
+    ? (() => {
+        const years = projects.map(p => new Date(p.created_at).getFullYear());
+        const min = Math.min(...years);
+        const max = Math.max(...years);
+        return min === max ? `${min}` : `${min} — ${max}`;
+      })()
+    : null;
+
+  return (
+    <>
+      <style>{`
+        .pf-item.span-7 { grid-column: span 7; }
+        .pf-item.span-5 { grid-column: span 5; }
+        .pf-item.span-4 { grid-column: span 4; }
+        .pf-item.span-8 { grid-column: span 8; }
+        .pf-item.span-6 { grid-column: span 6; }
+
+        @media (max-width: 720px) {
+          .pf-item.span-7,
+          .pf-item.span-5,
+          .pf-item.span-4,
+          .pf-item.span-8,
+          .pf-item.span-6 { grid-column: span 12 !important; }
+          .pf-header-row { flex-direction: column !important; align-items: flex-start !important; gap: 8px !important; }
+          .pf-header-meta { text-align: left !important; }
+        }
+
+        @media (min-width: 721px) and (max-width: 1080px) {
+          .pf-item.span-7 { grid-column: span 6; }
+          .pf-item.span-5 { grid-column: span 6; }
+          .pf-item.span-4 { grid-column: span 6; }
+          .pf-item.span-8 { grid-column: span 6; }
+        }
+      `}</style>
+
+      <div ref={ref} style={{ paddingBottom: "89px" }}>
+
+        {/* Page header */}
+        <motion.div
+          className="pf-header-row"
+          initial={{ opacity: 0, y: 21 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+          style={{
+            display: "flex",
+            alignItems: "flex-end",
+            justifyContent: "space-between",
+            marginBottom: "clamp(16px, 2vw, 28px)",
+          }}
+        >
+          <div>
+            <h1 style={{
+              fontFamily: serif,
+              fontSize: "clamp(48px, 7vw, 92px)",
+              fontWeight: 700,
+              color: "#1a1a1a",
+              letterSpacing: "-0.025em",
+              lineHeight: 0.92,
+              margin: 0,
+            }}>
+              Selected
+            </h1>
+            <h1 style={{
+              fontFamily: serif,
+              fontSize: "clamp(48px, 7vw, 92px)",
+              fontWeight: 700,
+              color: "#6b6b6b",
+              letterSpacing: "-0.025em",
+              lineHeight: 0.92,
+              margin: 0,
+              paddingLeft: "clamp(21px, 3vw, 48px)",
+            }}>
+              Work
+            </h1>
+          </div>
+
+          {projects.length > 0 && (
+            <div className="pf-header-meta" style={{ textAlign: "right", paddingBottom: "clamp(4px, 0.5vw, 10px)" }}>
+              {yearRange && (
+                <span style={{ fontFamily: sans, fontSize: "clamp(11px, 0.9vw, 14px)", color: "#8a8a7a", display: "block" }}>
+                  {yearRange}
+                </span>
+              )}
+              <span style={{ fontFamily: sans, fontSize: "clamp(11px, 0.9vw, 14px)", color: "#8a8a7a", display: "block", marginTop: "4px" }}>
+                {projects.length} project{projects.length !== 1 ? "s" : ""}
+              </span>
+            </div>
+          )}
+        </motion.div>
+
+        {/* Divider */}
+        <motion.div
+          initial={{ scaleX: 0, opacity: 0 }}
+          animate={isInView ? { scaleX: 1, opacity: 1 } : {}}
+          transition={{ duration: 0.7, delay: 0.2 }}
+          style={{
+            height: "1px",
+            backgroundColor: "rgba(26,26,26,0.12)",
+            marginBottom: "clamp(16px, 2.5vw, 40px)",
+            transformOrigin: "left",
+          }}
+        />
+
+        {projects.length === 0 && (
+          <p style={{ fontFamily: sans, fontSize: "14px", color: "#8a8a7a" }}>
+            No projects to show yet.
+          </p>
+        )}
+
+        {/* Asymmetric 12-column grid */}
+        {projects.length > 0 && (
+          <div style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(12, 1fr)",
+            gap: "clamp(8px, 1.2vw, 20px)",
+          }}>
+            {projects.map((project, i) => (
+              <ProjectCard key={project.id} project={project} index={i} />
+            ))}
           </div>
         )}
-      </motion.div>
-    </Link>
-  );
-}
-
-function ProjectCard({ project, index }: { project: Project; index: number }) {
-  const [isHovered, setIsHovered] = useState(false);
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-50px" });
-  const hasLogo = Boolean(project.logo);
-
-  const getYear = () => {
-    if (project.created_at) return new Date(project.created_at).getFullYear().toString();
-    return new Date().getFullYear().toString();
-  };
-
-  return (
-    <Link href={`/work/projects/${project.slug}`}>
-      <motion.div
-        ref={ref}
-        initial={{ opacity: 0, y: 20 }}
-        animate={isInView ? { opacity: 1, y: 0 } : {}}
-        transition={{ duration: 0.6, delay: index * 0.08 }}
-        onMouseEnter={() => setIsHovered(true)}
-        onMouseLeave={() => setIsHovered(false)}
-        className="group cursor-pointer py-8 md:py-9"
-      >
-        <div className="grid items-start gap-6 md:grid-cols-[1fr_minmax(0,112px)] md:gap-7">
-          <div>
-            <div className="mb-3 flex flex-wrap items-center gap-2.5">
-              <span className="font-mono text-[11px] uppercase tracking-[0.08em] text-label">{getYear()}</span>
-              {project.tech_stack && project.tech_stack.length > 0 && (
-                <div className="flex gap-1.5 flex-wrap">
-                  {project.tech_stack.slice(0, 3).map(tag => (
-                    <span key={tag} className="text-[10px] uppercase tracking-[0.08em] px-2 py-0.5 border border-line-subtle rounded-full text-label">
-                      {tag}
-                    </span>
-                  ))}
-                  {project.tech_stack.length > 3 && (
-                    <span className="text-[10px] uppercase tracking-[0.08em] px-2 py-0.5 border border-line-subtle rounded-full text-label">
-                      +{project.tech_stack.length - 3}
-                    </span>
-                  )}
-                </div>
-              )}
-            </div>
-            <div className="mb-2.5 flex items-start gap-3">
-              <h3 className="flex items-center gap-2 text-xl font-normal leading-tight tracking-tight text-title md:text-2xl">
-                {project.title}
-                <motion.span animate={{ x: isHovered ? 4 : 0, y: isHovered ? -4 : 0 }} transition={{ duration: 0.2 }}>
-                  <ArrowUpRight className="h-3.5 w-3.5 text-icon transition-colors group-hover:text-icon-hover" strokeWidth={1.5} />
-                </motion.span>
-              </h3>
-            </div>
-            {project.subtitle && (
-              <p className="max-w-xl text-[14px] leading-relaxed text-body-secondary">
-                {project.subtitle}
-              </p>
-            )}
-          </div>
-          {project.logo && (
-            <motion.div
-              animate={{ scale: isHovered ? 1 : 0.95, opacity: isHovered ? 1 : 0.7 }}
-              className="relative aspect-square w-24 shrink-0 justify-self-end overflow-hidden rounded-xl border border-line bg-white/70 p-2.5 dark:bg-surface md:w-28"
-            >
-              <Image
-                src={project.logo}
-                alt={`${project.title} logo`}
-                fill
-                className="object-contain p-1 dark:brightness-[0.94]"
-                sizes="(max-width: 768px) 96px, 112px"
-              />
-            </motion.div>
-          )}
-          {!hasLogo && project.cover_image && (
-            <motion.div
-              animate={{ scale: isHovered ? 1 : 0.95, opacity: isHovered ? 1 : 0.7 }}
-              className="relative aspect-square w-24 shrink-0 justify-self-end overflow-hidden rounded-xl border border-line-subtle bg-surface-raised md:w-28"
-            >
-              <Image src={project.cover_image} alt={project.title} fill className="object-cover dark:brightness-[0.9]" sizes="112px" />
-            </motion.div>
-          )}
-        </div>
-      </motion.div>
-    </Link>
-  );
-}
-
-export default function WorkPageContent({ caseStudies, projects }: WorkPageContentProps) {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
-
-  return (
-    <div ref={ref} className="mx-auto py-content-py md:py-content-py-md">
-      <motion.h1
-        initial={{ opacity: 0, y: 20 }}
-        animate={isInView ? { opacity: 1, y: 0 } : {}}
-        transition={{ duration: 0.8 }}
-        className="font-serif text-5xl tracking-tight text-heading md:text-6xl max-w-4xl"
-      >
-        Selected
-      </motion.h1>
-      <motion.h1 className="font-serif text-5xl tracking-tight text-heading md:text-8xl max-w-4xl text-muted_ink ml-[0.05em]"
-      initial={{ opacity: 0, y: 20 }}
-      animate={isInView ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.8 }}
-      >
-        Work
-      </motion.h1>
-      <hr className="mt-12 mb-8 border-0 border-t border-line-subtle max-w-4xl" />
-      <div>
-      {caseStudies.length > 0 && (
-        <section className="mb-20">
-          <motion.h2
-            initial={{ opacity: 0, y: 16 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            className="mb-8 font-mono text-[11px] uppercase tracking-[0.12em] text-label"
-          >
-            Case Studies
-          </motion.h2>
-          <div>
-            {caseStudies.map((item, index) => (
-              <CaseStudyCard key={item.id} item={item} index={index} />
-            ))}
-          </div>
-        </section>
-      )}
-
-      {projects.length > 0 && (
-        <section className="ml-8 max-w-4xl">
-          <div>
-            {projects.map((project, index) => (
-              <ProjectCard key={project.id} project={project} index={index} />
-            ))}
-          </div>
-        </section>
-      )}
-
-      {caseStudies.length === 0 && projects.length === 0 && (
-        <div className="flex items-center justify-center min-h-[40vh]">
-          <p className="text-caption font-light">No work to show yet</p>
-        </div>
-      )}
       </div>
-    </div>
+    </>
   );
 }

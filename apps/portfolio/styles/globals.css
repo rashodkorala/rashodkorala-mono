@@ -5,7 +5,7 @@
 @layer base {
   :root {
     /* ─── Surface tokens ─── */
-    --color-page: #e9e6e0;
+    --color-page: #f0ede8;
     --color-surface: rgba(43, 43, 43, 0.06);
     --color-surface-raised: rgba(43, 43, 43, 0.04);
     --color-surface-elevated: #2b2b2b;
