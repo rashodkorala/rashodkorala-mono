@@ -55,9 +55,7 @@ export interface CaseStudy {
   title: string;
   slug: string;
   content_md: string;
-  featured: boolean;
   order: number;
-  tags: string[];
   gallery: string[];
   before_after?: { beforeImage?: string | null; afterImage?: string | null } | null;
   summary?: string | null;
