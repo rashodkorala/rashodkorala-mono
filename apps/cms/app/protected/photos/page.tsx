@@ -3,5 +3,5 @@ import { getPhotos } from "@/lib/actions/photos";
 
 export default async function PhotosPage() {
   const photos = await getPhotos();
-  return <Photos initialPhotos={photos} stories={[]} />;
+  return <Photos initialPhotos={photos} />;
 }

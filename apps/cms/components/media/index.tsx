@@ -50,6 +50,11 @@ const formatFileSize = (bytes: number | null): string => {
     return `${(bytes / (1024 * 1024 * 1024)).toFixed(1)} GB`
 }
 
+const getMediaLabel = (item: MediaItem): string => {
+    const filename = item.path.split("/").pop()
+    return filename || item.path
+}
+
 export function MediaLibrary({ initialMedia }: MediaProps) {
     const router = useRouter()
     const [media, setMedia] = useState<MediaItem[]>(initialMedia)
@@ -114,9 +119,9 @@ export function MediaLibrary({ initialMedia }: MediaProps) {
 
     const stats = {
         total: media.length,
-        images: media.filter((m) => m.fileType === "image").length,
-        videos: media.filter((m) => m.fileType === "video").length,
-        documents: media.filter((m) => m.fileType === "document").length,
+        images: media.filter((m) => m.mediaType === "image").length,
+        videos: media.filter((m) => m.mediaType === "video").length,
+        documents: media.filter((m) => m.mediaType === "document").length,
     }
 
     return (
@@ -196,15 +201,15 @@ export function MediaLibrary({ initialMedia }: MediaProps) {
 
             <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                 {filteredMedia.map((item) => {
-                    const Icon = getFileTypeIcon(item.fileType)
+                    const Icon = getFileTypeIcon(item.mediaType)
                     return (
                         <Card key={item.id} className="relative group">
                             <div className="aspect-video bg-muted rounded-t-lg overflow-hidden">
-                                {item.fileType === "image" ? (
+                                {item.mediaType === "image" ? (
                                     // eslint-disable-next-line @next/next/no-img-element
                                     <img
-                                        src={item.fileUrl}
-                                        alt={item.altText || item.title}
+                                        src={item.publicUrl}
+                                        alt={item.altText || getMediaLabel(item)}
                                         className="w-full h-full object-cover"
                                         loading="lazy"
                                     />
@@ -217,9 +222,9 @@ export function MediaLibrary({ initialMedia }: MediaProps) {
                             <CardHeader>
                                 <div className="flex items-start justify-between">
                                     <div className="flex-1 min-w-0">
-                                        <CardTitle className="text-sm truncate">{item.title}</CardTitle>
+                                        <CardTitle className="text-sm truncate">{getMediaLabel(item)}</CardTitle>
                                         <CardDescription className="text-xs mt-1">
-                                            {formatFileSize(item.fileSize)}
+                                            {formatFileSize(item.bytes)}
                                         </CardDescription>
                                     </div>
                                     <DropdownMenu>
@@ -246,7 +251,7 @@ export function MediaLibrary({ initialMedia }: MediaProps) {
                                 </div>
                                 <div className="flex gap-1 flex-wrap mt-2">
                                     <Badge variant="outline" className="text-xs">
-                                        {item.fileType}
+                                        {item.mediaType}
                                     </Badge>
                                     {item.folder && (
                                         <Badge variant="secondary" className="text-xs">

@@ -12,10 +12,9 @@ type Kind = "case_study" | "project" | null
 
 interface NewWorkClientProps {
   availableProjects: { id: string; title: string; slug: string }[]
-  availableCaseStudies: { id: string; title: string; slug: string }[]
 }
 
-export function NewWorkClient({ availableProjects, availableCaseStudies }: NewWorkClientProps) {
+export function NewWorkClient({ availableProjects }: NewWorkClientProps) {
   const [selectedKind, setSelectedKind] = useState<Kind>(null)
 
   return (
@@ -131,7 +130,7 @@ export function NewWorkClient({ availableProjects, availableCaseStudies }: NewWo
               Change type
             </Button>
           </div>
-          <ProjectForm availableCaseStudies={availableCaseStudies} />
+          <ProjectForm />
         </div>
       )}
     </div>

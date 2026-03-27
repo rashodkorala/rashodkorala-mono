@@ -24,7 +24,7 @@ import {
 } from "@/components/ui/select"
 import { Textarea } from "@/components/ui/textarea"
 import { Checkbox } from "@/components/ui/checkbox"
-import type { MediaItem, MediaInsert, MediaUpdate } from "@/lib/types/media"
+import type { MediaItem, MediaInsert } from "@/lib/types/media"
 import { createMedia, updateMedia } from "@/lib/actions/media"
 import Image from "next/image"
 interface MediaFormProps {
@@ -47,12 +47,25 @@ const getFileType = (mimeType: string): string => {
   return "other"
 }
 
+interface MediaFormData {
+  title: string
+  description: string
+  fileUrl: string
+  fileType: "image" | "video" | "audio" | "document" | "other"
+  fileSize: number | null
+  mimeType: string | null
+  altText: string
+  tags: string[]
+  folder: string
+  featured: boolean
+}
+
 export function MediaForm({ isOpen, onClose, editingMedia }: MediaFormProps) {
   const router = useRouter()
   const supabase = createClient()
   const isEditing = !!editingMedia
 
-  const [formData, setFormData] = useState<MediaInsert>({
+  const [formData, setFormData] = useState<MediaFormData>({
     title: "",
     description: "",
     fileUrl: "",
@@ -73,19 +86,19 @@ export function MediaForm({ isOpen, onClose, editingMedia }: MediaFormProps) {
   useEffect(() => {
     if (editingMedia) {
       setFormData({
-        title: editingMedia.title,
-        description: editingMedia.description || "",
-        fileUrl: editingMedia.fileUrl,
-        fileType: editingMedia.fileType,
-        fileSize: editingMedia.fileSize,
-        mimeType: editingMedia.mimeType,
+        title: editingMedia.path.split("/").pop() || editingMedia.path,
+        description: "",
+        fileUrl: editingMedia.publicUrl,
+        fileType: editingMedia.mediaType,
+        fileSize: editingMedia.bytes,
+        mimeType: null,
         altText: editingMedia.altText || "",
         tags: editingMedia.tags || [],
         folder: editingMedia.folder || "",
-        featured: editingMedia.featured,
+        featured: false,
       })
       setSelectedFile(null)
-      setPreviewUrl(editingMedia.fileType === "image" ? editingMedia.fileUrl : null)
+      setPreviewUrl(editingMedia.mediaType === "image" ? editingMedia.publicUrl : null)
     } else {
       setFormData({
         title: "",
@@ -154,12 +167,17 @@ export function MediaForm({ isOpen, onClose, editingMedia }: MediaFormProps) {
 
     try {
       let fileUrl = formData.fileUrl
+      let filePath = editingMedia?.path ?? ""
 
       // Upload file if new file is selected
       if (selectedFile) {
+        if (isEditing) {
+          throw new Error("Replacing existing file is not supported yet. Remove and upload a new asset.")
+        }
+
         const uniqueName = generateUniqueName(selectedFile)
         // Use folder path if specified, otherwise upload to root
-        const filePath = formData.folder ? `${formData.folder}/${uniqueName}` : uniqueName
+        filePath = formData.folder ? `${formData.folder}/${uniqueName}` : uniqueName
         
         const { error: uploadError } = await supabase.storage
           .from("media")
@@ -179,15 +197,22 @@ export function MediaForm({ isOpen, onClose, editingMedia }: MediaFormProps) {
       if (isEditing && editingMedia) {
         await updateMedia({
           id: editingMedia.id,
-          ...formData,
-          fileUrl,
+          altText: formData.altText || null,
+          tags: formData.tags || [],
+          folder: formData.folder || null,
         })
         toast.success("Media updated successfully")
       } else {
-        await createMedia({
-          ...formData,
-          fileUrl,
-        })
+        const payload: MediaInsert = {
+          path: filePath,
+          publicUrl: fileUrl,
+          mediaType: (formData.fileType === "other" ? "document" : formData.fileType) as MediaInsert["mediaType"],
+          bytes: formData.fileSize,
+          altText: formData.altText || null,
+          tags: formData.tags || [],
+          folder: formData.folder || null,
+        }
+        await createMedia(payload)
         toast.success("Media uploaded successfully")
       }
 
@@ -296,7 +321,7 @@ export function MediaForm({ isOpen, onClose, editingMedia }: MediaFormProps) {
             <Label htmlFor="folder">Folder</Label>
             <Select
               value={formData.folder || ""}
-              onValueChange={(value) => setFormData({ ...formData, folder: value || null })}
+              onValueChange={(value) => setFormData({ ...formData, folder: value || "" })}
               disabled={isLoading}
             >
               <SelectTrigger>

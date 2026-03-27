@@ -41,7 +41,7 @@ export default async function WorkPage({ searchParams }: WorkPageProps) {
       id: cs.id,
       kind: "case_study" as const,
       title: cs.title,
-      subtitle: cs.problem || null,
+      subtitle: cs.contentMd?.trim() ? cs.contentMd.trim().slice(0, 140) : null,
       updatedAt: cs.updatedAt,
       slug: cs.slug,
       data: cs,
