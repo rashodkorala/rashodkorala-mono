@@ -1,5 +1,3 @@
-export type ProjectCategory = 'startup' | 'client' | 'personal' | 'school';
-export type ProjectStatus = 'draft' | 'published' | 'archived';
 export type ProjectMediaType = 'image' | 'video';
 
 export interface ProjectMediaItem {
@@ -13,35 +11,20 @@ export interface Project {
   user_id: string;
   slug: string;
   title: string;
+  subtitle?: string | null;
+  logo?: string | null;
   short_description?: string | null;
   cover_image?: string | null;
   project_media?: ProjectMediaItem[] | null;
   role?: string | null;
   timeline?: string | null;
   tech_stack?: string[] | null;
-  subtitle?: string;
-  problem?: string;
-  solution?: string;
-  roles?: string[];
-  features?: string[];
-  tech?: string[];
   live_url?: string;
   github_url?: string;
-  cover_image_url?: string;
-  gallery_image_urls?: string[];
-  gallery_video_urls?: string[];
-  content_md?: string;
-  category?: ProjectCategory;
-  status: ProjectStatus;
-  featured: boolean;
-  sort_order: number;
   created_at: string;
   updated_at: string;
   relatedCaseStudies?: CaseStudy[];
 }
-
-export type CaseStudyCategory = 'startup' | 'client' | 'personal' | 'school';
-export type CaseStudyStatus = 'draft' | 'published' | 'archived';
 
 // Matches new `case_studies` table
 export interface CaseStudy {
@@ -50,37 +33,12 @@ export interface CaseStudy {
   project_id?: string | null;
   title: string;
   slug: string;
-  problem?: string | null;
-  approach?: string | null;
-  solution?: string | null;
-  impact?: string | null;
-  learnings?: string | null;
-  before_after?: { beforeImage?: string | null; afterImage?: string | null } | null;
-  lede?: string | null;
-  summary?: string | null;
   content_md: string;
-  type: 'problem-solving' | 'descriptive';
-  status: CaseStudyStatus;
-  category?: CaseStudyCategory | null;
   featured: boolean;
-  sort_order: number;
-  role?: string | null;
-  team_size?: string | null;
-  timeline?: string | null;
-  industry?: string | null;
-  audience?: string | null;
+  order: number;
   tags: string[];
-  skills: string[];
-  stack: string[];
-  results: { text: string }[];
-  metrics: { label: string; value: string }[];
-  links: { label: string; url: string }[];
-  cover_path?: string | null;
-  gallery_paths: string[];
-  seo_title?: string | null;
-  seo_description?: string | null;
-  views: number;
-  published_at?: string | null;
+  gallery: string[];
+  before_after?: { beforeImage?: string | null; afterImage?: string | null } | null;
   created_at: string;
   updated_at: string;
   relatedProjects?: Project[];

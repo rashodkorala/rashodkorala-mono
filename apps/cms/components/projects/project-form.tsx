@@ -32,6 +32,8 @@ export function ProjectForm({ project }: ProjectFormProps) {
   const [formData, setFormData] = useState<ProjectFormData>({
     title: project?.title || "",
     slug: project?.slug || "",
+    subtitle: project?.subtitle || "",
+    logoFile: null,
     shortDescription: project?.shortDescription || "",
     role: project?.role || "",
     timeline: project?.timeline || "",
@@ -45,13 +47,16 @@ export function ProjectForm({ project }: ProjectFormProps) {
   const [isLoading, setIsLoading] = useState(false)
 
   const [coverFile, setCoverFile] = useState<File | null>(null)
+  const [clearCoverImage, setClearCoverImage] = useState(false)
+  const [logoFile, setLogoFile] = useState<File | null>(null)
+  const [clearLogo, setClearLogo] = useState(false)
+  const [logoPreviewUrl, setLogoPreviewUrl] = useState<string | null>(project?.logo || null)
   const [coverPreviewUrl, setCoverPreviewUrl] = useState<string | null>(
     project?.coverImage || null
   )
   const [mediaFiles, setMediaFiles] = useState<File[]>([])
-  const [mediaPreviewUrls, setMediaPreviewUrls] = useState<string[]>(
-    (project?.projectMedia || []).map((m) => m.url)
-  )
+  const [existingProjectMedia, setExistingProjectMedia] = useState(project?.projectMedia || [])
+  const [mediaPreviewUrls, setMediaPreviewUrls] = useState<string[]>([])
   const [techInput, setTechInput] = useState("")
 
   const handleTitleChange = (title: string) => {
@@ -66,14 +71,32 @@ export function ProjectForm({ project }: ProjectFormProps) {
     const file = e.target.files?.[0]
     if (!file) return
     setCoverFile(file)
+    setClearCoverImage(false)
     const reader = new FileReader()
     reader.onloadend = () => setCoverPreviewUrl(reader.result as string)
     reader.readAsDataURL(file)
   }
 
+  const handleLogoUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setLogoFile(file)
+    setClearLogo(false)
+    const reader = new FileReader()
+    reader.onloadend = () => setLogoPreviewUrl(reader.result as string)
+    reader.readAsDataURL(file)
+  }
+
+  const removeLogo = () => {
+    setLogoFile(null)
+    setLogoPreviewUrl(null)
+    setClearLogo(true)
+  }
+
   const removeCoverImage = () => {
     setCoverFile(null)
     setCoverPreviewUrl(null)
+    setClearCoverImage(true)
   }
 
   const handleMediaUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -96,6 +119,10 @@ export function ProjectForm({ project }: ProjectFormProps) {
   const removeMedia = (index: number) => {
     setMediaPreviewUrls((prev) => prev.filter((_, i) => i !== index))
     setMediaFiles((prev) => prev.filter((_, i) => i !== index))
+  }
+
+  const removeExistingMedia = (index: number) => {
+    setExistingProjectMedia((prev) => prev.filter((_, i) => i !== index))
   }
 
   const addToArray = (value: string) => {
@@ -123,7 +150,11 @@ export function ProjectForm({ project }: ProjectFormProps) {
     try {
       const submitData: ProjectFormData = {
         ...formData,
+        logoFile,
+        clearLogo,
         coverImageFile: coverFile,
+        clearCoverImage,
+        existingProjectMedia,
         mediaFiles,
       }
 
@@ -157,6 +188,14 @@ export function ProjectForm({ project }: ProjectFormProps) {
             <Label htmlFor="slug">Slug *</Label>
             <Input id="slug" value={formData.slug} onChange={(e) => setFormData((p) => ({ ...p, slug: e.target.value }))} required />
           </div>
+        </div>
+        <div className="space-y-2">
+          <Label>Subtitle</Label>
+          <Input
+            value={formData.subtitle}
+            onChange={(e) => setFormData((p) => ({ ...p, subtitle: e.target.value }))}
+            placeholder="Short hook line for the project"
+          />
         </div>
         <div className="space-y-2">
           <Label>Short Description</Label>
@@ -222,18 +261,49 @@ export function ProjectForm({ project }: ProjectFormProps) {
       <Card className="p-6 space-y-4">
         <h2 className="text-lg font-semibold">Media</h2>
         <div className="space-y-2">
+          <Label>Logo (optional)</Label>
+          <Input type="file" accept="image/*" onChange={handleLogoUpload} />
+          {logoPreviewUrl && (
+            <div className="relative inline-block">
+              <img src={logoPreviewUrl} alt="Logo preview" className="h-20 w-20 object-contain rounded border bg-background p-2" />
+              <button type="button" onClick={removeLogo} className="absolute -top-2 -right-2 rounded-full bg-black/60 p-1">
+                <IconX className="h-3 w-3 text-white" />
+              </button>
+            </div>
+          )}
+        </div>
+        <div className="space-y-2">
           <Label>Cover Image</Label>
           <Input type="file" accept="image/*" onChange={handleCoverImageUpload} />
-          {coverPreviewUrl && <img src={coverPreviewUrl} alt="Cover preview" className="w-full max-w-md h-48 object-cover rounded-lg" />}
+          {coverPreviewUrl && (
+            <div className="relative inline-block">
+              <img src={coverPreviewUrl} alt="Cover preview" className="w-full max-w-md h-48 object-cover rounded-lg" />
+              <button type="button" onClick={removeCoverImage} className="absolute top-1 right-1 rounded bg-black/60 p-1">
+                <IconX className="h-3 w-3 text-white" />
+              </button>
+            </div>
+          )}
         </div>
         <div className="space-y-2">
           <Label>Project Media (images/videos)</Label>
           <Input type="file" accept="image/*,video/*" multiple onChange={handleMediaUpload} />
-          {mediaPreviewUrls.length > 0 && (
+          {(existingProjectMedia.length > 0 || mediaPreviewUrls.length > 0) && (
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+              {existingProjectMedia.map((item, i) => (
+                <div key={`existing-${i}`} className="relative">
+                  {item.type === "video" ? (
+                    <video src={item.url} className="w-full h-28 object-cover rounded" />
+                  ) : (
+                    <img src={item.url} alt={`Media ${i + 1}`} className="w-full h-28 object-cover rounded" />
+                  )}
+                  <button type="button" onClick={() => removeExistingMedia(i)} className="absolute top-1 right-1 rounded bg-black/60 p-1">
+                    <IconX className="h-3 w-3 text-white" />
+                  </button>
+                </div>
+              ))}
               {mediaPreviewUrls.map((url, i) => (
-                <div key={i} className="relative">
-                  <img src={url} alt={`Media ${i + 1}`} className="w-full h-28 object-cover rounded" />
+                <div key={`new-${i}`} className="relative">
+                  <img src={url} alt={`New media ${i + 1}`} className="w-full h-28 object-cover rounded" />
                   <button type="button" onClick={() => removeMedia(i)} className="absolute top-1 right-1 rounded bg-black/60 p-1">
                     <IconX className="h-3 w-3 text-white" />
                   </button>

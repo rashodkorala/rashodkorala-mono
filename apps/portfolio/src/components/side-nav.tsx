@@ -4,29 +4,17 @@ import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { motion } from "framer-motion";
-
-const sections = [
-  { id: "about", label: "About", href: "/" },
-  { id: "work", label: "Work", href: "/work" },
-  { id: "photography", label: "Photography", href: "https://photos.rashodkorala.com" },
-  { id: "contact", label: "Contact", href: "/contact" },
-];
+import {
+  PORTFOLIO_NAV,
+  getActiveNavSectionId,
+} from "@/lib/portfolio-nav";
 
 export default function SideNav() {
   const pathname = usePathname();
   const [active, setActive] = useState("");
 
   useEffect(() => {
-    if (pathname === "/") {
-      setActive("about");
-    } else if (pathname.startsWith("/work") || pathname.startsWith("/projects")) {
-      setActive("work");
-    } else {
-      const match = sections.find(
-        (s) => s.href !== "/" && pathname.startsWith(s.href)
-      );
-      if (match) setActive(match.id);
-    }
+    setActive(getActiveNavSectionId(pathname));
   }, [pathname]);
 
   return (
@@ -41,8 +29,8 @@ export default function SideNav() {
       }}
     >
       <div className="flex-1 flex items-center">
-        <ul className="space-y-7">
-          {sections.map(({ id, href, label }) => (
+        <ul className="space-y-6 xl:space-y-7 2xl:space-y-8">
+          {PORTFOLIO_NAV.map(({ id, href, label }) => (
             <li key={id}>
               <Link
                 href={href}
@@ -61,7 +49,7 @@ export default function SideNav() {
                       : "w-0 group-hover:w-4 bg-ink/20 dark:bg-[#4d4844]"
                   }`}
                 />
-                <span className="text-[13px] tracking-[0.06em] font-light">
+                <span className="font-sans text-[clamp(0.8125rem,0.7rem+0.45vw,1rem)] tracking-[0.05em] font-normal leading-none">
                   {label}
                 </span>
               </Link>

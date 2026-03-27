@@ -50,7 +50,7 @@ export default async function WorkPage({ searchParams }: WorkPageProps) {
       id: p.id,
       kind: "project" as const,
       title: p.title,
-      subtitle: p.shortDescription || null,
+      subtitle: p.subtitle || p.shortDescription || null,
       updatedAt: p.updatedAt,
       slug: p.slug,
       data: p,

@@ -30,6 +30,12 @@ export default async function ViewProjectPage({ params }: { params: Promise<{ sl
           </Button>
           <div>
             <h1 className="text-2xl font-bold">{project.title}</h1>
+            {project.logo && (
+              <img src={project.logo} alt={`${project.title} logo`} className="mt-2 h-10 w-10 rounded object-contain border bg-background p-1" />
+            )}
+            {project.subtitle && (
+              <p className="text-sm text-muted-foreground">{project.subtitle}</p>
+            )}
             {project.shortDescription && (
               <p className="text-muted-foreground">{project.shortDescription}</p>
             )}

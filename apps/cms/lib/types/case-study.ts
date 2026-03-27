@@ -44,7 +44,10 @@ export interface CaseStudyFormData {
   contentMd: string
   featured: boolean
   tags: string[]
+  existingGallery?: string[]
   galleryFiles?: File[]
+  clearBeforeImage?: boolean
+  clearAfterImage?: boolean
   beforeImageFile?: File | null
   afterImageFile?: File | null
   order: number

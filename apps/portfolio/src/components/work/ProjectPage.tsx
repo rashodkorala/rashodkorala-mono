@@ -2,192 +2,255 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, ExternalLink, Github } from "lucide-react";
 import type { Project } from "@/lib/types";
-import { renderMarkdown, type MarkdownParserConfig } from "@rashodkorala/theView";
+import ProjectGallery from "./ProjectGallery";
+import ProjectRelatedCaseStudies from "./ProjectRelatedCaseStudies";
 
-const projectMarkdownConfig: MarkdownParserConfig = {
-  h1: "font-['Times_New_Roman','Times',serif] text-3xl md:text-4xl font-light tracking-tight mt-12 mb-5 text-ink dark:text-[#efe9e2]",
-  h2: "font-['Times_New_Roman','Times',serif] text-2xl md:text-3xl font-light tracking-tight mt-12 mb-5 text-ink dark:text-[#e6dfd8]",
-  h3: "font-['Times_New_Roman','Times',serif] text-xl md:text-2xl font-light tracking-tight mt-8 mb-4 text-ink dark:text-[#ddd6cf]",
-  p: "font-['Helvetica_Neue','Helvetica','Arial',sans-serif] text-[16px] leading-[1.9] text-ink/75 dark:text-[#c2bab3] mb-4",
-  strong: "font-medium text-ink dark:text-[#f0ebe4]",
-  em: "italic",
-  code: "font-mono text-ink/85 dark:text-[#d7cfc8] bg-ink/5 dark:bg-[#1a1817] px-2 py-0.5 rounded text-sm",
-  pre: "bg-ink/[0.04] dark:bg-[#171514] border border-ink/10 dark:border-[#2f2c2a] rounded-lg p-4 overflow-x-auto my-6",
-  a: "text-ink dark:text-[#ece7df] underline decoration-ink/20 dark:decoration-[#7a736d] hover:decoration-ink/60 dark:hover:decoration-[#b1aaa3] transition-colors",
-  img: "w-full h-auto rounded-lg object-cover",
-  imgBorder: "border-ink/10 dark:border-[#2f2c2a]",
-};
+const ui =
+  "[font-family:var(--font-geist-sans),ui-sans-serif,system-ui,sans-serif]";
+
+function SectionLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <p
+      className={`${ui} text-[11px] font-medium uppercase tracking-[0.18em] text-ink/40 dark:text-[#8b847f]`}
+    >
+      {children}
+    </p>
+  );
+}
 
 export default function ProjectPage({ project }: { project: Project }) {
-  const tech = project.tech_stack ?? project.tech ?? [];
-  const roles = project.role ? [project.role] : (project.roles ?? []);
-  const features = project.features ?? [];
+  const tech = project.tech_stack ?? [];
+  const roles = project.role ? [project.role] : [];
   const media = project.project_media ?? [];
-  const galleryUrls = media.filter((m) => m.type === "image").map((m) => m.url).concat(project.gallery_image_urls ?? []);
-  const galleryVideos = media.filter((m) => m.type === "video").map((m) => m.url).concat(project.gallery_video_urls ?? []);
+  const relatedCaseStudies = project.relatedCaseStudies ?? [];
+  const galleryUrls = media.filter((m) => m.type === "image").map((m) => m.url);
+  const galleryVideos = media.filter((m) => m.type === "video").map((m) => m.url);
 
-  const mdHtml = project.content_md
-    ? renderMarkdown(project.content_md, projectMarkdownConfig)
-    : "";
+  const hasDetails = Boolean(project.timeline) || roles.length > 0;
+
+  const backBar =
+    "fixed top-16 z-30 flex h-12 items-center border-b border-ink/10 bg-cream/95 backdrop-blur-md dark:border-[#2a2725] dark:bg-[#151311]/95 left-0 right-0 px-6 md:px-12 lg:left-48 lg:right-0 lg:px-14 lg:top-20";
 
   return (
-    <div className="max-w-4xl py-12 md:py-16 font-['Helvetica_Neue','Helvetica','Arial',sans-serif]">
-      <Link
-        href="/work"
-        className="inline-flex items-center gap-2 text-sm text-ink/45 hover:text-ink transition-colors group dark:text-[#a8a29d] dark:hover:text-[#e0dbd5]"
-      >
-        <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" strokeWidth={1.5} />
-        Back to work
-      </Link>
-
-      <div className="mt-8 flex flex-wrap items-center gap-2">
-        {project.category && (
-          <span className="text-[11px] uppercase tracking-[0.08em] px-2.5 py-1 rounded-full border border-ink/10 text-ink/45 dark:border-[#33302d] dark:text-[#b1aaa3]">
-            {project.category}
-          </span>
-        )}
-        {tech.slice(0, 3).map((t) => (
-          <span key={t} className="text-[11px] uppercase tracking-[0.08em] px-2.5 py-1 rounded-full border border-ink/8 text-ink/35 dark:border-[#34312e] dark:text-[#9f9791]">
-            {t}
-          </span>
-        ))}
+    <>
+      <div className={backBar} role="navigation" aria-label="Back to work">
+        <div className="mx-auto flex w-full max-w-4xl">
+          <Link
+            href="/work"
+            className={`${ui} inline-flex items-center gap-2 text-sm text-ink/45 transition-colors hover:text-ink group dark:text-[#a8a29d] dark:hover:text-[#e0dbd5]`}
+          >
+            <ArrowLeft
+              className="w-4 h-4 transition-transform group-hover:-translate-x-1"
+              strokeWidth={1.5}
+            />
+            Back to work
+          </Link>
+        </div>
       </div>
 
-      <h1 className="mt-5 font-['Times_New_Roman','Times',serif] text-3xl md:text-5xl tracking-tight text-ink dark:text-[#f0ebe4]">
-        {project.title}
-      </h1>
-      {(project.short_description || project.subtitle) && (
-        <p className="mt-3 text-lg text-muted_ink font-light dark:text-[#b8afa8]">{project.short_description || project.subtitle}</p>
-      )}
+      <article
+        className={`mx-auto max-w-4xl pb-16 pt-2 md:pb-24 md:pt-4 ${ui}`}
+      >
+        <div className="h-12 shrink-0" aria-hidden />
 
-      {(project.live_url || project.github_url) && (
-        <div className="mt-6 flex items-center gap-4">
-          {project.live_url && (
-            <a
-              href={project.live_url}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center gap-1.5 text-sm text-ink/55 hover:text-ink transition-colors dark:text-[#a8a29d] dark:hover:text-[#e0dbd5]"
-            >
-              <ExternalLink className="w-3.5 h-3.5" strokeWidth={1.5} />
-              Live
-            </a>
-          )}
-          {project.github_url && (
-            <a
-              href={project.github_url}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center gap-1.5 text-sm text-ink/55 hover:text-ink transition-colors dark:text-[#a8a29d] dark:hover:text-[#e0dbd5]"
-            >
-              <Github className="w-3.5 h-3.5" strokeWidth={1.5} />
-              GitHub
-            </a>
-          )}
-        </div>
-      )}
-
-      {(project.cover_image || project.cover_image_url) && (
-        <div className="mt-8 relative w-full aspect-video rounded-2xl overflow-hidden border border-ink/10 dark:border-[#2f2c2a]">
-          <Image
-            src={project.cover_image || project.cover_image_url!}
-            alt={project.title}
-            fill
-            className="object-cover saturate-95 dark:brightness-[0.86] dark:saturate-90"
-            priority
-          />
-        </div>
-      )}
-
-      {(project.problem || project.solution) && (
-        <div className="mt-10 grid md:grid-cols-2 gap-6">
-          {project.problem && (
-            <div>
-              <p className="text-[11px] uppercase tracking-[0.15em] text-ink/35 dark:text-[#8b847f] mb-3">Problem</p>
-              <p className="text-[15px] leading-[1.8] text-ink/70 dark:text-[#c2bab3]">{project.problem}</p>
-            </div>
-          )}
-          {project.solution && (
-            <div>
-              <p className="text-[11px] uppercase tracking-[0.15em] text-ink/35 dark:text-[#8b847f] mb-3">Solution</p>
-              <p className="text-[15px] leading-[1.8] text-ink/70 dark:text-[#c2bab3]">{project.solution}</p>
-            </div>
-          )}
-        </div>
-      )}
-
-      {mdHtml && (
-        <section
-          className="mt-14"
-          dangerouslySetInnerHTML={{ __html: mdHtml }}
-        />
-      )}
-
-      {features.length > 0 && (
-        <section className="mt-12">
-          <p className="text-[11px] uppercase tracking-[0.15em] text-ink/35 dark:text-[#8b847f]">Features</p>
-          <ul className="mt-4 space-y-2">
-            {features.map((f, i) => (
-              <li key={i} className="flex items-start gap-2 text-[15px] text-ink/70 dark:text-[#c2bab3]">
-                <span className="mt-1 text-ink/25">–</span>
-                {f}
-              </li>
-            ))}
-          </ul>
-        </section>
-      )}
-
-      {galleryUrls.length > 0 && (
-        <section className="mt-12">
-          <p className="text-[11px] uppercase tracking-[0.15em] text-ink/35 dark:text-[#8b847f]">Gallery</p>
-          <div className="mt-4 grid grid-cols-2 md:grid-cols-3 gap-3">
-            {galleryUrls.map((url, i) => (
-              <div key={i} className="relative aspect-video rounded-xl overflow-hidden border border-ink/8 dark:border-[#2f2c2a]">
-                <Image src={url} alt={`${project.title} ${i + 1}`} fill className="object-cover dark:brightness-[0.88]" />
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
-
-      <hr className="border-ink/10 my-12 dark:border-[#2e2b29]" />
-
-      {(tech.length > 0 || roles.length > 0 || project.timeline) && (
-        <div className="pb-10 space-y-4">
-          {project.timeline && (
-            <p className="text-sm text-ink/55 dark:text-[#b5ada6]">Timeline: {project.timeline}</p>
-          )}
+        {/* Intro */}
+        <header className="space-y-6">
           {tech.length > 0 && (
             <div className="flex flex-wrap gap-2">
               {tech.map((t) => (
-                <span key={t} className="px-3 py-1 text-xs rounded-full border border-ink/10 text-ink/45 dark:border-[#33302d] dark:text-[#afa7a0]">
+                <span
+                  key={t}
+                  className="text-[11px] uppercase tracking-[0.08em] px-2.5 py-1 rounded-full border border-ink/10 text-ink/40 dark:border-[#34312e] dark:text-[#9f9791]"
+                >
                   {t}
                 </span>
               ))}
             </div>
           )}
-          {roles.length > 0 && (
-            <div className="flex flex-wrap gap-2">
-              {roles.map((r) => (
-                <span key={r} className="px-3 py-1 text-xs rounded-full border border-ink/8 text-ink/35 dark:border-[#34312e] dark:text-[#9f9791]">
-                  {r}
+
+          <div className="space-y-4">
+            <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:gap-8">
+              <div className="min-w-0 flex-1 space-y-3">
+                <h1 className="font-serif text-3xl font-semibold leading-[1.12] tracking-tight text-ink md:text-[2.75rem] md:leading-[1.08] dark:text-[#f0ebe4]">
+                  {project.title}
+                </h1>
+                {project.subtitle && (
+                  <p className="text-lg font-normal leading-snug text-ink/75 md:text-xl dark:text-[#cdc4bc]">
+                    {project.subtitle}
+                  </p>
+                )}
+              </div>
+              {project.logo && (
+                <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-xl border border-ink/10 bg-white/90 p-2 shadow-sm dark:border-[#2f2c2a] dark:bg-[#1a1817] dark:shadow-none sm:h-[4.5rem] sm:w-[4.5rem]">
+                  <Image
+                    src={project.logo}
+                    alt={`${project.title} logo`}
+                    fill
+                    className="object-contain p-1"
+                  />
+                </div>
+              )}
+            </div>
+
+            {project.short_description && (
+              <p className="max-w-2xl text-[17px] leading-[1.75] text-ink/72 dark:text-[#b8afa8]">
+                {project.short_description}
+              </p>
+            )}
+          </div>
+
+          {(project.live_url ||
+            project.github_url ||
+            hasDetails) && (
+            <div
+              role="group"
+              aria-label="Project links and context"
+              className="flex flex-wrap items-center gap-x-3 gap-y-2 pt-2 text-sm"
+            >
+              {(project.live_url || project.github_url) && (
+                <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+                  {project.live_url && (
+                    <a
+                      href={project.live_url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center gap-1.5 font-medium text-ink/75 transition-colors hover:text-ink dark:text-[#c9c2bb] dark:hover:text-[#efe9e2]"
+                    >
+                      <ExternalLink className="h-3.5 w-3.5" strokeWidth={1.5} />
+                      Live site
+                    </a>
+                  )}
+                  {project.github_url && (
+                    <a
+                      href={project.github_url}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex items-center gap-1.5 font-medium text-ink/75 transition-colors hover:text-ink dark:text-[#c9c2bb] dark:hover:text-[#efe9e2]"
+                    >
+                      <Github className="h-3.5 w-3.5" strokeWidth={1.5} />
+                      GitHub
+                    </a>
+                  )}
+                </div>
+              )}
+              {(project.live_url || project.github_url) && hasDetails && (
+                <span
+                  className="select-none text-ink/25 dark:text-[#5c5650]"
+                  aria-hidden
+                >
+                  |
                 </span>
-              ))}
+              )}
+              {hasDetails && (
+                <div className="min-w-0 text-ink/60 dark:text-[#b5ada6] leading-snug">
+                  {project.timeline && (
+                    <span>
+                      <span className="text-ink/40 dark:text-[#8b847f]">
+                        Timeline{" "}
+                      </span>
+                      {project.timeline}
+                    </span>
+                  )}
+                  {project.timeline && roles.length > 0 && (
+                    <span className="mx-1.5 text-ink/20 dark:text-[#4a4540]">
+                      ·
+                    </span>
+                  )}
+                  {roles.length > 0 && (
+                    <span>
+                      <span className="text-ink/40 dark:text-[#8b847f]">
+                        Role{" "}
+                      </span>
+                      {roles.join(" · ")}
+                    </span>
+                  )}
+                </div>
+              )}
             </div>
           )}
-        </div>
-      )}
+        </header>
 
-      {galleryVideos.length > 0 && (
-        <section className="mt-12">
-          <p className="text-[11px] uppercase tracking-[0.15em] text-ink/35 dark:text-[#8b847f]">Videos</p>
-          <div className="mt-4 grid gap-3">
-            {galleryVideos.map((url, i) => (
-              <video key={i} src={url} controls className="w-full rounded-xl border border-ink/8 dark:border-[#2f2c2a]" />
-            ))}
+        {relatedCaseStudies.length > 0 && (
+          <section className="mt-8 md:mt-10" aria-labelledby="project-cs-heading">
+            <header className="mb-6 md:mb-8">
+              <SectionLabel>Related</SectionLabel>
+              <h2
+                id="project-cs-heading"
+                className="mt-2 font-serif text-2xl font-semibold tracking-tight text-ink md:text-[1.65rem] dark:text-[#e8e2db]"
+              >
+                Case studies
+              </h2>
+              <p className="mt-2 max-w-xl text-sm leading-relaxed text-ink/50 dark:text-[#8f8882]">
+                Long-form write-ups that cover research, decisions, and outcomes for this work.
+              </p>
+            </header>
+            <ProjectRelatedCaseStudies
+              caseStudies={relatedCaseStudies}
+              headingId="project-cs-heading"
+            />
+          </section>
+        )}
+
+        {project.cover_image && (
+          <div className="mt-12 md:mt-14">
+            <div className="relative aspect-[16/10] w-full overflow-hidden rounded-2xl border border-ink/10 shadow-[0_1px_0_rgba(43,43,43,0.06)] dark:border-[#2f2c2a] dark:shadow-none md:aspect-video md:rounded-[1.25rem]">
+              <Image
+                src={project.cover_image}
+                alt={project.title}
+                fill
+                className="object-cover saturate-95 dark:brightness-[0.86] dark:saturate-90"
+                priority
+                sizes="(max-width: 768px) 100vw, 768px"
+              />
+            </div>
           </div>
-        </section>
-      )}
-    </div>
+        )}
+
+        {galleryUrls.length > 0 && (
+          <section className="mt-14 md:mt-20" aria-labelledby="project-gallery-heading">
+            <header className="mb-6 md:mb-8">
+              <h2
+                id="project-gallery-heading"
+                className="font-serif text-2xl font-semibold tracking-tight text-ink md:text-[1.65rem] dark:text-[#e8e2db]"
+              >
+                <span className="block text-[11px] font-medium uppercase tracking-[0.18em] text-ink/40 dark:text-[#8b847f]">
+                  Gallery
+                </span>
+                <span className="mt-2 block">Selected frames</span>
+              </h2>
+              <p className="mt-3 max-w-xl text-sm leading-relaxed text-ink/50 dark:text-[#8f8882]">
+                Click any image for a full-screen view. Use arrow keys or the on-screen controls to
+                move between images.
+              </p>
+            </header>
+            <ProjectGallery images={galleryUrls} projectTitle={project.title} />
+          </section>
+        )}
+
+        {galleryVideos.length > 0 && (
+          <section className="mt-14 md:mt-20" aria-labelledby="project-videos-heading">
+            <header className="mb-6 md:mb-8">
+              <SectionLabel>Video</SectionLabel>
+              <h2
+                id="project-videos-heading"
+                className="mt-2 font-serif text-2xl font-semibold tracking-tight text-ink md:text-[1.65rem] dark:text-[#e8e2db]"
+              >
+                Video
+              </h2>
+            </header>
+            <div className="grid gap-5">
+              {galleryVideos.map((url, i) => (
+                <video
+                  key={i}
+                  src={url}
+                  controls
+                  className="w-full overflow-hidden rounded-xl border border-ink/10 shadow-sm dark:border-[#2f2c2a] dark:shadow-none"
+                />
+              ))}
+            </div>
+          </section>
+        )}
+      </article>
+    </>
   );
 }

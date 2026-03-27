@@ -22,11 +22,11 @@ export async function generateMetadata({
   const item = caseStudy ?? project;
   if (!item) return { title: "Not found" };
 
-  const title = "seo_title" in item ? item.seo_title || item.title : item.title;
+  const title = item.title;
   const description =
-    "seo_description" in item
-      ? item.seo_description || ("summary" in item ? item.summary : undefined)
-      : ("subtitle" in item ? item.subtitle : undefined);
+    "content_md" in item
+      ? item.content_md?.slice(0, 160)
+      : ("short_description" in item ? item.short_description || undefined : undefined);
 
   return {
     title,

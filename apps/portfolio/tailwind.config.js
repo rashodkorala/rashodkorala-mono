@@ -9,10 +9,16 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        serif: ['var(--font-playfair)', 'Georgia', 'serif'],
+        sans: [
+          "var(--font-geist-sans)",
+          "ui-sans-serif",
+          "system-ui",
+          "sans-serif",
+        ],
+        serif: ["var(--font-playfair)", "Georgia", "serif"],
       },
       colors: {
-        cream: "#ece8e1",
+        cream: "#e9e6e0",
         ink: "#2b2b2b",
         muted_ink: "#6b6560",
         systemGray: "#8E8E93",

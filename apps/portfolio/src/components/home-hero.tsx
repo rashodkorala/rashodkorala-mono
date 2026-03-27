@@ -20,27 +20,27 @@ const socials = [
 
 export default function HomeHero() {
   return (
-    <div className="h-screen overflow-hidden bg-cream text-ink dark:bg-[#121110] dark:text-[#e6e1da]">
-      <div className="h-full lg:ml-48 flex flex-col px-6 md:px-12 lg:px-14 pt-16 lg:pt-20 pb-10 md:pb-12">
-        <div className="relative flex-1 flex flex-col lg:flex-row gap-8 lg:gap-12 min-h-0">
+    <div className="h-screen overflow-hidden bg-cream text-ink dark:bg-[#151311] dark:text-[#e6e1da]">
+      <div className="h-full lg:ml-48 flex flex-col px-6 sm:px-8 md:px-12 lg:px-16 pt-[4.75rem] sm:pt-20 lg:pt-24 pb-10 sm:pb-12 md:pb-14">
+        <div className="relative flex-1 flex flex-col lg:flex-row gap-8 sm:gap-10 lg:gap-16 xl:gap-20 min-h-0">
 
           {/* Left column */}
-          <div className="flex flex-col justify-between flex-1 min-w-0 lg:max-w-[55%]">
-            <div>
+          <div className="flex min-h-0 flex-1 flex-col justify-between min-w-0 lg:max-w-[55%] gap-6 sm:gap-8 lg:gap-12">
+            <div className="flex min-h-0 flex-1 flex-col">
               <motion.h1
-                className="font-serif leading-[0.92] tracking-[-0.02em] mb-8 md:mb-10"
+                className="shrink-0 font-serif leading-[0.88] tracking-[-0.03em] text-balance mb-6 sm:mb-9 md:mb-11"
                 initial="hidden"
                 animate="visible"
               >
                 <motion.span
-                  className="block text-[clamp(3.2rem,9vw,7.5rem)]"
+                  className="block text-[clamp(3rem,8.5vw,7.25rem)]"
                   variants={reveal}
                   custom={0.2}
                 >
                   Rashod
                 </motion.span>
                 <motion.span
-                  className="block text-[clamp(3.2rem,9vw,7.5rem)] ml-[0.15em]"
+                  className="block text-[clamp(3rem,8.5vw,7.25rem)] ml-[0.12em] mt-[-0.02em]"
                   variants={reveal}
                   custom={0.35}
                 >
@@ -49,16 +49,18 @@ export default function HomeHero() {
               </motion.h1>
 
               <motion.div
-                className="ml-0 md:ml-[12%] max-w-[400px]"
+                className="flex min-h-0 flex-1 flex-col justify-center gap-8 sm:gap-10 lg:gap-12 w-full max-w-none overflow-y-auto pr-1"
                 initial="hidden"
                 animate="visible"
               >
                 <motion.p
-                  className="text-[14px] leading-[1.75] font-light text-muted_ink dark:text-[#b6aea7]"
+                  className="font-sans w-full max-w-none text-pretty text-[clamp(0.9375rem,0.82rem+0.55vw,1.125rem)] leading-[1.85] sm:leading-[1.82] font-normal tracking-[0.006em] text-muted_ink dark:text-[#b8b0a9]"
                   variants={reveal}
                   custom={0.55}
                 >
-                  Hello, I&rsquo;m Rashod.
+                  <span className="text-ink dark:text-[#ebe6df] font-medium">
+                    Hello, I&rsquo;m Rashod.
+                  </span>
                   <br />
                   I&rsquo;m a software developer and entrepreneur based in
                   St. John&rsquo;s, Newfoundland. I build products, help
@@ -67,7 +69,7 @@ export default function HomeHero() {
                 </motion.p>
 
                 <motion.p
-                  className="text-[14px] leading-[1.75] font-light text-muted_ink mt-5 dark:text-[#b6aea7]"
+                  className="font-sans w-full max-w-none text-pretty text-[clamp(0.9375rem,0.8rem+0.5vw,1.0625rem)] leading-[1.85] sm:leading-[1.82] font-normal tracking-[0.006em] text-muted_ink dark:text-[#a9a29b]"
                   variants={reveal}
                   custom={0.7}
                 >
@@ -82,7 +84,7 @@ export default function HomeHero() {
             </div>
 
             <motion.div
-              className="flex items-center gap-10 pt-6"
+              className="shrink-0 flex flex-wrap items-center gap-x-10 gap-y-3 pt-4 sm:pt-6 border-t border-ink/[0.08] dark:border-[#3d3935]/80"
               variants={reveal}
               initial="hidden"
               animate="visible"
@@ -94,10 +96,10 @@ export default function HomeHero() {
                   href={social.href}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="relative text-[14px] tracking-[0.01em] text-ink transition-opacity hover:opacity-60 dark:text-[#dfd9d2]"
+                  className="relative font-sans text-sm sm:text-[15px] tracking-[0.02em] text-ink transition-opacity hover:opacity-60 dark:text-[#e8e2db]"
                 >
                   {social.label}
-                  <span className="absolute -bottom-1 left-0 w-full h-px bg-ink/25 dark:bg-[#625d58]" />
+                  <span className="absolute -bottom-1 left-0 w-full h-px bg-ink/30 dark:bg-[#6b6560]" />
                 </a>
               ))}
             </motion.div>

@@ -81,7 +81,7 @@ export default function RootLayout({
 }) {
     return (
         <html lang="en" suppressHydrationWarning data-theme="light">
-            <body className={`${geistSans.variable} ${geistMono.variable} ${playfair.variable} bg-cream dark:bg-[#121110]`}>
+            <body className={`${geistSans.variable} ${geistMono.variable} ${playfair.variable} bg-cream dark:bg-[#151311]`}>
                 <PostHogProvider app="portfolio">
                     <TopBar />
                     <SideNav />

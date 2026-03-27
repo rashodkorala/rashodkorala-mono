@@ -42,7 +42,10 @@ export function CaseStudyForm({ caseStudy, availableProjects }: CaseStudyFormPro
     contentMd: caseStudy?.contentMd || "",
     featured: caseStudy?.featured || false,
     tags: caseStudy?.tags || [],
+    existingGallery: caseStudy?.gallery || [],
     galleryFiles: [],
+    clearBeforeImage: false,
+    clearAfterImage: false,
     beforeImageFile: null,
     afterImageFile: null,
     order: caseStudy?.order ?? 0,
@@ -54,8 +57,17 @@ export function CaseStudyForm({ caseStudy, availableProjects }: CaseStudyFormPro
   const inlineImageInputRef = useRef<HTMLInputElement | null>(null)
 
   const [galleryFiles, setGalleryFiles] = useState<File[]>([])
-  const [galleryPreviewUrls, setGalleryPreviewUrls] = useState<string[]>(
-    caseStudy?.gallery || []
+  const [existingGallery, setExistingGallery] = useState<string[]>(caseStudy?.gallery || [])
+  const [galleryPreviewUrls, setGalleryPreviewUrls] = useState<string[]>([])
+  const [beforePreviewUrl, setBeforePreviewUrl] = useState<string | null>(
+    caseStudy?.beforeAfter?.beforeImage
+      ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/media/${caseStudy.beforeAfter.beforeImage}`
+      : null
+  )
+  const [afterPreviewUrl, setAfterPreviewUrl] = useState<string | null>(
+    caseStudy?.beforeAfter?.afterImage
+      ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/media/${caseStudy.beforeAfter.afterImage}`
+      : null
   )
 
   const [tagsCsv, setTagsCsv] = useState((caseStudy?.tags || []).join(", "))
@@ -88,6 +100,10 @@ export function CaseStudyForm({ caseStudy, availableProjects }: CaseStudyFormPro
   const removeGalleryImage = (index: number) => {
     setGalleryPreviewUrls(prev => prev.filter((_, i) => i !== index))
     setGalleryFiles(prev => prev.filter((_, i) => i !== index))
+  }
+
+  const removeExistingGalleryImage = (index: number) => {
+    setExistingGallery((prev) => prev.filter((_, i) => i !== index))
   }
 
   const syncTagsFromCsv = (value: string) => {
@@ -166,7 +182,11 @@ export function CaseStudyForm({ caseStudy, availableProjects }: CaseStudyFormPro
     setIsLoading(true)
 
     try {
-      await createOrUpdateCaseStudy({ ...formData, galleryFiles }, caseStudy?.id, linkedProjectIds)
+      await createOrUpdateCaseStudy(
+        { ...formData, existingGallery, galleryFiles },
+        caseStudy?.id,
+        linkedProjectIds
+      )
 
       toast.success(isEditing ? "Case study updated" : "Case study created")
       router.push("/protected/work")
@@ -255,10 +275,22 @@ export function CaseStudyForm({ caseStudy, availableProjects }: CaseStudyFormPro
         <div className="space-y-2">
           <Label>Gallery</Label>
           <Input type="file" accept="image/*" multiple onChange={handleGalleryImageUpload} />
-          {galleryPreviewUrls.length > 0 && (
+          {(existingGallery.length > 0 || galleryPreviewUrls.length > 0) && (
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+              {existingGallery.map((path, i) => (
+                <div key={`existing-${path}-${i}`} className="relative">
+                  <img
+                    src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/media/${path}`}
+                    alt={`Gallery ${i + 1}`}
+                    className="w-full h-24 object-cover rounded"
+                  />
+                  <button type="button" onClick={() => removeExistingGalleryImage(i)} className="absolute top-1 right-1 rounded bg-black/60 p-1">
+                    <IconX className="h-3 w-3 text-white" />
+                  </button>
+                </div>
+              ))}
               {galleryPreviewUrls.map((url, i) => (
-                <div key={i} className="relative">
+                <div key={`new-${i}`} className="relative">
                   <img src={url} alt={`Gallery ${i + 1}`} className="w-full h-24 object-cover rounded" />
                   <button type="button" onClick={() => removeGalleryImage(i)} className="absolute top-1 right-1 rounded bg-black/60 p-1">
                     <IconX className="h-3 w-3 text-white" />
@@ -271,11 +303,65 @@ export function CaseStudyForm({ caseStudy, availableProjects }: CaseStudyFormPro
         <div className="grid md:grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label>Before Image</Label>
-            <Input type="file" accept="image/*" onChange={(e) => setFormData((p) => ({ ...p, beforeImageFile: e.target.files?.[0] || null }))} />
+            <Input
+              type="file"
+              accept="image/*"
+              onChange={(e) => {
+                const file = e.target.files?.[0] || null
+                setFormData((p) => ({ ...p, beforeImageFile: file, clearBeforeImage: false }))
+                if (file) {
+                  const reader = new FileReader()
+                  reader.onloadend = () => setBeforePreviewUrl(reader.result as string)
+                  reader.readAsDataURL(file)
+                }
+              }}
+            />
+            {beforePreviewUrl && (
+              <div className="relative inline-block">
+                <img src={beforePreviewUrl} alt="Before preview" className="h-24 w-24 object-cover rounded" />
+                <button
+                  type="button"
+                  onClick={() => {
+                    setBeforePreviewUrl(null)
+                    setFormData((p) => ({ ...p, beforeImageFile: null, clearBeforeImage: true }))
+                  }}
+                  className="absolute top-1 right-1 rounded bg-black/60 p-1"
+                >
+                  <IconX className="h-3 w-3 text-white" />
+                </button>
+              </div>
+            )}
           </div>
           <div className="space-y-2">
             <Label>After Image</Label>
-            <Input type="file" accept="image/*" onChange={(e) => setFormData((p) => ({ ...p, afterImageFile: e.target.files?.[0] || null }))} />
+            <Input
+              type="file"
+              accept="image/*"
+              onChange={(e) => {
+                const file = e.target.files?.[0] || null
+                setFormData((p) => ({ ...p, afterImageFile: file, clearAfterImage: false }))
+                if (file) {
+                  const reader = new FileReader()
+                  reader.onloadend = () => setAfterPreviewUrl(reader.result as string)
+                  reader.readAsDataURL(file)
+                }
+              }}
+            />
+            {afterPreviewUrl && (
+              <div className="relative inline-block">
+                <img src={afterPreviewUrl} alt="After preview" className="h-24 w-24 object-cover rounded" />
+                <button
+                  type="button"
+                  onClick={() => {
+                    setAfterPreviewUrl(null)
+                    setFormData((p) => ({ ...p, afterImageFile: null, clearAfterImage: true }))
+                  }}
+                  className="absolute top-1 right-1 rounded bg-black/60 p-1"
+                >
+                  <IconX className="h-3 w-3 text-white" />
+                </button>
+              </div>
+            )}
           </div>
         </div>
       </Card>

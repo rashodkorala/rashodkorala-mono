@@ -1,5 +1,5 @@
 import { Metadata } from "next"
-import ProjectComp from "@/src/components/main/projectComp"
+import ProjectPage from "@/src/components/work/ProjectPage"
 import PageShell from "@/src/components/page-shell"
 import { getCachedProjectBySlug } from "@/lib/supabase/cached-projects"
 import { notFound } from "next/navigation"
@@ -14,7 +14,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
         return { title: "Project Not Found" };
     }
 
-    const description = project.subtitle || project.problem || `Explore the ${project.title} project by Rashod Korala.`;
+    const description = project.short_description || project.subtitle || `Explore the ${project.title} project by Rashod Korala.`;
 
     return {
         title: project.title,
@@ -22,25 +22,25 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
         openGraph: {
             title: `${project.title} | Rashod Korala`,
             description,
-            images: project.cover_image_url ? [{ url: project.cover_image_url }] : [],
+            images: project.cover_image ? [{ url: project.cover_image }] : [],
         },
         twitter: {
             title: `${project.title} | Rashod Korala`,
             description,
-            images: project.cover_image_url ? [project.cover_image_url] : [],
+            images: project.cover_image ? [project.cover_image] : [],
         },
     };
 }
 
-export default async function ProjectPage({ params }: { params: Promise<{ slug: string }> }) {
+export default async function ProjectDetailPage({ params }: { params: Promise<{ slug: string }> }) {
     const slug = (await params).slug;
-    const initialProject = await getCachedProjectBySlug(slug);
-    if (!initialProject) {
+    const project = await getCachedProjectBySlug(slug);
+    if (!project) {
         notFound();
     }
     return (
         <PageShell>
-            <ProjectComp projectSlug={slug} initialProject={initialProject} />
+            <ProjectPage project={project} />
         </PageShell>
     )
 }

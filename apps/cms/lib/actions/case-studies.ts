@@ -145,8 +145,9 @@ export async function createOrUpdateCaseStudy(
   } = await supabase.auth.getUser()
   if (!user) throw new Error("Unauthorized")
 
-  // Fetch existing record to preserve cover/gallery paths when editing
+  // Fetch existing record to preserve paths when editing
   let existingGalleryPaths: string[] = []
+  let existingBeforeAfter: { beforeImage?: string | null; afterImage?: string | null } | null = null
   if (existingId) {
     const { data: existing } = await supabase
       .from("case_studies")
@@ -156,11 +157,12 @@ export async function createOrUpdateCaseStudy(
       .single()
     if (existing) {
       existingGalleryPaths = existing.gallery || []
+      existingBeforeAfter = existing.before_after || null
     }
   }
 
-  // Handle gallery uploads — preserve existing paths if no new files
-  const galleryPaths: string[] = formData.galleryFiles && formData.galleryFiles.length > 0 ? [] : existingGalleryPaths
+  // Handle gallery uploads — preserve retained existing paths and append new uploads
+  const galleryPaths: string[] = formData.existingGallery || existingGalleryPaths
   for (const file of formData.galleryFiles || []) {
     const ext = file.name.split(".").pop()
     const uuid = crypto.randomUUID()
@@ -170,18 +172,10 @@ export async function createOrUpdateCaseStudy(
     galleryPaths.push(path)
   }
 
-  let beforeImage = existingId ? null : null
-  let afterImage = existingId ? null : null
-  if (existingId) {
-    const { data: existing } = await supabase
-      .from("case_studies")
-      .select("before_after")
-      .eq("id", existingId)
-      .eq("user_id", user.id)
-      .single()
-    beforeImage = existing?.before_after?.beforeImage || null
-    afterImage = existing?.before_after?.afterImage || null
-  }
+  let beforeImage = existingBeforeAfter?.beforeImage || null
+  let afterImage = existingBeforeAfter?.afterImage || null
+  if (formData.clearBeforeImage) beforeImage = null
+  if (formData.clearAfterImage) afterImage = null
 
   if (formData.beforeImageFile) {
     const ext = formData.beforeImageFile.name.split(".").pop()

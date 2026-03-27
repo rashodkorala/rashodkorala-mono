@@ -11,6 +11,8 @@ export interface ProjectDB {
   user_id: string
   slug: string
   title: string
+  subtitle: string | null
+  logo: string | null
   short_description: string | null
   cover_image: string | null
   project_media: ProjectMediaItem[] | null
@@ -29,6 +31,8 @@ export interface Project {
   userId: string
   slug: string
   title: string
+  subtitle: string | null
+  logo: string | null
   shortDescription: string | null
   coverImage: string | null
   projectMedia: ProjectMediaItem[]
@@ -44,6 +48,8 @@ export interface Project {
 export interface ProjectInsert {
   slug: string
   title: string
+  subtitle?: string | null
+  logo?: string | null
   shortDescription?: string | null
   coverImage?: string | null
   projectMedia?: ProjectMediaItem[] | null
@@ -61,6 +67,9 @@ export interface ProjectUpdate extends Partial<ProjectInsert> {
 export interface ProjectFormData {
   title: string
   slug: string
+  subtitle: string
+  logoFile?: File | null
+  clearLogo?: boolean
   shortDescription: string
   role: string
   timeline: string
@@ -68,5 +77,7 @@ export interface ProjectFormData {
   liveUrl: string
   githubUrl: string
   coverImageFile?: File | null
+  clearCoverImage?: boolean
+  existingProjectMedia?: ProjectMediaItem[]
   mediaFiles?: File[]
 }

@@ -13,6 +13,7 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
   const [isHovered, setIsHovered] = useState(false);
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-50px" });
+  const hasLogo = Boolean(project.logo);
 
   const getYear = () => {
     if (project.created_at) return new Date(project.created_at).getFullYear().toString();
@@ -20,7 +21,7 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
   };
 
   return (
-    <Link href={`/projects/${project.slug}`}>
+    <Link href={`/work/projects/${project.slug}`}>
       <motion.div
         ref={ref}
         initial={{ opacity: 0, y: 20 }}
@@ -34,16 +35,16 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
           <div>
             <div className="flex items-center gap-2.5 mb-2 flex-wrap">
               <span className="text-[11px] uppercase tracking-[0.08em] text-ink/25 font-mono">{getYear()}</span>
-              {project.tech && project.tech.length > 0 && (
+              {project.tech_stack && project.tech_stack.length > 0 && (
                 <div className="flex gap-1.5 flex-wrap">
-                  {project.tech.slice(0, 3).map(tag => (
+                  {project.tech_stack.slice(0, 3).map(tag => (
                     <span key={tag} className="text-[10px] uppercase tracking-[0.08em] px-2 py-0.5 border border-ink/8 rounded-full text-ink/30">
                       {tag}
                     </span>
                   ))}
-                  {project.tech.length > 3 && (
+                  {project.tech_stack.length > 3 && (
                     <span className="text-[10px] uppercase tracking-[0.08em] px-2 py-0.5 border border-ink/8 rounded-full text-ink/30">
-                      +{project.tech.length - 3}
+                      +{project.tech_stack.length - 3}
                     </span>
                   )}
                 </div>
@@ -56,15 +57,32 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
               </motion.span>
             </h3>
             {project.subtitle && (
-              <p className="text-muted_ink/70 leading-relaxed max-w-lg text-[14px]">{project.subtitle}</p>
+              <p className="text-muted_ink/80 leading-relaxed max-w-lg text-[14px]">{project.subtitle}</p>
+            )}
+            {project.short_description && (
+              <p className="text-muted_ink/70 leading-relaxed max-w-lg text-[14px]">{project.short_description}</p>
             )}
           </div>
-          {project.cover_image_url && (
+          {project.logo && (
             <motion.div
               animate={{ scale: isHovered ? 1 : 0.95, opacity: isHovered ? 1 : 0.7 }}
-              className="relative w-full h-24 bg-ink/5 rounded-lg overflow-hidden"
+              className="relative h-24 w-24 justify-self-end overflow-hidden rounded-xl border border-ink/10 bg-white/70 p-2.5 md:h-28 md:w-28"
             >
-              <Image src={project.cover_image_url} alt={project.title} fill className="object-cover" sizes="160px" />
+              <Image
+                src={project.logo}
+                alt={`${project.title} logo`}
+                fill
+                className="object-contain p-1"
+                sizes="(max-width: 768px) 96px, 112px"
+              />
+            </motion.div>
+          )}
+          {!hasLogo && project.cover_image && (
+            <motion.div
+              animate={{ scale: isHovered ? 1 : 0.95, opacity: isHovered ? 1 : 0.7 }}
+              className="relative h-24 w-full overflow-hidden rounded-lg bg-ink/5"
+            >
+              <Image src={project.cover_image} alt={project.title} fill className="object-cover" sizes="160px" />
             </motion.div>
           )}
         </div>
@@ -96,7 +114,7 @@ const Projects: React.FC<ProjectsProps> = ({ initialProjects = [] }) => {
 
   if (isLoading) {
     return (
-      <div ref={ref} className="max-w-3xl py-12">
+      <div ref={ref} className="mx-auto max-w-3xl py-12">
         <div className="space-y-8">
           {[...Array(4)].map((_, index) => (
             <div key={index} className="animate-pulse border-t border-ink/8 py-8">
@@ -112,7 +130,7 @@ const Projects: React.FC<ProjectsProps> = ({ initialProjects = [] }) => {
 
   if (error) {
     return (
-      <div ref={ref} className="max-w-3xl py-12">
+      <div ref={ref} className="mx-auto max-w-3xl py-12">
         <div className="flex items-center justify-center min-h-[40vh]">
           <div className="text-center space-y-4">
             <p className="text-red-600 text-lg">{error}</p>
@@ -126,7 +144,7 @@ const Projects: React.FC<ProjectsProps> = ({ initialProjects = [] }) => {
   }
 
   return (
-    <div ref={ref} className="max-w-3xl py-12 md:py-16">
+    <div ref={ref} className="mx-auto max-w-3xl py-12 md:py-16">
       <motion.h1
         initial={{ opacity: 0, y: 20 }}
         animate={isInView ? { opacity: 1, y: 0 } : {}}

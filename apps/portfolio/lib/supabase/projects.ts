@@ -5,8 +5,6 @@ export async function getAllProjects(): Promise<Project[]> {
   const { data, error } = await supabase
     .from('projects')
     .select('*')
-    .eq('status', 'published')
-    .order('sort_order', { ascending: true })
     .order('created_at', { ascending: false });
 
   if (error) {
@@ -22,7 +20,6 @@ export async function getProjectBySlug(slug: string): Promise<Project | null> {
     .from('projects')
     .select('*')
     .eq('slug', slug)
-    .eq('status', 'published')
     .single();
 
   if (error) {
@@ -34,26 +31,14 @@ export async function getProjectBySlug(slug: string): Promise<Project | null> {
 
   const { data: caseStudies } = await supabase
     .from('case_studies')
-    .select('id, slug, title, summary, cover_path, status')
+    .select('id, slug, title, tags, gallery, content_md, featured, order')
     .eq('project_id', data.id)
-    .eq('status', 'published');
+    .order('featured', { ascending: false })
+    .order('order', { ascending: true });
 
   return { ...data, relatedCaseStudies: caseStudies || [] } as Project;
 }
 
 export async function getFeaturedProjects(): Promise<Project[]> {
-  const { data, error } = await supabase
-    .from('projects')
-    .select('*')
-    .eq('status', 'published')
-    .eq('featured', true)
-    .order('sort_order', { ascending: true })
-    .order('created_at', { ascending: false });
-
-  if (error) {
-    console.error('Error fetching featured projects:', error);
-    throw error;
-  }
-
-  return (data || []) as Project[];
+  return getAllProjects();
 }

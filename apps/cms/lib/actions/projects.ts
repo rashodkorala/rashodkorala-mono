@@ -10,6 +10,8 @@ function transformProject(p: ProjectDB): Project {
     userId: p.user_id,
     slug: p.slug,
     title: p.title,
+    subtitle: p.subtitle,
+    logo: p.logo,
     shortDescription: p.short_description,
     coverImage: p.cover_image,
     projectMedia: p.project_media || [],
@@ -120,6 +122,11 @@ export async function createProject(data: ProjectFormData): Promise<Project> {
   if (!user) throw new Error("Unauthorized")
 
   let coverImage: string | null = null
+  let logo: string | null = null
+  if (data.logoFile) {
+    const media = await uploadProjectMedia(supabase, data.logoFile)
+    logo = media.url
+  }
   if (data.coverImageFile) {
     const media = await uploadProjectMedia(supabase, data.coverImageFile)
     coverImage = media.url
@@ -134,6 +141,8 @@ export async function createProject(data: ProjectFormData): Promise<Project> {
     user_id: user.id,
     slug: data.slug,
     title: data.title,
+    subtitle: data.subtitle || null,
+    logo,
     short_description: data.shortDescription || null,
     cover_image: coverImage,
     project_media: projectMedia,
@@ -166,25 +175,40 @@ export async function updateProject(id: string, data: ProjectFormData): Promise<
 
   const { data: existing } = await supabase
     .from("projects")
-    .select("cover_image, project_media")
+    .select("logo, cover_image, project_media")
     .eq("id", id)
     .eq("user_id", user.id)
     .single()
 
   let coverImage: string | null = existing?.cover_image ?? null
+  let logo: string | null = existing?.logo ?? null
+  if (data.clearLogo) {
+    logo = null
+  }
+  if (data.logoFile) {
+    const media = await uploadProjectMedia(supabase, data.logoFile)
+    logo = media.url
+  }
+  if (data.clearCoverImage) {
+    coverImage = null
+  }
   if (data.coverImageFile) {
     const media = await uploadProjectMedia(supabase, data.coverImageFile)
     coverImage = media.url
   }
 
-  const projectMedia: ProjectMediaItem[] =
+  const retainedMedia: ProjectMediaItem[] = data.existingProjectMedia || []
+  const uploadedMedia: ProjectMediaItem[] =
     data.mediaFiles && data.mediaFiles.length > 0
       ? await Promise.all(data.mediaFiles.map((file) => uploadProjectMedia(supabase, file)))
-      : existing?.project_media || []
+      : []
+  const projectMedia: ProjectMediaItem[] = [...retainedMedia, ...uploadedMedia]
 
   const payload = {
     slug: data.slug,
     title: data.title,
+    subtitle: data.subtitle || null,
+    logo,
     short_description: data.shortDescription || null,
     cover_image: coverImage,
     project_media: projectMedia,

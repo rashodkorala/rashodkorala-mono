@@ -65,5 +65,13 @@ export const portfolioTheme: ThemeConfig = {
     a: "text-black underline decoration-black/20 hover:decoration-black/60 transition-colors",
     img: "w-full h-auto rounded-lg object-cover",
     imgBorder: "border-black/10",
+    ul: "my-6 pl-6 list-disc space-y-2 marker:text-black/30 [&_li]:pl-0.5",
+    ol: "my-6 pl-6 list-decimal list-outside space-y-2 marker:text-black/30 [&_li]:pl-0.5",
+    li: "text-black/70 leading-relaxed",
+    blockquote:
+      "my-6 border-l-4 border-black/20 pl-4 italic text-black/60 [&_p]:mb-2 [&_p:last-child]:mb-0",
+    hr: "my-10 border-0 border-t border-black/10",
+    th: "px-3 py-2 text-left font-medium border-b border-black/10 text-black",
+    td: "px-3 py-2 align-top border-b border-black/5 text-black/70",
   },
 }
