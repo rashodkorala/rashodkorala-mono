@@ -18,6 +18,17 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
   );
 }
 
+function normalizeExternalUrl(url: string | null | undefined): string | null {
+  if (!url) return null;
+  const trimmed = url.trim();
+  if (!trimmed) return null;
+
+  if (/^https?:\/\//i.test(trimmed)) return trimmed;
+  if (/^(mailto|tel):/i.test(trimmed)) return trimmed;
+
+  return `https://${trimmed}`;
+}
+
 export default function ProjectPage({ project }: { project: Project }) {
   const tech = project.tech_stack ?? [];
   const roles = project.role ? [project.role] : [];
@@ -25,6 +36,8 @@ export default function ProjectPage({ project }: { project: Project }) {
   const relatedCaseStudies = project.relatedCaseStudies ?? [];
   const galleryUrls = media.filter((m) => m.type === "image").map((m) => m.url);
   const galleryVideos = media.filter((m) => m.type === "video").map((m) => m.url);
+  const liveUrl = normalizeExternalUrl(project.live_url);
+  const githubUrl = normalizeExternalUrl(project.github_url);
 
   const hasDetails = Boolean(project.timeline) || roles.length > 0;
 
@@ -99,19 +112,19 @@ export default function ProjectPage({ project }: { project: Project }) {
             )}
           </div>
 
-          {(project.live_url ||
-            project.github_url ||
+          {(liveUrl ||
+            githubUrl ||
             hasDetails) && (
             <div
               role="group"
               aria-label="Project links and context"
               className="flex flex-wrap items-center gap-x-3 gap-y-2 pt-2 text-sm"
             >
-              {(project.live_url || project.github_url) && (
+              {(liveUrl || githubUrl) && (
                 <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
-                  {project.live_url && (
+                  {liveUrl && (
                     <a
-                      href={project.live_url}
+                      href={liveUrl}
                       target="_blank"
                       rel="noreferrer"
                       className="inline-flex items-center gap-1.5 font-medium text-ink/75 transition-colors hover:text-ink dark:text-[#c9c2bb] dark:hover:text-[#efe9e2]"
@@ -120,9 +133,9 @@ export default function ProjectPage({ project }: { project: Project }) {
                       Live site
                     </a>
                   )}
-                  {project.github_url && (
+                  {githubUrl && (
                     <a
-                      href={project.github_url}
+                      href={githubUrl}
                       target="_blank"
                       rel="noreferrer"
                       className="inline-flex items-center gap-1.5 font-medium text-ink/75 transition-colors hover:text-ink dark:text-[#c9c2bb] dark:hover:text-[#efe9e2]"
@@ -133,7 +146,7 @@ export default function ProjectPage({ project }: { project: Project }) {
                   )}
                 </div>
               )}
-              {(project.live_url || project.github_url) && hasDetails && (
+              {(liveUrl || githubUrl) && hasDetails && (
                 <span
                   className="select-none text-ink/25 dark:text-[#5c5650]"
                   aria-hidden
