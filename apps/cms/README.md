@@ -98,10 +98,17 @@ See the detailed setup guides:
 
 ### 5. Set Up Storage Buckets
 
-Create storage buckets in Supabase Dashboard → Storage:
+Create these **public** buckets in Supabase Dashboard → Storage (names must match exactly):
 
-1. **photos** bucket (public, for photo uploads)
-   - Set up policies as described in [Bulk Upload Setup](./BULK_UPLOAD_SETUP.md)
+| Bucket | Used for |
+|--------|----------|
+| **media** | CMS media library, photo uploads, blog/case-study inline images |
+| **blogs-mdx** | Blog markdown files (`mdx_path` in `blogs`) |
+| **blogs-media** | Blog post media uploads |
+| **case-studies-mdx** | Case study MDX files (`mdx_path` in `case_studies`) |
+| **case-studies-media** | Case study cover/gallery uploads |
+
+Legacy buckets **photos** or **case-studies** (single combined bucket) are not referenced by this codebase; remove them in the dashboard if you still have them and no longer need the files.
 
 ### 6. Run the Development Server
 

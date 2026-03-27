@@ -52,6 +52,13 @@ export default function Sidebar() {
                                 The View
                             </Link>
                             <Link
+                                href="/projects"
+                                className="transform transition-transform duration-300 ease-in-out hover:scale-105"
+                                onClick={closeMenu}
+                            >
+                                Projects
+                            </Link>
+                            <Link
                                 href="/about"
                                 className="transform transition-transform duration-300 ease-in-out hover:scale-105"
                                 onClick={closeMenu}
