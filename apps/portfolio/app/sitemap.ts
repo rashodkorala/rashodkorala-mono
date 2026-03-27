@@ -12,7 +12,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     { url: `${BASE_URL}/contact`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.6 },
   ]
 
-  const [projects, caseStudies] = await Promise.all([getCachedAllProjects(), getCachedCaseStudies()])
+  let projects: Awaited<ReturnType<typeof getCachedAllProjects>> = []
+  let caseStudies: Awaited<ReturnType<typeof getCachedCaseStudies>> = []
+
+  try {
+    [projects, caseStudies] = await Promise.all([getCachedAllProjects(), getCachedCaseStudies()])
+  } catch (error) {
+    // Keep sitemap generation resilient in environments without DB/network access.
+    console.error("Sitemap data fetch failed:", error)
+    return staticRoutes
+  }
 
   const projectRoutes: MetadataRoute.Sitemap = projects.map((project) => ({
     url: `${BASE_URL}/work/${project.slug}`,

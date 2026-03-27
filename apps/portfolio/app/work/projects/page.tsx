@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import Projects from "@/src/components/main/projects";
 import PageShell from "@/src/components/page-shell";
 import { getCachedAllProjects } from "@/lib/supabase/cached-projects";
+import type { Project } from "@/lib/types";
 
 export const revalidate = 3600;
 
@@ -11,7 +12,12 @@ export const metadata: Metadata = {
 };
 
 export default async function Index() {
-    const initialProjects = await getCachedAllProjects();
+    let initialProjects: Project[] = [];
+    try {
+        initialProjects = await getCachedAllProjects();
+    } catch (error) {
+        console.error("Failed to load projects for /work/projects:", error);
+    }
     return (
         <PageShell>
             <Projects initialProjects={initialProjects} />

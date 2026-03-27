@@ -66,11 +66,28 @@ const ProjectComp = ({ projectSlug, initialProject = null }: ProjectCompProps) =
     );
   }
 
-  const galleryImages = project.gallery_image_urls || [];
-  const galleryVideos = project.gallery_video_urls || [];
+  // Backward-compatible view model: supports both current and legacy project fields.
+  const projectView = project as Project & {
+    tech?: string[] | null;
+    problem?: string | null;
+    solution?: string | null;
+    features?: string[] | null;
+    cover_image_url?: string | null;
+    gallery_image_urls?: string[] | null;
+    gallery_video_urls?: string[] | null;
+  };
+
+  const galleryImages =
+    projectView.gallery_image_urls ||
+    (project.project_media ?? []).filter((item) => item.type === 'image').map((item) => item.url);
+  const galleryVideos =
+    projectView.gallery_video_urls ||
+    (project.project_media ?? []).filter((item) => item.type === 'video').map((item) => item.url);
   type MediaItem = { type: 'image'; url: string } | { type: 'video'; url: string };
   const allMedia: MediaItem[] = [];
-  if (project.cover_image_url) allMedia.push({ type: 'image', url: project.cover_image_url });
+  if (projectView.cover_image_url || project.cover_image) {
+    allMedia.push({ type: 'image', url: projectView.cover_image_url || project.cover_image! });
+  }
   galleryImages.forEach((url) => allMedia.push({ type: 'image', url }));
   galleryVideos.forEach((url) => allMedia.push({ type: 'video', url }));
 
@@ -100,7 +117,7 @@ const ProjectComp = ({ projectSlug, initialProject = null }: ProjectCompProps) =
           >
             <div className="flex flex-wrap gap-3 mb-6">
               <span className="text-[11px] uppercase tracking-[0.08em] text-ink/25 font-mono">{getYear()}</span>
-              {project.tech && project.tech.map(tag => (
+              {(projectView.tech || project.tech_stack || []).map(tag => (
                 <span key={tag} className="text-[11px] uppercase tracking-[0.08em] px-2.5 py-1 border border-ink/10 rounded-full text-ink/30">
                   {tag}
                 </span>
@@ -109,7 +126,7 @@ const ProjectComp = ({ projectSlug, initialProject = null }: ProjectCompProps) =
 
             <h1 className="text-3xl md:text-5xl font-light tracking-tight mb-6">{project.title}</h1>
             <p className="text-lg text-muted_ink leading-relaxed max-w-2xl">
-              {project.subtitle || project.solution || project.problem || ''}
+              {project.subtitle || project.short_description || projectView.solution || projectView.problem || ''}
             </p>
 
             <div className="flex gap-4 mt-8">
@@ -178,28 +195,28 @@ const ProjectComp = ({ projectSlug, initialProject = null }: ProjectCompProps) =
             </motion.div>
           )}
 
-          {(project.problem || project.solution) && (
+          {(projectView.problem || projectView.solution) && (
             <div className="grid md:grid-cols-2 gap-16 md:gap-24 mb-20">
-              {project.problem && (
+              {projectView.problem && (
                 <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.4 }}>
                   <h2 className="text-[11px] tracking-[0.08em] uppercase text-ink/30 mb-4">Challenge</h2>
-                  <p className="text-lg text-muted_ink leading-relaxed">{project.problem}</p>
+                  <p className="text-lg text-muted_ink leading-relaxed">{projectView.problem}</p>
                 </motion.div>
               )}
-              {project.solution && (
+              {projectView.solution && (
                 <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.5 }}>
                   <h2 className="text-[11px] tracking-[0.08em] uppercase text-ink/30 mb-4">Solution</h2>
-                  <p className="text-lg text-muted_ink leading-relaxed">{project.solution}</p>
+                  <p className="text-lg text-muted_ink leading-relaxed">{projectView.solution}</p>
                 </motion.div>
               )}
             </div>
           )}
 
-          {project.features && project.features.length > 0 && (
+          {projectView.features && projectView.features.length > 0 && (
             <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.6 }} className="border-t border-ink/10 pt-16">
               <h2 className="text-[11px] tracking-[0.08em] uppercase text-ink/30 mb-8">Impact</h2>
               <div className="grid md:grid-cols-3 gap-8">
-                {project.features.slice(0, 3).map((feature, index) => (
+                {projectView.features.slice(0, 3).map((feature, index) => (
                   <div key={index} className="p-6 border border-ink/10 rounded-lg">
                     <p className="text-base md:text-lg">{feature}</p>
                   </div>

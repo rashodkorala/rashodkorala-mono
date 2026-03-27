@@ -27,8 +27,15 @@ export default function CaseStudiesList({ items }: CaseStudiesListProps) {
       </motion.h1>
 
       <div>
-        {items.map((item, index) => (
-          <Link
+        {items.map((item, index) => {
+          const itemView = item as CaseStudy & {
+            category?: string;
+            summary?: string;
+            cover_url?: string;
+          };
+
+          return (
+            <Link
             key={item.id}
             href={`/work/${item.slug}`}
             className="block border-t border-ink/8 py-7 group dark:border-[#33302d]"
@@ -41,9 +48,9 @@ export default function CaseStudiesList({ items }: CaseStudiesListProps) {
             >
               <div>
                 <div className="flex items-center gap-2 mb-2 flex-wrap">
-                  {item.category && (
+                  {itemView.category && (
                     <span className="text-[10px] px-2 py-0.5 rounded-full border border-ink/10 text-ink/55 uppercase tracking-[0.08em] dark:border-[#3b3734] dark:text-[#c0b8b1]">
-                      {item.category}
+                      {itemView.category}
                     </span>
                   )}
                   {item.tags?.slice(0, 2).map((tag) => (
@@ -59,18 +66,19 @@ export default function CaseStudiesList({ items }: CaseStudiesListProps) {
                   {item.title}
                   <ArrowUpRight className="w-3.5 h-3.5 text-ink/20 group-hover:text-ink transition-colors dark:text-[#77706a] dark:group-hover:text-[#e2ddd6]" strokeWidth={1.5} />
                 </h2>
-                {item.summary && (
-                  <p className="text-muted_ink/80 mt-1.5 font-light leading-relaxed max-w-lg text-[14px] dark:text-[#b5ada6]">{item.summary}</p>
+                {itemView.summary && (
+                  <p className="text-muted_ink/80 mt-1.5 font-light leading-relaxed max-w-lg text-[14px] dark:text-[#b5ada6]">{itemView.summary}</p>
                 )}
               </div>
-              {item.cover_url && (
+              {itemView.cover_url && (
                 <div className="relative w-full h-24 rounded-lg overflow-hidden border border-ink/8 dark:border-[#33302d]">
-                  <Image src={item.cover_url} alt={item.title} fill className="object-cover opacity-75 group-hover:opacity-100 transition-opacity dark:brightness-[0.9]" sizes="160px" />
+                  <Image src={itemView.cover_url} alt={item.title} fill className="object-cover opacity-75 group-hover:opacity-100 transition-opacity dark:brightness-[0.9]" sizes="160px" />
                 </div>
               )}
             </motion.div>
           </Link>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

@@ -2,7 +2,7 @@
 import { motion, useInView } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
 import { ArrowUpRight, Zap, Shield, Globe } from "lucide-react";
-import { getProjectsByCategory } from "@/lib/supabase/projects";
+import { getAllProjects } from "@/lib/supabase/projects";
 import { Project } from "@/lib/types";
 
 const defaultFeatures = [
@@ -16,14 +16,21 @@ export default function Startup() {
     const isInView = useInView(ref, { once: true, margin: "-100px" });
     const [startupProject, setStartupProject] = useState<Project | null>(null);
     const [isLoading, setIsLoading] = useState(true);
+    const startupView = startupProject as (Project & {
+        featured?: boolean;
+        solution?: string;
+        features?: string[];
+        tech?: string[];
+        roles?: string[];
+    }) | null;
 
     useEffect(() => {
         async function fetchStartupProject() {
             try {
                 setIsLoading(true);
-                const projects = await getProjectsByCategory('startup');
+                const projects = await getAllProjects();
                 // Get the first startup project (or featured one if available)
-                const project = projects.find(p => p.featured) || projects[0] || null;
+                const project = (projects as Array<Project & { featured?: boolean }>).find(p => p.featured) || projects[0] || null;
                 setStartupProject(project);
             } catch (err) {
                 console.error('Error fetching startup project:', err);
@@ -81,7 +88,7 @@ export default function Startup() {
                                     )}
                                 </h3>
                                 <p className="text-white/50 font-light max-w-md">
-                                    {startupProject?.solution || startupProject?.subtitle || "We're on a mission to democratize software development. Our platform helps teams of all sizes build, deploy, and scale applications with unprecedented ease."}
+                                    {startupView?.solution || startupProject?.subtitle || startupProject?.short_description || "We're on a mission to democratize software development. Our platform helps teams of all sizes build, deploy, and scale applications with unprecedented ease."}
                                 </p>
                             </div>
 
@@ -101,8 +108,8 @@ export default function Startup() {
                         </div>
 
                         <div className="grid md:grid-cols-3 gap-8">
-                            {(startupProject?.features && startupProject.features.length > 0
-                                ? startupProject.features.slice(0, 3).map((feature, index) => ({
+                            {(startupView?.features && startupView.features.length > 0
+                                ? startupView.features.slice(0, 3).map((feature, index) => ({
                                     icon: defaultFeatures[index % defaultFeatures.length].icon,
                                     title: feature.split(':')[0] || feature,
                                     desc: feature.split(':')[1]?.trim() || feature
@@ -125,18 +132,18 @@ export default function Startup() {
                     </div>
                 </motion.div>
 
-                {startupProject && startupProject.tech && startupProject.tech.length > 0 ? (
+                {startupProject && (startupView?.tech || startupProject.tech_stack) && (startupView?.tech || startupProject.tech_stack || []).length > 0 ? (
                     <motion.div
                         initial={{ opacity: 0 }}
                         animate={isInView ? { opacity: 1 } : {}}
                         transition={{ duration: 0.8, delay: 0.6 }}
                         className="mt-16 flex flex-wrap justify-center gap-8 text-white/30"
                     >
-                        <span className="text-sm">Built with {startupProject.tech.slice(0, 3).join(', ')}</span>
-                        {startupProject.roles && startupProject.roles.length > 0 && (
+                        <span className="text-sm">Built with {(startupView?.tech || startupProject.tech_stack || []).slice(0, 3).join(', ')}</span>
+                        {startupView?.roles && startupView.roles.length > 0 && (
                             <>
                                 <span className="text-sm">•</span>
-                                <span className="text-sm">{startupProject.roles.join(', ')}</span>
+                                <span className="text-sm">{startupView.roles.join(', ')}</span>
                             </>
                         )}
                     </motion.div>

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import WorkPageContent from "@/src/components/work/WorkPageContent";
 import PageShell from "@/src/components/page-shell";
 import { getCachedAllProjects } from "@/lib/supabase/cached-projects";
+import type { Project } from "@/lib/types";
 
 export const revalidate = 3600;
 
@@ -11,7 +12,12 @@ export const metadata: Metadata = {
 };
 
 export default async function WorkPage() {
-  const projects = await getCachedAllProjects();
+  let projects: Project[] = [];
+  try {
+    projects = await getCachedAllProjects();
+  } catch (error) {
+    console.error("Failed to load projects for /work:", error);
+  }
   return (
     <PageShell>
       <WorkPageContent caseStudies={[]} projects={projects} />
