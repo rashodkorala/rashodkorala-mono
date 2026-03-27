@@ -59,6 +59,15 @@
 
     /* ─── Layout ─── */
     --sidenav-w: 12rem;
+    --header-h: 4rem;
+    --header-h-lg: 5rem;
+    --page-px: 1.5rem;
+    --page-px-sm: 2rem;
+    --page-px-md: 3rem;
+    --page-px-lg: 4rem;
+    --page-px-xl: 5rem;
+    --content-py: 3.5rem;
+    --content-py-md: 5rem;
     --radius: 0.5rem;
   }
 

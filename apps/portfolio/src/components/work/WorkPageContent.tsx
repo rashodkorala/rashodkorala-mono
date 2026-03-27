@@ -77,7 +77,7 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
         transition={{ duration: 0.6, delay: index * 0.08 }}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
-        className="group cursor-pointer border-t border-line-subtle py-8 md:py-9"
+        className="group cursor-pointer py-8 md:py-9"
       >
         <div className="grid items-start gap-6 md:grid-cols-[1fr_minmax(0,112px)] md:gap-7">
           <div>
@@ -145,16 +145,24 @@ export default function WorkPageContent({ caseStudies, projects }: WorkPageConte
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <div ref={ref} className="mx-auto max-w-4xl py-14 md:py-20">
+    <div ref={ref} className="mx-auto py-content-py md:py-content-py-md">
       <motion.h1
         initial={{ opacity: 0, y: 20 }}
         animate={isInView ? { opacity: 1, y: 0 } : {}}
         transition={{ duration: 0.8 }}
-        className="mb-14 font-serif text-5xl tracking-tight text-heading md:text-6xl"
+        className="font-serif text-5xl tracking-tight text-heading md:text-6xl max-w-4xl"
+      >
+        Selected
+      </motion.h1>
+      <motion.h1 className="font-serif text-5xl tracking-tight text-heading md:text-8xl max-w-4xl text-muted_ink ml-[0.05em]"
+      initial={{ opacity: 0, y: 20 }}
+      animate={isInView ? { opacity: 1, y: 0 } : {}}
+      transition={{ duration: 0.8 }}
       >
         Work
       </motion.h1>
-
+      <hr className="mt-12 mb-8 border-0 border-t border-line-subtle max-w-4xl" />
+      <div>
       {caseStudies.length > 0 && (
         <section className="mb-20">
           <motion.h2
@@ -174,15 +182,7 @@ export default function WorkPageContent({ caseStudies, projects }: WorkPageConte
       )}
 
       {projects.length > 0 && (
-        <section>
-          <motion.h2
-            initial={{ opacity: 0, y: 16 }}
-            animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            className="mb-8 font-mono text-[11px] uppercase tracking-[0.12em] text-label"
-          >
-            Projects
-          </motion.h2>
+        <section className="ml-8 max-w-4xl">
           <div>
             {projects.map((project, index) => (
               <ProjectCard key={project.id} project={project} index={index} />
@@ -196,6 +196,7 @@ export default function WorkPageContent({ caseStudies, projects }: WorkPageConte
           <p className="text-caption font-light">No work to show yet</p>
         </div>
       )}
+      </div>
     </div>
   );
 }

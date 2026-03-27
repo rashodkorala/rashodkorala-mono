@@ -15,7 +15,7 @@ export default function ContactContent() {
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <div ref={ref} className="max-w-3xl py-12 md:py-16">
+    <div ref={ref} className="max-w-4xl py-content-py md:py-content-py-md">
       <motion.h1
         initial={{ opacity: 0, y: 20 }}
         animate={isInView ? { opacity: 1, y: 0 } : {}}

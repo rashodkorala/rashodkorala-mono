@@ -21,6 +21,15 @@ module.exports = {
       },
       spacing: {
         sidenav: "var(--sidenav-w)",
+        header: "var(--header-h)",
+        "header-lg": "var(--header-h-lg)",
+        "page-px": "var(--page-px)",
+        "page-px-sm": "var(--page-px-sm)",
+        "page-px-md": "var(--page-px-md)",
+        "page-px-lg": "var(--page-px-lg)",
+        "page-px-xl": "var(--page-px-xl)",
+        "content-py": "var(--content-py)",
+        "content-py-md": "var(--content-py-md)",
       },
       colors: {
         cream: "#e9e6e0",

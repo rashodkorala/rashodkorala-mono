@@ -42,7 +42,7 @@ export default function ProjectPage({ project }: { project: Project }) {
   const hasDetails = Boolean(project.timeline) || roles.length > 0;
 
   const backBar =
-    "fixed top-16 z-30 flex h-12 items-center border-b border-line bg-surface-overlay-strong backdrop-blur-md left-0 right-0 px-6 md:px-12 lg:left-sidenav lg:right-0 lg:px-14 lg:top-20";
+    "fixed top-header z-30 flex h-12 items-center border-b border-line bg-surface-overlay-strong backdrop-blur-md left-0 right-0 px-page-px md:px-page-px-md lg:left-sidenav lg:right-0 lg:px-page-px-lg lg:top-header-lg";
 
   return (
     <>

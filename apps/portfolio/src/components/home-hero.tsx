@@ -21,7 +21,7 @@ const socials = [
 export default function HomeHero() {
   return (
     <div className="h-screen overflow-hidden bg-page text-body">
-      <div className="h-full lg:ml-sidenav flex flex-col px-6 sm:px-8 md:px-12 lg:px-16 xl:px-20 pt-[4.75rem] sm:pt-20 lg:pt-24 pb-8 sm:pb-10 md:pb-12">
+      <div className="h-full lg:ml-sidenav flex flex-col px-page-px sm:px-page-px-sm md:px-page-px-md lg:px-page-px-lg xl:px-page-px-xl pt-[4.75rem] sm:pt-20 lg:pt-24 pb-8 sm:pb-10 md:pb-12">
         <div className="relative flex-1 flex flex-col lg:flex-row lg:gap-12 xl:gap-16 min-h-0">
 
           {/* Left column */}
