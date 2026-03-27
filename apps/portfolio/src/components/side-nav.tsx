@@ -19,7 +19,7 @@ export default function SideNav() {
 
   return (
     <motion.nav
-      className="hidden lg:flex flex-col justify-end fixed left-0 top-0 h-screen w-48 pl-8 py-12 z-50"
+      className="hidden lg:flex flex-col justify-end fixed left-0 top-0 h-screen w-sidenav pl-8 py-12 z-50"
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{
@@ -38,18 +38,18 @@ export default function SideNav() {
                 rel={href.startsWith("http") ? "noopener noreferrer" : undefined}
                 className={`flex items-center gap-3 transition-all duration-500 group ${
                   active === id
-                    ? "text-ink/80 dark:text-[#d7d2cc]"
-                    : "text-ink/25 hover:text-ink/50 dark:text-[#8f8780] dark:hover:text-[#beb8b1]"
+                    ? "text-nav-active"
+                    : "text-nav-inactive hover:text-nav-hover"
                 }`}
               >
                 <span
                   className={`h-px transition-all duration-500 ${
                     active === id
-                      ? "w-8 bg-ink/40 dark:bg-[#7d756f]"
-                      : "w-0 group-hover:w-4 bg-ink/20 dark:bg-[#4d4844]"
+                      ? "w-8 bg-nav-indicator"
+                      : "w-0 group-hover:w-4 bg-nav-indicator-subtle"
                   }`}
                 />
-                <span className="font-sans text-[clamp(0.8125rem,0.7rem+0.45vw,1rem)] tracking-[0.05em] font-normal leading-none">
+                <span className="font-sans text-[length:var(--text-nav-size)] tracking-[0.05em] font-normal leading-none">
                   {label}
                 </span>
               </Link>

@@ -70,7 +70,7 @@ export default function ThemeToggle() {
       type="button"
       onClick={toggleTheme}
       aria-label={ready ? `Switch to ${nextTheme} theme` : "Toggle theme"}
-      className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-ink/20 bg-cream/80 text-ink/70 backdrop-blur transition hover:bg-cream dark:border-[#2f2c2a] dark:bg-background dark:text-[#d0cbc5] dark:hover:bg-[#1a1817]"
+      className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-ctrl-border bg-ctrl text-ctrl-text backdrop-blur transition hover:bg-ctrl-hover"
     >
       {theme === "dark" ? <Sun className="h-4 w-4" strokeWidth={1.8} /> : <Moon className="h-4 w-4" strokeWidth={1.8} />}
     </button>

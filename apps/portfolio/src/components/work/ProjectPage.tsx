@@ -11,7 +11,7 @@ const ui =
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
     <p
-      className={`${ui} text-[11px] font-medium uppercase tracking-[0.18em] text-ink/40 dark:text-[#8b847f]`}
+      className={`${ui} text-[11px] font-medium uppercase tracking-[0.18em] text-label`}
     >
       {children}
     </p>
@@ -42,7 +42,7 @@ export default function ProjectPage({ project }: { project: Project }) {
   const hasDetails = Boolean(project.timeline) || roles.length > 0;
 
   const backBar =
-    "fixed top-16 z-30 flex h-12 items-center border-b border-ink/10 bg-cream/95 backdrop-blur-md dark:border-[#2a2725] dark:bg-background/95 left-0 right-0 px-6 md:px-12 lg:left-48 lg:right-0 lg:px-14 lg:top-20";
+    "fixed top-16 z-30 flex h-12 items-center border-b border-line bg-surface-overlay-strong backdrop-blur-md left-0 right-0 px-6 md:px-12 lg:left-sidenav lg:right-0 lg:px-14 lg:top-20";
 
   return (
     <>
@@ -50,7 +50,7 @@ export default function ProjectPage({ project }: { project: Project }) {
         <div className="mx-auto flex w-full max-w-4xl">
           <Link
             href="/work"
-            className={`${ui} inline-flex items-center gap-2 text-sm text-ink/45 transition-colors hover:text-ink group dark:text-[#a8a29d] dark:hover:text-[#e0dbd5]`}
+            className={`${ui} inline-flex items-center gap-2 text-sm text-caption transition-colors hover:text-heading group`}
           >
             <ArrowLeft
               className="w-4 h-4 transition-transform group-hover:-translate-x-1"
@@ -66,14 +66,13 @@ export default function ProjectPage({ project }: { project: Project }) {
       >
         <div className="h-12 shrink-0" aria-hidden />
 
-        {/* Intro */}
         <header className="space-y-6">
           {tech.length > 0 && (
             <div className="flex flex-wrap gap-2">
               {tech.map((t) => (
                 <span
                   key={t}
-                  className="text-[11px] uppercase tracking-[0.08em] px-2.5 py-1 rounded-full border border-ink/10 text-ink/40 dark:border-[#34312e] dark:text-[#9f9791]"
+                  className="text-[11px] uppercase tracking-[0.08em] px-2.5 py-1 rounded-full border border-line text-label"
                 >
                   {t}
                 </span>
@@ -84,17 +83,17 @@ export default function ProjectPage({ project }: { project: Project }) {
           <div className="space-y-4">
             <div className="flex flex-col gap-5 sm:flex-row sm:items-start sm:gap-8">
               <div className="min-w-0 flex-1 space-y-3">
-                <h1 className="font-serif text-3xl font-semibold leading-[1.12] tracking-tight text-ink md:text-[2.75rem] md:leading-[1.08] dark:text-[#f0ebe4]">
+                <h1 className="font-serif text-3xl font-semibold leading-[1.12] tracking-tight text-heading md:text-[2.75rem] md:leading-[1.08]">
                   {project.title}
                 </h1>
                 {project.subtitle && (
-                  <p className="text-lg font-normal leading-snug text-ink/75 md:text-xl dark:text-[#cdc4bc]">
+                  <p className="text-lg font-normal leading-snug text-body-secondary md:text-xl">
                     {project.subtitle}
                   </p>
                 )}
               </div>
               {project.logo && (
-                <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-xl border border-ink/10 bg-white/90 p-2 shadow-sm dark:border-[#2f2c2a] dark:bg-[#1a1817] dark:shadow-none sm:h-[4.5rem] sm:w-[4.5rem]">
+                <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-xl border border-line bg-white/90 p-2 shadow-sm dark:bg-surface-raised dark:shadow-none sm:h-[4.5rem] sm:w-[4.5rem]">
                   <Image
                     src={project.logo}
                     alt={`${project.title} logo`}
@@ -106,7 +105,7 @@ export default function ProjectPage({ project }: { project: Project }) {
             </div>
 
             {project.short_description && (
-              <p className="max-w-2xl text-[17px] leading-[1.75] text-ink/72 dark:text-[#b8afa8]">
+              <p className="max-w-2xl text-[17px] leading-[1.75] text-body-secondary">
                 {project.short_description}
               </p>
             )}
@@ -127,7 +126,7 @@ export default function ProjectPage({ project }: { project: Project }) {
                       href={liveUrl}
                       target="_blank"
                       rel="noreferrer"
-                      className="inline-flex items-center gap-1.5 font-medium text-ink/75 transition-colors hover:text-ink dark:text-[#c9c2bb] dark:hover:text-[#efe9e2]"
+                      className="inline-flex items-center gap-1.5 font-medium text-body-secondary transition-colors hover:text-heading"
                     >
                       <ExternalLink className="h-3.5 w-3.5" strokeWidth={1.5} />
                       Live site
@@ -138,7 +137,7 @@ export default function ProjectPage({ project }: { project: Project }) {
                       href={githubUrl}
                       target="_blank"
                       rel="noreferrer"
-                      className="inline-flex items-center gap-1.5 font-medium text-ink/75 transition-colors hover:text-ink dark:text-[#c9c2bb] dark:hover:text-[#efe9e2]"
+                      className="inline-flex items-center gap-1.5 font-medium text-body-secondary transition-colors hover:text-heading"
                     >
                       <Github className="h-3.5 w-3.5" strokeWidth={1.5} />
                       GitHub
@@ -148,30 +147,30 @@ export default function ProjectPage({ project }: { project: Project }) {
               )}
               {(liveUrl || githubUrl) && hasDetails && (
                 <span
-                  className="select-none text-ink/25 dark:text-[#5c5650]"
+                  className="select-none text-faint"
                   aria-hidden
                 >
                   |
                 </span>
               )}
               {hasDetails && (
-                <div className="min-w-0 text-ink/60 dark:text-[#b5ada6] leading-snug">
+                <div className="min-w-0 text-body-tertiary leading-snug">
                   {project.timeline && (
                     <span>
-                      <span className="text-ink/40 dark:text-[#8b847f]">
+                      <span className="text-label">
                         Timeline{" "}
                       </span>
                       {project.timeline}
                     </span>
                   )}
                   {project.timeline && roles.length > 0 && (
-                    <span className="mx-1.5 text-ink/20 dark:text-[#4a4540]">
+                    <span className="mx-1.5 text-faint">
                       ·
                     </span>
                   )}
                   {roles.length > 0 && (
                     <span>
-                      <span className="text-ink/40 dark:text-[#8b847f]">
+                      <span className="text-label">
                         Role{" "}
                       </span>
                       {roles.join(" · ")}
@@ -189,11 +188,11 @@ export default function ProjectPage({ project }: { project: Project }) {
               <SectionLabel>Related</SectionLabel>
               <h2
                 id="project-cs-heading"
-                className="mt-2 font-serif text-2xl font-semibold tracking-tight text-ink md:text-[1.65rem] dark:text-[#e8e2db]"
+                className="mt-2 font-serif text-2xl font-semibold tracking-tight text-title md:text-[1.65rem]"
               >
                 Case studies
               </h2>
-              <p className="mt-2 max-w-xl text-sm leading-relaxed text-ink/50 dark:text-[#8f8882]">
+              <p className="mt-2 max-w-xl text-sm leading-relaxed text-body-tertiary">
                 Long-form write-ups that cover research, decisions, and outcomes for this work.
               </p>
             </header>
@@ -206,7 +205,7 @@ export default function ProjectPage({ project }: { project: Project }) {
 
         {project.cover_image && (
           <div className="mt-12 md:mt-14">
-            <div className="relative aspect-[16/10] w-full overflow-hidden rounded-2xl border border-ink/10 shadow-[0_1px_0_rgba(43,43,43,0.06)] dark:border-[#2f2c2a] dark:shadow-none md:aspect-video md:rounded-[1.25rem]">
+            <div className="relative aspect-[16/10] w-full overflow-hidden rounded-2xl border border-line shadow-[0_1px_0_rgba(43,43,43,0.06)] dark:shadow-none md:aspect-video md:rounded-[1.25rem]">
               <Image
                 src={project.cover_image}
                 alt={project.title}
@@ -224,14 +223,14 @@ export default function ProjectPage({ project }: { project: Project }) {
             <header className="mb-6 md:mb-8">
               <h2
                 id="project-gallery-heading"
-                className="font-serif text-2xl font-semibold tracking-tight text-ink md:text-[1.65rem] dark:text-[#e8e2db]"
+                className="font-serif text-2xl font-semibold tracking-tight text-title md:text-[1.65rem]"
               >
-                <span className="block text-[11px] font-medium uppercase tracking-[0.18em] text-ink/40 dark:text-[#8b847f]">
+                <span className="block text-[11px] font-medium uppercase tracking-[0.18em] text-label">
                   Gallery
                 </span>
                 <span className="mt-2 block">Selected frames</span>
               </h2>
-              <p className="mt-3 max-w-xl text-sm leading-relaxed text-ink/50 dark:text-[#8f8882]">
+              <p className="mt-3 max-w-xl text-sm leading-relaxed text-body-tertiary">
                 Click any image for a full-screen view. Use arrow keys or the on-screen controls to
                 move between images.
               </p>
@@ -246,7 +245,7 @@ export default function ProjectPage({ project }: { project: Project }) {
               <SectionLabel>Video</SectionLabel>
               <h2
                 id="project-videos-heading"
-                className="mt-2 font-serif text-2xl font-semibold tracking-tight text-ink md:text-[1.65rem] dark:text-[#e8e2db]"
+                className="mt-2 font-serif text-2xl font-semibold tracking-tight text-title md:text-[1.65rem]"
               >
                 Video
               </h2>
@@ -257,7 +256,7 @@ export default function ProjectPage({ project }: { project: Project }) {
                   key={i}
                   src={url}
                   controls
-                  className="w-full overflow-hidden rounded-xl border border-ink/10 shadow-sm dark:border-[#2f2c2a] dark:shadow-none"
+                  className="w-full overflow-hidden rounded-xl border border-line shadow-sm dark:shadow-none"
                 />
               ))}
             </div>

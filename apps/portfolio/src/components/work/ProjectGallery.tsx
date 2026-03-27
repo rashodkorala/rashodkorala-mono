@@ -162,7 +162,7 @@ export default function ProjectGallery({ images, projectTitle }: ProjectGalleryP
           <button
             type="button"
             onClick={() => open(0)}
-            className="group relative aspect-[16/10] w-full overflow-hidden rounded-2xl border border-ink/10 text-left shadow-[0_1px_0_rgba(43,43,43,0.06)] transition-[box-shadow,transform] hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink/30 dark:border-[#2f2c2a] dark:shadow-none dark:hover:border-[#45413d]"
+            className="group relative aspect-[16/10] w-full overflow-hidden rounded-2xl border border-line text-left shadow-[0_1px_0_rgba(43,43,43,0.06)] transition-[box-shadow,transform] hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink/30 dark:shadow-none hover:border-line-hover"
           >
             <Image
               src={images[0]!}
@@ -185,7 +185,7 @@ export default function ProjectGallery({ images, projectTitle }: ProjectGalleryP
                 key={url}
                 type="button"
                 onClick={() => open(i)}
-                className="group relative aspect-[4/3] w-full overflow-hidden rounded-xl border border-ink/10 text-left transition-[box-shadow,transform] hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink/30 dark:border-[#2f2c2a] dark:hover:border-[#45413d]"
+                className="group relative aspect-[4/3] w-full overflow-hidden rounded-xl border border-line text-left transition-[box-shadow,transform] hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink/30 hover:border-line-hover"
               >
                 <Image
                   src={url}
@@ -205,7 +205,7 @@ export default function ProjectGallery({ images, projectTitle }: ProjectGalleryP
             <button
               type="button"
               onClick={() => open(0)}
-              className="group relative aspect-[2/1] w-full overflow-hidden rounded-2xl border border-ink/10 text-left shadow-[0_1px_0_rgba(43,43,43,0.06)] transition-[box-shadow,transform] hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink/30 dark:border-[#2f2c2a] md:aspect-[21/9]"
+              className="group relative aspect-[2/1] w-full overflow-hidden rounded-2xl border border-line text-left shadow-[0_1px_0_rgba(43,43,43,0.06)] transition-[box-shadow,transform] hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink/30 md:aspect-[21/9]"
             >
               <Image
                 src={images[0]!}
@@ -227,7 +227,7 @@ export default function ProjectGallery({ images, projectTitle }: ProjectGalleryP
                     key={`${url}-${i}`}
                     type="button"
                     onClick={() => open(i)}
-                    className="group relative aspect-[4/3] w-full overflow-hidden rounded-xl border border-ink/10 text-left transition-[box-shadow,transform] hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink/30 dark:border-[#2f2c2a] dark:hover:border-[#45413d]"
+                    className="group relative aspect-[4/3] w-full overflow-hidden rounded-xl border border-line text-left transition-[box-shadow,transform] hover:shadow-md focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink/30 hover:border-line-hover"
                   >
                     <Image
                       src={url}
