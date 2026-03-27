@@ -111,9 +111,6 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
                 {project.subtitle}
               </p>
             )}
-            {project.short_description && (
-              <p className="mt-1.5 max-w-xl text-[14px] leading-relaxed text-muted_ink/80 dark:text-[#b5ada6]">{project.short_description}</p>
-            )}
           </div>
           {project.logo && (
             <motion.div
