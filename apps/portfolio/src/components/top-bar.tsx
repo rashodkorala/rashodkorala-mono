@@ -9,19 +9,14 @@ import {
   getActiveNavSectionId,
 } from "@/lib/portfolio-nav";
 
-const navLinkClass = (isActive: boolean) =>
-  `font-sans whitespace-normal sm:whitespace-nowrap transition-colors duration-300 ${
-    isActive
-      ? "text-ink dark:text-[#ebe6df] font-medium"
-      : "text-ink/55 hover:text-ink dark:text-[#9c9590] dark:hover:text-[#d7d2cc] font-normal"
-  }`;
-
 export default function TopBar() {
   const pathname = usePathname();
   const [active, setActive] = useState("");
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   useEffect(() => {
     setActive(getActiveNavSectionId(pathname));
+    setIsMobileMenuOpen(false);
   }, [pathname]);
 
   return (
@@ -38,25 +33,74 @@ export default function TopBar() {
         </span>
       </Link>
 
-      <nav
-        className="grid lg:hidden w-full min-w-0 flex-1 grid-cols-4 items-center gap-x-0 px-1 py-1.5 sm:px-2"
-        aria-label="Primary"
-      >
-        {PORTFOLIO_NAV.map(({ id, href, label }) => {
-          const isExternal = href.startsWith("http");
-          return (
-            <Link
-              key={id}
-              href={href}
-              target={isExternal ? "_blank" : undefined}
-              rel={isExternal ? "noopener noreferrer" : undefined}
-              className={`${navLinkClass(active === id)} flex min-h-11 min-w-0 items-center justify-center px-0.5 text-center text-[11px] leading-snug sm:min-h-0 sm:text-xs md:text-sm`}
-            >
-              {label}
-            </Link>
-          );
-        })}
-      </nav>
+      <div className="lg:hidden flex w-full min-w-0 flex-1 items-center justify-end">
+        <button
+          type="button"
+          aria-label="Toggle navigation menu"
+          aria-expanded={isMobileMenuOpen}
+          onClick={() => setIsMobileMenuOpen((prev) => !prev)}
+          className="group inline-flex h-10 w-10 items-center justify-center rounded-md border border-ink/20 text-ink transition-colors hover:border-ink/40 dark:border-[#4d4844] dark:text-[#e5dfd7] dark:hover:border-[#7d756f]"
+        >
+          <span className="sr-only">Menu</span>
+          <span className="relative inline-flex h-4 w-5 flex-col justify-between">
+            <span
+              className={`h-px w-full bg-current transition-all duration-300 ${
+                isMobileMenuOpen ? "translate-y-[7px] rotate-45" : ""
+              }`}
+            />
+            <span
+              className={`h-px w-full bg-current transition-opacity duration-300 ${
+                isMobileMenuOpen ? "opacity-0" : "opacity-100"
+              }`}
+            />
+            <span
+              className={`h-px w-full bg-current transition-all duration-300 ${
+                isMobileMenuOpen ? "-translate-y-[7px] -rotate-45" : ""
+              }`}
+            />
+          </span>
+        </button>
+      </div>
+
+      {isMobileMenuOpen && (
+        <nav
+          className="absolute left-0 right-0 top-16 z-50 border-b border-ink/10 bg-cream/95 px-6 py-5 shadow-[0_10px_30px_-15px_rgba(0,0,0,0.35)] backdrop-blur dark:border-[#2c2926] dark:bg-[#151311]/95 lg:hidden"
+          aria-label="Mobile primary"
+        >
+          <ul className="space-y-4">
+            {PORTFOLIO_NAV.map(({ id, href, label }) => {
+              const isExternal = href.startsWith("http");
+              const isActive = active === id;
+
+              return (
+                <li key={id}>
+                  <Link
+                    href={href}
+                    target={isExternal ? "_blank" : undefined}
+                    rel={isExternal ? "noopener noreferrer" : undefined}
+                    className={`group flex items-center gap-3 transition-all duration-300 ${
+                      isActive
+                        ? "text-ink/85 dark:text-[#e2ddd6]"
+                        : "text-ink/50 hover:text-ink/75 dark:text-[#918a84] dark:hover:text-[#c5beb7]"
+                    }`}
+                  >
+                    <span
+                      className={`h-px transition-all duration-300 ${
+                        isActive
+                          ? "w-8 bg-ink/40 dark:bg-[#7d756f]"
+                          : "w-2 group-hover:w-4 bg-ink/20 dark:bg-[#4d4844]"
+                      }`}
+                    />
+                    <span className="font-sans text-sm tracking-[0.05em]">
+                      {label}
+                    </span>
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </nav>
+      )}
 
       <div className="hidden shrink-0 items-center lg:flex">
         <ThemeToggle />
