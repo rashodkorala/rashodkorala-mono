@@ -52,7 +52,7 @@ export default function ProjectRelatedCaseStudies({
             >
               <div
                 className={cn(
-                  "relative aspect-[16/10] w-full shrink-0 overflow-hidden bg-ink/[0.04] dark:bg-[#141210]",
+                  "relative aspect-[16/10] w-full shrink-0 overflow-hidden bg-ink/[0.04] dark:bg-background",
                   "md:w-[min(44%,260px)] md:aspect-auto md:min-h-[168px]"
                 )}
               >

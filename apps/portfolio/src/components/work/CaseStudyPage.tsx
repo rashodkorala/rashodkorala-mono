@@ -67,7 +67,7 @@ export default function CaseStudyPage({ caseStudy }: { caseStudy: CaseStudy }) {
     "rounded-sm border border-ink/10 bg-[#e4e0d8] px-6 py-10 shadow-[0_1px_2px_rgba(43,43,43,0.05),0_6px_24px_rgba(43,43,43,0.05)] md:px-10 md:py-12 dark:border-[#3d3935] dark:bg-[#1c1a17] dark:shadow-[0_10px_36px_rgba(0,0,0,0.32)]";
 
   const backBar =
-    "fixed top-16 z-30 flex h-12 items-center border-b border-ink/10 bg-cream/95 backdrop-blur-md dark:border-[#2a2725] dark:bg-[#151311]/95 left-0 right-0 px-6 md:px-12 lg:left-48 lg:right-0 lg:px-14 lg:top-20";
+    "fixed top-16 z-30 flex h-12 items-center border-b border-ink/10 bg-cream/95 backdrop-blur-md dark:border-[#2a2725] dark:bg-background/95 left-0 right-0 px-6 md:px-12 lg:left-48 lg:right-0 lg:px-14 lg:top-20";
 
   return (
     <>

@@ -80,8 +80,8 @@ export default function RootLayout({
     children: React.ReactNode
 }) {
     return (
-        <html lang="en" suppressHydrationWarning data-theme="light">
-            <body className={`${geistSans.variable} ${geistMono.variable} ${playfair.variable} bg-cream dark:bg-[#151311]`}>
+        <html lang="en" className="dark" suppressHydrationWarning>
+            <body className={`${geistSans.variable} ${geistMono.variable} ${playfair.variable} bg-cream dark:bg-background`}>
                 <PostHogProvider app="portfolio">
                     <TopBar />
                     <SideNav />

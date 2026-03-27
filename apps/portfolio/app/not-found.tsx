@@ -21,7 +21,7 @@ export default function NotFound() {
         </p>
         <Link
           href="/"
-          className="font-['Helvetica_Neue','Helvetica','Arial',sans-serif] inline-flex items-center gap-2 px-6 py-3 border border-ink/20 dark:border-[#4d4844] rounded-full text-sm text-ink dark:text-[#ece7df] hover:bg-ink hover:text-cream dark:hover:bg-[#ece7df] dark:hover:text-[#151311] transition-colors"
+          className="font-['Helvetica_Neue','Helvetica','Arial',sans-serif] inline-flex items-center gap-2 px-6 py-3 border border-ink/20 dark:border-[#4d4844] rounded-full text-sm text-ink dark:text-[#ece7df] hover:bg-ink hover:text-cream dark:hover:bg-[#ece7df] dark:hover:text-[#141210] transition-colors"
         >
           Back to home
         </Link>

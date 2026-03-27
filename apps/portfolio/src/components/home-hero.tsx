@@ -20,7 +20,7 @@ const socials = [
 
 export default function HomeHero() {
   return (
-    <div className="h-screen overflow-hidden bg-cream text-ink dark:bg-[#151311] dark:text-[#e6e1da]">
+    <div className="h-screen overflow-hidden bg-cream text-ink dark:bg-background dark:text-[#e6e1da]">
       <div className="h-full lg:ml-48 flex flex-col px-6 sm:px-8 md:px-12 lg:px-16 pt-[4.75rem] sm:pt-20 lg:pt-24 pb-10 sm:pb-12 md:pb-14">
         <div className="relative flex-1 flex flex-col lg:flex-row gap-8 sm:gap-10 lg:gap-16 xl:gap-20 min-h-0">
 
@@ -49,7 +49,7 @@ export default function HomeHero() {
               </motion.h1>
 
               <motion.div
-                className="flex min-h-0 flex-1 flex-col justify-center gap-8 sm:gap-10 lg:gap-12 w-full max-w-none overflow-y-auto pr-1"
+                className="flex min-h-0 flex-1 flex-col justify-center gap-8 sm:gap-10 lg:gap-12 w-full max-w-none"
                 initial="hidden"
                 animate="visible"
               >
@@ -59,13 +59,10 @@ export default function HomeHero() {
                   custom={0.55}
                 >
                   <span className="text-ink dark:text-[#ebe6df] font-medium">
-                    Hello, I&rsquo;m Rashod.
+                    I&rsquo;m Rashod, a software developer and entrepreneur based in St. John&rsquo;s, Newfoundland.
                   </span>
                   <br />
-                  I&rsquo;m a software developer and entrepreneur based in
-                  St. John&rsquo;s, Newfoundland. I build products, help
-                  businesses grow with technology, and capture moments
-                  through photography.
+                  I focus on building practical, scalable products and helping businesses use technology to grow with clarity and purpose. My work spans product discovery, software architecture, and translating complex technical ideas into solutions that make sense for non-technical teams.
                 </motion.p>
 
                 <motion.p
@@ -73,12 +70,9 @@ export default function HomeHero() {
                   variants={reveal}
                   custom={0.7}
                 >
-                  Things I do include: product discovery and validation,
-                  building software architecture, volunteering to support
-                  small businesses, digital branding for local brands,
-                  photography, business operations strategy, product
-                  placement, and helping non-technical people understand
-                  technical solutions.
+                  Beyond development, I work closely with small businesses and local brands, offering support in digital strategy, branding, and operations to improve efficiency and drive results. I also explore photography as a creative outlet, capturing moments and perspectives that complement my work in technology.
+                  <br />
+                  At the core, I&rsquo;m driven by understanding problems deeply and building solutions that are both useful and grounded in real-world needs.
                 </motion.p>
               </motion.div>
             </div>

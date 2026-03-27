@@ -6,17 +6,15 @@ import { Moon, Sun } from "lucide-react";
 type Theme = "light" | "dark";
 
 function resolveInitialTheme(): Theme {
-  if (typeof window === "undefined") return "light";
+  if (typeof window === "undefined") return "dark";
   const saved = window.localStorage.getItem("portfolio-theme");
   if (saved === "light" || saved === "dark") return saved;
-  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  return "dark";
 }
 
 function applyTheme(theme: Theme) {
   const isDark = theme === "dark";
   document.documentElement.classList.toggle("dark", isDark);
-  document.body.classList.toggle("dark", isDark);
-  document.documentElement.dataset.theme = theme;
 }
 
 function getThemeFromDom(): Theme {
@@ -25,7 +23,7 @@ function getThemeFromDom(): Theme {
 }
 
 export default function ThemeToggle() {
-  const [theme, setTheme] = useState<Theme>("light");
+  const [theme, setTheme] = useState<Theme>("dark");
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
@@ -72,7 +70,7 @@ export default function ThemeToggle() {
       type="button"
       onClick={toggleTheme}
       aria-label={ready ? `Switch to ${nextTheme} theme` : "Toggle theme"}
-      className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-ink/20 bg-cream/80 text-ink/70 backdrop-blur transition hover:bg-cream dark:border-[#2f2c2a] dark:bg-[#151311] dark:text-[#d0cbc5] dark:hover:bg-[#1a1817]"
+      className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-ink/20 bg-cream/80 text-ink/70 backdrop-blur transition hover:bg-cream dark:border-[#2f2c2a] dark:bg-background dark:text-[#d0cbc5] dark:hover:bg-[#1a1817]"
     >
       {theme === "dark" ? <Sun className="h-4 w-4" strokeWidth={1.8} /> : <Moon className="h-4 w-4" strokeWidth={1.8} />}
     </button>
