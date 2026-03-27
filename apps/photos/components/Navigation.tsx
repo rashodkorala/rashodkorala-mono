@@ -9,7 +9,6 @@ import ThemeToggle from "@/components/ThemeToggle";
 const navItems = [
     { name: "About", path: "/about" },
     { name: "Gallery", path: "/#gallery" },
-    { name: "Stories", path: "/stories" },
     { name: "Contact", path: "/#contact" },
 ];
 

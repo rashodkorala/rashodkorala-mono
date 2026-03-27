@@ -23,17 +23,15 @@ import {
 import { PhotoForm } from "./photo-form"
 import { PhotoUploadForm } from "./photo-upload-form"
 import type { Photo } from "@/lib/types/photo"
-import type { Story } from "@/lib/types/story"
 import { deletePhoto } from "@/lib/actions/photos"
 import { useRouter } from "next/navigation"
 import { cn } from "@/lib/utils"
 
 interface PhotosProps {
     initialPhotos: Photo[]
-    stories: Story[]
 }
 
-const Photos = ({ initialPhotos, stories }: PhotosProps) => {
+const Photos = ({ initialPhotos }: PhotosProps) => {
     const router = useRouter()
     const [photos, setPhotos] = useState<Photo[]>(initialPhotos)
     const [isFormOpen, setIsFormOpen] = useState(false)
@@ -289,15 +287,6 @@ const Photos = ({ initialPhotos, stories }: PhotosProps) => {
                                             {photo.category && (
                                                 <CardDescription className="text-xs">
                                                     {photo.category}
-                                                </CardDescription>
-                                            )}
-                                            {photo.storyId && (
-                                                <CardDescription className="text-xs">
-                                                    <span className="text-muted-foreground">
-                                                        Story:{" "}
-                                                    </span>
-                                                    {stories.find((s) => s.id === photo.storyId)
-                                                        ?.title ?? "Unknown"}
                                                 </CardDescription>
                                             )}
                                             {photo.location && (

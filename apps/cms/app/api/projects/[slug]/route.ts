@@ -40,27 +40,55 @@ export async function GET(
 
     // Transform to camelCase for API response
     const project: ProjectDB = data
+    const legacyProject = project as ProjectDB & {
+      problem?: string | null
+      solution?: string | null
+      roles?: string[] | null
+      features?: string[] | null
+      tech?: string[] | null
+      cover_image_url?: string | null
+      gallery_image_urls?: string[] | null
+      gallery_video_urls?: string[] | null
+      category?: string | null
+      status?: string | null
+      featured?: boolean | null
+      sort_order?: number | null
+    }
+
     const response = {
       id: project.id,
       userId: project.user_id,
       slug: project.slug,
       title: project.title,
       subtitle: project.subtitle,
-      problem: project.problem,
-      solution: project.solution,
-      roles: project.roles,
-      features: project.features,
-      tech: project.tech,
+      shortDescription: project.short_description,
+      problem: legacyProject.problem ?? null,
+      solution: legacyProject.solution ?? null,
+      roles: legacyProject.roles ?? (project.role ? [project.role] : []),
+      features: legacyProject.features ?? [],
+      tech: legacyProject.tech ?? project.tech_stack ?? [],
+      role: project.role,
+      timeline: project.timeline,
       liveUrl: project.live_url,
       githubUrl: project.github_url,
-      caseStudyUrl: project.case_study_url,
-      coverImageUrl: project.cover_image_url,
-      galleryImageUrls: project.gallery_image_urls,
-      galleryVideoUrls: project.gallery_video_urls ?? null,
-      category: project.category,
-      status: project.status,
-      featured: project.featured,
-      sortOrder: project.sort_order,
+      logo: project.logo,
+      coverImage: project.cover_image,
+      coverImageUrl: legacyProject.cover_image_url ?? project.cover_image,
+      projectMedia: project.project_media ?? [],
+      galleryImageUrls:
+        legacyProject.gallery_image_urls ??
+        (project.project_media ?? [])
+          .filter((item) => item.type === "image")
+          .map((item) => item.url),
+      galleryVideoUrls:
+        legacyProject.gallery_video_urls ??
+        (project.project_media ?? [])
+          .filter((item) => item.type === "video")
+          .map((item) => item.url),
+      category: legacyProject.category ?? null,
+      status: legacyProject.status ?? null,
+      featured: legacyProject.featured ?? null,
+      sortOrder: legacyProject.sort_order ?? null,
       createdAt: project.created_at,
       updatedAt: project.updated_at,
     }

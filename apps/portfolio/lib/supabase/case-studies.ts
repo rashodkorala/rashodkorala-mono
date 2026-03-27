@@ -5,9 +5,8 @@ export async function getAllCaseStudies(): Promise<CaseStudy[]> {
   const { data, error } = await supabase
     .from("case_studies")
     .select("*")
-    .eq("status", "published")
-    .order("featured", { ascending: false })
-    .order("published_at", { ascending: false });
+    .order("order", { ascending: true })
+    .order("created_at", { ascending: false });
 
   if (error) {
     console.error("Error fetching case studies:", error);
@@ -22,7 +21,6 @@ export async function getCaseStudyBySlug(slug: string): Promise<CaseStudy | null
     .from("case_studies")
     .select("*")
     .eq("slug", slug)
-    .eq("status", "published")
     .single();
 
   if (error) {
@@ -30,5 +28,16 @@ export async function getCaseStudyBySlug(slug: string): Promise<CaseStudy | null
     return null;
   }
 
-  return data as CaseStudy;
+  if (!data) return null;
+
+  const projects = data.project_id
+    ? (
+        await supabase
+          .from('projects')
+          .select('*')
+          .eq('id', data.project_id)
+      ).data || []
+    : [];
+
+  return { ...data, relatedProjects: projects } as CaseStudy;
 }

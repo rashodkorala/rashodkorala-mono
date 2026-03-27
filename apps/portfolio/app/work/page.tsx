@@ -1,15 +1,26 @@
 import type { Metadata } from "next";
-import CaseStudiesList from "@/src/components/work/CaseStudiesList";
-import { getCachedCaseStudies } from "@/lib/supabase/cached-case-studies";
+import WorkPageContent from "@/src/components/work/WorkPageContent";
+import PageShell from "@/src/components/page-shell";
+import { getCachedAllProjects } from "@/lib/supabase/cached-projects";
+import type { Project } from "@/lib/types";
 
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
   title: "Work",
-  description: "Narrative-first case studies: problem, process, and outcomes.",
+  description: "Case studies and projects by Rashod Korala.",
 };
 
 export default async function WorkPage() {
-  const items = await getCachedCaseStudies();
-  return <CaseStudiesList items={items} />;
+  let projects: Project[] = [];
+  try {
+    projects = await getCachedAllProjects();
+  } catch (error) {
+    console.error("Failed to load projects for /work:", error);
+  }
+  return (
+    <PageShell>
+      <WorkPageContent caseStudies={[]} projects={projects} />
+    </PageShell>
+  );
 }

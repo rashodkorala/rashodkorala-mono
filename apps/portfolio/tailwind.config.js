@@ -1,10 +1,26 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   darkMode: ["class"],
-  content: ["./src/**/*.{js,jsx,ts,tsx}"],
+  content: [
+    "./app/**/*.{js,jsx,ts,tsx}",
+    "./components/**/*.{js,jsx,ts,tsx}",
+    "./src/**/*.{js,jsx,ts,tsx}",
+  ],
   theme: {
     extend: {
+      fontFamily: {
+        sans: [
+          "var(--font-geist-sans)",
+          "ui-sans-serif",
+          "system-ui",
+          "sans-serif",
+        ],
+        serif: ["var(--font-playfair)", "Georgia", "serif"],
+      },
       colors: {
+        cream: "#e9e6e0",
+        ink: "#2b2b2b",
+        muted_ink: "#6b6560",
         systemGray: "#8E8E93",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",

@@ -2,40 +2,37 @@
 
 import { createClient } from "@/lib/supabase/server"
 import { revalidatePath } from "next/cache"
-import type { MediaItem, MediaDB, MediaInsert, MediaUpdate } from "@/lib/types/media"
+import type { MediaItem, MediaLibraryDB, MediaInsert, MediaUpdate } from "@/lib/types/media"
 
-function transformMedia(media: MediaDB): MediaItem {
+function transformMedia(m: MediaLibraryDB): MediaItem {
   return {
-    id: media.id,
-    userId: media.user_id,
-    title: media.title,
-    description: media.description,
-    fileUrl: media.file_url,
-    fileType: media.file_type,
-    fileSize: media.file_size,
-    mimeType: media.mime_type,
-    altText: media.alt_text,
-    tags: media.tags || [],
-    folder: media.folder,
-    featured: media.featured,
-    createdAt: media.created_at,
-    updatedAt: media.updated_at,
+    id: m.id,
+    userId: m.user_id,
+    bucket: m.bucket,
+    path: m.path,
+    publicUrl: m.public_url,
+    mediaType: m.media_type,
+    width: m.width,
+    height: m.height,
+    bytes: m.bytes,
+    altText: m.alt_text,
+    folder: m.folder,
+    tags: m.tags,
+    createdAt: m.created_at,
+    updatedAt: m.updated_at,
   }
 }
 
 export async function getMedia(folder?: string): Promise<MediaItem[]> {
   const supabase = await createClient()
-  
+
   const {
     data: { user },
   } = await supabase.auth.getUser()
-
-  if (!user) {
-    throw new Error("Unauthorized")
-  }
+  if (!user) throw new Error("Unauthorized")
 
   let query = supabase
-    .from("media")
+    .from("media_library")
     .select("*")
     .eq("user_id", user.id)
     .order("created_at", { ascending: false })
@@ -45,61 +42,48 @@ export async function getMedia(folder?: string): Promise<MediaItem[]> {
   }
 
   const { data, error } = await query
-
-  if (error) {
-    throw new Error(`Failed to fetch media: ${error.message}`)
-  }
+  if (error) throw new Error(`Failed to fetch media: ${error.message}`)
 
   return (data || []).map(transformMedia)
 }
 
-export async function getMediaByType(fileType: string): Promise<MediaItem[]> {
+export async function getMediaByType(mediaType: string): Promise<MediaItem[]> {
   const supabase = await createClient()
-  
+
   const {
     data: { user },
   } = await supabase.auth.getUser()
-
-  if (!user) {
-    throw new Error("Unauthorized")
-  }
+  if (!user) throw new Error("Unauthorized")
 
   const { data, error } = await supabase
-    .from("media")
+    .from("media_library")
     .select("*")
     .eq("user_id", user.id)
-    .eq("file_type", fileType)
+    .eq("media_type", mediaType)
     .order("created_at", { ascending: false })
 
-  if (error) {
-    throw new Error(`Failed to fetch media: ${error.message}`)
-  }
+  if (error) throw new Error(`Failed to fetch media: ${error.message}`)
 
   return (data || []).map(transformMedia)
 }
 
 export async function getMediaItem(id: string): Promise<MediaItem | null> {
   const supabase = await createClient()
-  
+
   const {
     data: { user },
   } = await supabase.auth.getUser()
-
-  if (!user) {
-    throw new Error("Unauthorized")
-  }
+  if (!user) throw new Error("Unauthorized")
 
   const { data, error } = await supabase
-    .from("media")
+    .from("media_library")
     .select("*")
     .eq("id", id)
     .eq("user_id", user.id)
     .single()
 
   if (error) {
-    if (error.code === "PGRST116") {
-      return null
-    }
+    if (error.code === "PGRST116") return null
     throw new Error(`Failed to fetch media: ${error.message}`)
   }
 
@@ -108,36 +92,31 @@ export async function getMediaItem(id: string): Promise<MediaItem | null> {
 
 export async function createMedia(media: MediaInsert): Promise<MediaItem> {
   const supabase = await createClient()
-  
+
   const {
     data: { user },
   } = await supabase.auth.getUser()
-
-  if (!user) {
-    throw new Error("Unauthorized")
-  }
+  if (!user) throw new Error("Unauthorized")
 
   const { data, error } = await supabase
-    .from("media")
+    .from("media_library")
     .insert({
       user_id: user.id,
-      title: media.title,
-      description: media.description || null,
-      file_url: media.fileUrl,
-      file_type: media.fileType,
-      file_size: media.fileSize || null,
-      mime_type: media.mimeType || null,
+      bucket: media.bucket || "media",
+      path: media.path,
+      public_url: media.publicUrl,
+      media_type: media.mediaType,
+      width: media.width || null,
+      height: media.height || null,
+      bytes: media.bytes || null,
       alt_text: media.altText || null,
-      tags: media.tags || [],
       folder: media.folder || null,
-      featured: media.featured || false,
+      tags: media.tags || [],
     })
     .select()
     .single()
 
-  if (error) {
-    throw new Error(`Failed to create media: ${error.message}`)
-  }
+  if (error) throw new Error(`Failed to create media: ${error.message}`)
 
   revalidatePath("/protected/media")
   return transformMedia(data)
@@ -145,37 +124,25 @@ export async function createMedia(media: MediaInsert): Promise<MediaItem> {
 
 export async function updateMedia(media: MediaUpdate): Promise<MediaItem> {
   const supabase = await createClient()
-  
+
   const {
     data: { user },
   } = await supabase.auth.getUser()
-
-  if (!user) {
-    throw new Error("Unauthorized")
-  }
+  if (!user) throw new Error("Unauthorized")
 
   const { data, error } = await supabase
-    .from("media")
+    .from("media_library")
     .update({
-      title: media.title,
-      description: media.description,
-      file_url: media.fileUrl,
-      file_type: media.fileType,
-      file_size: media.fileSize,
-      mime_type: media.mimeType,
       alt_text: media.altText,
-      tags: media.tags,
       folder: media.folder,
-      featured: media.featured,
+      tags: media.tags,
     })
     .eq("id", media.id)
     .eq("user_id", user.id)
     .select()
     .single()
 
-  if (error) {
-    throw new Error(`Failed to update media: ${error.message}`)
-  }
+  if (error) throw new Error(`Failed to update media: ${error.message}`)
 
   revalidatePath("/protected/media")
   return transformMedia(data)
@@ -183,25 +150,19 @@ export async function updateMedia(media: MediaUpdate): Promise<MediaItem> {
 
 export async function deleteMedia(id: string): Promise<void> {
   const supabase = await createClient()
-  
+
   const {
     data: { user },
   } = await supabase.auth.getUser()
-
-  if (!user) {
-    throw new Error("Unauthorized")
-  }
+  if (!user) throw new Error("Unauthorized")
 
   const { error } = await supabase
-    .from("media")
+    .from("media_library")
     .delete()
     .eq("id", id)
     .eq("user_id", user.id)
 
-  if (error) {
-    throw new Error(`Failed to delete media: ${error.message}`)
-  }
+  if (error) throw new Error(`Failed to delete media: ${error.message}`)
 
   revalidatePath("/protected/media")
 }
-

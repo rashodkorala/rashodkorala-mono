@@ -46,18 +46,18 @@ const ProjectComp = ({ projectSlug, initialProject = null }: ProjectCompProps) =
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-black text-white flex items-center justify-center">
-        <p className="text-white/40">Loading...</p>
+      <div className="min-h-[40vh] flex items-center justify-center">
+        <p className="text-ink/40">Loading...</p>
       </div>
     );
   }
 
   if (!project) {
     return (
-      <div className="min-h-screen bg-black text-white flex items-center justify-center">
+      <div className="min-h-[40vh] flex items-center justify-center">
         <div className="text-center space-y-4">
-          <p className="text-white/40">Project not found</p>
-          <Link href="/" className="inline-flex items-center gap-2 text-white/40 hover:text-white transition-colors">
+          <p className="text-ink/40">Project not found</p>
+          <Link href="/" className="inline-flex items-center gap-2 text-ink/40 hover:text-ink transition-colors">
             <ArrowLeft className="w-4 h-4" strokeWidth={1.5} />
             <span className="text-sm font-light">Back to home</span>
           </Link>
@@ -66,16 +66,33 @@ const ProjectComp = ({ projectSlug, initialProject = null }: ProjectCompProps) =
     );
   }
 
-  const galleryImages = project.gallery_image_urls || [];
-  const galleryVideos = project.gallery_video_urls || [];
+  // Backward-compatible view model: supports both current and legacy project fields.
+  const projectView = project as Project & {
+    tech?: string[] | null;
+    problem?: string | null;
+    solution?: string | null;
+    features?: string[] | null;
+    cover_image_url?: string | null;
+    gallery_image_urls?: string[] | null;
+    gallery_video_urls?: string[] | null;
+  };
+
+  const galleryImages =
+    projectView.gallery_image_urls ||
+    (project.project_media ?? []).filter((item) => item.type === 'image').map((item) => item.url);
+  const galleryVideos =
+    projectView.gallery_video_urls ||
+    (project.project_media ?? []).filter((item) => item.type === 'video').map((item) => item.url);
   type MediaItem = { type: 'image'; url: string } | { type: 'video'; url: string };
   const allMedia: MediaItem[] = [];
-  if (project.cover_image_url) allMedia.push({ type: 'image', url: project.cover_image_url });
+  if (projectView.cover_image_url || project.cover_image) {
+    allMedia.push({ type: 'image', url: projectView.cover_image_url || project.cover_image! });
+  }
   galleryImages.forEach((url) => allMedia.push({ type: 'image', url }));
   galleryVideos.forEach((url) => allMedia.push({ type: 'video', url }));
 
   return (
-    <div className="min-h-screen bg-black text-white">
+    <div className="max-w-3xl py-12 md:py-16">
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -83,9 +100,9 @@ const ProjectComp = ({ projectSlug, initialProject = null }: ProjectCompProps) =
         className="px-6 md:px-12 py-8"
       >
         <div className="max-w-4xl">
-          <Link href="/projects" className="inline-flex items-center gap-2 text-white/40 hover:text-white transition-colors group">
+          <Link href="/work" className="inline-flex items-center gap-2 text-ink/40 hover:text-ink transition-colors group">
             <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" strokeWidth={1.5} />
-            <span className="text-sm font-light">Back to projects</span>
+            <span className="text-sm font-light">Back to work</span>
           </Link>
         </div>
       </motion.div>
@@ -99,17 +116,17 @@ const ProjectComp = ({ projectSlug, initialProject = null }: ProjectCompProps) =
             className="mb-16"
           >
             <div className="flex flex-wrap gap-3 mb-6">
-              <span className="text-[11px] uppercase tracking-[0.08em] text-white/25 font-mono">{getYear()}</span>
-              {project.tech && project.tech.map(tag => (
-                <span key={tag} className="text-[11px] uppercase tracking-[0.08em] px-2.5 py-1 border border-white/10 rounded-full text-white/30">
+              <span className="text-[11px] uppercase tracking-[0.08em] text-ink/25 font-mono">{getYear()}</span>
+              {(projectView.tech || project.tech_stack || []).map(tag => (
+                <span key={tag} className="text-[11px] uppercase tracking-[0.08em] px-2.5 py-1 border border-ink/10 rounded-full text-ink/30">
                   {tag}
                 </span>
               ))}
             </div>
 
             <h1 className="text-3xl md:text-5xl font-light tracking-tight mb-6">{project.title}</h1>
-            <p className="text-lg text-white/50 leading-relaxed max-w-2xl">
-              {project.subtitle || project.solution || project.problem || ''}
+            <p className="text-lg text-muted_ink leading-relaxed max-w-2xl">
+              {project.subtitle || project.short_description || projectView.solution || projectView.problem || ''}
             </p>
 
             <div className="flex gap-4 mt-8">
@@ -120,7 +137,7 @@ const ProjectComp = ({ projectSlug, initialProject = null }: ProjectCompProps) =
                   rel="noopener noreferrer"
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className="inline-flex items-center gap-2 px-5 py-2.5 border border-white/15 rounded-full text-sm hover:bg-white hover:text-black transition-colors"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 border border-ink/15 rounded-full text-sm hover:bg-ink hover:text-cream transition-colors"
                 >
                   <ExternalLink className="w-4 h-4" strokeWidth={1.5} />
                   Live Demo
@@ -133,7 +150,7 @@ const ProjectComp = ({ projectSlug, initialProject = null }: ProjectCompProps) =
                   rel="noopener noreferrer"
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className="inline-flex items-center gap-2 px-5 py-2.5 border border-white/15 rounded-full text-sm hover:bg-white hover:text-black transition-colors"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 border border-ink/15 rounded-full text-sm hover:bg-ink hover:text-cream transition-colors"
                 >
                   <Github className="w-4 h-4" strokeWidth={1.5} />
                   View Code
@@ -152,7 +169,7 @@ const ProjectComp = ({ projectSlug, initialProject = null }: ProjectCompProps) =
               {allMedia.slice(0, 6).map((item, index) => (
                 <div
                   key={index}
-                  className={`group relative aspect-video rounded-lg overflow-hidden border border-white/10 cursor-pointer ${allMedia.length === 1 ? 'w-full max-w-4xl' : ''}`}
+                  className={`group relative aspect-video rounded-lg overflow-hidden border border-ink/10 cursor-pointer ${allMedia.length === 1 ? 'w-full max-w-4xl' : ''}`}
                   onClick={() => setSelectedMediaIndex(index)}
                 >
                   {item.type === 'image' ? (
@@ -178,29 +195,29 @@ const ProjectComp = ({ projectSlug, initialProject = null }: ProjectCompProps) =
             </motion.div>
           )}
 
-          {(project.problem || project.solution) && (
+          {(projectView.problem || projectView.solution) && (
             <div className="grid md:grid-cols-2 gap-16 md:gap-24 mb-20">
-              {project.problem && (
+              {projectView.problem && (
                 <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.4 }}>
-                  <h2 className="text-[11px] tracking-[0.08em] uppercase text-white/30 mb-4">Challenge</h2>
-                  <p className="text-lg text-white/50 leading-relaxed">{project.problem}</p>
+                  <h2 className="text-[11px] tracking-[0.08em] uppercase text-ink/30 mb-4">Challenge</h2>
+                  <p className="text-lg text-muted_ink leading-relaxed">{projectView.problem}</p>
                 </motion.div>
               )}
-              {project.solution && (
+              {projectView.solution && (
                 <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.5 }}>
-                  <h2 className="text-[11px] tracking-[0.08em] uppercase text-white/30 mb-4">Solution</h2>
-                  <p className="text-lg text-white/50 leading-relaxed">{project.solution}</p>
+                  <h2 className="text-[11px] tracking-[0.08em] uppercase text-ink/30 mb-4">Solution</h2>
+                  <p className="text-lg text-muted_ink leading-relaxed">{projectView.solution}</p>
                 </motion.div>
               )}
             </div>
           )}
 
-          {project.features && project.features.length > 0 && (
-            <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.6 }} className="border-t border-white/10 pt-16">
-              <h2 className="text-[11px] tracking-[0.08em] uppercase text-white/30 mb-8">Impact</h2>
+          {projectView.features && projectView.features.length > 0 && (
+            <motion.div initial={{ opacity: 0, y: 40 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8, delay: 0.6 }} className="border-t border-ink/10 pt-16">
+              <h2 className="text-[11px] tracking-[0.08em] uppercase text-ink/30 mb-8">Impact</h2>
               <div className="grid md:grid-cols-3 gap-8">
-                {project.features.slice(0, 3).map((feature, index) => (
-                  <div key={index} className="p-6 border border-white/10 rounded-lg">
+                {projectView.features.slice(0, 3).map((feature, index) => (
+                  <div key={index} className="p-6 border border-ink/10 rounded-lg">
                     <p className="text-base md:text-lg">{feature}</p>
                   </div>
                 ))}
@@ -212,11 +229,11 @@ const ProjectComp = ({ projectSlug, initialProject = null }: ProjectCompProps) =
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.8 }}
-            className="mt-24 pt-16 border-t border-white/10 text-center"
+            className="mt-24 pt-16 border-t border-ink/10 text-center"
           >
-            <p className="text-sm text-white/30 mb-6">Interested in more?</p>
-            <Link href="/projects" className="inline-flex items-center gap-2 text-xl font-light hover:text-white/60 transition-colors">
-              View all projects
+            <p className="text-sm text-ink/30 mb-6">Interested in more?</p>
+            <Link href="/work" className="inline-flex items-center gap-2 text-xl font-light hover:text-ink/60 transition-colors">
+              View all work
               <ArrowLeft className="w-5 h-5 rotate-180" strokeWidth={1.5} />
             </Link>
           </motion.div>
@@ -231,16 +248,16 @@ const ProjectComp = ({ projectSlug, initialProject = null }: ProjectCompProps) =
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3, ease: [0.25, 0.1, 0.25, 1] }}
             onClick={handleClose}
-            className="fixed inset-0 bg-black/95 z-50 flex items-center justify-center p-4"
+            className="fixed inset-0 bg-black/90 z-50 flex items-center justify-center p-4"
           >
             <motion.button
               initial={{ opacity: 0, scale: 0.8 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.1, duration: 0.3 }}
-              className="absolute top-6 right-6 z-50 p-3 bg-white/10 backdrop-blur-xl hover:bg-white/20 rounded-full transition-all duration-300 border border-white/10"
+              className="absolute top-6 right-6 z-50 p-3 bg-ink/10 backdrop-blur-xl hover:bg-ink/20 rounded-full transition-all duration-300 border border-ink/10"
               onClick={handleClose}
             >
-              <ArrowLeft className="w-5 h-5 text-white rotate-90" />
+              <ArrowLeft className="w-5 h-5 text-ink rotate-90" />
             </motion.button>
 
             <motion.div

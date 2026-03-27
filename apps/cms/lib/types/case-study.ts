@@ -1,51 +1,21 @@
-export type CaseStudyStatus = "draft" | "published" | "archived"
-export type CaseStudyType = "problem-solving" | "descriptive"
-
-export interface Link {
-  label: string
-  url: string
+export interface BeforeAfter {
+  beforeImage: string | null
+  afterImage: string | null
 }
 
-export interface Metric {
-  label: string
-  value: string
-}
-
-export interface Result {
-  text: string
-}
-
-// Database schema (snake_case)
+// Database schema (snake_case) — matches new case_studies table
 export interface CaseStudyDB {
   id: string
   user_id: string
+  project_id: string | null
   title: string
   slug: string
-  summary: string | null
-  type: CaseStudyType
-  status: CaseStudyStatus
+  content_md: string | null
+  before_after: BeforeAfter | null
   featured: boolean
-  published_at: string | null
-  subject_name: string | null
-  subject_type: string | null
-  industry: string | null
-  audience: string | null
-  role: string | null
-  team_size: string | null
-  timeline: string | null
+  order: number
   tags: string[]
-  skills: string[]
-  stack: string[]
-  cover_url: string | null
-  gallery_urls: string[]
-  gallery_video_urls: string[]
-  links: Link[]
-  results: Result[]
-  metrics: Metric[]
-  mdx_path: string
-  seo_title: string | null
-  seo_description: string | null
-  views: number
+  gallery: string[]
   created_at: string
   updated_at: string
 }
@@ -54,67 +24,31 @@ export interface CaseStudyDB {
 export interface CaseStudy {
   id: string
   userId: string
+  projectId?: string | null
   title: string
   slug: string
-  summary: string | null
-  type: CaseStudyType
-  status: CaseStudyStatus
+  contentMd: string
+  beforeAfter: BeforeAfter
   featured: boolean
-  publishedAt: string | null
-  subjectName: string | null
-  subjectType: string | null
-  industry: string | null
-  audience: string | null
-  role: string | null
-  teamSize: string | null
-  timeline: string | null
+  order: number
   tags: string[]
-  skills: string[]
-  stack: string[]
-  coverUrl: string | null
-  galleryUrls: string[]
-  galleryVideoUrls: string[]
-  links: Link[]
-  results: Result[]
-  metrics: Metric[]
-  mdxPath: string
-  seoTitle: string | null
-  seoDescription: string | null
-  views: number
+  gallery: string[]
   createdAt: string
   updatedAt: string
 }
 
 export interface CaseStudyFormData {
+  projectId?: string | null
   title: string
   slug: string
-  summary: string
-  type: CaseStudyType
-  status: CaseStudyStatus
+  contentMd: string
   featured: boolean
-  publishedAt: string | null
-  subjectName: string
-  subjectType: string
-  industry: string
-  audience: string
-  role: string
-  teamSize: string
-  timeline: string
   tags: string[]
-  skills: string[]
-  stack: string[]
-  coverUrl: string | null
-  galleryUrls: string[]
-  galleryVideoUrls: string[]
-  links: Link[]
-  results: Result[]
-  metrics: Metric[]
-  mdxContent: string
-  seoTitle: string
-  seoDescription: string
+  existingGallery?: string[]
+  galleryFiles?: File[]
+  clearBeforeImage?: boolean
+  clearAfterImage?: boolean
+  beforeImageFile?: File | null
+  afterImageFile?: File | null
+  order: number
 }
-
-
-
-
-

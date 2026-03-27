@@ -20,7 +20,6 @@ export interface PhotoDB {
   camera_settings: CameraSettings | null
   tags: string[] | null
   featured: boolean
-  story_id?: string | null
   created_at: string
   updated_at: string
   user_id: string
@@ -39,7 +38,6 @@ export interface Photo {
   cameraSettings: CameraSettings | null
   tags: string[] | null
   featured: boolean
-  storyId: string | null
   created_at: string
   updated_at: string
   user_id: string
@@ -57,7 +55,6 @@ export interface PhotoInsert {
   cameraSettings?: CameraSettings | null
   tags?: string[] | null
   featured?: boolean
-  storyId?: string | null
 }
 
 export interface PhotoUpdate extends Partial<PhotoInsert> {

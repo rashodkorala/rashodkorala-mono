@@ -17,7 +17,6 @@ function transformPhoto(photo: PhotoDB): Photo {
     cameraSettings: photo.camera_settings,
     tags: photo.tags,
     featured: photo.featured,
-    storyId: photo.story_id ?? null,
     created_at: photo.created_at,
     updated_at: photo.updated_at,
     user_id: photo.user_id,
@@ -164,7 +163,6 @@ export async function createPhoto(photo: PhotoInsert): Promise<Photo> {
       camera_settings: photo.cameraSettings || null,
       tags: photo.tags || [],
       featured: photo.featured || false,
-      story_id: photo.storyId ?? null,
       user_id: user.id,
     })
     .select()
@@ -202,7 +200,6 @@ export async function updatePhoto(photo: PhotoUpdate): Promise<Photo> {
     camera_settings: unknown
     tags: string[] | null
     featured: boolean
-    story_id: string | null
   }> = {}
   if (updates.title !== undefined) {
     const nextUrl = updates.imageUrl ?? ""
@@ -217,7 +214,6 @@ export async function updatePhoto(photo: PhotoUpdate): Promise<Photo> {
   if (updates.cameraSettings !== undefined) updateData.camera_settings = updates.cameraSettings
   if (updates.tags !== undefined) updateData.tags = updates.tags || []
   if (updates.featured !== undefined) updateData.featured = updates.featured
-  if (updates.storyId !== undefined) updateData.story_id = updates.storyId
 
   const { data, error } = await supabase
     .from("photos")

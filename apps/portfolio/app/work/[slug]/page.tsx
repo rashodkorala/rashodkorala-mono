@@ -1,17 +1,12 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getCachedCaseStudyBySlug } from "@/lib/supabase/cached-case-studies";
-import { supabase } from "@/lib/supabase";
+import { getCachedProjectBySlug } from "@/lib/supabase/cached-projects";
 import CaseStudyPage from "@/src/components/work/CaseStudyPage";
+import ProjectPage from "@/src/components/work/ProjectPage";
+import PageShell from "@/src/components/page-shell";
 
 export const revalidate = 3600;
-
-async function getCaseStudyMdx(mdxPath: string | null | undefined): Promise<string> {
-  if (!mdxPath) return "";
-  const { data, error } = await supabase.storage.from("case-studies-mdx").download(mdxPath);
-  if (error || !data) return "";
-  return data.text();
-}
 
 export async function generateMetadata({
   params,
@@ -19,16 +14,26 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const caseStudy = await getCachedCaseStudyBySlug(slug);
-  if (!caseStudy) return { title: "Case study not found" };
+  const [caseStudy, project] = await Promise.all([
+    getCachedCaseStudyBySlug(slug),
+    getCachedProjectBySlug(slug),
+  ]);
+
+  const item = caseStudy ?? project;
+  if (!item) return { title: "Not found" };
+
+  const title = item.title;
+  const description =
+    "content_md" in item
+      ? item.content_md?.slice(0, 160)
+      : ("short_description" in item ? item.short_description || undefined : undefined);
 
   return {
-    title: caseStudy.title,
-    description: caseStudy.summary || caseStudy.lede || undefined,
+    title,
+    description: description ?? undefined,
     openGraph: {
-      title: `${caseStudy.title} | Work`,
-      description: caseStudy.summary || caseStudy.lede || undefined,
-      images: caseStudy.cover_url ? [caseStudy.cover_url] : undefined,
+      title: `${item.title} | Work`,
+      description: description ?? undefined,
     },
   };
 }
@@ -39,9 +44,18 @@ export default async function WorkDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const caseStudy = await getCachedCaseStudyBySlug(slug);
-  if (!caseStudy) notFound();
+  const [caseStudy, project] = await Promise.all([
+    getCachedCaseStudyBySlug(slug),
+    getCachedProjectBySlug(slug),
+  ]);
 
-  const mdxContent = await getCaseStudyMdx(caseStudy.mdx_path);
-  return <CaseStudyPage caseStudy={caseStudy} mdxContent={mdxContent} />;
+  if (caseStudy) {
+    return <PageShell><CaseStudyPage caseStudy={caseStudy} /></PageShell>;
+  }
+
+  if (project) {
+    return <PageShell><ProjectPage project={project} /></PageShell>;
+  }
+
+  notFound();
 }

@@ -4,6 +4,16 @@ import path from "path";
 
 const nextConfig: NextConfig = {
   transpilePackages: ["@rashodkorala/posthog-next"],
+  // Server Action payload limit (default 1 MB). Next may read either top-level
+  // `serverActions` or `experimental.serverActions` depending on version — set both.
+  experimental: {
+    serverActions: {
+      bodySizeLimit: "100mb",
+    },
+  },
+  serverActions: {
+    bodySizeLimit: "100mb",
+  },
   // Set output file tracing root to the workspace root for monorepo support
   outputFileTracingRoot: path.join(__dirname, "../.."),
   pageExtensions: ["js", "jsx", "md", "mdx", "ts", "tsx"],

@@ -1,83 +1,71 @@
-export const CASE_STUDY_MDX_TEMPLATE = `# Overview
+export const CASE_STUDY_MDX_TEMPLATE = `## Overview
 
-Provide a brief introduction to the project or case study.
+[Write 2–3 sentences. What is this work? Who was involved? What was the scale or stakes?]
 
-> **Hybrid workflow:** Keep the full narrative in this document. For scannable outcomes (numbers, CTAs, link chips) that match your portfolio layout, also use **Structured highlights** in the form: Links, Key Results, and Metrics.
-
-## Context
-
-Background information and setting for the work.
+Example: "I led the redesign of the checkout flow for a Series A B2B SaaS serving 200+ enterprise clients. Working in a team of 4, we had 3 months to reduce cart abandonment on annual subscription upgrades."
 
 ---
 
-# Problem
+## Context & Background
 
-## Goals
+[What was the state of things before you started? What triggered this work? What constraints existed — time, team, legacy code, org politics?]
 
-What were you trying to achieve?
-
-- Goal 1
-- Goal 2
-- Goal 3
+Example: "The existing checkout had a 68% drop-off at the plan upgrade step. The codebase was 4 years old with no tests, and the design team had just been cut from 6 to 2 people."
 
 ---
 
-# Approach
+## The Problem
 
-## What Was Done
+[Be specific. What exactly was broken, missing, or painful? Who felt it and how often?]
 
-Describe your methodology and process.
+Example: "Enterprise buyers were abandoning at the payment step because they couldn't get purchase orders approved in the same session — the flow required immediate card payment with no PO path."
 
-### Key Activities
+### Goals
 
-1. Activity one
-2. Activity two
-3. Activity three
-
----
-
-# Challenges and Tradeoffs
-
-## Main Challenges
-
-- Challenge 1
-- Challenge 2
-
-## Key Tradeoffs
-
-- Tradeoff 1: What you chose and why
-- Tradeoff 2: What you sacrificed
+- [Goal 1 — measurable if possible] e.g., Reduce upgrade step drop-off below 20%
+- [Goal 2] e.g., Support PO-based payment for enterprise accounts
+- [Goal 3] e.g., Ship within Q1 without breaking existing billing integrations
 
 ---
 
-# Results
+## Approach
 
-Tell the outcome story in prose and bullets here. Repeat or mirror your **Key Results** / **Metrics** form fields only if you want the same points in the written narrative.
+[How did you break the problem down? What did you try first? What changed along the way? Show your thinking, not just what you did.]
 
-## Outcomes
+### What I Did
 
-- Result 1
-- Result 2
-- Result 3
+1. [Phase 1] e.g., Ran 6 user interviews with ops managers who abandoned checkout
+2. [Phase 2] e.g., Mapped the existing flow and identified 11 friction points
+3. [Phase 3] e.g., Prototyped 3 alternative flows and tested with 2 power users before committing
 
-## Key Takeaways
+### Key Decisions
 
-1. Lesson learned
-2. Important insight
-3. Future application
+[What were the meaningful choices you made? What did you explicitly NOT do, and why?]
+
+Example: "We chose to add a 'Request PO Invoice' escape hatch rather than building a full invoicing system — faster to ship and covered 80% of the use case within the quarter."
 
 ---
 
-# Next Steps
+## Challenges & Tradeoffs
 
-What happens next or what would you do differently?
+[What was genuinely hard? Not just technical — process, people, scope, competing priorities.]
 
-## Call to Action (Optional)
+- [Challenge 1] e.g., Engineering estimated 6 weeks for a PO flow; we negotiated down to a static PDF email path deliverable in 2
+- [Challenge 2] e.g., Stakeholders wanted a full redesign; we scoped it down to the 3 highest-drop steps to stay in sprint
 
-Invite readers to learn more, try the product, or connect with you.
+---
+
+## Results
+
+[What actually happened after you shipped? Be honest — include what didn't move the needle too.]
+
+Example: "Drop-off on the upgrade step fell from 68% to 22% within 30 days. The PO invoice path handled 34% of enterprise upgrades in month 1. Mobile conversion didn't improve — we hadn't addressed the pricing table on small screens."
+
+---
+
+## What I Learned
+
+[What would you do differently? What surprised you? What did this work sharpen in you?]
+
+Example: "I underestimated how much payment UX is shaped by the buyer's internal procurement process. Next time I'd involve a finance rep from the buyer's side in discovery interviews much earlier."
 `
-
-
-
-
-

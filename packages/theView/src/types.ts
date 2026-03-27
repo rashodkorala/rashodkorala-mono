@@ -25,6 +25,20 @@ export interface MarkdownParserConfig {
   a: string
   img: string
   imgBorder: string
+  /** Unordered list wrapper */
+  ul?: string
+  /** Ordered list wrapper */
+  ol?: string
+  /** List item */
+  li?: string
+  /** Blockquote */
+  blockquote?: string
+  /** Horizontal rule */
+  hr?: string
+  /** Table header cell */
+  th?: string
+  /** Table body cell */
+  td?: string
 }
 
 export interface ThemeConfig {

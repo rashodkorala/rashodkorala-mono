@@ -1,29 +1,29 @@
-export type ProjectCategory = 'startup' | 'client' | 'personal' | 'school';
-export type ProjectStatus = 'draft' | 'published' | 'archived';
+export type ProjectMediaType = 'image' | 'video';
 
+export interface ProjectMediaItem {
+  type: ProjectMediaType;
+  url: string;
+}
+
+// Matches new `projects` table (renamed from projects_archived)
 export interface Project {
-  id: string; // UUID
-  user_id: string; // UUID
-  slug: string; // URL-friendly slug (e.g., "getfit", "small-business-website")
+  id: string;
+  user_id: string;
+  slug: string;
   title: string;
-  subtitle?: string;
-  problem?: string;
-  solution?: string;
-  roles?: string[]; // Array of roles
-  features?: string[]; // Array of features
-  tech?: string[]; // Array of technologies
+  subtitle?: string | null;
+  logo?: string | null;
+  short_description?: string | null;
+  cover_image?: string | null;
+  project_media?: ProjectMediaItem[] | null;
+  role?: string | null;
+  timeline?: string | null;
+  tech_stack?: string[] | null;
   live_url?: string;
   github_url?: string;
-  case_study_url?: string;
-  cover_image_url?: string;
-  gallery_image_urls?: string[]; // Array of gallery image URLs
-  gallery_video_urls?: string[]; // Array of gallery video URLs
-  category?: ProjectCategory;
-  status: ProjectStatus;
-  featured: boolean;
-  sort_order: number;
   created_at: string;
   updated_at: string;
+  relatedCaseStudies?: CaseStudy[];
 }
 
 export type CaseStudyCategory = 'startup' | 'client' | 'personal' | 'school';
@@ -51,8 +51,15 @@ export interface CaseStudyMetric {
 export interface CaseStudy {
   id: string;
   user_id: string;
+  project_id?: string | null;
   title: string;
   slug: string;
+  content_md: string;
+  featured: boolean;
+  order: number;
+  tags: string[];
+  gallery: string[];
+  before_after?: { beforeImage?: string | null; afterImage?: string | null } | null;
   summary?: string | null;
   /** Legacy field; CMS uses `summary` */
   lede?: string | null;
@@ -81,7 +88,7 @@ export interface CaseStudy {
   seo_title?: string | null;
   seo_description?: string | null;
   views?: number | null;
-  updated_at: string;
   created_at: string;
+  updated_at: string;
+  relatedProjects?: Project[];
 }
-

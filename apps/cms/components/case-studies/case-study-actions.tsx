@@ -60,13 +60,13 @@ export function CaseStudyActions({ caseStudy }: CaseStudyActionsProps) {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuItem asChild>
-            <Link href={`/protected/case-studies/view/${caseStudy.slug}`}>
+            <Link href={`/protected/work/view/${caseStudy.slug}`}>
               <IconEye className="h-4 w-4 mr-2" />
               View
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
-            <Link href={`/protected/case-studies/${caseStudy.slug}`}>
+            <Link href={`/protected/work/${caseStudy.slug}`}>
               <IconEdit className="h-4 w-4 mr-2" />
               Edit
             </Link>

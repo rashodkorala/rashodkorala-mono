@@ -2,13 +2,11 @@
 
 import * as React from "react"
 import {
-  IconChartBar,
+  IconUser,
   IconDashboard,
   IconPhoto,
-  IconBook,
   IconSettings,
   IconBriefcase,
-  IconPencil,
 } from "@tabler/icons-react"
 
 import { NavMain } from "@/components/nav-main"
@@ -33,8 +31,8 @@ const data = {
       icon: IconDashboard,
     },
     {
-      title: "Case Studies",
-      url: "/protected/case-studies",
+      title: "Work",
+      url: "/protected/work",
       icon: IconBriefcase,
     },
     {
@@ -43,19 +41,9 @@ const data = {
       icon: IconPhoto,
     },
     {
-      title: "Stories",
-      url: "/protected/stories",
-      icon: IconBook,
-    },
-    {
-      title: "The View",
-      url: "/protected/blogs",
-      icon: IconPencil,
-    },
-    {
-      title: "Analytics",
-      url: "/protected/analytics",
-      icon: IconChartBar,
+      title: "About",
+      url: "/protected/about",
+      icon: IconUser,
     },
   ],
   navSecondary: [

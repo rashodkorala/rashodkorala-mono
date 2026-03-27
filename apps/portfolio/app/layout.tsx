@@ -2,8 +2,9 @@ import { Metadata } from 'next'
 import '@/styles/globals.css'
 
 import { PostHogProvider } from '@rashodkorala/posthog-next'
-import { Geist_Mono, Geist } from 'next/font/google';
-import Footer from '@/src/components/footer';
+import { Geist_Mono, Geist, Playfair_Display } from 'next/font/google';
+import SideNav from '@/src/components/side-nav';
+import TopBar from '@/src/components/top-bar';
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -19,6 +20,12 @@ const geistMono = Geist_Mono({
     display: "swap",
     adjustFontFallback: true,
     fallback: ['ui-monospace', 'monospace'],
+});
+
+const playfair = Playfair_Display({
+    variable: "--font-playfair",
+    subsets: ["latin"],
+    display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -73,11 +80,12 @@ export default function RootLayout({
     children: React.ReactNode
 }) {
     return (
-        <html lang="en" className="dark">
-            <body className={`${geistSans.variable} ${geistMono.variable} bg-black text-white`}>
+        <html lang="en" className="dark" suppressHydrationWarning>
+            <body className={`${geistSans.variable} ${geistMono.variable} ${playfair.variable} bg-cream dark:bg-background`}>
                 <PostHogProvider app="portfolio">
+                    <TopBar />
+                    <SideNav />
                     {children}
-                    <Footer />
                 </PostHogProvider>
             </body>
         </html>

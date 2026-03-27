@@ -1,24 +1,33 @@
 "use client";
 
 import Main from "@/components/Pages/Home";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 export default function HomePage() {
     const router = useRouter();
+    const [isCheckingIntro, setIsCheckingIntro] = useState(true);
+    const [shouldShowHome, setShouldShowHome] = useState(false);
 
     useEffect(() => {
-        // Check if animation has been shown in this session
-        if (typeof window !== 'undefined') {
-            const hasSeenAnimation = sessionStorage.getItem('hasSeenOpeningAnimation') === 'true';
-            
-            // Redirect to intro page if animation hasn't been shown
-            if (!hasSeenAnimation) {
-                router.push('/intro');
-            }
+        const hasSeenAnimation = sessionStorage.getItem('hasSeenOpeningAnimation') === 'true';
+
+        if (!hasSeenAnimation) {
+            router.replace('/intro');
+            return;
         }
+
+        setShouldShowHome(true);
+        setIsCheckingIntro(false);
     }, [router]);
 
-    // Show home page content
+    if (isCheckingIntro) {
+        return null;
+    }
+
+    if (!shouldShowHome) {
+        return null;
+    }
+
     return <Main />;
 }
