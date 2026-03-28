@@ -2,7 +2,7 @@ import { Metadata } from 'next'
 import '@/styles/globals.css'
 
 import { PostHogProvider } from '@rashodkorala/posthog-next'
-import { Geist_Mono, Geist, Playfair_Display, Cormorant_Garamond, DM_Sans } from 'next/font/google';
+import { Geist_Mono, Geist, Instrument_Serif, Plus_Jakarta_Sans } from 'next/font/google';
 import SideNav from '@/src/components/side-nav';
 
 const geistSans = Geist({
@@ -21,21 +21,17 @@ const geistMono = Geist_Mono({
     fallback: ['ui-monospace', 'monospace'],
 });
 
-const playfair = Playfair_Display({
-    variable: "--font-playfair",
-    subsets: ["latin"],
-    weight: ["400", "700", "900"],
-    display: "swap",
-});
-
-const cormorant = Cormorant_Garamond({
+// Display font — Instrument Serif (italic variant included for typographic accents)
+const instrumentSerif = Instrument_Serif({
     variable: "--font-cormorant",
     subsets: ["latin"],
-    weight: ["400", "600", "700"],
+    weight: "400",
+    style: ["normal", "italic"],
     display: "swap",
 });
 
-const dmSans = DM_Sans({
+// Body font — Plus Jakarta Sans
+const plusJakartaSans = Plus_Jakarta_Sans({
     variable: "--font-dm-sans",
     subsets: ["latin"],
     weight: ["300", "400", "500"],
@@ -95,7 +91,7 @@ export default function RootLayout({
 }) {
     return (
         <html lang="en" className="bg-page text-body" suppressHydrationWarning>
-            <body className={`${geistSans.variable} ${geistMono.variable} ${playfair.variable} ${cormorant.variable} ${dmSans.variable}`}>
+            <body className={`${geistSans.variable} ${geistMono.variable} ${instrumentSerif.variable} ${plusJakartaSans.variable}`}>
                 <PostHogProvider app="portfolio">
                     <SideNav />
                     {children}

@@ -12,7 +12,8 @@ module.exports = {
         sans: ["var(--font-geist-sans)", "ui-sans-serif", "system-ui", "sans-serif"],
         mono: ["var(--font-geist-mono)", "ui-monospace", "monospace"],
         serif: ["var(--font-playfair)", "Georgia", "serif"],
-        display: ["'Times New Roman'", "Times", "serif"],
+        display: ["var(--font-cormorant)", "Georgia", "serif"],  // Instrument Serif
+        body: ["var(--font-dm-sans)", "system-ui", "sans-serif"],  // Plus Jakarta Sans
         reading: ["'Helvetica Neue'", "Helvetica", "Arial", "sans-serif"],
       },
       fontSize: {

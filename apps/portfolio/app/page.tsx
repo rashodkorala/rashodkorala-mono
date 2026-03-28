@@ -13,5 +13,5 @@ export const metadata: Metadata = {
 };
 
 export default function Index() {
-  return <HomeHero />;
+  return <HomeHero imageSrc="/about.jpg" />;
 }
