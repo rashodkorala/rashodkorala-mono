@@ -55,10 +55,10 @@ export interface CaseStudy {
   title: string;
   slug: string;
   content_md: string;
-  featured: boolean;
+  featured?: boolean | null;
   order: number;
-  tags: string[];
-  gallery: string[];
+  tags?: string[] | null;
+  gallery?: string[] | null;
   before_after?: { beforeImage?: string | null; afterImage?: string | null } | null;
   summary?: string | null;
   /** Legacy field; CMS uses `summary` */
@@ -72,9 +72,7 @@ export interface CaseStudy {
   category?: CaseStudyCategory | null;
   sort_order?: number | null;
   status: CaseStudyStatus;
-  featured?: boolean | null;
   published_at?: string | null;
-  tags?: string[] | null;
   skills?: string[] | null;
   stack?: string[] | null;
   cover_url?: string | null;

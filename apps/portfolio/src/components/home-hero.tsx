@@ -1,5 +1,6 @@
 'use client'
 import Image from "next/image";
+import Link from "next/link";
 import { motion } from "framer-motion";
 
 const ease: [number, number, number, number] = [0.16, 1, 0.3, 1];
@@ -70,9 +71,9 @@ export default function HomeHero({ imageSrc }: HomeHeroProps = {}) {
         }}>
           <div style={{ display: "flex", alignItems: "center", gap: "clamp(20px, 3vw, 44px)" }}>
             <ul className="hero-nav-links">
-              <li><a href="/work" style={{ fontSize: "clamp(12px, 1vw, 16px)", color: "#1a1a1a", textDecoration: "none", fontFamily: "var(--font-dm-sans), system-ui, sans-serif", letterSpacing: "0.02em" }}>Work</a></li>
-              <li><a href="/about" style={{ fontSize: "clamp(12px, 1vw, 16px)", color: "#1a1a1a", textDecoration: "none", fontFamily: "var(--font-dm-sans), system-ui, sans-serif", letterSpacing: "0.02em" }}>About</a></li>
-              <li><a href="/contact" style={{ fontSize: "clamp(12px, 1vw, 16px)", color: "#1a1a1a", textDecoration: "none", fontFamily: "var(--font-dm-sans), system-ui, sans-serif", letterSpacing: "0.02em" }}>Contact</a></li>
+              <li><Link href="/work" style={{ fontSize: "clamp(12px, 1vw, 16px)", color: "#1a1a1a", textDecoration: "none", fontFamily: "var(--font-dm-sans), system-ui, sans-serif", letterSpacing: "0.02em" }}>Work</Link></li>
+              <li><Link href="/about" style={{ fontSize: "clamp(12px, 1vw, 16px)", color: "#1a1a1a", textDecoration: "none", fontFamily: "var(--font-dm-sans), system-ui, sans-serif", letterSpacing: "0.02em" }}>About</Link></li>
+              <li><Link href="/contact" style={{ fontSize: "clamp(12px, 1vw, 16px)", color: "#1a1a1a", textDecoration: "none", fontFamily: "var(--font-dm-sans), system-ui, sans-serif", letterSpacing: "0.02em" }}>Contact</Link></li>
             </ul>
           </div>
         </nav>

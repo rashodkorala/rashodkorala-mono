@@ -44,6 +44,8 @@ const mdConfig: MarkdownParserConfig = {
   code: "cs-code",
   pre: "cs-pre",
   hr: "cs-hr",
+  img: "cs-img",
+  imgBorder: "cs-img-border",
 };
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
