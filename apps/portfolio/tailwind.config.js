@@ -21,6 +21,7 @@ module.exports = {
         prose: "var(--text-body-size)",
       },
       spacing: {
+        // ── Structural layout tokens (consume CSS vars, unchanged names) ──────
         sidenav: "var(--sidenav-w)",
         header: "var(--header-h)",
         "header-lg": "var(--header-h-lg)",
@@ -31,6 +32,19 @@ module.exports = {
         "page-px-xl": "var(--page-px-xl)",
         "content-py": "var(--content-py)",
         "content-py-md": "var(--content-py-md)",
+        // ── Fibonacci scale tokens — use as `p-fib-21`, `gap-fib-34`, etc. ───
+        // Sequence: 8 → 13 → 21 → 34 → 55 → 89 → 144 (each step × φ ≈ 1.618)
+        "fib-8":   "var(--fib-8)",    //  8px — hairline
+        "fib-13":  "var(--fib-13)",   // 13px — tight
+        "fib-21":  "var(--fib-21)",   // 21px — base
+        "fib-34":  "var(--fib-34)",   // 34px — comfortable
+        "fib-55":  "var(--fib-55)",   // 55px — section
+        "fib-89":  "var(--fib-89)",   // 89px — generous
+        "fib-144": "var(--fib-144)",  // 144px — structural
+      },
+      maxWidth: {
+        // Content cap for ultrawide screens — 89rem = 1424px (fib-89 × 16)
+        content: "var(--content-max-w)",
       },
       colors: {
         cream: "#e9e6e0",

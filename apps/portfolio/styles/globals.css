@@ -57,17 +57,43 @@
     --text-body-size: clamp(0.8125rem, 0.72rem + 0.4vw, 0.9375rem);
     --text-nav-size: clamp(0.8125rem, 0.7rem + 0.45vw, 1rem);
 
-    /* ─── Layout ─── */
-    --sidenav-w: 12rem;
-    --header-h: 4rem;
-    --header-h-lg: 5rem;
-    --page-px: 1.5rem;
-    --page-px-sm: 2rem;
-    --page-px-md: 3rem;
-    --page-px-lg: 4rem;
-    --page-px-xl: 5rem;
-    --content-py: 3.5rem;
-    --content-py-md: 5rem;
+    /* ─── Fibonacci spacing scale (px → rem, base 16px) ───────────────────────
+     *  Fib sequence:  8   13   21   34   55   89   144
+     *  Step names:   xs  sm   md   lg   xl   2xl  3xl
+     *  Each step ÷ previous ≈ φ (1.618), so any two adjacent steps are in
+     *  golden-ratio proportion. Use these tokens for ALL spacing decisions.
+     * ───────────────────────────────────────────────────────────────────────── */
+    --fib-8:   0.5rem;      /*   8px — hairline: icon padding, thin borders  */
+    --fib-13:  0.8125rem;   /*  13px — tight: label gaps, inline padding     */
+    --fib-21:  1.3125rem;   /*  21px — base unit: nav padding, small gaps    */
+    --fib-34:  2.125rem;    /*  34px — comfortable: card padding, row gaps   */
+    --fib-55:  3.4375rem;   /*  55px — section: page padding, content gaps   */
+    --fib-89:  5.5625rem;   /*  89px — generous: xl padding, large spacing   */
+    --fib-144: 9rem;        /* 144px — structural: max-offset, hero zones    */
+
+    /* ─── Layout — every value mapped to nearest Fibonacci step ────────────────
+     *  Old → New (nearest fib)  Δ
+     *  1.5rem  (24px) → 1.3125rem (21px)  −3px  page-px
+     *  2rem    (32px) → 2.125rem  (34px)  +2px  page-px-sm
+     *  3rem    (48px) → 3.4375rem (55px)  +7px  page-px-md
+     *  4rem    (64px) → 3.4375rem (55px) −9px  page-px-lg (sidenav provides extra offset)
+     *  5rem    (80px) → 5.5625rem (89px)  +9px  page-px-xl
+     *  3.5rem  (56px) → 3.4375rem (55px)  −1px  content-py
+     *  5rem    (80px) → 5.5625rem (89px)  +9px  content-py-md
+     * ───────────────────────────────────────────────────────────────────────── */
+    --sidenav-w: 12rem;                   /* structural — kept as-is */
+    --header-h: 4rem;                     /* structural — must match top-bar h-16 */
+    --header-h-lg: 5rem;                  /* structural — must match top-bar lg:h-20 */
+    --page-px:    var(--fib-21);          /* was 1.5rem (24px → 21px) */
+    --page-px-sm: var(--fib-34);          /* was 2rem   (32px → 34px) */
+    --page-px-md: var(--fib-55);          /* was 3rem   (48px → 55px) */
+    --page-px-lg: var(--fib-55);          /* was 4rem   (64px → 55px); sidenav offset carries the rest */
+    --page-px-xl: var(--fib-89);          /* was 5rem   (80px → 89px) */
+    --content-py:    var(--fib-55);       /* was 3.5rem (56px → 55px) */
+    --content-py-md: var(--fib-89);       /* was 5rem   (80px → 89px) */
+    /* NEW — max content width prevents over-stretch on 4K/ultrawide.
+     * 89rem = 1424px ≈ fits 1440p exactly; uses the fib-89 step multiplied by 16 */
+    --content-max-w: 89rem;
     --radius: 0.5rem;
   }
 

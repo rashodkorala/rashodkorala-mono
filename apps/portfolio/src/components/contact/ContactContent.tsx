@@ -17,7 +17,7 @@ interface FormState {
 
 const contactDetails = [
   { label: "Email",    value: "hello@rashodkorala.com", href: "mailto:hello@rashodkorala.com" },
-  { label: "Based in", value: "St. John's, NL",          href: null },
+  { label: "Based in", value: "Canada",                   href: null },
   { label: "GitHub",   value: "rashodkorala",             href: "https://github.com/rashodkorala" },
   { label: "LinkedIn", value: "rashodk",                  href: "https://linkedin.com/in/rashodk" },
   { label: "Response", value: "Within 48 hours",          href: null },

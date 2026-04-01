@@ -12,20 +12,20 @@ const sans  = "var(--font-dm-sans), system-ui, sans-serif";
 
 /**
  * Cycling 12-column grid pattern — 6 slots per cycle:
- *   0 → span-7  wide (4/3)
- *   1 → span-5  tall (3/4)
- *   2 → span-4  square
- *   3 → span-8  wide (4/3)
- *   4 → span-6  square
- *   5 → span-6  square
+ *   0 → span-7  wide (16/9)
+ *   1 → span-5  wide (4/3)
+ *   2 → span-4  wide (4/3)
+ *   3 → span-8  wide (16/9)
+ *   4 → span-6  wide (3/2)
+ *   5 → span-6  wide (3/2)
  */
 const GRID_PATTERN = [
-  { span: 7, aspect: "4 / 3"  },
-  { span: 5, aspect: "3 / 4"  },
-  { span: 4, aspect: "1 / 1"  },
-  { span: 8, aspect: "4 / 3"  },
-  { span: 6, aspect: "1 / 1"  },
-  { span: 6, aspect: "1 / 1"  },
+  { span: 7, aspect: "16 / 9" },
+  { span: 5, aspect: "4 / 3"  },
+  { span: 4, aspect: "4 / 3"  },
+  { span: 8, aspect: "16 / 9" },
+  { span: 6, aspect: "3 / 2"  },
+  { span: 6, aspect: "3 / 2"  },
 ] as const;
 
 interface WorkPageContentProps {
@@ -103,7 +103,7 @@ function ProjectCard({
     >
       <Link href={`/work/projects/${project.slug}`} style={{ textDecoration: "none", display: "block" }}>
         {/* Image */}
-        <div className="group" style={{
+        <div className="group rounded-xl" style={{
           width: "100%",
           aspectRatio: slot.aspect,
           overflow: "hidden",
@@ -116,7 +116,7 @@ function ProjectCard({
               src={coverSrc}
               alt={project.title}
               fill
-              className="object-cover transition-transform duration-700 group-hover:scale-[1.04]"
+              className="object-fit transition-transform duration-700 group-hover:scale-[1.04] "
               sizes="(max-width: 720px) 100vw, (max-width: 1080px) 50vw, 40vw"
             />
           ) : (
@@ -138,7 +138,7 @@ function ProjectCard({
             letterSpacing: "0.06em",
             zIndex: 1,
           }}>
-            {num}
+            
           </span>
         </div>
 
@@ -292,7 +292,8 @@ export default function WorkPageContent({ projects }: WorkPageContentProps) {
           <div style={{
             display: "grid",
             gridTemplateColumns: "repeat(12, 1fr)",
-            gap: "clamp(8px, 1.2vw, 20px)",
+            /* gap: max bound 20px → 21px (fib). min 8px already Fibonacci. */
+            gap: "clamp(8px, 1.2vw, 21px)",
           }}>
             {projects.map((project, i) => (
               <ProjectCard key={project.id} project={project} index={i} />

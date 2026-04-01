@@ -72,7 +72,7 @@ export default function CaseStudiesList({ items }: CaseStudiesListProps) {
               </div>
               {itemView.cover_url && (
                 <div className="relative w-full h-24 rounded-lg overflow-hidden border border-line-subtle">
-                  <Image src={itemView.cover_url} alt={item.title} fill className="object-cover opacity-75 group-hover:opacity-100 transition-opacity dark:brightness-[0.9]" sizes="160px" />
+                  <Image src={itemView.cover_url} alt={item.title} fill className="object-fit opacity-75 group-hover:opacity-100 transition-opacity dark:brightness-[0.9]" sizes="160px" />
                 </div>
               )}
             </motion.div>

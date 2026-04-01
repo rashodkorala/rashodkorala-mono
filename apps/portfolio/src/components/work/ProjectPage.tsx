@@ -280,9 +280,11 @@ export default function ProjectPage({ project }: { project: Project }) {
         </div>
 
         {/* Body grid: content | sidebar */}
+        {/* Body grid — golden ratio: 55fr main / 34fr sidebar (φ = 55/34 ≈ 1.618).
+            Gap clamp bounds changed to Fibonacci: 32→34px min, 72→55px max. */}
         <div
           className="pd-body-grid"
-          style={{ display: "grid", gridTemplateColumns: "1fr 280px", gap: "clamp(32px, 5vw, 72px)", alignItems: "start" }}
+          style={{ display: "grid", gridTemplateColumns: "55fr 34fr", gap: "clamp(34px, 5vw, 55px)", alignItems: "start" }}
         >
           {/* ── Left ── */}
           <div>
@@ -296,9 +298,10 @@ export default function ProjectPage({ project }: { project: Project }) {
             {media.length > 0 && (
               <div id="pd-photos" style={{ marginBottom: "clamp(32px, 4vw, 56px)" }}>
                 <p style={sectionLabel}>Project photos</p>
+                {/* gap: 16px→13px (fib); margin-bottom: 16px→13px, 24px→21px (fib) */}
                 <div
                   className="pd-photos-grid"
-                  style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "clamp(8px, 1.2vw, 16px)", marginBottom: hiddenCount > 0 && !galleryExpanded ? "clamp(16px, 1.5vw, 24px)" : 0 }}
+                  style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "clamp(8px, 1.2vw, 13px)", marginBottom: hiddenCount > 0 && !galleryExpanded ? "clamp(13px, 1.5vw, 21px)" : 0 }}
                 >
                   {visibleMedia.map((m, i) => (
                     <GalleryImage

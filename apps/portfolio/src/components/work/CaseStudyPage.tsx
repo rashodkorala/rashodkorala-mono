@@ -295,9 +295,11 @@ export default function CaseStudyPage({ caseStudy }: { caseStudy: CaseStudy }) {
         </div>
 
         {/* Body: prose | sidebar */}
+        {/* Body grid — golden ratio: minmax(0,55fr) prose / 34fr sidebar.
+            φ = 55/34 ≈ 1.618. Gap clamp bounds → Fibonacci: 32→34px, 72→55px. */}
         <div
           className="cs-body-grid"
-          style={{ display: "grid", gridTemplateColumns: "minmax(0,1fr) 280px", gap: "clamp(32px,5vw,72px)", alignItems: "start" }}
+          style={{ display: "grid", gridTemplateColumns: "minmax(0,55fr) 34fr", gap: "clamp(34px,5vw,55px)", alignItems: "start" }}
         >
           {/* ── Left ── */}
           <article>
