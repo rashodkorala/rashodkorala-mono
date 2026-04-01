@@ -94,7 +94,7 @@ export default function HomeHero({ imageSrc }: HomeHeroProps = {}) {
                   variants={reveal}
                   custom={0.55}
                 >
-                  I'm a software engineer and entrepreneur based in Canada, building practical products and helping businesses grow through technology.
+                  I am a software engineer and entrepreneur based in Canada, building practical products and helping businesses grow through technology.
                 </motion.p>
 
                 <motion.p
