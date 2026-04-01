@@ -50,11 +50,6 @@ export default function CaseStudiesList({ items }: CaseStudiesListProps) {
             >
               <div>
                 <div className="flex items-center gap-2 mb-2 flex-wrap">
-                  {itemView.category && (
-                    <span className="text-[10px] px-2 py-0.5 rounded-full border border-line text-caption uppercase tracking-[0.08em]">
-                      {itemView.category}
-                    </span>
-                  )}
                   {item.tags?.slice(0, 2).map((tag) => (
                     <span
                       key={tag}
