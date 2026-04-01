@@ -16,6 +16,13 @@ export interface CaseStudyDB {
   order: number
   tags: string[]
   gallery: string[]
+  status: 'draft' | 'published' | 'archived'
+  summary: string | null
+  cover_path: string | null
+  role: string | null
+  timeline: string | null
+  links: { label: string; url: string; type?: string }[]
+  stack: string[]
   created_at: string
   updated_at: string
 }
@@ -33,6 +40,13 @@ export interface CaseStudy {
   order: number
   tags: string[]
   gallery: string[]
+  status: 'draft' | 'published' | 'archived'
+  summary: string | null
+  coverPath: string | null
+  role: string | null
+  timeline: string | null
+  links: { label: string; url: string; type?: string }[]
+  stack: string[]
   createdAt: string
   updatedAt: string
 }
@@ -51,4 +65,12 @@ export interface CaseStudyFormData {
   beforeImageFile?: File | null
   afterImageFile?: File | null
   order: number
+  status: 'draft' | 'published' | 'archived'
+  summary: string
+  role: string
+  timeline: string
+  links: { label: string; url: string; type?: string }[]
+  stack: string[]
+  coverImageFile?: File | null
+  clearCoverImage?: boolean
 }

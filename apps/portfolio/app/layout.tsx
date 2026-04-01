@@ -2,7 +2,7 @@ import { Metadata } from 'next'
 import '@/styles/globals.css'
 
 import { PostHogProvider } from '@rashodkorala/posthog-next'
-import { Geist_Mono, Geist, Instrument_Serif, Plus_Jakarta_Sans } from 'next/font/google';
+import { Cormorant_Garamond, Geist_Mono, Geist, Plus_Jakarta_Sans } from 'next/font/google';
 import SideNav from '@/src/components/side-nav';
 
 const geistSans = Geist({
@@ -21,11 +21,11 @@ const geistMono = Geist_Mono({
     fallback: ['ui-monospace', 'monospace'],
 });
 
-// Display font — Instrument Serif (italic variant included for typographic accents)
-const instrumentSerif = Instrument_Serif({
+// Display / serif — Cormorant Garamond (weights match bold headings across Work, CV, etc.)
+const cormorantGaramond = Cormorant_Garamond({
     variable: "--font-cormorant",
     subsets: ["latin"],
-    weight: "400",
+    weight: ["300", "400", "500", "600", "700"],
     style: ["normal", "italic"],
     display: "swap",
 });
@@ -91,7 +91,7 @@ export default function RootLayout({
 }) {
     return (
         <html lang="en" className="bg-page text-body" suppressHydrationWarning>
-            <body className={`${geistSans.variable} ${geistMono.variable} ${instrumentSerif.variable} ${plusJakartaSans.variable}`}>
+            <body className={`${geistSans.variable} ${geistMono.variable} ${cormorantGaramond.variable} ${plusJakartaSans.variable}`}>
                 <PostHogProvider app="portfolio">
                     <SideNav />
                     {children}

@@ -153,10 +153,11 @@ function RelatedProjectCard({ project }: { project: Project }) {
 
 export default function CaseStudyPage({ caseStudy }: { caseStudy: CaseStudy }) {
   const tags          = asStrings(caseStudy.tags);
-  const stack         = asStrings(caseStudy.stack ?? caseStudy.skills);
+  const stack         = asStrings(caseStudy.stack);
   const gallery       = asStrings(caseStudy.gallery).map(mediaUrl);
-  const coverSrc      = caseStudy.cover_url ?? gallery[0] ?? null;
+  const coverSrc      = caseStudy.cover_path ? mediaUrl(caseStudy.cover_path) : gallery[0] ?? null;
   const screenshots   = gallery.slice(0, 4);
+  const ba            = caseStudy.before_after ?? null;
   const relatedProjects = caseStudy.relatedProjects ?? [];
 
   // Links from the links[] array
@@ -164,13 +165,9 @@ export default function CaseStudyPage({ caseStudy }: { caseStudy: CaseStudy }) {
   const liveLink = links.find(l => l.type === "live" || l.label?.toLowerCase().includes("live") || l.label?.toLowerCase().includes("site"));
   const ghLink   = links.find(l => l.type === "github" || l.label?.toLowerCase().includes("github") || l.label?.toLowerCase().includes("git"));
 
-  // Outcome cards — prefer metrics (value+label), fallback to results (text)
-  const metrics = (caseStudy.metrics ?? []).filter(m => m.value);
-  const results = (caseStudy.results ?? []).filter(r => r.text || r.title);
-
-  // Stats bar items
-  const subtitle = caseStudy.summary ?? caseStudy.lede ?? null;
-  const client   = caseStudy.subject_name ?? null;
+  // Stats bar
+  const subtitle = caseStudy.summary ?? null;
+  const statusLabel = caseStudy.status ? (caseStudy.status.charAt(0).toUpperCase() + caseStudy.status.slice(1)) : null;
 
   // Two-line title: first word large, rest indented
   const titleWords = caseStudy.title.split(" ");
@@ -185,7 +182,7 @@ export default function CaseStudyPage({ caseStudy }: { caseStudy: CaseStudy }) {
   // In-page nav sections — markdown H2s first, then fixed sections
   const sections: { id: string; label: string }[] = [
     ...mdHeadings,
-    ...(metrics.length > 0 || results.length > 0 ? [{ id: "cs-outcomes", label: "Outcomes" }] : []),
+    ...((ba?.beforeImage || ba?.afterImage) ? [{ id: "cs-before-after", label: "Before / After" }] : []),
     ...(screenshots.length > 0 ? [{ id: "cs-gallery", label: "Gallery" }] : []),
     ...(stack.length > 0 ? [{ id: "cs-stack", label: "Technology" }] : []),
     ...(relatedProjects.length > 0 ? [{ id: "cs-related", label: "Related" }] : []),
@@ -234,7 +231,7 @@ export default function CaseStudyPage({ caseStudy }: { caseStudy: CaseStudy }) {
         .cs-nav-dash { width:14px; height:1px; background:currentColor; flex-shrink:0; display:inline-block; }
 
         /* Scroll offset — leaves breathing room so the heading doesn't slam the top */
-        [id^="cs-md-"], #cs-outcomes, #cs-gallery, #cs-stack, #cs-related {
+        [id^="cs-md-"], #cs-before-after, #cs-gallery, #cs-stack, #cs-related {
           scroll-margin-top: 72px;
         }
 
@@ -304,19 +301,20 @@ export default function CaseStudyPage({ caseStudy }: { caseStudy: CaseStudy }) {
         )}
 
         {/* Stats bar */}
-        <div className="cs-stats-grid" style={{ marginBottom: "clamp(32px,4vw,56px)" }}>
-          {[
-            { label: "Client",   value: client ?? "—" },
-            { label: "Role",     value: caseStudy.role ?? "—" },
-            { label: "Timeline", value: caseStudy.timeline ?? "—" },
-            { label: "Status",   value: caseStudy.status ? (caseStudy.status.charAt(0).toUpperCase() + caseStudy.status.slice(1)) : "—" },
-          ].map((item, i) => (
-            <div key={item.label} style={{ padding: "clamp(16px,2vw,28px) clamp(12px,1.5vw,20px)", borderRight: i < 3 ? "1px solid rgba(26,26,26,0.1)" : "none" }}>
-              <p style={{ ...sectionLabel, marginBottom: 6 }}>{item.label}</p>
-              <p style={{ fontFamily: serif, fontSize: "clamp(15px,1.4vw,22px)", color: "#1a1a1a", fontWeight: 600, letterSpacing: "-0.01em", lineHeight: 1.2 }}>{item.value}</p>
-            </div>
-          ))}
-        </div>
+        {[caseStudy.role, caseStudy.timeline, statusLabel].some(Boolean) && (
+          <div className="cs-stats-grid" style={{ marginBottom: "clamp(32px,4vw,56px)" }}>
+            {[
+              { label: "Role",     value: caseStudy.role },
+              { label: "Timeline", value: caseStudy.timeline },
+              { label: "Status",   value: statusLabel },
+            ].filter(item => item.value).map((item, i, arr) => (
+              <div key={item.label} style={{ padding: "clamp(16px,2vw,28px) clamp(12px,1.5vw,20px)", borderRight: i < arr.length - 1 ? "1px solid rgba(26,26,26,0.1)" : "none" }}>
+                <p style={{ ...sectionLabel, marginBottom: 6 }}>{item.label}</p>
+                <p style={{ fontFamily: serif, fontSize: "clamp(15px,1.4vw,22px)", color: "#1a1a1a", fontWeight: 600, letterSpacing: "-0.01em", lineHeight: 1.2 }}>{item.value}</p>
+              </div>
+            ))}
+          </div>
+        )}
 
         {/* Body: prose | sidebar */}
         {/* Body grid — golden ratio: minmax(0,55fr) prose / 34fr sidebar.
@@ -332,41 +330,29 @@ export default function CaseStudyPage({ caseStudy }: { caseStudy: CaseStudy }) {
               <div dangerouslySetInnerHTML={{ __html: mdHtml }} />
             )}
 
-            {/* Outcome cards */}
-            {metrics.length > 0 && (
-              <div id="cs-outcomes" style={{ margin: "clamp(28px,3.5vw,52px) 0" }}>
-                <p style={{ ...sectionLabel, marginBottom: "clamp(12px,1.2vw,16px)" }}>Outcomes</p>
-                <div
-                  className="cs-outcomes-grid"
-                  style={{ display: "grid", gridTemplateColumns: `repeat(${Math.min(metrics.length, 3)},1fr)`, gap: "clamp(10px,1.2vw,16px)" }}
-                >
-                  {metrics.map((m, i) => (
-                    <div key={i} style={{ background: "#1a1a1a", padding: "clamp(16px,2vw,24px)" }}>
-                      <p style={{ fontFamily: serif, fontSize: "clamp(28px,3.5vw,52px)", color: "#f0ede8", fontWeight: 700, lineHeight: 1, marginBottom: 6, letterSpacing: "-0.03em" }}>
-                        {m.value}
-                      </p>
-                      <p style={{ fontSize: "clamp(11px,0.85vw,13px)", color: "#a0a09a", fontFamily: sans, lineHeight: 1.4 }}>
-                        {m.label}
-                      </p>
+            {/* Before / After */}
+            {(ba?.beforeImage || ba?.afterImage) && (
+              <section id="cs-before-after" style={{ margin: "clamp(24px,3vw,44px) 0" }}>
+                <p style={{ ...sectionLabel, marginBottom: "clamp(12px,1.2vw,16px)" }}>Before / After</p>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "clamp(8px,1vw,16px)" }}>
+                  {ba.beforeImage && (
+                    <div>
+                      <p style={{ fontSize: "clamp(10px,0.75vw,11px)", color: "#8a8a7a", fontFamily: sans, marginBottom: 6, letterSpacing: "0.06em", textTransform: "uppercase" }}>Before</p>
+                      <div style={{ position: "relative", aspectRatio: "4/3", overflow: "hidden" }}>
+                        <Image src={mediaUrl(ba.beforeImage)} alt="Before" fill className="object-cover" sizes="(max-width:900px) 50vw, 27vw" />
+                      </div>
                     </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Results (fallback if no metrics) */}
-            {metrics.length === 0 && results.length > 0 && (
-              <div id="cs-outcomes" style={{ margin: "clamp(28px,3.5vw,52px) 0" }}>
-                <p style={{ ...sectionLabel, marginBottom: "clamp(12px,1.2vw,16px)" }}>Results</p>
-                <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-                  {results.map((r, i) => (
-                    <div key={i} style={{ borderLeft: "3px solid #1a1a1a", paddingLeft: "clamp(14px,1.5vw,20px)" }}>
-                      {r.title && <p style={{ fontFamily: serif, fontSize: "clamp(15px,1.3vw,20px)", color: "#1a1a1a", fontWeight: 600, margin: "0 0 4px" }}>{r.title}</p>}
-                      {r.text && <p style={{ fontSize: "clamp(13px,1vw,16px)", color: "#3a3a3a", fontFamily: sans, lineHeight: 1.75, margin: 0 }}>{r.text}</p>}
+                  )}
+                  {ba.afterImage && (
+                    <div>
+                      <p style={{ fontSize: "clamp(10px,0.75vw,11px)", color: "#8a8a7a", fontFamily: sans, marginBottom: 6, letterSpacing: "0.06em", textTransform: "uppercase" }}>After</p>
+                      <div style={{ position: "relative", aspectRatio: "4/3", overflow: "hidden" }}>
+                        <Image src={mediaUrl(ba.afterImage)} alt="After" fill className="object-cover" sizes="(max-width:900px) 50vw, 27vw" />
+                      </div>
                     </div>
-                  ))}
+                  )}
                 </div>
-              </div>
+              </section>
             )}
 
             {/* Screenshot gallery */}
@@ -399,13 +385,6 @@ export default function CaseStudyPage({ caseStudy }: { caseStudy: CaseStudy }) {
 
           {/* ── Sidebar ── */}
           <aside className="cs-sidebar" style={{ position: "sticky", top: 32, display: "flex", flexDirection: "column", gap: "clamp(20px,2.2vw,30px)" }}>
-
-            {client && (
-              <>
-                <div><SidebarLabel>Client</SidebarLabel><SidebarValue>{client}</SidebarValue></div>
-                <SidebarDivider />
-              </>
-            )}
 
             {caseStudy.role && (
               <>
