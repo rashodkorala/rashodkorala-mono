@@ -91,9 +91,7 @@
     --page-px-xl: var(--fib-89);          /* was 5rem   (80px → 89px) */
     --content-py:    var(--fib-55);       /* was 3.5rem (56px → 55px) */
     --content-py-md: var(--fib-89);       /* was 5rem   (80px → 89px) */
-    /* NEW — max content width prevents over-stretch on 4K/ultrawide.
-     * 89rem = 1424px ≈ fits 1440p exactly; uses the fib-89 step multiplied by 16 */
-    --content-max-w: 89rem;
+    --content-max-w: 120rem;
     --radius: 0.5rem;
   }
 

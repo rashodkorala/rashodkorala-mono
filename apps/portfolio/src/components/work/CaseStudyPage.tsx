@@ -29,6 +29,27 @@ function sanitizeMd(md: string): string {
     .trim();
 }
 
+function slugify(text: string): string {
+  return "cs-md-" + text.toLowerCase().replace(/[^a-z0-9\s]/g, "").trim().replace(/\s+/g, "-");
+}
+
+/** Extract H2 headings from raw markdown for the "On this page" nav. */
+function extractMdHeadings(md: string): { id: string; label: string }[] {
+  return md.split("\n")
+    .filter(line => /^##\s/.test(line))
+    .map(line => ({ label: line.replace(/^##\s+/, "").trim(), id: "" }))
+    .map(h => ({ ...h, id: slugify(h.label) }));
+}
+
+/** Inject id attributes into rendered h1/h2/h3 tags based on their text content. */
+function injectHeadingIds(html: string): string {
+  return html.replace(/<(h[1-3])([^>]*)>([\s\S]*?)<\/\1>/gi, (_, tag, attrs, content) => {
+    const text = content.replace(/<[^>]+>/g, "").trim();
+    const id = slugify(text);
+    return `<${tag}${attrs} id="${id}">${content}</${tag}>`;
+  });
+}
+
 // Markdown class config — styled via .cs-prose-* in <style> block
 const mdConfig: MarkdownParserConfig = {
   h1: "cs-h1",
@@ -103,7 +124,7 @@ function RelatedProjectCard({ project }: { project: Project }) {
   const fill  = fills[project.title.charCodeAt(0) % fills.length];
   return (
     <Link href={`/work/projects/${project.slug}`} style={{ textDecoration: "none", display: "block" }}>
-      <div style={{ width: "100%", aspectRatio: "4/3", background: fill, overflow: "hidden", position: "relative" }}>
+      <div style={{ width: "100%", aspectRatio: "16/9", background: fill, overflow: "hidden", position: "relative" }}>
         {cover ? (
           <Image src={cover} alt={project.title} fill className="object-cover" sizes="(max-width:900px) 50vw, 25vw" />
         ) : (
@@ -114,12 +135,12 @@ function RelatedProjectCard({ project }: { project: Project }) {
           </div>
         )}
       </div>
-      <div style={{ paddingTop: "clamp(8px,0.8vw,12px)" }}>
-        <p style={{ fontFamily: serif, fontSize: "clamp(14px,1.2vw,18px)", color: "#1a1a1a", fontWeight: 600, margin: "0 0 3px", letterSpacing: "-0.01em" }}>
+      <div style={{ paddingTop: "clamp(6px,0.6vw,10px)" }}>
+        <p style={{ fontFamily: serif, fontSize: "clamp(13px,1vw,16px)", color: "#1a1a1a", fontWeight: 600, margin: "0 0 2px", letterSpacing: "-0.01em" }}>
           {project.title}
         </p>
         {project.subtitle && (
-          <p style={{ fontSize: "clamp(10px,0.8vw,12px)", color: "#8a8a7a", fontFamily: sans, margin: 0 }}>
+          <p style={{ fontSize: "clamp(10px,0.75vw,11px)", color: "#8a8a7a", fontFamily: sans, margin: 0 }}>
             {project.subtitle}
           </p>
         )}
@@ -150,7 +171,6 @@ export default function CaseStudyPage({ caseStudy }: { caseStudy: CaseStudy }) {
   // Stats bar items
   const subtitle = caseStudy.summary ?? caseStudy.lede ?? null;
   const client   = caseStudy.subject_name ?? null;
-  const initials = (client ?? caseStudy.title).slice(0, 2).toUpperCase();
 
   // Two-line title: first word large, rest indented
   const titleWords = caseStudy.title.split(" ");
@@ -158,15 +178,18 @@ export default function CaseStudyPage({ caseStudy }: { caseStudy: CaseStudy }) {
   const titleLine2 = titleWords.length > 1 ? titleWords.slice(1).join(" ") : null;
 
   // Markdown
-  const mdHtml = caseStudy.content_md ? renderMarkdown(sanitizeMd(caseStudy.content_md), mdConfig) : "";
+  const sanitized = caseStudy.content_md ? sanitizeMd(caseStudy.content_md) : "";
+  const mdHtml = sanitized ? injectHeadingIds(renderMarkdown(sanitized, mdConfig)) : "";
+  const mdHeadings = sanitized ? extractMdHeadings(sanitized) : [];
 
-  // In-page nav sections
-  const sections: { id: string; label: string }[] = [];
-  if (mdHtml)              sections.push({ id: "cs-overview",  label: "Overview"    });
-  if (metrics.length > 0 || results.length > 0) sections.push({ id: "cs-outcomes", label: "Outcomes" });
-  if (screenshots.length > 0) sections.push({ id: "cs-gallery",  label: "Gallery"  });
-  if (stack.length > 0)    sections.push({ id: "cs-stack",     label: "Technology" });
-  if (relatedProjects.length > 0) sections.push({ id: "cs-related", label: "Related" });
+  // In-page nav sections — markdown H2s first, then fixed sections
+  const sections: { id: string; label: string }[] = [
+    ...mdHeadings,
+    ...(metrics.length > 0 || results.length > 0 ? [{ id: "cs-outcomes", label: "Outcomes" }] : []),
+    ...(screenshots.length > 0 ? [{ id: "cs-gallery", label: "Gallery" }] : []),
+    ...(stack.length > 0 ? [{ id: "cs-stack", label: "Technology" }] : []),
+    ...(relatedProjects.length > 0 ? [{ id: "cs-related", label: "Related" }] : []),
+  ];
 
   const sectionLabel: React.CSSProperties = {
     fontSize: "clamp(10px,0.8vw,12px)", color: "#8a8a7a",
@@ -210,6 +233,11 @@ export default function CaseStudyPage({ caseStudy }: { caseStudy: CaseStudy }) {
         .cs-nav-link:hover { color:#1a1a1a; }
         .cs-nav-dash { width:14px; height:1px; background:currentColor; flex-shrink:0; display:inline-block; }
 
+        /* Scroll offset — leaves breathing room so the heading doesn't slam the top */
+        [id^="cs-md-"], #cs-outcomes, #cs-gallery, #cs-stack, #cs-related {
+          scroll-margin-top: 72px;
+        }
+
         /* Stats bar */
         .cs-stats-grid { display:grid; grid-template-columns:repeat(4,1fr); border-top:1px solid rgba(26,26,26,0.1); border-bottom:1px solid rgba(26,26,26,0.1); }
 
@@ -252,10 +280,6 @@ export default function CaseStudyPage({ caseStudy }: { caseStudy: CaseStudy }) {
             )}
           </h1>
 
-          {/* Logo box */}
-          <div style={{ width: "clamp(48px,4.5vw,72px)", height: "clamp(48px,4.5vw,72px)", background: "#1a1a1a", display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0, marginBottom: 4 }}>
-            <span style={{ color: "#f0ede8", fontSize: "clamp(14px,1.4vw,22px)", fontWeight: 700, fontFamily: serif }}>{initials}</span>
-          </div>
         </div>
 
         {/* Subtitle */}
@@ -305,10 +329,7 @@ export default function CaseStudyPage({ caseStudy }: { caseStudy: CaseStudy }) {
           <article>
             {/* Markdown body */}
             {mdHtml && (
-              <div
-                id="cs-overview"
-                dangerouslySetInnerHTML={{ __html: mdHtml }}
-              />
+              <div dangerouslySetInnerHTML={{ __html: mdHtml }} />
             )}
 
             {/* Outcome cards */}
@@ -435,8 +456,8 @@ export default function CaseStudyPage({ caseStudy }: { caseStudy: CaseStudy }) {
         {relatedProjects.length > 0 && (
           <>
             <div id="cs-related" style={{ height: 1, background: "rgba(26,26,26,0.1)", margin: "clamp(32px,4vw,56px) 0 0" }} />
-            <div style={{ marginTop: "clamp(24px,3vw,44px)" }}>
-              <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: "clamp(16px,1.8vw,24px)" }}>
+            <div style={{ marginTop: "clamp(20px,2.5vw,36px)" }}>
+              <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: "clamp(12px,1.4vw,20px)" }}>
                 <p style={{ ...sectionLabel, marginBottom: 0 }}>Related projects</p>
                 <Link href="/work" style={{ fontSize: "clamp(11px,0.85vw,13px)", color: "#1a1a1a", textDecoration: "underline", textUnderlineOffset: "4px", fontFamily: sans }}>
                   View all
@@ -444,7 +465,7 @@ export default function CaseStudyPage({ caseStudy }: { caseStudy: CaseStudy }) {
               </div>
               <div
                 className="cs-related-grid"
-                style={{ display: "grid", gridTemplateColumns: `repeat(${Math.min(relatedProjects.length, 3)},1fr)`, gap: "clamp(12px,1.5vw,24px)" }}
+                style={{ display: "grid", gridTemplateColumns: `repeat(${Math.min(Math.max(relatedProjects.length, 3), 5)},1fr)`, gap: "clamp(8px,1vw,16px)" }}
               >
                 {relatedProjects.map(p => <RelatedProjectCard key={p.id} project={p} />)}
               </div>

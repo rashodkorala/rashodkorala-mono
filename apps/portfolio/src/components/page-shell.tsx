@@ -17,9 +17,11 @@ export default function PageShell({ children }: PageShellProps) {
           uses the Fibonacci-derived --page-px-* tokens. */}
       <div
         ref={scrollRef}
-        className="h-full overflow-y-auto lg:ml-sidenav px-page-px sm:px-page-px-sm md:px-page-px-md lg:px-page-px-lg xl:px-page-px-xl pt-12 lg:pt-16 scrollbar-hide max-w-[var(--content-max-w)]"
+        className="h-full overflow-y-auto lg:ml-sidenav scrollbar-hide"
       >
-        {children}
+        <div className="max-w-[var(--content-max-w)] mx-auto px-page-px sm:px-page-px-sm md:px-page-px-md lg:px-page-px-lg xl:px-page-px-xl pt-12 lg:pt-16">
+          {children}
+        </div>
       </div>
     </div>
   );
