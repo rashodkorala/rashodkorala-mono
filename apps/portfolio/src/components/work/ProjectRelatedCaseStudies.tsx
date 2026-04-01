@@ -44,15 +44,15 @@ export default function ProjectRelatedCaseStudies({
             <Link
               href={`/work/${cs.slug}`}
               className={cn(
-                "group relative flex flex-col overflow-hidden rounded-2xl border border-ink/10 bg-gradient-to-br from-ink/[0.02] to-transparent transition-all duration-300",
-                "hover:border-ink/22 hover:shadow-[0_12px_40px_-12px_rgba(43,43,43,0.18)] dark:border-[#2f2c2a] dark:from-[#1c1a18]/80 dark:to-transparent",
-                "dark:hover:border-[#45413d] dark:hover:shadow-[0_16px_48px_-16px_rgba(0,0,0,0.55)]",
+                "group relative flex flex-col overflow-hidden rounded-2xl border border-line bg-gradient-to-br from-surface-raised to-transparent transition-all duration-300",
+                "hover:border-line-hover hover:shadow-[0_12px_40px_-12px_rgba(43,43,43,0.18)]",
+                "dark:hover:shadow-[0_16px_48px_-16px_rgba(0,0,0,0.55)]",
                 "md:flex-row md:items-stretch"
               )}
             >
               <div
                 className={cn(
-                  "relative aspect-[16/10] w-full shrink-0 overflow-hidden bg-ink/[0.04] dark:bg-background",
+                  "relative aspect-[16/10] w-full shrink-0 overflow-hidden bg-surface",
                   "md:w-[min(44%,260px)] md:aspect-auto md:min-h-[168px]"
                 )}
               >
@@ -66,7 +66,7 @@ export default function ProjectRelatedCaseStudies({
                   />
                 ) : (
                   <div className="flex h-full min-h-[140px] items-center justify-center md:min-h-0">
-                    <div className="rounded-full border border-ink/10 bg-ink/[0.04] p-4 text-ink/25 dark:border-[#3d3935] dark:bg-[#1f1d1b] dark:text-[#6b6560]">
+                    <div className="rounded-full border border-line bg-surface-raised p-4 text-faint">
                       <BookOpen className="h-8 w-8" strokeWidth={1.25} />
                     </div>
                   </div>
@@ -84,7 +84,7 @@ export default function ProjectRelatedCaseStudies({
                     {tags.map((tag) => (
                       <span
                         key={tag}
-                        className="text-[10px] uppercase tracking-[0.1em] text-ink/38 dark:text-[#8f8781]"
+                        className="text-[10px] uppercase tracking-[0.1em] text-label"
                       >
                         {tag}
                       </span>
@@ -92,19 +92,19 @@ export default function ProjectRelatedCaseStudies({
                   </div>
                 )}
                 <div className="flex items-start justify-between gap-4">
-                  <h3 className="font-serif text-xl font-semibold leading-snug tracking-tight text-ink transition-colors group-hover:text-ink dark:text-[#eee8e0] dark:group-hover:text-[#f5f0ea] md:text-[1.35rem]">
+                  <h3 className="font-serif text-xl font-semibold leading-snug tracking-tight text-title transition-colors group-hover:text-heading md:text-[1.35rem]">
                     {cs.title}
                   </h3>
-                  <span className="mt-1 shrink-0 text-ink/25 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-ink/50 dark:text-[#5c5650] dark:group-hover:text-[#b5ada6]">
+                  <span className="mt-1 shrink-0 text-faint transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-body-secondary">
                     <ArrowUpRight className="h-5 w-5" strokeWidth={1.5} />
                   </span>
                 </div>
                 {excerpt && (
-                  <p className="line-clamp-2 text-[14px] leading-relaxed text-ink/55 dark:text-[#a39b94]">
+                  <p className="line-clamp-2 text-[14px] leading-relaxed text-body-tertiary">
                     {excerpt}
                   </p>
                 )}
-                <span className="text-[12px] font-medium text-ink/40 transition-colors group-hover:text-ink/65 dark:text-[#8b847f] dark:group-hover:text-[#c9c2bb]">
+                <span className="text-[12px] font-medium text-label transition-colors group-hover:text-body-secondary">
                   Read case study
                 </span>
               </div>

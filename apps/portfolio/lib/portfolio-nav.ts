@@ -13,6 +13,7 @@ export const PORTFOLIO_NAV: readonly PortfolioNavItem[] = [
     href: "https://photos.rashodkorala.com",
   },
   { id: "contact", label: "Contact", href: "/contact" },
+  { id: "cv",      label: "CV",      href: "/cv" },
 ] as const;
 
 export function getActiveNavSectionId(pathname: string): string {
@@ -20,6 +21,7 @@ export function getActiveNavSectionId(pathname: string): string {
   if (pathname.startsWith("/work") || pathname.startsWith("/projects")) {
     return "work";
   }
+  if (pathname.startsWith("/cv")) return "cv";
   const match = PORTFOLIO_NAV.find(
     (s) =>
       !s.href.startsWith("http") &&

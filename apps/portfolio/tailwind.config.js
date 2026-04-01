@@ -9,59 +9,100 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        sans: [
-          "var(--font-geist-sans)",
-          "ui-sans-serif",
-          "system-ui",
-          "sans-serif",
-        ],
+        sans: ["var(--font-geist-sans)", "ui-sans-serif", "system-ui", "sans-serif"],
+        mono: ["var(--font-geist-mono)", "ui-monospace", "monospace"],
         serif: ["var(--font-playfair)", "Georgia", "serif"],
+        display: ["var(--font-cormorant)", "Georgia", "serif"],  // Instrument Serif
+        body: ["var(--font-dm-sans)", "system-ui", "sans-serif"],  // Plus Jakarta Sans
+        reading: ["'Helvetica Neue'", "Helvetica", "Arial", "sans-serif"],
+      },
+      fontSize: {
+        display: "var(--text-display)",
+        prose: "var(--text-body-size)",
+      },
+      spacing: {
+        // ── Structural layout tokens (consume CSS vars, unchanged names) ──────
+        sidenav: "var(--sidenav-w)",
+        header: "var(--header-h)",
+        "header-lg": "var(--header-h-lg)",
+        "page-px": "var(--page-px)",
+        "page-px-sm": "var(--page-px-sm)",
+        "page-px-md": "var(--page-px-md)",
+        "page-px-lg": "var(--page-px-lg)",
+        "page-px-xl": "var(--page-px-xl)",
+        "content-py": "var(--content-py)",
+        "content-py-md": "var(--content-py-md)",
+        // ── Fibonacci scale tokens — use as `p-fib-21`, `gap-fib-34`, etc. ───
+        // Sequence: 8 → 13 → 21 → 34 → 55 → 89 → 144 (each step × φ ≈ 1.618)
+        "fib-8":   "var(--fib-8)",    //  8px — hairline
+        "fib-13":  "var(--fib-13)",   // 13px — tight
+        "fib-21":  "var(--fib-21)",   // 21px — base
+        "fib-34":  "var(--fib-34)",   // 34px — comfortable
+        "fib-55":  "var(--fib-55)",   // 55px — section
+        "fib-89":  "var(--fib-89)",   // 89px — generous
+        "fib-144": "var(--fib-144)",  // 144px — structural
+      },
+      maxWidth: {
+        // Content cap for ultrawide screens — 89rem = 1424px (fib-89 × 16)
+        content: "var(--content-max-w)",
       },
       colors: {
         cream: "#e9e6e0",
         ink: "#2b2b2b",
         muted_ink: "#6b6560",
         systemGray: "#8E8E93",
-        background: "hsl(var(--background))",
-        foreground: "hsl(var(--foreground))",
-        card: {
-          DEFAULT: "hsl(var(--card))",
-          foreground: "hsl(var(--card-foreground))",
+
+        page: "var(--color-page)",
+        surface: {
+          DEFAULT: "var(--color-surface)",
+          raised: "var(--color-surface-raised)",
+          elevated: "var(--color-surface-elevated)",
+          overlay: "var(--color-surface-overlay)",
+          "overlay-strong": "var(--color-surface-overlay-strong)",
         },
-        popover: {
-          DEFAULT: "hsl(var(--popover))",
-          foreground: "hsl(var(--popover-foreground))",
+        heading: "var(--color-heading)",
+        title: "var(--color-title)",
+        body: {
+          DEFAULT: "var(--color-body)",
+          secondary: "var(--color-body-secondary)",
+          tertiary: "var(--color-body-tertiary)",
         },
-        primary: {
-          DEFAULT: "hsl(var(--primary))",
-          foreground: "hsl(var(--primary-foreground))",
+        caption: "var(--color-caption)",
+        label: "var(--color-label)",
+        faint: "var(--color-faint)",
+        inverse: "var(--color-inverse)",
+        nav: {
+          active: "var(--color-nav-active)",
+          inactive: "var(--color-nav-inactive)",
+          hover: "var(--color-nav-hover)",
+          indicator: "var(--color-nav-indicator)",
+          "indicator-subtle": "var(--color-nav-indicator-subtle)",
         },
-        secondary: {
-          DEFAULT: "hsl(var(--secondary))",
-          foreground: "hsl(var(--secondary-foreground))",
+        link: {
+          DEFAULT: "var(--color-link)",
+          hover: "var(--color-link-hover)",
+          underline: "var(--color-link-underline)",
         },
-        muted: {
-          DEFAULT: "hsl(var(--muted))",
-          foreground: "hsl(var(--muted-foreground))",
+        icon: {
+          DEFAULT: "var(--color-icon)",
+          hover: "var(--color-icon-hover)",
         },
-        accent: {
-          DEFAULT: "hsl(var(--accent))",
-          foreground: "hsl(var(--accent-foreground))",
+        line: {
+          DEFAULT: "var(--color-border)",
+          subtle: "var(--color-border-subtle)",
+          strong: "var(--color-border-strong)",
+          hover: "var(--color-border-hover)",
         },
-        destructive: {
-          DEFAULT: "hsl(var(--destructive))",
-          foreground: "hsl(var(--destructive-foreground))",
+        ctrl: {
+          DEFAULT: "var(--color-ctrl-bg)",
+          text: "var(--color-ctrl-text)",
+          hover: "var(--color-ctrl-hover)",
+          border: "var(--color-ctrl-border)",
         },
-        border: "hsl(var(--border))",
-        input: "hsl(var(--input))",
-        ring: "hsl(var(--ring))",
-        chart: {
-          1: "hsl(var(--chart-1))",
-          2: "hsl(var(--chart-2))",
-          3: "hsl(var(--chart-3))",
-          4: "hsl(var(--chart-4))",
-          5: "hsl(var(--chart-5))",
-        },
+        "doc-bg": "var(--color-doc-bg)",
+
+        background: "var(--color-page)",
+        foreground: "var(--color-body)",
       },
       borderRadius: {
         lg: "var(--radius)",

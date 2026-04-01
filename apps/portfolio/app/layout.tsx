@@ -2,9 +2,8 @@ import { Metadata } from 'next'
 import '@/styles/globals.css'
 
 import { PostHogProvider } from '@rashodkorala/posthog-next'
-import { Geist_Mono, Geist, Playfair_Display } from 'next/font/google';
+import { Geist_Mono, Geist, Instrument_Serif, Plus_Jakarta_Sans } from 'next/font/google';
 import SideNav from '@/src/components/side-nav';
-import TopBar from '@/src/components/top-bar';
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -22,9 +21,20 @@ const geistMono = Geist_Mono({
     fallback: ['ui-monospace', 'monospace'],
 });
 
-const playfair = Playfair_Display({
-    variable: "--font-playfair",
+// Display font — Instrument Serif (italic variant included for typographic accents)
+const instrumentSerif = Instrument_Serif({
+    variable: "--font-cormorant",
     subsets: ["latin"],
+    weight: "400",
+    style: ["normal", "italic"],
+    display: "swap",
+});
+
+// Body font — Plus Jakarta Sans
+const plusJakartaSans = Plus_Jakarta_Sans({
+    variable: "--font-dm-sans",
+    subsets: ["latin"],
+    weight: ["300", "400", "500"],
     display: "swap",
 });
 
@@ -80,10 +90,9 @@ export default function RootLayout({
     children: React.ReactNode
 }) {
     return (
-        <html lang="en" className="dark" suppressHydrationWarning>
-            <body className={`${geistSans.variable} ${geistMono.variable} ${playfair.variable} bg-cream dark:bg-background`}>
+        <html lang="en" className="bg-page text-body" suppressHydrationWarning>
+            <body className={`${geistSans.variable} ${geistMono.variable} ${instrumentSerif.variable} ${plusJakartaSans.variable}`}>
                 <PostHogProvider app="portfolio">
-                    <TopBar />
                     <SideNav />
                     {children}
                 </PostHogProvider>

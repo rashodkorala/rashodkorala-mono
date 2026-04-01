@@ -2,7 +2,12 @@
   "permissions": {
     "allow": [
       "Bash(xargs basename:*)",
-      "mcp__supabase__apply_migration"
+      "mcp__supabase__apply_migration",
+      "Bash(pnpm build:portfolio:*)",
+      "Bash(pnpm:*)",
+      "Read(//Users/rashodkorala/Downloads/**)",
+      "Bash(python3 -c \":*)",
+      "mcp__supabase__execute_sql"
     ]
   },
   "enableAllProjectMcpServers": true,
