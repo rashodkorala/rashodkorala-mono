@@ -17,6 +17,13 @@ function transformCaseStudy(cs: CaseStudyDB): CaseStudy {
     order: cs.order,
     tags: cs.tags || [],
     gallery: cs.gallery || [],
+    status: cs.status ?? 'draft',
+    summary: cs.summary ?? null,
+    coverPath: cs.cover_path ?? null,
+    role: cs.role ?? null,
+    timeline: cs.timeline ?? null,
+    links: cs.links ?? [],
+    stack: cs.stack ?? [],
     createdAt: cs.created_at,
     updatedAt: cs.updated_at,
   }
@@ -148,16 +155,18 @@ export async function createOrUpdateCaseStudy(
   // Fetch existing record to preserve paths when editing
   let existingGalleryPaths: string[] = []
   let existingBeforeAfter: { beforeImage?: string | null; afterImage?: string | null } | null = null
+  let existingCoverPath: string | null = null
   if (existingId) {
     const { data: existing } = await supabase
       .from("case_studies")
-      .select("gallery, before_after")
+      .select("gallery, before_after, cover_path")
       .eq("id", existingId)
       .eq("user_id", user.id)
       .single()
     if (existing) {
       existingGalleryPaths = existing.gallery || []
       existingBeforeAfter = existing.before_after || null
+      existingCoverPath = existing.cover_path || null
     }
   }
 
@@ -170,6 +179,17 @@ export async function createOrUpdateCaseStudy(
     const { error: uploadError } = await supabase.storage.from("media").upload(path, file)
     if (uploadError) throw new Error(`Failed to upload gallery image: ${uploadError.message}`)
     galleryPaths.push(path)
+  }
+
+  // Handle cover image
+  let coverPath: string | null = existingCoverPath
+  if (formData.clearCoverImage) coverPath = null
+  if (formData.coverImageFile) {
+    const ext = formData.coverImageFile.name.split(".").pop()
+    const path = `case-studies/${formData.slug}/cover/${crypto.randomUUID()}.${ext}`
+    const { error: uploadError } = await supabase.storage.from("media").upload(path, formData.coverImageFile)
+    if (uploadError) throw new Error(`Failed to upload cover image: ${uploadError.message}`)
+    coverPath = path
   }
 
   let beforeImage = existingBeforeAfter?.beforeImage || null
@@ -203,6 +223,13 @@ export async function createOrUpdateCaseStudy(
     order: formData.order,
     tags: formData.tags || [],
     gallery: galleryPaths,
+    status: formData.status ?? 'draft',
+    summary: formData.summary || null,
+    cover_path: coverPath,
+    role: formData.role || null,
+    timeline: formData.timeline || null,
+    links: formData.links ?? [],
+    stack: formData.stack ?? [],
   }
 
   let data

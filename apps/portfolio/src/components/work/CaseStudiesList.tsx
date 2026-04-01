@@ -7,6 +7,12 @@ import { motion, useInView } from "framer-motion";
 import { useRef } from "react";
 import type { CaseStudy } from "@/lib/types";
 
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
+function mediaUrl(path: string): string {
+  if (path.startsWith("http")) return path;
+  return `${supabaseUrl}/storage/v1/object/public/media/${path}`;
+}
+
 interface CaseStudiesListProps {
   items: CaseStudy[];
 }
@@ -28,11 +34,7 @@ export default function CaseStudiesList({ items }: CaseStudiesListProps) {
 
       <div>
         {items.map((item, index) => {
-          const itemView = item as CaseStudy & {
-            category?: string;
-            summary?: string;
-            cover_url?: string;
-          };
+          const itemView = item;
 
           return (
             <Link
@@ -48,11 +50,6 @@ export default function CaseStudiesList({ items }: CaseStudiesListProps) {
             >
               <div>
                 <div className="flex items-center gap-2 mb-2 flex-wrap">
-                  {itemView.category && (
-                    <span className="text-[10px] px-2 py-0.5 rounded-full border border-line text-caption uppercase tracking-[0.08em]">
-                      {itemView.category}
-                    </span>
-                  )}
                   {item.tags?.slice(0, 2).map((tag) => (
                     <span
                       key={tag}
@@ -70,9 +67,9 @@ export default function CaseStudiesList({ items }: CaseStudiesListProps) {
                   <p className="text-body-secondary mt-1.5 font-light leading-relaxed max-w-lg text-[14px]">{itemView.summary}</p>
                 )}
               </div>
-              {itemView.cover_url && (
+              {itemView.cover_path && (
                 <div className="relative w-full h-24 rounded-lg overflow-hidden border border-line-subtle">
-                  <Image src={itemView.cover_url} alt={item.title} fill className="object-fit opacity-75 group-hover:opacity-100 transition-opacity dark:brightness-[0.9]" sizes="160px" />
+                  <Image src={mediaUrl(itemView.cover_path)} alt={item.title} fill className="object-fit opacity-75 group-hover:opacity-100 transition-opacity dark:brightness-[0.9]" sizes="160px" />
                 </div>
               )}
             </motion.div>

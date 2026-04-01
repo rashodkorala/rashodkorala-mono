@@ -73,7 +73,7 @@ function GalleryImage({ src, alt, style }: { src: string; alt: string; style?: R
 }
 
 function RelatedCard({ cs }: { cs: CaseStudy }) {
-  const thumb = cs.cover_url ?? (cs.gallery?.[0] ? resolveUrl(cs.gallery[0]) : null);
+  const thumb = (cs.cover_path ? resolveUrl(cs.cover_path) : null) ?? (cs.gallery?.[0] ? resolveUrl(cs.gallery[0]) : null);
   const fills = ["#a8a49c", "#d8d2c8", "#cac4bc", "#b8b2aa"];
   const fill  = fills[cs.title.charCodeAt(0) % fills.length];
 

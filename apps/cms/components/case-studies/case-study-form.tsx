@@ -49,6 +49,14 @@ export function CaseStudyForm({ caseStudy, availableProjects }: CaseStudyFormPro
     beforeImageFile: null,
     afterImageFile: null,
     order: caseStudy?.order ?? 0,
+    status: caseStudy?.status ?? 'draft',
+    summary: caseStudy?.summary ?? "",
+    role: caseStudy?.role ?? "",
+    timeline: caseStudy?.timeline ?? "",
+    links: caseStudy?.links ?? [],
+    stack: caseStudy?.stack ?? [],
+    coverImageFile: null,
+    clearCoverImage: false,
   })
 
   const [isLoading, setIsLoading] = useState(false)
@@ -71,6 +79,12 @@ export function CaseStudyForm({ caseStudy, availableProjects }: CaseStudyFormPro
   )
 
   const [tagsCsv, setTagsCsv] = useState((caseStudy?.tags || []).join(", "))
+  const [stackCsv, setStackCsv] = useState((caseStudy?.stack || []).join(", "))
+  const [coverPreviewUrl, setCoverPreviewUrl] = useState<string | null>(
+    caseStudy?.coverPath
+      ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/media/${caseStudy.coverPath}`
+      : null
+  )
 
   const handleTitleChange = (title: string) => {
     setFormData(prev => ({
@@ -108,11 +122,30 @@ export function CaseStudyForm({ caseStudy, availableProjects }: CaseStudyFormPro
 
   const syncTagsFromCsv = (value: string) => {
     setTagsCsv(value)
-    const tags = value
-      .split(",")
-      .map((t) => t.trim())
-      .filter(Boolean)
+    const tags = value.split(",").map((t) => t.trim()).filter(Boolean)
     setFormData((prev) => ({ ...prev, tags }))
+  }
+
+  const syncStackFromCsv = (value: string) => {
+    setStackCsv(value)
+    const stack = value.split(",").map((t) => t.trim()).filter(Boolean)
+    setFormData((prev) => ({ ...prev, stack }))
+  }
+
+  const addLink = () => {
+    setFormData((prev) => ({ ...prev, links: [...prev.links, { label: "", url: "", type: "other" }] }))
+  }
+
+  const updateLink = (i: number, field: "label" | "url" | "type", value: string) => {
+    setFormData((prev) => {
+      const links = [...prev.links]
+      links[i] = { ...links[i], [field]: value }
+      return { ...prev, links }
+    })
+  }
+
+  const removeLink = (i: number) => {
+    setFormData((prev) => ({ ...prev, links: prev.links.filter((_, idx) => idx !== i) }))
   }
 
   const insertMarkdownAtCursor = (snippet: string) => {
@@ -235,6 +268,109 @@ export function CaseStudyForm({ caseStudy, availableProjects }: CaseStudyFormPro
         <div className="flex items-center gap-2">
           <Checkbox checked={formData.featured} onCheckedChange={(c) => setFormData((p) => ({ ...p, featured: Boolean(c) }))} />
           <Label>Featured</Label>
+        </div>
+      </Card>
+
+      <Card className="p-6 space-y-4">
+        <h3 className="font-semibold">Metadata</h3>
+        <div className="grid md:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label>Status</Label>
+            <select
+              className="w-full border rounded-md p-2 bg-background"
+              value={formData.status}
+              onChange={(e) => setFormData((p) => ({ ...p, status: e.target.value as CaseStudyFormData["status"] }))}
+            >
+              <option value="draft">Draft</option>
+              <option value="published">Published</option>
+              <option value="archived">Archived</option>
+            </select>
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="role">Role</Label>
+            <Input id="role" value={formData.role} onChange={(e) => setFormData((p) => ({ ...p, role: e.target.value }))} placeholder="Lead Engineer & Designer" />
+          </div>
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="summary">Summary</Label>
+          <Textarea id="summary" rows={2} value={formData.summary} onChange={(e) => setFormData((p) => ({ ...p, summary: e.target.value }))} placeholder="Short subtitle shown on the portfolio page" />
+        </div>
+        <div className="grid md:grid-cols-2 gap-4">
+          <div className="space-y-2">
+            <Label htmlFor="timeline">Timeline</Label>
+            <Input id="timeline" value={formData.timeline} onChange={(e) => setFormData((p) => ({ ...p, timeline: e.target.value }))} placeholder="6 months" />
+          </div>
+          <div className="space-y-2">
+            <Label>Stack</Label>
+            <Input value={stackCsv} onChange={(e) => syncStackFromCsv(e.target.value)} placeholder="React, Supabase, TypeScript" />
+          </div>
+        </div>
+
+        <div className="space-y-2">
+          <Label>Cover Image</Label>
+          <Input
+            type="file"
+            accept="image/*"
+            onChange={(e) => {
+              const file = e.target.files?.[0] || null
+              setFormData((p) => ({ ...p, coverImageFile: file, clearCoverImage: false }))
+              if (file) {
+                const reader = new FileReader()
+                reader.onloadend = () => setCoverPreviewUrl(reader.result as string)
+                reader.readAsDataURL(file)
+              }
+            }}
+          />
+          {coverPreviewUrl && (
+            <div className="relative inline-block">
+              <img src={coverPreviewUrl} alt="Cover preview" className="h-32 w-auto object-cover rounded" />
+              <button
+                type="button"
+                onClick={() => {
+                  setCoverPreviewUrl(null)
+                  setFormData((p) => ({ ...p, coverImageFile: null, clearCoverImage: true }))
+                }}
+                className="absolute top-1 right-1 rounded bg-black/60 p-1"
+              >
+                <IconX className="h-3 w-3 text-white" />
+              </button>
+            </div>
+          )}
+        </div>
+
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <Label>Links</Label>
+            <Button type="button" variant="outline" size="sm" onClick={addLink}>Add link</Button>
+          </div>
+          {formData.links.map((link, i) => (
+            <div key={i} className="flex gap-2 items-start">
+              <Input
+                placeholder="Label"
+                value={link.label}
+                onChange={(e) => updateLink(i, "label", e.target.value)}
+                className="flex-1"
+              />
+              <Input
+                placeholder="https://..."
+                value={link.url}
+                onChange={(e) => updateLink(i, "url", e.target.value)}
+                className="flex-[2]"
+              />
+              <select
+                className="border rounded-md p-2 bg-background text-sm"
+                value={link.type || "other"}
+                onChange={(e) => updateLink(i, "type", e.target.value)}
+              >
+                <option value="live">Live</option>
+                <option value="github">GitHub</option>
+                <option value="other">Other</option>
+              </select>
+              <button type="button" onClick={() => removeLink(i)} className="rounded bg-muted p-2">
+                <IconX className="h-4 w-4" />
+              </button>
+            </div>
+          ))}
         </div>
       </Card>
 

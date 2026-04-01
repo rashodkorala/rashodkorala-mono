@@ -5,6 +5,7 @@ export async function getAllCaseStudies(): Promise<CaseStudy[]> {
   const { data, error } = await supabase
     .from("case_studies")
     .select("*")
+    .eq("status", "published")
     .order("order", { ascending: true })
     .order("created_at", { ascending: false });
 
