@@ -55,7 +55,7 @@ export default function CaseStudiesList({ items }: CaseStudiesListProps) {
                   <ArrowUpRight className="w-3.5 h-3.5 text-icon group-hover:text-icon-hover transition-colors" strokeWidth={1.5} />
                 </h2>
                 {itemView.summary && (
-                  <p className="text-body-secondary mt-1.5 font-light leading-relaxed max-w-lg text-[14px]">{itemView.summary}</p>
+                  <p className="text-body-secondary mt-1.5 font-light leading-relaxed max-w-lg text-[15px]">{itemView.summary}</p>
                 )}
               </div>
               {itemView.cover_path && (
