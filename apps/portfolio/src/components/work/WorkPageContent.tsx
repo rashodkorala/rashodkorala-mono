@@ -1,11 +1,11 @@
 "use client";
 
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion, useInView } from "framer-motion";
-import type { Project } from "@/lib/types";
-import type { CaseStudy } from "@/lib/types";
+import type { Project, CaseStudy } from "@/lib/types";
+import CaseStudiesList from "./CaseStudiesList";
 
 const serif = "var(--font-cormorant), 'Georgia', serif";
 const sans  = "var(--font-dm-sans), system-ui, sans-serif";
@@ -173,13 +173,23 @@ function ProjectCard({
   );
 }
 
-export default function WorkPageContent({ projects }: WorkPageContentProps) {
+export default function WorkPageContent({ projects, caseStudies }: WorkPageContentProps) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-80px" });
+  const [tab, setTab] = useState<"projects" | "case-studies">("projects");
 
   const yearRange = projects.length
     ? (() => {
         const years = projects.map(p => new Date(p.created_at).getFullYear());
+        const min = Math.min(...years);
+        const max = Math.max(...years);
+        return min === max ? `${min}` : `${min} — ${max}`;
+      })()
+    : null;
+
+  const csYearRange = caseStudies.length
+    ? (() => {
+        const years = caseStudies.map(cs => new Date(cs.created_at).getFullYear());
         const min = Math.min(...years);
         const max = Math.max(...years);
         return min === max ? `${min}` : `${min} — ${max}`;
@@ -228,44 +238,118 @@ export default function WorkPageContent({ projects }: WorkPageContentProps) {
             marginBottom: "clamp(16px, 2vw, 28px)",
           }}
         >
-          <div>
-            <h1 style={{
-              fontFamily: serif,
-              fontSize: "clamp(48px, 7vw, 92px)",
-              fontWeight: 700,
-              color: "#1a1a1a",
-              letterSpacing: "-0.025em",
-              lineHeight: 0.92,
-              margin: 0,
-            }}>
-              Selected
-            </h1>
-            <h1 style={{
-              fontFamily: serif,
-              fontSize: "clamp(48px, 7vw, 92px)",
-              fontWeight: 700,
-              color: "#6b6b6b",
-              letterSpacing: "-0.025em",
-              lineHeight: 0.92,
-              margin: 0,
-              paddingLeft: "clamp(21px, 3vw, 48px)",
-            }}>
-              Work
-            </h1>
-          </div>
-
-          {projects.length > 0 && (
-            <div className="pf-header-meta" style={{ textAlign: "right", paddingBottom: "clamp(4px, 0.5vw, 10px)" }}>
-              {yearRange && (
-                <span style={{ fontFamily: sans, fontSize: "clamp(11px, 0.9vw, 14px)", color: "#8a8a7a", display: "block" }}>
-                  {yearRange}
-                </span>
-              )}
-              <span style={{ fontFamily: sans, fontSize: "clamp(11px, 0.9vw, 14px)", color: "#8a8a7a", display: "block", marginTop: "4px" }}>
-                {projects.length} project{projects.length !== 1 ? "s" : ""}
-              </span>
+          {/* Title — hidden on case studies tab */}
+          {tab === "projects" ? (
+            <div>
+              <h1 style={{
+                fontFamily: serif,
+                fontSize: "clamp(48px, 7vw, 92px)",
+                fontWeight: 700,
+                color: "#1a1a1a",
+                letterSpacing: "-0.025em",
+                lineHeight: 0.92,
+                margin: 0,
+              }}>
+                Selected
+              </h1>
+              <h1 style={{
+                fontFamily: serif,
+                fontSize: "clamp(48px, 7vw, 92px)",
+                fontWeight: 700,
+                color: "#6b6b6b",
+                letterSpacing: "-0.025em",
+                lineHeight: 0.92,
+                margin: 0,
+                paddingLeft: "clamp(21px, 3vw, 48px)",
+              }}>
+                Work
+              </h1>
+            </div>
+          ) : (
+            <div>
+              <h1 style={{
+                fontFamily: serif,
+                fontSize: "clamp(48px, 7vw, 92px)",
+                fontWeight: 700,
+                color: "#1a1a1a",
+                letterSpacing: "-0.025em",
+                lineHeight: 0.92,
+                margin: 0,
+              }}>
+                Case
+              </h1>
+              <h1 style={{
+                fontFamily: serif,
+                fontSize: "clamp(48px, 7vw, 92px)",
+                fontWeight: 700,
+                color: "#6b6b6b",
+                letterSpacing: "-0.025em",
+                lineHeight: 0.92,
+                margin: 0,
+                paddingLeft: "clamp(21px, 3vw, 48px)",
+              }}>
+                Studies
+              </h1>
             </div>
           )}
+
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 10, paddingBottom: "clamp(4px, 0.5vw, 10px)" }}>
+            {/* Styled toggle */}
+            <div style={{
+              display: "inline-flex",
+              border: "1px solid rgba(26,26,26,0.15)",
+              overflow: "hidden",
+            }}>
+              {(["projects", "case-studies"] as const).map((value, i) => (
+                <button
+                  key={value}
+                  onClick={() => setTab(value)}
+                  style={{
+                    padding: "7px 18px",
+                    fontFamily: sans,
+                    fontSize: "clamp(10px, 0.85vw, 12px)",
+                    letterSpacing: "0.08em",
+                    textTransform: "uppercase",
+                    fontWeight: 500,
+                    cursor: "pointer",
+                    border: "none",
+                    borderLeft: i > 0 ? "1px solid rgba(26,26,26,0.15)" : "none",
+                    background: tab === value ? "#1a1a1a" : "transparent",
+                    color: tab === value ? "#f0ede8" : "#8a8a7a",
+                    transition: "background 0.18s, color 0.18s",
+                  }}
+                >
+                  {value === "projects" ? "Projects" : "Case Studies"}
+                </button>
+              ))}
+            </div>
+
+            {/* Count */}
+            {tab === "projects" && projects.length > 0 && (
+              <div className="pf-header-meta" style={{ textAlign: "right" }}>
+                {yearRange && (
+                  <span style={{ fontFamily: sans, fontSize: "clamp(11px, 0.9vw, 14px)", color: "#8a8a7a", display: "block" }}>
+                    {yearRange}
+                  </span>
+                )}
+                <span style={{ fontFamily: sans, fontSize: "clamp(11px, 0.9vw, 14px)", color: "#8a8a7a", display: "block", marginTop: "4px" }}>
+                  {projects.length} project{projects.length !== 1 ? "s" : ""}
+                </span>
+              </div>
+            )}
+            {tab === "case-studies" && caseStudies.length > 0 && (
+              <div className="pf-header-meta" style={{ textAlign: "right" }}>
+                {csYearRange && (
+                  <span style={{ fontFamily: sans, fontSize: "clamp(11px, 0.9vw, 14px)", color: "#8a8a7a", display: "block" }}>
+                    {csYearRange}
+                  </span>
+                )}
+                <span style={{ fontFamily: sans, fontSize: "clamp(11px, 0.9vw, 14px)", color: "#8a8a7a", display: "block", marginTop: "4px" }}>
+                  {caseStudies.length} case {caseStudies.length !== 1 ? "studies" : "study"}
+                </span>
+              </div>
+            )}
+          </div>
         </motion.div>
 
         {/* Divider */}
@@ -281,24 +365,36 @@ export default function WorkPageContent({ projects }: WorkPageContentProps) {
           }}
         />
 
-        {projects.length === 0 && (
-          <p style={{ fontFamily: sans, fontSize: "14px", color: "#8a8a7a" }}>
-            No projects to show yet.
-          </p>
+        {/* Projects tab */}
+        {tab === "projects" && (
+          <>
+            {projects.length === 0 ? (
+              <p style={{ fontFamily: sans, fontSize: "14px", color: "#8a8a7a" }}>
+                No projects to show yet.
+              </p>
+            ) : (
+              <div style={{
+                display: "grid",
+                gridTemplateColumns: "repeat(12, 1fr)",
+                gap: "clamp(8px, 1.2vw, 21px)",
+              }}>
+                {projects.map((project, i) => (
+                  <ProjectCard key={project.id} project={project} index={i} />
+                ))}
+              </div>
+            )}
+          </>
         )}
 
-        {/* Asymmetric 12-column grid */}
-        {projects.length > 0 && (
-          <div style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(12, 1fr)",
-            /* gap: max bound 20px → 21px (fib). min 8px already Fibonacci. */
-            gap: "clamp(8px, 1.2vw, 21px)",
-          }}>
-            {projects.map((project, i) => (
-              <ProjectCard key={project.id} project={project} index={i} />
-            ))}
-          </div>
+        {/* Case Studies tab */}
+        {tab === "case-studies" && (
+          caseStudies.length === 0 ? (
+            <p style={{ fontFamily: sans, fontSize: "14px", color: "#8a8a7a" }}>
+              No case studies published yet.
+            </p>
+          ) : (
+            <CaseStudiesList items={caseStudies} />
+          )
         )}
       </div>
     </>
