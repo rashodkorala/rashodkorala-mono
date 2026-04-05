@@ -26,5 +26,6 @@ export interface AnalyticsSummary {
   topDomains: Array<{ domain: string; views: number }>
   deviceBreakdown: Array<{ device: string; count: number }>
   dailyViews: Array<{ date: string; views: number }>
+  domainDailyViews: Array<{ domain: string; date: string; views: number }>
 }
 
