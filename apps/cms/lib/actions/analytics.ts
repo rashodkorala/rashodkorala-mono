@@ -51,6 +51,7 @@ export async function getAnalyticsSummary(
       topDomains: [],
       deviceBreakdown: [],
       dailyViews: [],
+      domainDailyViews: [],
     }
   }
 
@@ -64,6 +65,7 @@ export async function getAnalyticsSummary(
     topDomains: (result.top_domains as Array<{ domain: string; views: number }>) || [],
     deviceBreakdown: (result.device_breakdown as Array<{ device: string; count: number }>) || [],
     dailyViews: (result.daily_views as Array<{ date: string; views: number }>) || [],
+    domainDailyViews: [],
   }
 }
 

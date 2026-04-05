@@ -38,6 +38,7 @@ export async function fetchPostHogAnalyticsSummary(
     pageRows,
     domainRows,
     deviceRows,
+    domainDailyRows,
   ] = await Promise.all([
     posthogHogQL(
       `
@@ -126,6 +127,22 @@ LIMIT 20
 `.trim(),
       "cms_dashboard_device_breakdown"
     ),
+    posthogHogQL(
+      `
+SELECT
+  domain(properties.$current_url) AS domain,
+  toDate(timestamp) AS day,
+  count() AS views
+FROM events
+WHERE event = '$pageview'
+  AND timestamp >= toDateTime('${t0}')
+  AND timestamp <= toDateTime('${t1}')
+  AND domain(properties.$current_url) IN ('www.rashodkorala.com', 'photos.rashodkorala.com')
+GROUP BY domain, day
+ORDER BY day ASC
+`.trim(),
+      "cms_dashboard_domain_daily_views"
+    ),
   ])
 
   const s0 = summaryRows[0] ?? []
@@ -153,6 +170,12 @@ LIMIT 20
     count: num(row[1]),
   }))
 
+  const domainDailyViews = domainDailyRows.map((row) => ({
+    domain: str(row[0]),
+    date: formatDayLabel(row[1]),
+    views: num(row[2]),
+  }))
+
   return {
     totalPageviews,
     uniqueVisitors,
@@ -161,5 +184,6 @@ LIMIT 20
     topDomains,
     deviceBreakdown,
     dailyViews,
+    domainDailyViews,
   }
 }

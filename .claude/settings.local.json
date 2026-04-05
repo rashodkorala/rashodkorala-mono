@@ -8,7 +8,8 @@
       "Read(//Users/rashodkorala/Downloads/**)",
       "Bash(python3 -c \":*)",
       "mcp__supabase__execute_sql",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(npx tsc:*)"
     ]
   },
   "enableAllProjectMcpServers": true,

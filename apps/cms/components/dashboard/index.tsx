@@ -1,9 +1,8 @@
 import { ChartAreaInteractive } from "@/components/chart-area-interactive"
-import { DataTable } from "@/components/data-table"
+import { ChartDeviceBreakdown } from "@/components/chart-device-breakdown"
+import { ChartTopPages } from "@/components/chart-top-pages"
 import { SectionCards } from "@/components/section-cards"
 import type { AnalyticsSummary } from "@/lib/types/analytics"
-
-import data from "./data.json"
 
 interface DashboardProps {
     photosCount: number
@@ -23,7 +22,10 @@ const Dashboard = ({ photosCount, analytics }: DashboardProps) => {
                         <div className="px-4 lg:px-6">
                             <ChartAreaInteractive analytics={analytics} />
                         </div>
-                        <DataTable data={data} />
+                        <div className="grid grid-cols-1 gap-4 px-4 lg:grid-cols-2 lg:px-6">
+                            <ChartTopPages analytics={analytics} />
+                            <ChartDeviceBreakdown analytics={analytics} />
+                        </div>
                     </div>
                 </div>
             </div>
