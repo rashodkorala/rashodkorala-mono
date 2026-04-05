@@ -22,16 +22,7 @@ export default function CaseStudiesList({ items }: CaseStudiesListProps) {
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <div ref={ref} className="max-w-4xl py-content-py md:py-content-py-md">
-      <motion.h1
-        initial={{ opacity: 0, y: 20 }}
-        animate={isInView ? { opacity: 1, y: 0 } : {}}
-        transition={{ duration: 0.8 }}
-        className="font-serif text-4xl md:text-5xl tracking-tight mb-12"
-      >
-        Work
-      </motion.h1>
-
+    <div ref={ref} className="max-w-4xl">
       <div>
         {items.map((item, index) => {
           const itemView = item;
@@ -40,7 +31,7 @@ export default function CaseStudiesList({ items }: CaseStudiesListProps) {
             <Link
             key={item.id}
             href={`/work/${item.slug}`}
-            className="block border-t border-line-subtle py-7 group"
+            className="block border-b border-line-subtle py-7 group"
           >
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -64,7 +55,7 @@ export default function CaseStudiesList({ items }: CaseStudiesListProps) {
                   <ArrowUpRight className="w-3.5 h-3.5 text-icon group-hover:text-icon-hover transition-colors" strokeWidth={1.5} />
                 </h2>
                 {itemView.summary && (
-                  <p className="text-body-secondary mt-1.5 font-light leading-relaxed max-w-lg text-[14px]">{itemView.summary}</p>
+                  <p className="text-body-secondary mt-1.5 font-light leading-relaxed max-w-lg text-[15px]">{itemView.summary}</p>
                 )}
               </div>
               {itemView.cover_path && (

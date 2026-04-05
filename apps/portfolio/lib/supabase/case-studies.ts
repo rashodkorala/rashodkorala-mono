@@ -25,7 +25,7 @@ export async function getCaseStudyBySlug(slug: string): Promise<CaseStudy | null
     .single();
 
   if (error) {
-    console.error("Error fetching case study:", error);
+    if (error.code !== 'PGRST116') console.error("Error fetching case study:", error);
     return null;
   }
 

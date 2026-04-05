@@ -23,7 +23,7 @@ export async function getProjectBySlug(slug: string): Promise<Project | null> {
     .single();
 
   if (error) {
-    console.error('Error fetching project:', error);
+    if (error.code !== 'PGRST116') console.error('Error fetching project:', error);
     return null;
   }
 

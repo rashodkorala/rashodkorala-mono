@@ -73,7 +73,7 @@ const mdConfig: MarkdownParserConfig = {
 
 function SidebarLabel({ children }: { children: React.ReactNode }) {
   return (
-    <p style={{ fontSize: "clamp(10px,0.75vw,11px)", color: "#8a8a7a", letterSpacing: "0.1em", textTransform: "uppercase", fontFamily: sans, marginBottom: 8 }}>
+    <p style={{ fontSize: "clamp(11px,0.8vw,12px)", color: "#8a8a7a", letterSpacing: "0.1em", textTransform: "uppercase", fontFamily: sans, marginBottom: 8 }}>
       {children}
     </p>
   );
@@ -81,7 +81,7 @@ function SidebarLabel({ children }: { children: React.ReactNode }) {
 
 function SidebarValue({ children }: { children: React.ReactNode }) {
   return (
-    <p style={{ fontFamily: serif, fontSize: "clamp(14px,1.2vw,18px)", color: "#1a1a1a", fontWeight: 600, letterSpacing: "-0.01em", lineHeight: 1.4 }}>
+    <p style={{ fontFamily: serif, fontSize: "clamp(14px,1.2vw,18px)", color: "#1a1a1a", fontWeight: 400, letterSpacing: "-0.01em", lineHeight: 1.45 }}>
       {children}
     </p>
   );
@@ -197,16 +197,16 @@ export default function CaseStudyPage({ caseStudy }: { caseStudy: CaseStudy }) {
     <>
       <style>{`
         /* Markdown prose */
-        .cs-h1,.cs-h2,.cs-h3 { font-family:${serif}; color:#1a1a1a; font-weight:700; letter-spacing:-0.02em; line-height:1.1; }
-        .cs-h1 { font-size:clamp(28px,3vw,44px); margin:clamp(32px,4vw,56px) 0 clamp(12px,1.2vw,18px); }
-        .cs-h2 { font-size:clamp(22px,2.4vw,36px); margin:clamp(28px,3.5vw,52px) 0 clamp(12px,1.2vw,18px); }
-        .cs-h3 { font-size:clamp(18px,1.8vw,26px); font-weight:600; margin:clamp(20px,2.5vw,36px) 0 clamp(8px,0.8vw,12px); }
-        .cs-p  { font-size:clamp(14px,1.1vw,17px); color:#3a3a3a; line-height:1.85; font-family:${sans}; margin-bottom:clamp(14px,1.4vw,20px); }
+        .cs-h1,.cs-h2,.cs-h3 { font-family:${serif}; color:#1a1a1a; font-weight:700; letter-spacing:-0.02em; }
+        .cs-h1 { font-size:clamp(28px,3vw,44px); margin:clamp(32px,4vw,56px) 0 clamp(12px,1.2vw,18px); line-height:1.05; }
+        .cs-h2 { font-size:clamp(22px,2.4vw,36px); margin:clamp(28px,3.5vw,52px) 0 clamp(12px,1.2vw,18px); line-height:1.18; }
+        .cs-h3 { font-size:clamp(18px,1.8vw,26px); font-weight:600; margin:clamp(20px,2.5vw,36px) 0 clamp(8px,0.8vw,12px); line-height:1.25; }
+        .cs-p  { font-size:clamp(15px,1.05vw,17px); color:#3a3a3a; line-height:1.65; letter-spacing:0.01em; font-family:${sans}; margin-bottom:clamp(14px,1.4vw,20px); }
         .cs-ul { padding-left:0; list-style:none; margin-bottom:clamp(14px,1.4vw,20px); }
-        .cs-li { font-size:clamp(14px,1.1vw,17px); color:#3a3a3a; line-height:1.8; font-family:${sans}; padding-left:20px; position:relative; margin-bottom:6px; }
+        .cs-li { font-size:clamp(15px,1.05vw,17px); color:#3a3a3a; line-height:1.65; font-family:${sans}; padding-left:20px; position:relative; margin-bottom:8px; }
         .cs-li::before { content:'–'; position:absolute; left:0; color:#8a8a7a; }
         .cs-blockquote { border-left:3px solid #1a1a1a; padding:clamp(12px,1.5vw,20px) clamp(16px,2vw,28px); margin:clamp(24px,3vw,40px) 0; }
-        .cs-blockquote .cs-p { font-family:${serif}; font-size:clamp(18px,1.8vw,26px); color:#1a1a1a; font-style:italic; line-height:1.5; margin:0; }
+        .cs-blockquote .cs-p { font-family:${serif}; font-size:clamp(18px,1.8vw,26px); color:#1a1a1a; font-style:italic; line-height:1.6; margin:0; }
         .cs-strong { font-weight:600; color:#1a1a1a; }
         .cs-em { font-style:italic; }
         .cs-a  { color:#1a1a1a; text-decoration:underline; text-underline-offset:3px; }
@@ -321,7 +321,7 @@ export default function CaseStudyPage({ caseStudy }: { caseStudy: CaseStudy }) {
             φ = 55/34 ≈ 1.618. Gap clamp bounds → Fibonacci: 32→34px, 72→55px. */}
         <div
           className="cs-body-grid"
-          style={{ display: "grid", gridTemplateColumns: "minmax(0,55fr) 34fr", gap: "clamp(34px,5vw,55px)", alignItems: "start" }}
+          style={{ display: "grid", gridTemplateColumns: "minmax(0,1fr) clamp(220px,22vw,300px)", gap: "clamp(34px,5vw,55px)", alignItems: "start" }}
         >
           {/* ── Left ── */}
           <article>
