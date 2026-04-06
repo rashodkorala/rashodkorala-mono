@@ -211,9 +211,28 @@ export default function ProjectPage({ project }: { project: Project }) {
           transition: background 0.2s, color 0.2s;
         }
         .pd-view-more-btn:hover { background: #1a1a1a; color: #f0ede8; }
+
+        /* Mobile sticky TOC */
+        .pd-mobile-toc { display: none; }
+        .pd-mobile-toc-summary {
+          list-style: none; display: flex; align-items: center; justify-content: space-between;
+          padding: 12px 0; cursor: pointer; font-size: 10px; color: #b4b0a8;
+          letter-spacing: 0.14em; text-transform: uppercase;
+          font-family: var(--font-dm-sans), system-ui, sans-serif; user-select: none;
+        }
+        .pd-mobile-toc-summary::-webkit-details-marker { display: none; }
+        .pd-mobile-toc-nav { padding-bottom: 14px; display: flex; flex-direction: column; gap: 10px; }
+
         @media (max-width: 900px) {
           .pd-body-grid    { grid-template-columns: 1fr !important; }
           .pd-sidebar      { position: static !important; order: -1; }
+          .pd-desktop-toc  { display: none; }
+          .pd-mobile-toc   {
+            display: block; position: sticky; top: 0; z-index: 10;
+            background: var(--color-page, #f0ede8);
+            border-bottom: 1px solid rgba(26,26,26,0.08);
+            margin-bottom: clamp(24px, 3vw, 44px);
+          }
           .pd-related-grid { grid-template-columns: 1fr 1fr !important; }
         }
         @media (max-width: 600px) {
@@ -278,6 +297,39 @@ export default function ProjectPage({ project }: { project: Project }) {
             <CoverPlaceholder initial={project.title.charAt(0)} />
           )}
         </div>
+
+        {/* Mobile sticky TOC — hidden on desktop, sticky bar on mobile */}
+        {sections.length > 1 && (
+          <div className="pd-mobile-toc">
+            <details>
+              <summary className="pd-mobile-toc-summary">
+                On this page
+                <span aria-hidden="true">↓</span>
+              </summary>
+              <nav className="pd-mobile-toc-nav">
+                {sections.map(({ id, label }) => (
+                  <a
+                    key={id}
+                    href={`#${id}`}
+                    style={{
+                      fontSize: "clamp(11px, 0.9vw, 13px)",
+                      color: "#8a8a7a",
+                      fontFamily: sans,
+                      textDecoration: "none",
+                      letterSpacing: "0.01em",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 8,
+                    }}
+                  >
+                    <span style={{ width: 14, height: 1, background: "currentColor", flexShrink: 0, display: "inline-block" }} />
+                    {label}
+                  </a>
+                ))}
+              </nav>
+            </details>
+          </div>
+        )}
 
         {/* Body grid: content | sidebar */}
         {/* Body grid — golden ratio: 55fr main / 34fr sidebar (φ = 55/34 ≈ 1.618).
@@ -412,13 +464,15 @@ export default function ProjectPage({ project }: { project: Project }) {
               </>
             )}
 
-            {/* In-page navigation */}
-            {sections.length > 1 && (
-              <>
-                <Divider />
-                <PageNav sections={sections} />
-              </>
-            )}
+            {/* In-page navigation — hidden on mobile (mobile TOC is sticky above) */}
+            <div className="pd-desktop-toc">
+              {sections.length > 1 && (
+                <>
+                  <Divider />
+                  <PageNav sections={sections} />
+                </>
+              )}
+            </div>
           </aside>
         </div>
 
