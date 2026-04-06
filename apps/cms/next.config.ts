@@ -45,12 +45,6 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "**.pexels.com",
       },
-      // Allow all HTTPS domains for development
-      // Remove this in production and add specific domains above
-      {
-        protocol: "https",
-        hostname: "**",
-      },
     ],
     // Enable image optimization with modern formats
     formats: ["image/avif", "image/webp"],
