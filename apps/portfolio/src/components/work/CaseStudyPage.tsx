@@ -240,7 +240,8 @@ export default function CaseStudyPage({ caseStudy }: { caseStudy: CaseStudy }) {
 
         @media (max-width:900px) {
           .cs-body-grid     { grid-template-columns:1fr !important; }
-          .cs-sidebar       { position:static !important; }
+          .cs-sidebar       { position:static !important; order:-1; }
+          .cs-sidebar-meta  { display:none; }
           .cs-stats-grid    { grid-template-columns:repeat(2,1fr) !important; }
           .cs-related-grid  { grid-template-columns:1fr 1fr !important; }
           .cs-outcomes-grid { grid-template-columns:repeat(3,1fr) !important; }
@@ -386,19 +387,21 @@ export default function CaseStudyPage({ caseStudy }: { caseStudy: CaseStudy }) {
           {/* ── Sidebar ── */}
           <aside className="cs-sidebar" style={{ position: "sticky", top: 32, display: "flex", flexDirection: "column", gap: "clamp(20px,2.2vw,30px)" }}>
 
-            {caseStudy.role && (
-              <>
-                <div><SidebarLabel>Role</SidebarLabel><SidebarValue>{caseStudy.role}</SidebarValue></div>
-                <SidebarDivider />
-              </>
-            )}
+            <div className="cs-sidebar-meta">
+              {caseStudy.role && (
+                <>
+                  <div><SidebarLabel>Role</SidebarLabel><SidebarValue>{caseStudy.role}</SidebarValue></div>
+                  <SidebarDivider />
+                </>
+              )}
 
-            {caseStudy.timeline && (
-              <>
-                <div><SidebarLabel>Timeline</SidebarLabel><SidebarValue>{caseStudy.timeline}</SidebarValue></div>
-                <SidebarDivider />
-              </>
-            )}
+              {caseStudy.timeline && (
+                <>
+                  <div><SidebarLabel>Timeline</SidebarLabel><SidebarValue>{caseStudy.timeline}</SidebarValue></div>
+                  <SidebarDivider />
+                </>
+              )}
+            </div>
 
             {liveLink && (
               <>
