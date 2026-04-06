@@ -213,7 +213,7 @@ export default function ProjectPage({ project }: { project: Project }) {
         .pd-view-more-btn:hover { background: #1a1a1a; color: #f0ede8; }
         @media (max-width: 900px) {
           .pd-body-grid    { grid-template-columns: 1fr !important; }
-          .pd-sidebar      { position: static !important; }
+          .pd-sidebar      { position: static !important; order: -1; }
           .pd-related-grid { grid-template-columns: 1fr 1fr !important; }
         }
         @media (max-width: 600px) {
