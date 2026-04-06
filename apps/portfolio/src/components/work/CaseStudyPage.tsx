@@ -238,10 +238,27 @@ export default function CaseStudyPage({ caseStudy }: { caseStudy: CaseStudy }) {
         /* Stats bar */
         .cs-stats-grid { display:grid; grid-template-columns:repeat(4,1fr); border-top:1px solid rgba(26,26,26,0.1); border-bottom:1px solid rgba(26,26,26,0.1); }
 
+        /* Mobile sticky TOC */
+        .cs-mobile-toc { display:none; }
+        .cs-mobile-toc-summary {
+          list-style:none; display:flex; align-items:center; justify-content:space-between;
+          padding:12px 0; cursor:pointer; font-size:10px; color:#b4b0a8;
+          letter-spacing:0.14em; text-transform:uppercase; font-family:${sans}; user-select:none;
+        }
+        .cs-mobile-toc-summary::-webkit-details-marker { display:none; }
+        .cs-mobile-toc-nav { padding-bottom:14px; display:flex; flex-direction:column; gap:10px; }
+
         @media (max-width:900px) {
           .cs-body-grid     { grid-template-columns:1fr !important; }
           .cs-sidebar       { position:static !important; order:-1; }
           .cs-sidebar-meta  { display:none; }
+          .cs-desktop-toc   { display:none; }
+          .cs-mobile-toc    {
+            display:block; position:sticky; top:0; z-index:10;
+            background:var(--color-page,#f0ede8);
+            border-bottom:1px solid rgba(26,26,26,0.08);
+            margin-bottom:clamp(24px,3vw,44px);
+          }
           .cs-stats-grid    { grid-template-columns:repeat(2,1fr) !important; }
           .cs-related-grid  { grid-template-columns:1fr 1fr !important; }
           .cs-outcomes-grid { grid-template-columns:repeat(3,1fr) !important; }
@@ -314,6 +331,26 @@ export default function CaseStudyPage({ caseStudy }: { caseStudy: CaseStudy }) {
                 <p style={{ fontFamily: serif, fontSize: "clamp(15px,1.4vw,22px)", color: "#1a1a1a", fontWeight: 600, letterSpacing: "-0.01em", lineHeight: 1.2 }}>{item.value}</p>
               </div>
             ))}
+          </div>
+        )}
+
+        {/* Mobile sticky TOC — hidden on desktop, sticky bar on mobile */}
+        {sections.length > 1 && (
+          <div className="cs-mobile-toc">
+            <details>
+              <summary className="cs-mobile-toc-summary">
+                On this page
+                <span aria-hidden="true">↓</span>
+              </summary>
+              <nav className="cs-mobile-toc-nav">
+                {sections.map(({ id, label }) => (
+                  <a key={id} href={`#${id}`} className="cs-nav-link">
+                    <span className="cs-nav-dash" />
+                    {label}
+                  </a>
+                ))}
+              </nav>
+            </details>
           </div>
         )}
 
@@ -427,10 +464,10 @@ export default function CaseStudyPage({ caseStudy }: { caseStudy: CaseStudy }) {
               </>
             )}
 
-            {/* In-page navigation */}
-            {sections.length > 1 && (
-              <PageNav sections={sections} />
-            )}
+            {/* In-page navigation — hidden on mobile (mobile TOC is sticky above) */}
+            <div className="cs-desktop-toc">
+              {sections.length > 1 && <PageNav sections={sections} />}
+            </div>
           </aside>
         </div>
 
