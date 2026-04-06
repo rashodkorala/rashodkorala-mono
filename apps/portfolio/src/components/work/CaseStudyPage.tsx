@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { CaseStudy, Project } from "@/lib/types";
 import { renderMarkdown, type MarkdownParserConfig } from "@rashodkorala/theView";
+import MobileToc from "./MobileToc";
 
 const serif = "var(--font-cormorant), 'Georgia', serif";
 const sans  = "var(--font-dm-sans), system-ui, sans-serif";
@@ -259,6 +260,9 @@ export default function CaseStudyPage({ caseStudy }: { caseStudy: CaseStudy }) {
             border-bottom:1px solid rgba(26,26,26,0.08);
             margin-bottom:clamp(24px,3vw,44px);
           }
+          [id^="cs-md-"], #cs-before-after, #cs-gallery, #cs-stack, #cs-related {
+            scroll-margin-top: var(--mobile-toc-height, 56px);
+          }
           .cs-stats-grid    { grid-template-columns:repeat(2,1fr) !important; }
           .cs-related-grid  { grid-template-columns:1fr 1fr !important; }
           .cs-outcomes-grid { grid-template-columns:repeat(3,1fr) !important; }
@@ -336,22 +340,14 @@ export default function CaseStudyPage({ caseStudy }: { caseStudy: CaseStudy }) {
 
         {/* Mobile sticky TOC — hidden on desktop, sticky bar on mobile */}
         {sections.length > 1 && (
-          <div className="cs-mobile-toc">
-            <details>
-              <summary className="cs-mobile-toc-summary">
-                On this page
-                <span aria-hidden="true">↓</span>
-              </summary>
-              <nav className="cs-mobile-toc-nav">
-                {sections.map(({ id, label }) => (
-                  <a key={id} href={`#${id}`} className="cs-nav-link">
-                    <span className="cs-nav-dash" />
-                    {label}
-                  </a>
-                ))}
-              </nav>
-            </details>
-          </div>
+          <MobileToc
+            sections={sections}
+            wrapperClass="cs-mobile-toc"
+            summaryClass="cs-mobile-toc-summary"
+            navClass="cs-mobile-toc-nav"
+            linkClass="cs-nav-link"
+            dashClass="cs-nav-dash"
+          />
         )}
 
         {/* Body: prose | sidebar */}
