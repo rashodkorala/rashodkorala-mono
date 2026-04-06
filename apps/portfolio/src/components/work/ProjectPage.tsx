@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import MobileToc from "./MobileToc";
 import Image from "next/image";
 import Link from "next/link";
 import type { Project, CaseStudy } from "@/lib/types";
@@ -212,6 +213,11 @@ export default function ProjectPage({ project }: { project: Project }) {
         }
         .pd-view-more-btn:hover { background: #1a1a1a; color: #f0ede8; }
 
+        /* In-page nav link classes (used by MobileToc) */
+        .pd-nav-link { font-size:clamp(11px,0.9vw,13px); color:#8a8a7a; font-family:var(--font-dm-sans),system-ui,sans-serif; text-decoration:none; letter-spacing:0.01em; display:flex; align-items:center; gap:8px; transition:color 0.15s; }
+        .pd-nav-link:hover { color:#1a1a1a; }
+        .pd-nav-dash { width:14px; height:1px; background:currentColor; flex-shrink:0; display:inline-block; }
+
         /* Mobile sticky TOC */
         .pd-mobile-toc { display: none; }
         .pd-mobile-toc-summary {
@@ -232,6 +238,9 @@ export default function ProjectPage({ project }: { project: Project }) {
             background: var(--color-page, #f0ede8);
             border-bottom: 1px solid rgba(26,26,26,0.08);
             margin-bottom: clamp(24px, 3vw, 44px);
+          }
+          #pd-overview, #pd-photos, #pd-video, #pd-tech, #pd-related {
+            scroll-margin-top: var(--mobile-toc-height, 56px);
           }
           .pd-related-grid { grid-template-columns: 1fr 1fr !important; }
         }
@@ -300,35 +309,14 @@ export default function ProjectPage({ project }: { project: Project }) {
 
         {/* Mobile sticky TOC — hidden on desktop, sticky bar on mobile */}
         {sections.length > 1 && (
-          <div className="pd-mobile-toc">
-            <details>
-              <summary className="pd-mobile-toc-summary">
-                On this page
-                <span aria-hidden="true">↓</span>
-              </summary>
-              <nav className="pd-mobile-toc-nav">
-                {sections.map(({ id, label }) => (
-                  <a
-                    key={id}
-                    href={`#${id}`}
-                    style={{
-                      fontSize: "clamp(11px, 0.9vw, 13px)",
-                      color: "#8a8a7a",
-                      fontFamily: sans,
-                      textDecoration: "none",
-                      letterSpacing: "0.01em",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 8,
-                    }}
-                  >
-                    <span style={{ width: 14, height: 1, background: "currentColor", flexShrink: 0, display: "inline-block" }} />
-                    {label}
-                  </a>
-                ))}
-              </nav>
-            </details>
-          </div>
+          <MobileToc
+            sections={sections}
+            wrapperClass="pd-mobile-toc"
+            summaryClass="pd-mobile-toc-summary"
+            navClass="pd-mobile-toc-nav"
+            linkClass="pd-nav-link"
+            dashClass="pd-nav-dash"
+          />
         )}
 
         {/* Body grid: content | sidebar */}
