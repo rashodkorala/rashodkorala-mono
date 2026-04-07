@@ -185,12 +185,12 @@ export default function ProjectPage({ project }: { project: Project }) {
           color: #1a1a1a;
           border: 1px solid #c4c0b8;
           padding: 6px 14px;
-          font-family: var(--font-dm-sans), system-ui, sans-serif;
+          font-family: var(--font-active-sans), system-ui, sans-serif;
           letter-spacing: 0.03em;
           background: transparent;
         }
         .pd-meta-link {
-          font-family: var(--font-dm-sans), system-ui, sans-serif;
+          font-family: var(--font-active-sans), system-ui, sans-serif;
           font-size: clamp(13px, 1vw, 15px);
           color: #1a1a1a;
           text-decoration: underline;
@@ -204,7 +204,7 @@ export default function ProjectPage({ project }: { project: Project }) {
           border: 1px solid #c4c0b8;
           padding: clamp(10px, 1.2vw, 16px) clamp(20px, 2.5vw, 36px);
           font-size: clamp(11px, 0.9vw, 13px);
-          font-family: var(--font-dm-sans), system-ui, sans-serif;
+          font-family: var(--font-active-sans), system-ui, sans-serif;
           letter-spacing: 0.08em;
           text-transform: uppercase;
           cursor: pointer;
@@ -214,7 +214,7 @@ export default function ProjectPage({ project }: { project: Project }) {
         .pd-view-more-btn:hover { background: #1a1a1a; color: #f0ede8; }
 
         /* In-page nav link classes (used by MobileToc) */
-        .pd-nav-link { font-size:clamp(11px,0.9vw,13px); color:#8a8a7a; font-family:var(--font-dm-sans),system-ui,sans-serif; text-decoration:none; letter-spacing:0.01em; display:flex; align-items:center; gap:8px; transition:color 0.15s; }
+        .pd-nav-link { font-size:clamp(11px,0.9vw,13px); color:#8a8a7a; font-family:var(--font-active-sans),system-ui,sans-serif; text-decoration:none; letter-spacing:0.01em; display:flex; align-items:center; gap:8px; transition:color 0.15s; }
         .pd-nav-link:hover { color:#1a1a1a; }
         .pd-nav-dash { width:14px; height:1px; background:currentColor; flex-shrink:0; display:inline-block; }
 
@@ -224,7 +224,7 @@ export default function ProjectPage({ project }: { project: Project }) {
           list-style: none; display: flex; align-items: center; justify-content: space-between;
           padding: 12px 0; cursor: pointer; font-size: 10px; color: #b4b0a8;
           letter-spacing: 0.14em; text-transform: uppercase;
-          font-family: var(--font-dm-sans), system-ui, sans-serif; user-select: none;
+          font-family: var(--font-active-sans), system-ui, sans-serif; user-select: none;
         }
         .pd-mobile-toc-summary::-webkit-details-marker { display: none; }
         .pd-mobile-toc-nav { padding-bottom: 14px; display: flex; flex-direction: column; gap: 10px; }

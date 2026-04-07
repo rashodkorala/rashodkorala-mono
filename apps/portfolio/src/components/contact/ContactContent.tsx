@@ -84,7 +84,7 @@ export default function ContactContent() {
           border-bottom: 1px solid #c4c0b8;
           padding: clamp(8px, 1vw, 14px) 0;
           font-size: clamp(14px, 1.2vw, 18px);
-          font-family: var(--font-dm-sans), system-ui, sans-serif;
+          font-family: var(--font-active-sans), system-ui, sans-serif;
           color: #1a1a1a;
           outline: none;
           width: 100%;
@@ -102,7 +102,7 @@ export default function ContactContent() {
           border: none;
           padding: clamp(12px, 1.4vw, 20px) clamp(28px, 3vw, 48px);
           font-size: clamp(12px, 1vw, 15px);
-          font-family: var(--font-dm-sans), system-ui, sans-serif;
+          font-family: var(--font-active-sans), system-ui, sans-serif;
           font-weight: 500;
           letter-spacing: 0.06em;
           text-transform: uppercase;
