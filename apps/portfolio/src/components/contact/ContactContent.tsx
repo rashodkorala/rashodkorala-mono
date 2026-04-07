@@ -138,8 +138,8 @@ export default function ContactContent() {
               fontWeight: 700,
               fontSize: "clamp(44px, 7vw, 96px)",
               color: "#1a1a1a",
-              letterSpacing: "-0.025em",
-              lineHeight: 0.9,
+              letterSpacing: "-0.02em",
+              lineHeight: 0.88,
               marginBottom: "clamp(28px, 4vw, 56px)",
             }}>
               Get
@@ -207,7 +207,7 @@ export default function ContactContent() {
                 }}>
                   Thank you, {form.firstName || "there"}.
                 </p>
-                <p style={{ fontSize: "clamp(13px, 1vw, 16px)", color: "#8a8a7a", fontFamily: sans, lineHeight: 1.7 }}>
+                <p style={{ fontSize: "clamp(13px, 1vw, 16px)", color: "#8a8a7a", fontFamily: sans, lineHeight: 1.6 }}>
                   Your message has been sent. I&rsquo;ll be in touch within 48 hours.
                 </p>
               </div>

@@ -93,7 +93,7 @@ export default function HomeHero({ imageSrc }: HomeHeroProps = {}) {
 
               <motion.div className="md:max-w-[61.8%]" initial="hidden" animate="visible">
                 <motion.p
-                  className="font-serif font-light text-[clamp(13px,1.1vw,25px)] text-body-secondary leading-[1.75] tracking-[0.015em] mb-fib-21"
+                  className="font-serif font-normal text-[clamp(13px,1.1vw,25px)] text-body-secondary leading-[1.6] tracking-[0.01em] mb-fib-21"
                   variants={reveal}
                   custom={0.55}
                 >
@@ -101,7 +101,7 @@ export default function HomeHero({ imageSrc }: HomeHeroProps = {}) {
                 </motion.p>
 
                 <motion.p
-                  className="font-serif font-light text-[clamp(13px,1.1vw,25px)] text-body-secondary leading-[1.75] tracking-[0.015em]"
+                  className="font-serif font-normal text-[clamp(13px,1.1vw,25px)] text-body-secondary leading-[1.6] tracking-[0.01em]"
                   variants={reveal}
                   custom={0.7}
                 >

@@ -59,7 +59,7 @@ export default function SideNav() {
                       : "w-0 group-hover:w-fib-13 bg-nav-indicator-subtle"
                   }`}
                 />
-                <span className="font-sans text-[length:var(--text-nav-size)] tracking-[0.05em] font-normal leading-none">
+                <span className="font-sans text-[length:var(--text-nav-size)] tracking-[0.03em] font-normal leading-none">
                   {label}
                 </span>
               </Link>

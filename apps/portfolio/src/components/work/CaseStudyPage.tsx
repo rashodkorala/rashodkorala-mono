@@ -198,11 +198,11 @@ export default function CaseStudyPage({ caseStudy }: { caseStudy: CaseStudy }) {
     <>
       <style>{`
         /* Markdown prose */
-        .cs-h1,.cs-h2,.cs-h3 { font-family:${serif}; color:#1a1a1a; font-weight:700; letter-spacing:-0.02em; }
+        .cs-h1,.cs-h2,.cs-h3 { font-family:${serif}; color:#1a1a1a; font-weight:600; letter-spacing:-0.025em; }
         .cs-h1 { font-size:clamp(28px,3vw,44px); margin:clamp(32px,4vw,56px) 0 clamp(12px,1.2vw,18px); line-height:1.05; }
         .cs-h2 { font-size:clamp(22px,2.4vw,36px); margin:clamp(28px,3.5vw,52px) 0 clamp(12px,1.2vw,18px); line-height:1.18; }
-        .cs-h3 { font-size:clamp(18px,1.8vw,26px); font-weight:600; margin:clamp(20px,2.5vw,36px) 0 clamp(8px,0.8vw,12px); line-height:1.25; }
-        .cs-p  { font-size:clamp(15px,1.05vw,17px); color:#3a3a3a; line-height:1.65; letter-spacing:0.01em; font-family:${sans}; margin-bottom:clamp(14px,1.4vw,20px); }
+        .cs-h3 { font-size:clamp(18px,1.8vw,26px); font-weight:500; margin:clamp(20px,2.5vw,36px) 0 clamp(8px,0.8vw,12px); line-height:1.25; }
+        .cs-p  { font-size:clamp(15px,1.05vw,17px); color:#3a3a3a; line-height:1.65; letter-spacing:0; font-family:${sans}; margin-bottom:clamp(14px,1.4vw,20px); }
         .cs-ul { padding-left:0; list-style:none; margin-bottom:clamp(14px,1.4vw,20px); }
         .cs-li { font-size:clamp(15px,1.05vw,17px); color:#3a3a3a; line-height:1.65; font-family:${sans}; padding-left:20px; position:relative; margin-bottom:8px; }
         .cs-li::before { content:'–'; position:absolute; left:0; color:#8a8a7a; }

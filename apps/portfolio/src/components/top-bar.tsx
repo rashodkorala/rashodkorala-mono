@@ -109,7 +109,7 @@ export default function TopBar() {
                           : "w-fib-8 group-hover:w-fib-13 bg-nav-indicator-subtle"
                       }`}
                     />
-                    <span className="font-sans text-sm tracking-[0.05em]">
+                    <span className="font-sans text-sm tracking-[0.03em]">
                       {label}
                     </span>
                   </Link>
