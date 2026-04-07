@@ -17,7 +17,7 @@ const PRESETS: Record<Exclude<FontPreset, 'custom'>, { body: BodyFont; display: 
   classic: { body: 'plus-jakarta', display: 'cormorant' },
 };
 
-export const ACTIVE_PRESET: FontPreset = 'geist'; // ← change this to switch
+export const ACTIVE_PRESET = 'geist' as FontPreset; // ← change this to switch
 
 // Used only when ACTIVE_PRESET === 'custom'
 const CUSTOM: { body: BodyFont; display: DisplayFont } = {
