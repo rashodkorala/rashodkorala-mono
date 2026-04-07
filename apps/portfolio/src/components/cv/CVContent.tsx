@@ -29,72 +29,109 @@ interface Entry {
 
 const skills: SkillGroup[] = [
   {
-    label: "Core stack",
+    label: "Languages",
     items: [
-      { name: "TypeScript",   strong: true },
-      { name: "React / Next.js", strong: true },
-      { name: "React Native", strong: true },
-      { name: "Node.js",      strong: true },
-      { name: "Supabase",     strong: true },
-      { name: "PostgreSQL",   strong: true },
+      { name: "TypeScript",  strong: true },
+      { name: "JavaScript",  strong: true },
+      { name: "HTML5 / CSS3", strong: true },
+      { name: "Java" },
     ],
   },
   {
-    label: "Tools & platforms",
+    label: "Frameworks & Libraries",
     items: [
-      { name: "Anthropic API" },
+      { name: "React / Next.js", strong: true },
+      { name: "React Native",    strong: true },
+      { name: "Node.js",         strong: true },
+      { name: "Express" },
+      { name: "AngularJS" },
+    ],
+  },
+  {
+    label: "Databases",
+    items: [
+      { name: "PostgreSQL", strong: true },
+      { name: "Supabase",   strong: true },
+    ],
+  },
+  {
+    label: "Cloud & DevOps",
+    items: [
+      { name: "AWS",       strong: true },
+      { name: "Azure" },
+      { name: "OpenShift" },
+      { name: "Docker" },
+      { name: "Git" },
+    ],
+  },
+  {
+    label: "Tools & Platforms",
+    items: [
+      { name: "Figma" },
       { name: "Shopify / Liquid" },
+      { name: "Cursor" },
+      { name: "Claude Code" },
+      { name: "OpenAI Codex" },
+      { name: "Maven" },
       { name: "Framer Motion" },
       { name: "NFC / NDEF" },
-      { name: "Docker" },
-      { name: "Figma" },
-      { name: "AWS" },
-      { name: "Turborepo" },
+    ],
+  },
+  {
+    label: "Concepts",
+    items: [
+      { name: "REST APIs" },
+      { name: "AI Automation" },
+      { name: "MCP Integrations" },
+      { name: "CI/CD" },
+      { name: "Microservices" },
+      { name: "Web Security" },
     ],
   },
 ];
 
 const certs: Cert[] = [
-  { name: "Meta Front-End Developer",       issuer: "Meta · 2025" },
-  { name: "Google IT Support Professional", issuer: "Google · 2025" },
-  { name: "AWS Cloud Practitioner",         issuer: "Amazon · In progress" },
+  { name: "Meta Front-End Developer",         issuer: "Meta · Oct 2025" },
+  { name: "Google IT Support Professional",   issuer: "Google · Nov 2025" },
+  { name: "AWS Cloud Practitioner",           issuer: "Amazon · In progress" },
+  { name: "Master Java Comprehensive Developer", issuer: "2018" },
 ];
 
 const experience: Entry[] = [
   {
     id: "rnd",
-    date: "Mar 2026 — Present",
-    title: "Technical Product Engineer",
-    org: "R&D Creative Agency · Canada",
+    date: "Mar 2025 — Present",
+    title: "Technical Product Engineer & Co-Founder",
+    org: "R&D Creative Agency · St. John's, NL",
     description:
-      "Architect and deliver full-stack solutions for clients across React, Node.js, and Shopify stacks. Integrated Claude Code and OpenAI Codex via MCP, reducing average build-to-launch time by ~40%. Lead structured discovery sessions and enforce Git branching strategies across all projects.",
-    tags: ["React", "Node.js", "Shopify", "Anthropic API", "MCP"],
+      "Led full-cycle delivery of web projects across multiple sectors, from brief to production-ready digital products. Leveraged AI tooling including Claude Code and OpenAI Codex to automate development workflows. Designed and implemented RESTful APIs and third-party integrations for clients including Rob Roy, Konfusion, and MOOV. Applied UI/UX principles to improve live products, enhancing engagement and conversion.",
+    tags: ["React", "Node.js", "Shopify", "Claude Code", "OpenAI Codex"],
   },
   {
     id: "fyynd",
     date: "Jan 2026 — Present",
-    title: "Product Design Specialist",
-    org: "Fyynd Fit · Remote",
+    title: "Product Design Consultant",
+    org: "Fyynd Fit · Remote — Part-Time",
     description:
-      "Redesigned end-to-end navigation architecture across mobile app and web platform, reducing friction in core user journeys. Overhauled the visual design system for cross-platform consistency and applied strategic CTA placement to increase engagement.",
-    tags: ["UI/UX", "Design Systems", "Mobile", "Web"],
+      "Redesigned navigation architecture across mobile app and website, reducing user friction and simplifying core user flows. Overhauled the visual design system for cross-platform consistency. Improved data visualisation and layout to make complex information more scannable, driving higher conversion on key actions.",
+    tags: ["UI/UX", "Design Systems", "Mobile", "Figma"],
   },
   {
     id: "aetherlabs",
     date: "Jun 2025 — Present",
-    title: "Founder & Lead Engineer",
-    org: "AetherLabs · Canada",
+    title: "Co-Founder & Engineering Team Lead",
+    org: "AetherLabs · St. John's, NL",
     description:
-      "Built and scaled a full back-office platform for 30,000+ independent artists across Canada — inventory, NFC provenance tagging, AI document extraction, and CRM. React Native mobile app, Next.js web client, Supabase backend in a Turborepo monorepo. Selected for Propel ICT Vision and Genesis Evolve accelerator programmes.",
-    tags: ["React Native", "Next.js", "Supabase", "Anthropic API", "NFC"],
+      "Architected and led end-to-end development of a back-office platform enabling independent artists to manage inventory, documentation, provenance, and business workflows. Drove product-market fit through customer discovery and user interviews with artists, galleries, and museums. Scaled the platform to support 30,000+ artists across Canada. Implemented NFC-embedded certificate-of-authenticity workflows and AI-assisted document extraction.",
+    tags: ["React Native", "Next.js", "Supabase", "PostgreSQL", "NFC"],
   },
   {
     id: "paradies",
     date: "Jun 2022 — Present",
     title: "Technical Associate",
-    org: "Paradies Lagardere · St. John's International Airport",
+    org: "Paradies Lagardère · St. John's International Airport — Part-Time",
     description:
-      "Managed POS systems supporting 200–400 daily customer interactions. Analysed product performance data to inform merchandising decisions, resulting in a 30% sales increase on underperforming lines.",
+      "Managed POS systems and transaction workflows, maintaining operational reliability across daily retail operations. Analysed product performance and sales data to inform stocking and merchandising decisions, contributing to a 30% increase in sales for underperforming product lines.",
     tags: [],
   },
 ];
@@ -106,17 +143,35 @@ const projects: Entry[] = [
     title: "Transcript Processing Pipeline",
     org: "TypeScript · Node.js · Anthropic API",
     description:
-      "Pipeline that processes raw meeting transcripts into structured CRM-ready data using a three-tier confidence classification system. Strong technical feedback from the engineering review team.",
+      "AI-powered pipeline that transforms meeting transcripts into structured CRM data using a three-tier confidence taxonomy and RESTful ingestion services.",
     tags: ["TypeScript", "Anthropic API", "Node.js"],
   },
   {
     id: "moov",
-    date: "2024",
+    date: "In Development",
     title: "MOOV Shopify Storefront",
     org: "Shopify · Liquid · CSS · JavaScript",
     description:
-      "Custom dark-themed storefront with a tailored design system, responsive UI components, and optimised checkout flow for a smart alarm hardware product.",
-    tags: ["Shopify", "Liquid", "CSS"],
+      "Dark-themed Shopify storefront with a custom design system, responsive UI, and cross-browser-optimised HTML5/CSS3 for a smart alarm product launch.",
+    tags: ["Shopify", "Liquid", "CSS", "JavaScript"],
+  },
+  {
+    id: "fyynd-project",
+    date: "2026",
+    title: "Fyynd Fit — App & Website Redesign",
+    org: "Figma · fyyndfit.com",
+    description:
+      "Redesigned the mobile app and website experience, overhauling navigation architecture, visual design system, and data visualisation to improve usability and interface cohesion.",
+    tags: ["Figma", "UI/UX", "Mobile", "Web"],
+  },
+  {
+    id: "aetherlabs-project",
+    date: "2025",
+    title: "AetherLabs — Back Office Platform",
+    org: "Next.js · TypeScript · Supabase · PostgreSQL",
+    description:
+      "Comprehensive platform for artist business operations including inventory, provenance management, NFC-embedded certificate-of-authenticity workflows, CRM, and invoicing.",
+    tags: ["Next.js", "TypeScript", "Supabase", "PostgreSQL", "NFC"],
   },
 ];
 
@@ -398,17 +453,14 @@ export default function CVContent() {
                 </p>
               )
             )}
-            <button
+            <a
               className="cv-no-print"
-              onClick={() => window.print()}
+              href="/Rashod_Korala_Resume.pdf"
+              download="Rashod_Korala_Resume.pdf"
               style={{
                 fontFamily: sans,
                 fontSize: "clamp(11px,0.85vw,13px)",
                 color: "var(--color-heading)",
-                background: "none",
-                border: "none",
-                padding: 0,
-                cursor: "pointer",
                 display: "inline-flex",
                 alignItems: "center",
                 gap: 5,
@@ -419,7 +471,38 @@ export default function CVContent() {
               }}
             >
               Download PDF <DownloadIcon />
-            </button>
+            </a>
+          </div>
+        </div>
+
+        <HRule />
+
+        {/* ── Professional Competency ───────────────────────────────────────── */}
+        <div style={{ marginBottom: "clamp(28px,3.5vw,48px)" }}>
+          <SectionHeader title="Professional Competency" />
+          <div style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(3, 1fr)",
+            gap: "clamp(6px,0.8vw,10px) clamp(16px,2vw,32px)",
+          }}>
+            {[
+              "Full Stack Engineering",
+              "AI Workflow Automation",
+              "Technical Product Leadership",
+              "Product Discovery & Iteration",
+              "System Architecture",
+              "UI/UX Systems Design",
+              "Cross-Functional Collaboration",
+              "Client Delivery Management",
+              "Project Management",
+            ].map((item) => (
+              <div key={item} style={{ display: "flex", alignItems: "center", gap: 9 }}>
+                <div style={{ width: 4, height: 4, borderRadius: "50%", background: "var(--color-border-strong)", flexShrink: 0 }} />
+                <span style={{ fontFamily: sans, fontSize: "clamp(12px,0.92vw,14px)", color: "var(--color-body-secondary)", fontWeight: 300, lineHeight: 1.75 }}>
+                  {item}
+                </span>
+              </div>
+            ))}
           </div>
         </div>
 
