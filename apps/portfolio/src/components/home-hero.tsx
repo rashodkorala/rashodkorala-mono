@@ -44,7 +44,10 @@ export default function HomeHero({ imageSrc }: HomeHeroProps = {}) {
       <div className="min-h-svh bg-page flex flex-col w-full lg:h-screen lg:overflow-hidden lg:pl-sidenav">
 
         {/* Nav — mobile/tablet only */}
-        <nav className="lg:hidden shrink-0 flex items-center justify-end px-page-px sm:px-page-px-sm md:px-page-px-md py-fib-21 sm:py-fib-34">
+        <nav className="lg:hidden shrink-0 flex items-center justify-between px-page-px sm:px-page-px-sm md:px-page-px-md py-fib-21 sm:py-fib-34">
+          <Link href="/" className="font-body text-[13px] text-heading tracking-[0.02em] no-underline">
+            RK
+          </Link>
           <ul className="flex gap-fib-21 sm:gap-fib-34 list-none m-0 p-0">
             {navLinks.map(({ label, href }) => (
               <li key={href}>
@@ -63,7 +66,7 @@ export default function HomeHero({ imageSrc }: HomeHeroProps = {}) {
           <div className="flex flex-col min-w-0 pb-fib-21 md:pb-fib-34">
 
             {/* Zone 1: top spacer — optical centre */}
-            <div className="flex-[0.618]" aria-hidden="true" />
+            <div className="flex-[0.2] md:flex-[0.618]" aria-hidden="true" />
 
             {/* Zone 2: name + bio */}
             <div className="flex flex-col justify-center">
@@ -88,7 +91,7 @@ export default function HomeHero({ imageSrc }: HomeHeroProps = {}) {
                 </motion.span>
               </motion.h1>
 
-              <motion.div className="max-w-[61.8%]" initial="hidden" animate="visible">
+              <motion.div className="md:max-w-[61.8%]" initial="hidden" animate="visible">
                 <motion.p
                   className="font-serif font-light text-[clamp(13px,1.1vw,25px)] text-body-secondary leading-[1.75] tracking-[0.015em] mb-fib-21"
                   variants={reveal}

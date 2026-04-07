@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
 import { toast } from "sonner";
+import { submitContactForm } from "@/app/actions/contact";
 
 export default function Contact() {
     const [formData, setFormData] = useState({
@@ -13,41 +14,14 @@ export default function Contact() {
         message: ""
     });
     const [formStatus, setFormStatus] = useState("");
-    const access_key = process.env.NEXT_PUBLIC_CONTACT_FORM_KEY;
-
 
     async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
         event.preventDefault();
-        const formData = new FormData(event.currentTarget);
 
-        if (access_key) {
-            formData.append("access_key", access_key);
-        } else {
-            setFormStatus("Access key is missing.");
-            return;
-        }
+        const result = await submitContactForm(formData);
 
-        const object = Object.fromEntries(formData);
-        const json = JSON.stringify(object);
-
-        const response = await fetch("https://api.web3forms.com/submit", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Accept: "application/json",
-            },
-            body: json,
-        });
-
-        const result = await response.json();
         if (result.success) {
-            setFormStatus("Message sent successfully!");
-            setFormData({
-                name: "",
-                email: "",
-                subject: "",
-                message: ""
-            });
+            setFormData({ name: "", email: "", subject: "", message: "" });
             setFormStatus("");
             toast.success("Message sent successfully!");
         } else {
@@ -149,7 +123,6 @@ export default function Contact() {
                                 </Button>
 
                                 {formStatus && <p className="text-slate-600 mt-4 font-thin">{formStatus}</p>}
-                                <input type="hidden" name="from_name" value="A message from Photos by Rashod Korala's website "></input>
                             </form>
                         </div>
 

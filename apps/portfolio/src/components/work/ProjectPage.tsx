@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import MobileToc from "./MobileToc";
 import Image from "next/image";
 import Link from "next/link";
 import type { Project, CaseStudy } from "@/lib/types";
@@ -211,9 +212,36 @@ export default function ProjectPage({ project }: { project: Project }) {
           transition: background 0.2s, color 0.2s;
         }
         .pd-view-more-btn:hover { background: #1a1a1a; color: #f0ede8; }
+
+        /* In-page nav link classes (used by MobileToc) */
+        .pd-nav-link { font-size:clamp(11px,0.9vw,13px); color:#8a8a7a; font-family:var(--font-dm-sans),system-ui,sans-serif; text-decoration:none; letter-spacing:0.01em; display:flex; align-items:center; gap:8px; transition:color 0.15s; }
+        .pd-nav-link:hover { color:#1a1a1a; }
+        .pd-nav-dash { width:14px; height:1px; background:currentColor; flex-shrink:0; display:inline-block; }
+
+        /* Mobile sticky TOC */
+        .pd-mobile-toc { display: none; }
+        .pd-mobile-toc-summary {
+          list-style: none; display: flex; align-items: center; justify-content: space-between;
+          padding: 12px 0; cursor: pointer; font-size: 10px; color: #b4b0a8;
+          letter-spacing: 0.14em; text-transform: uppercase;
+          font-family: var(--font-dm-sans), system-ui, sans-serif; user-select: none;
+        }
+        .pd-mobile-toc-summary::-webkit-details-marker { display: none; }
+        .pd-mobile-toc-nav { padding-bottom: 14px; display: flex; flex-direction: column; gap: 10px; }
+
         @media (max-width: 900px) {
           .pd-body-grid    { grid-template-columns: 1fr !important; }
-          .pd-sidebar      { position: static !important; }
+          .pd-sidebar      { position: static !important; order: -1; }
+          .pd-desktop-toc  { display: none; }
+          .pd-mobile-toc   {
+            display: block; position: sticky; top: 0; z-index: 10;
+            background: var(--color-page, #f0ede8);
+            border-bottom: 1px solid rgba(26,26,26,0.08);
+            margin-bottom: clamp(24px, 3vw, 44px);
+          }
+          #pd-overview, #pd-photos, #pd-video, #pd-tech, #pd-related {
+            scroll-margin-top: var(--mobile-toc-height, 56px);
+          }
           .pd-related-grid { grid-template-columns: 1fr 1fr !important; }
         }
         @media (max-width: 600px) {
@@ -278,6 +306,18 @@ export default function ProjectPage({ project }: { project: Project }) {
             <CoverPlaceholder initial={project.title.charAt(0)} />
           )}
         </div>
+
+        {/* Mobile sticky TOC — hidden on desktop, sticky bar on mobile */}
+        {sections.length > 1 && (
+          <MobileToc
+            sections={sections}
+            wrapperClass="pd-mobile-toc"
+            summaryClass="pd-mobile-toc-summary"
+            navClass="pd-mobile-toc-nav"
+            linkClass="pd-nav-link"
+            dashClass="pd-nav-dash"
+          />
+        )}
 
         {/* Body grid: content | sidebar */}
         {/* Body grid — golden ratio: 55fr main / 34fr sidebar (φ = 55/34 ≈ 1.618).
@@ -412,13 +452,15 @@ export default function ProjectPage({ project }: { project: Project }) {
               </>
             )}
 
-            {/* In-page navigation */}
-            {sections.length > 1 && (
-              <>
-                <Divider />
-                <PageNav sections={sections} />
-              </>
-            )}
+            {/* In-page navigation — hidden on mobile (mobile TOC is sticky above) */}
+            <div className="pd-desktop-toc">
+              {sections.length > 1 && (
+                <>
+                  <Divider />
+                  <PageNav sections={sections} />
+                </>
+              )}
+            </div>
           </aside>
         </div>
 

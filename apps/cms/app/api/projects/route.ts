@@ -56,7 +56,6 @@ export async function GET(request: NextRequest) {
 
       return {
         id: project.id,
-        userId: project.user_id,
         slug: project.slug,
         title: project.title,
         subtitle: project.subtitle,

@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { CaseStudy, Project } from "@/lib/types";
 import { renderMarkdown, type MarkdownParserConfig } from "@rashodkorala/theView";
+import MobileToc from "./MobileToc";
 
 const serif = "var(--font-cormorant), 'Georgia', serif";
 const sans  = "var(--font-dm-sans), system-ui, sans-serif";
@@ -238,9 +239,30 @@ export default function CaseStudyPage({ caseStudy }: { caseStudy: CaseStudy }) {
         /* Stats bar */
         .cs-stats-grid { display:grid; grid-template-columns:repeat(4,1fr); border-top:1px solid rgba(26,26,26,0.1); border-bottom:1px solid rgba(26,26,26,0.1); }
 
+        /* Mobile sticky TOC */
+        .cs-mobile-toc { display:none; }
+        .cs-mobile-toc-summary {
+          list-style:none; display:flex; align-items:center; justify-content:space-between;
+          padding:12px 0; cursor:pointer; font-size:10px; color:#b4b0a8;
+          letter-spacing:0.14em; text-transform:uppercase; font-family:${sans}; user-select:none;
+        }
+        .cs-mobile-toc-summary::-webkit-details-marker { display:none; }
+        .cs-mobile-toc-nav { padding-bottom:14px; display:flex; flex-direction:column; gap:10px; }
+
         @media (max-width:900px) {
           .cs-body-grid     { grid-template-columns:1fr !important; }
-          .cs-sidebar       { position:static !important; }
+          .cs-sidebar       { position:static !important; order:-1; }
+          .cs-sidebar-meta  { display:none; }
+          .cs-desktop-toc   { display:none; }
+          .cs-mobile-toc    {
+            display:block; position:sticky; top:0; z-index:10;
+            background:var(--color-page,#f0ede8);
+            border-bottom:1px solid rgba(26,26,26,0.08);
+            margin-bottom:clamp(24px,3vw,44px);
+          }
+          [id^="cs-md-"], #cs-before-after, #cs-gallery, #cs-stack, #cs-related {
+            scroll-margin-top: var(--mobile-toc-height, 56px);
+          }
           .cs-stats-grid    { grid-template-columns:repeat(2,1fr) !important; }
           .cs-related-grid  { grid-template-columns:1fr 1fr !important; }
           .cs-outcomes-grid { grid-template-columns:repeat(3,1fr) !important; }
@@ -316,6 +338,18 @@ export default function CaseStudyPage({ caseStudy }: { caseStudy: CaseStudy }) {
           </div>
         )}
 
+        {/* Mobile sticky TOC — hidden on desktop, sticky bar on mobile */}
+        {sections.length > 1 && (
+          <MobileToc
+            sections={sections}
+            wrapperClass="cs-mobile-toc"
+            summaryClass="cs-mobile-toc-summary"
+            navClass="cs-mobile-toc-nav"
+            linkClass="cs-nav-link"
+            dashClass="cs-nav-dash"
+          />
+        )}
+
         {/* Body: prose | sidebar */}
         {/* Body grid — golden ratio: minmax(0,55fr) prose / 34fr sidebar.
             φ = 55/34 ≈ 1.618. Gap clamp bounds → Fibonacci: 32→34px, 72→55px. */}
@@ -386,19 +420,21 @@ export default function CaseStudyPage({ caseStudy }: { caseStudy: CaseStudy }) {
           {/* ── Sidebar ── */}
           <aside className="cs-sidebar" style={{ position: "sticky", top: 32, display: "flex", flexDirection: "column", gap: "clamp(20px,2.2vw,30px)" }}>
 
-            {caseStudy.role && (
-              <>
-                <div><SidebarLabel>Role</SidebarLabel><SidebarValue>{caseStudy.role}</SidebarValue></div>
-                <SidebarDivider />
-              </>
-            )}
+            <div className="cs-sidebar-meta">
+              {caseStudy.role && (
+                <>
+                  <div><SidebarLabel>Role</SidebarLabel><SidebarValue>{caseStudy.role}</SidebarValue></div>
+                  <SidebarDivider />
+                </>
+              )}
 
-            {caseStudy.timeline && (
-              <>
-                <div><SidebarLabel>Timeline</SidebarLabel><SidebarValue>{caseStudy.timeline}</SidebarValue></div>
-                <SidebarDivider />
-              </>
-            )}
+              {caseStudy.timeline && (
+                <>
+                  <div><SidebarLabel>Timeline</SidebarLabel><SidebarValue>{caseStudy.timeline}</SidebarValue></div>
+                  <SidebarDivider />
+                </>
+              )}
+            </div>
 
             {liveLink && (
               <>
@@ -424,10 +460,10 @@ export default function CaseStudyPage({ caseStudy }: { caseStudy: CaseStudy }) {
               </>
             )}
 
-            {/* In-page navigation */}
-            {sections.length > 1 && (
-              <PageNav sections={sections} />
-            )}
+            {/* In-page navigation — hidden on mobile (mobile TOC is sticky above) */}
+            <div className="cs-desktop-toc">
+              {sections.length > 1 && <PageNav sections={sections} />}
+            </div>
           </aside>
         </div>
 
