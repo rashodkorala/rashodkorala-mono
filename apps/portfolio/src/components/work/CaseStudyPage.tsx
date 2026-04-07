@@ -4,8 +4,8 @@ import type { CaseStudy, Project } from "@/lib/types";
 import { renderMarkdown, type MarkdownParserConfig } from "@rashodkorala/theView";
 import MobileToc from "./MobileToc";
 
-const serif = "var(--font-cormorant), 'Georgia', serif";
-const sans  = "var(--font-dm-sans), system-ui, sans-serif";
+const serif = "var(--font-active-display), 'Georgia', serif";
+const sans  = "var(--font-active-sans), system-ui, sans-serif";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
 

@@ -3,8 +3,8 @@
 import React, { useState } from "react";
 import { supabase } from "@/lib/supabase";
 
-const serif = "var(--font-cormorant), 'Georgia', serif";
-const sans  = "var(--font-dm-sans), system-ui, sans-serif";
+const serif = "var(--font-active-display), 'Georgia', serif";
+const sans  = "var(--font-active-sans), system-ui, sans-serif";
 
 interface FormState {
   firstName: string;

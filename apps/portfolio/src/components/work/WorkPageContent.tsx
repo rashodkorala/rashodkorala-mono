@@ -7,8 +7,8 @@ import { motion, useInView } from "framer-motion";
 import type { Project, CaseStudy } from "@/lib/types";
 import CaseStudiesList from "./CaseStudiesList";
 
-const serif = "var(--font-cormorant), 'Georgia', serif";
-const sans  = "var(--font-dm-sans), system-ui, sans-serif";
+const serif = "var(--font-active-display), 'Georgia', serif";
+const sans  = "var(--font-active-sans), system-ui, sans-serif";
 
 /**
  * Cycling 12-column grid pattern — 6 slots per cycle:

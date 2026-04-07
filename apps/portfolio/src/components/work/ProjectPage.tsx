@@ -6,8 +6,8 @@ import Image from "next/image";
 import Link from "next/link";
 import type { Project, CaseStudy } from "@/lib/types";
 
-const serif = "var(--font-cormorant), 'Georgia', serif";
-const sans  = "var(--font-dm-sans), system-ui, sans-serif";
+const serif = "var(--font-active-display), 'Georgia', serif";
+const sans  = "var(--font-active-sans), system-ui, sans-serif";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
 
