@@ -11,9 +11,9 @@ module.exports = {
       fontFamily: {
         sans: ["var(--font-geist-sans)", "ui-sans-serif", "system-ui", "sans-serif"],
         mono: ["var(--font-geist-mono)", "ui-monospace", "monospace"],
-        serif: ["var(--font-playfair)", "Georgia", "serif"],
-        display: ["var(--font-cormorant)", "Georgia", "serif"],  // Cormorant Garamond
-        body: ["var(--font-dm-sans)", "system-ui", "sans-serif"],  // Plus Jakarta Sans
+        serif: ["var(--font-active-display)", "Georgia", "serif"],
+        display: ["var(--font-active-display)", "Georgia", "serif"],
+        body: ["var(--font-active-sans)", "system-ui", "sans-serif"],
         reading: ["'Helvetica Neue'", "Helvetica", "Arial", "sans-serif"],
       },
       fontSize: {

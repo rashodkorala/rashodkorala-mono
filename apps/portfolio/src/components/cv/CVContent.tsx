@@ -6,10 +6,10 @@ import React from "react";
 // Sidebar: narrow fixed (clamp 160–224px) with skills/certs/education
 // Main: chronological entries with date column + content column
 // Hero: large serif name left, contact meta right
-// Fonts: portfolio CSS vars (Cormorant Garamond → --font-cormorant, Plus Jakarta → --font-dm-sans)
+// Fonts: use semantic CSS vars controlled by apps/portfolio/config/typography.ts
 
-const serif = "var(--font-cormorant), 'Georgia', serif";
-const sans  = "var(--font-dm-sans), system-ui, sans-serif";
+const serif = "var(--font-active-display), 'Georgia', serif";
+const sans  = "var(--font-active-sans), system-ui, sans-serif";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 

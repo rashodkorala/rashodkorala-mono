@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { GeistSans } from "geist/font/sans";
 import { PostHogProvider } from "@rashodkorala/posthog-next";
 import { ThemeProvider } from "next-themes";
 import { Toaster } from "@/components/ui/sonner";
@@ -36,11 +36,8 @@ export const metadata: Metadata = {
   },
 };
 
-const inter = Inter({
-  variable: "--font-geist-sans",
-  display: "swap",
-  subsets: ["latin"],
-});
+// GeistSans from the geist package pre-configures --font-geist-sans
+
 
 export default function RootLayout({
   children,
@@ -49,7 +46,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning className="dark" style={{ colorScheme: "dark" }}>
-      <body className={`${inter.className} antialiased bg-background text-foreground`}>
+      <body className={`${GeistSans.variable} ${GeistSans.className} antialiased bg-background text-foreground`}>
         <PostHogProvider app="cms">
           <ThemeProvider
             attribute="class"

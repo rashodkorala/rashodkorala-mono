@@ -2,24 +2,13 @@ import { Metadata } from 'next'
 import '@/styles/globals.css'
 
 import { PostHogProvider } from '@rashodkorala/posthog-next'
-import { Cormorant_Garamond, Geist_Mono, Geist, Plus_Jakarta_Sans } from 'next/font/google';
+import { GeistSans } from 'geist/font/sans';
+import { GeistMono } from 'geist/font/mono';
+import { Cormorant_Garamond, Plus_Jakarta_Sans } from 'next/font/google';
+import { typographyConfig } from '@/config/typography';
 import SideNav from '@/src/components/side-nav';
 
-const geistSans = Geist({
-    variable: "--font-geist-sans",
-    subsets: ["latin"],
-    display: "swap",
-    adjustFontFallback: true,
-    fallback: ['system-ui', 'arial'],
-});
-
-const geistMono = Geist_Mono({
-    variable: "--font-geist-mono",
-    subsets: ["latin"],
-    display: "swap",
-    adjustFontFallback: true,
-    fallback: ['ui-monospace', 'monospace'],
-});
+// GeistSans/GeistMono from the geist package pre-configure --font-geist-sans/--font-geist-mono
 
 // Display / serif — Cormorant Garamond (weights match bold headings across Work, CV, etc.)
 const cormorantGaramond = Cormorant_Garamond({
@@ -30,13 +19,22 @@ const cormorantGaramond = Cormorant_Garamond({
     display: "swap",
 });
 
-// Body font — Plus Jakarta Sans
+// Body font — Plus Jakarta Sans (available for 'classic' or 'custom' presets)
 const plusJakartaSans = Plus_Jakarta_Sans({
     variable: "--font-dm-sans",
     subsets: ["latin"],
     weight: ["300", "400", "500"],
     display: "swap",
 });
+
+// Font var map — resolves preset choices to CSS variable references
+const FONT_VAR: {
+    body:    Record<'geist' | 'plus-jakarta', string>;
+    display: Record<'geist' | 'cormorant',   string>;
+} = {
+    body:    { geist: 'var(--font-geist-sans)', 'plus-jakarta': 'var(--font-dm-sans)' },
+    display: { geist: 'var(--font-geist-sans)', cormorant: 'var(--font-cormorant)' },
+};
 
 export const metadata: Metadata = {
     metadataBase: new URL('https://rashodkorala.com'),
@@ -90,8 +88,16 @@ export default function RootLayout({
     children: React.ReactNode
 }) {
     return (
-        <html lang="en" className="bg-page text-body" suppressHydrationWarning>
-            <body className={`${geistSans.variable} ${geistMono.variable} ${cormorantGaramond.variable} ${plusJakartaSans.variable}`}>
+        <html
+            lang="en"
+            className="bg-page text-body"
+            suppressHydrationWarning
+            style={{
+                '--font-active-sans':    FONT_VAR.body[typographyConfig.body],
+                '--font-active-display': FONT_VAR.display[typographyConfig.display],
+            } as React.CSSProperties}
+        >
+            <body className={`${GeistSans.variable} ${GeistMono.variable} ${cormorantGaramond.variable} ${plusJakartaSans.variable}`}>
                 <PostHogProvider app="portfolio">
                     <SideNav />
                     {children}
