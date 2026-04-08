@@ -4,11 +4,9 @@ import React, { useRef, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion, useInView } from "framer-motion";
+import { jakartaSans, cormorantGaramond } from "@/lib/font";
 import type { Project, CaseStudy } from "@/lib/types";
 import CaseStudiesList from "./CaseStudiesList";
-
-const serif = "var(--font-active-display), 'Georgia', serif";
-const sans  = "var(--font-active-sans), system-ui, sans-serif";
 
 /**
  * Cycling 12-column grid pattern — 6 slots per cycle:
@@ -54,10 +52,10 @@ function CoverPlaceholder({ fill, initial }: { fill: string; initial: string }) 
       <text
         x="250" y="320"
         textAnchor="middle"
-        fontFamily="Georgia, serif"
+        fontFamily={jakartaSans}
         fontSize="96"
         fontWeight="700"
-        fill="#f0ede8"
+        fill="var(--color-inverse)"
         opacity="0.18"
         letterSpacing="-2"
       >
@@ -132,8 +130,8 @@ function ProjectCard({
             top: "clamp(8px, 1vw, 14px)",
             left: "clamp(8px, 1vw, 14px)",
             fontSize: "11px",
-            color: "#f0ede8",
-            fontFamily: sans,
+            color: "var(--color-inverse)",
+            fontFamily: jakartaSans,
             opacity: 0.7,
             letterSpacing: "0.06em",
             zIndex: 1,
@@ -145,10 +143,10 @@ function ProjectCard({
         {/* Title + subtitle */}
         <div style={{ padding: "clamp(8px, 1vw, 14px) 0 clamp(16px, 2vw, 28px)" }}>
           <p style={{
-            fontFamily: serif,
+            fontFamily: jakartaSans,
             fontSize: "clamp(16px, 1.5vw, 22px)",
-            color: "#1a1a1a",
-            fontWeight: 600,
+            color: "var(--color-heading)",
+            fontWeight:400,
             margin: "0 0 3px",
             letterSpacing: "-0.015em",
             lineHeight: 1.15,
@@ -157,9 +155,9 @@ function ProjectCard({
           </p>
           {project.subtitle && (
             <p style={{
-              fontSize: "clamp(11px, 0.85vw, 13px)",
-              color: "#8a8a7a",
-              fontFamily: sans,
+              fontSize: "clamp(13px, 0.85vw, 14px)",
+              color: "var(--color-body-secondary)",
+              fontFamily: jakartaSans,
               margin: 0,
               letterSpacing: "0.02em",
               lineHeight: 1.5,
@@ -242,10 +240,10 @@ export default function WorkPageContent({ projects, caseStudies }: WorkPageConte
           {tab === "projects" ? (
             <div>
               <h1 style={{
-                fontFamily: serif,
+                fontFamily: cormorantGaramond,
                 fontSize: "clamp(48px, 7vw, 92px)",
-                fontWeight: 700,
-                color: "#1a1a1a",
+                fontWeight: 300,
+                color: "var(--color-heading)",
                 letterSpacing: "-0.025em",
                 lineHeight: 0.92,
                 margin: 0,
@@ -253,10 +251,10 @@ export default function WorkPageContent({ projects, caseStudies }: WorkPageConte
                 Selected
               </h1>
               <h1 style={{
-                fontFamily: serif,
+                fontFamily: cormorantGaramond,
                 fontSize: "clamp(48px, 7vw, 92px)",
-                fontWeight: 700,
-                color: "#6b6b6b",
+                fontWeight: 300,
+                color: "var(--color-body-secondary)",
                 letterSpacing: "-0.025em",
                 lineHeight: 0.92,
                 margin: 0,
@@ -268,10 +266,10 @@ export default function WorkPageContent({ projects, caseStudies }: WorkPageConte
           ) : (
             <div>
               <h1 style={{
-                fontFamily: serif,
+                fontFamily: cormorantGaramond,
                 fontSize: "clamp(48px, 7vw, 92px)",
-                fontWeight: 700,
-                color: "#1a1a1a",
+                fontWeight: 400,
+                color: "var(--color-heading)",
                 letterSpacing: "-0.025em",
                 lineHeight: 0.92,
                 margin: 0,
@@ -279,10 +277,10 @@ export default function WorkPageContent({ projects, caseStudies }: WorkPageConte
                 Case
               </h1>
               <h1 style={{
-                fontFamily: serif,
+                fontFamily: cormorantGaramond,
                 fontSize: "clamp(48px, 7vw, 92px)",
-                fontWeight: 700,
-                color: "#6b6b6b",
+                fontWeight: 400,
+                color: "var(--color-body-secondary)",
                 letterSpacing: "-0.025em",
                 lineHeight: 0.92,
                 margin: 0,
@@ -297,7 +295,7 @@ export default function WorkPageContent({ projects, caseStudies }: WorkPageConte
             {/* Styled toggle */}
             <div style={{
               display: "inline-flex",
-              border: "1px solid rgba(26,26,26,0.15)",
+              border: "1px solid var(--color-border)",
               overflow: "hidden",
             }}>
               {(["projects", "case-studies"] as const).map((value, i) => (
@@ -306,16 +304,16 @@ export default function WorkPageContent({ projects, caseStudies }: WorkPageConte
                   onClick={() => setTab(value)}
                   style={{
                     padding: "7px 18px",
-                    fontFamily: sans,
-                    fontSize: "clamp(10px, 0.85vw, 12px)",
+                    fontFamily: jakartaSans,
+                    fontSize: "clamp(11px, 0.85vw, 12px)",
                     letterSpacing: "0.08em",
                     textTransform: "uppercase",
                     fontWeight: 500,
                     cursor: "pointer",
                     border: "none",
-                    borderLeft: i > 0 ? "1px solid rgba(26,26,26,0.15)" : "none",
-                    background: tab === value ? "#1a1a1a" : "transparent",
-                    color: tab === value ? "#f0ede8" : "#8a8a7a",
+                    borderLeft: i > 0 ? "1px solid var(--color-border)" : "none",
+                    background: tab === value ? "var(--color-heading)" : "transparent",
+                    color: tab === value ? "var(--color-page)" : "var(--color-body-secondary)",
                     transition: "background 0.18s, color 0.18s",
                   }}
                 >
@@ -328,11 +326,11 @@ export default function WorkPageContent({ projects, caseStudies }: WorkPageConte
             {tab === "projects" && projects.length > 0 && (
               <div className="pf-header-meta" style={{ textAlign: "right" }}>
                 {yearRange && (
-                  <span style={{ fontFamily: sans, fontSize: "clamp(11px, 0.9vw, 14px)", color: "#8a8a7a", display: "block" }}>
+                  <span style={{ fontFamily: jakartaSans, fontSize: "clamp(12px, 0.9vw, 14px)", color: "var(--color-body-secondary)", display: "block" }}>
                     {yearRange}
                   </span>
                 )}
-                <span style={{ fontFamily: sans, fontSize: "clamp(11px, 0.9vw, 14px)", color: "#8a8a7a", display: "block", marginTop: "4px" }}>
+                <span style={{ fontFamily: jakartaSans, fontSize: "clamp(12px, 0.9vw, 14px)", color: "var(--color-body-secondary)", display: "block", marginTop: "4px" }}>
                   {projects.length} project{projects.length !== 1 ? "s" : ""}
                 </span>
               </div>
@@ -340,11 +338,11 @@ export default function WorkPageContent({ projects, caseStudies }: WorkPageConte
             {tab === "case-studies" && caseStudies.length > 0 && (
               <div className="pf-header-meta" style={{ textAlign: "right" }}>
                 {csYearRange && (
-                  <span style={{ fontFamily: sans, fontSize: "clamp(11px, 0.9vw, 14px)", color: "#8a8a7a", display: "block" }}>
+                  <span style={{ fontFamily: jakartaSans, fontSize: "clamp(12px, 0.9vw, 14px)", color: "var(--color-body-secondary)", display: "block" }}>
                     {csYearRange}
                   </span>
                 )}
-                <span style={{ fontFamily: sans, fontSize: "clamp(11px, 0.9vw, 14px)", color: "#8a8a7a", display: "block", marginTop: "4px" }}>
+                <span style={{ fontFamily: jakartaSans, fontSize: "clamp(12px, 0.9vw, 14px)", color: "var(--color-body-secondary)", display: "block", marginTop: "4px" }}>
                   {caseStudies.length} case {caseStudies.length !== 1 ? "studies" : "study"}
                 </span>
               </div>
@@ -359,7 +357,7 @@ export default function WorkPageContent({ projects, caseStudies }: WorkPageConte
           transition={{ duration: 0.7, delay: 0.2 }}
           style={{
             height: "1px",
-            backgroundColor: "rgba(26,26,26,0.12)",
+            backgroundColor: "var(--color-border-subtle)",
             marginBottom: "clamp(16px, 2.5vw, 40px)",
             transformOrigin: "left",
           }}
@@ -369,7 +367,7 @@ export default function WorkPageContent({ projects, caseStudies }: WorkPageConte
         {tab === "projects" && (
           <>
             {projects.length === 0 ? (
-              <p style={{ fontFamily: sans, fontSize: "14px", color: "#8a8a7a" }}>
+              <p style={{ fontFamily: jakartaSans, fontSize: "14px", color: "var(--color-body-secondary)" }}>
                 No projects to show yet.
               </p>
             ) : (
@@ -389,7 +387,7 @@ export default function WorkPageContent({ projects, caseStudies }: WorkPageConte
         {/* Case Studies tab */}
         {tab === "case-studies" && (
           caseStudies.length === 0 ? (
-            <p style={{ fontFamily: sans, fontSize: "14px", color: "#8a8a7a" }}>
+            <p style={{ fontFamily: jakartaSans, fontSize: "14px", color: "var(--color-body-secondary)" }}>
               No case studies published yet.
             </p>
           ) : (

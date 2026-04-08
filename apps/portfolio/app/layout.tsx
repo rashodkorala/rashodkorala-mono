@@ -2,39 +2,31 @@ import { Metadata } from 'next'
 import '@/styles/globals.css'
 
 import { PostHogProvider } from '@rashodkorala/posthog-next'
-import { GeistSans } from 'geist/font/sans';
-import { GeistMono } from 'geist/font/mono';
-import { Cormorant_Garamond, Plus_Jakarta_Sans } from 'next/font/google';
-import { typographyConfig } from '@/config/typography';
-import SideNav from '@/src/components/side-nav';
+import { Plus_Jakarta_Sans, Cormorant_Garamond, JetBrains_Mono } from 'next/font/google'
+import SideNav from '@/src/components/side-nav'
+import TopBar from '@/src/components/top-bar'
 
-// GeistSans/GeistMono from the geist package pre-configure --font-geist-sans/--font-geist-mono
+const jakartaSans = Plus_Jakarta_Sans({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700'],
+  variable: '--font-jakarta',
+  display: 'swap',
+})
 
-// Display / serif — Cormorant Garamond (weights match bold headings across Work, CV, etc.)
 const cormorantGaramond = Cormorant_Garamond({
-    variable: "--font-cormorant",
-    subsets: ["latin"],
-    weight: ["300", "400", "500", "600", "700"],
-    style: ["normal", "italic"],
-    display: "swap",
-});
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700'],
+  style: ['normal', 'italic'],
+  variable: '--font-cormorant',
+  display: 'swap',
+})
 
-// Body font — Plus Jakarta Sans (available for 'classic' or 'custom' presets)
-const plusJakartaSans = Plus_Jakarta_Sans({
-    variable: "--font-dm-sans",
-    subsets: ["latin"],
-    weight: ["300", "400", "500"],
-    display: "swap",
-});
-
-// Font var map — resolves preset choices to CSS variable references
-const FONT_VAR: {
-    body:    Record<'geist' | 'plus-jakarta', string>;
-    display: Record<'geist' | 'cormorant',   string>;
-} = {
-    body:    { geist: 'var(--font-geist-sans)', 'plus-jakarta': 'var(--font-dm-sans)' },
-    display: { geist: 'var(--font-geist-sans)', cormorant: 'var(--font-cormorant)' },
-};
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ['latin'],
+  weight: ['400', '500', '600'],
+  variable: '--font-mono',
+  display: 'swap',
+})
 
 export const metadata: Metadata = {
     metadataBase: new URL('https://rashodkorala.com'),
@@ -92,13 +84,12 @@ export default function RootLayout({
             lang="en"
             className="bg-page text-body"
             suppressHydrationWarning
-            style={{
-                '--font-active-sans':    FONT_VAR.body[typographyConfig.body],
-                '--font-active-display': FONT_VAR.display[typographyConfig.display],
-            } as React.CSSProperties}
         >
-            <body className={`${GeistSans.variable} ${GeistMono.variable} ${cormorantGaramond.variable} ${plusJakartaSans.variable}`}>
+            <body
+                className={`${jakartaSans.variable} ${cormorantGaramond.variable} ${jetbrainsMono.variable}`}
+            >
                 <PostHogProvider app="portfolio">
+                    <TopBar />
                     <SideNav />
                     {children}
                 </PostHogProvider>

@@ -19,7 +19,7 @@ export default function PageShell({ children }: PageShellProps) {
         ref={scrollRef}
         className="h-full overflow-y-auto lg:ml-sidenav scrollbar-hide"
       >
-        <div className="max-w-[var(--content-max-w)] mx-auto px-page-px sm:px-page-px-sm md:px-page-px-md lg:px-page-px-lg xl:px-page-px-xl pt-12 lg:pt-16">
+        <div className="max-w-[var(--content-max-w)] mx-auto px-page-px sm:px-page-px-sm md:px-page-px-md lg:px-page-px-lg xl:px-page-px-xl pt-16 lg:pt-20">
           {children}
         </div>
       </div>

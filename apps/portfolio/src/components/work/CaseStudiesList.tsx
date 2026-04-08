@@ -31,7 +31,7 @@ export default function CaseStudiesList({ items }: CaseStudiesListProps) {
             <Link
             key={item.id}
             href={`/work/${item.slug}`}
-            className="block border-b border-line-subtle py-7 group"
+            className="block border-b border-line-subtle py-7 group rounded-lg px-fib-13 -mx-fib-13 transition-colors duration-200 ease-out hover:bg-surface focus-visible:outline-none focus-visible:bg-surface focus-visible:ring-2 focus-visible:ring-line-strong focus-visible:ring-offset-2 focus-visible:ring-offset-page"
           >
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -50,12 +50,12 @@ export default function CaseStudiesList({ items }: CaseStudiesListProps) {
                     </span>
                   ))}
                 </div>
-                <h2 className="text-lg md:text-xl font-normal tracking-tight flex items-center gap-2 text-title">
+                <h2 className="text-lg md:text-xl font-semibold tracking-tight flex items-center gap-2 text-title">
                   {item.title}
                   <ArrowUpRight className="w-3.5 h-3.5 text-icon group-hover:text-icon-hover transition-colors" strokeWidth={1.5} />
                 </h2>
                 {itemView.summary && (
-                  <p className="text-body-secondary mt-1.5 font-light leading-relaxed max-w-lg text-[15px]">{itemView.summary}</p>
+                  <p className="text-body-secondary mt-fib-21 font-light leading-relaxed max-w-lg text-[15px]">{itemView.summary}</p>
                 )}
               </div>
               {itemView.cover_path && (

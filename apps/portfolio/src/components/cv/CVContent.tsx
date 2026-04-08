@@ -1,15 +1,11 @@
 "use client";
 
 import React from "react";
+import { jakartaSans, cormorantGaramond } from "@/lib/font";
 
 // Design: editorial sidebar layout
 // Sidebar: narrow fixed (clamp 160–224px) with skills/certs/education
 // Main: chronological entries with date column + content column
-// Hero: large serif name left, contact meta right
-// Fonts: use semantic CSS vars controlled by apps/portfolio/config/typography.ts
-
-const serif = "var(--font-active-display), 'Georgia', serif";
-const sans  = "var(--font-active-sans), system-ui, sans-serif";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -216,9 +212,9 @@ function SectionHeader({ title }: { title: string }) {
   return (
     <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: "clamp(16px,2vw,28px)" }}>
       <h2 style={{
-        fontFamily: serif,
+        fontFamily: cormorantGaramond,
         fontSize: "clamp(18px,1.8vw,26px)",
-        fontWeight: 600,
+        fontWeight: 400,
         color: "var(--color-heading)",
         letterSpacing: "-0.02em",
         whiteSpace: "nowrap",
@@ -234,8 +230,8 @@ function SectionHeader({ title }: { title: string }) {
 function SidebarLabel({ children }: { children: React.ReactNode }) {
   return (
     <p style={{
-      fontFamily: sans,
-      fontSize: "clamp(10px,0.78vw,11px)",
+      fontFamily: jakartaSans,
+      fontSize: "clamp(11px,0.78vw,12px)",
       color: "var(--color-label)",
       letterSpacing: "0.12em",
       textTransform: "uppercase" as const,
@@ -266,8 +262,8 @@ function EntryGrid({ entries, showTags = true }: { entries: Entry[]; showTags?: 
         >
           {/* Date column — hidden on mobile via .cv-entry-date-col */}
           <p className="cv-entry-date-col" style={{
-            fontFamily: sans,
-            fontSize: "clamp(10px,0.78vw,11px)",
+            fontFamily: jakartaSans,
+            fontSize: "clamp(11px,0.78vw,12px)",
             color: "var(--color-label)",
             fontWeight: 400,
             lineHeight: 1.6,
@@ -284,7 +280,7 @@ function EntryGrid({ entries, showTags = true }: { entries: Entry[]; showTags?: 
           {/* Content column */}
           <div>
             <p style={{
-              fontFamily: serif,
+              fontFamily: jakartaSans,
               fontSize: "clamp(15px,1.4vw,21px)",
               color: "var(--color-heading)",
               fontWeight: 600,
@@ -295,7 +291,7 @@ function EntryGrid({ entries, showTags = true }: { entries: Entry[]; showTags?: 
               {e.title}
             </p>
             <p style={{
-              fontFamily: sans,
+              fontFamily: jakartaSans,
               fontSize: "clamp(11px,0.85vw,13px)",
               color: "var(--color-body-secondary)",
               fontWeight: 400,
@@ -304,11 +300,12 @@ function EntryGrid({ entries, showTags = true }: { entries: Entry[]; showTags?: 
               {e.org}
             </p>
             <p style={{
-              fontFamily: sans,
+              fontFamily: jakartaSans,
               fontSize: "clamp(12px,0.92vw,14px)",
               color: "var(--color-body-secondary)",
               fontWeight: 400,
               lineHeight: 1.65,
+              maxWidth: "75ch",
             }}>
               {e.description}
             </p>
@@ -316,8 +313,8 @@ function EntryGrid({ entries, showTags = true }: { entries: Entry[]; showTags?: 
               <div style={{ display: "flex", flexWrap: "wrap" as const, gap: 5, marginTop: 10 }}>
                 {e.tags.map((t) => (
                   <span key={t} style={{
-                    fontFamily: sans,
-                    fontSize: "clamp(10px,0.75vw,11px)",
+                    fontFamily: jakartaSans,
+                    fontSize: "clamp(11px,0.75vw,12px)",
                     color: "var(--color-body-secondary)",
                     border: "1px solid var(--color-border-strong)",
                     padding: "3px 9px",
@@ -391,7 +388,7 @@ export default function CVContent() {
         }
       `}</style>
 
-      <div style={{ fontFamily: sans, color: "var(--color-heading)", paddingBottom: "var(--fib-89)" }}>
+      <div style={{ fontFamily: jakartaSans, color: "var(--color-heading)", paddingBottom: "var(--fib-89)" }}>
 
         {/* ── Hero ─────────────────────────────────────────────────────────── */}
         <div
@@ -406,8 +403,8 @@ export default function CVContent() {
           }}
         >
           <h1 style={{
-            fontFamily: serif,
-            fontWeight: 700,
+            fontFamily: cormorantGaramond,
+            fontWeight: 300,
             fontSize: "clamp(44px,7vw,104px)",
             color: "var(--color-heading)",
             letterSpacing: "-0.025em",
@@ -443,7 +440,7 @@ export default function CVContent() {
                   target="_blank"
                   rel="noopener noreferrer"
                   style={{
-                    fontFamily: sans,
+                    fontFamily: jakartaSans,
                     fontSize: "clamp(11px,0.88vw,13px)",
                     color: "var(--color-body-secondary)",
                     display: "inline-flex",
@@ -457,7 +454,7 @@ export default function CVContent() {
                   {text} <ArrowIcon />
                 </a>
               ) : (
-                <p key={text} style={{ fontFamily: sans, fontSize: "clamp(11px,0.88vw,13px)", color: "var(--color-body-secondary)" }}>
+                <p key={text} style={{ fontFamily: jakartaSans, fontSize: "clamp(11px,0.88vw,13px)", color: "var(--color-body-secondary)" }}>
                   {text}
                 </p>
               )
@@ -467,7 +464,7 @@ export default function CVContent() {
               href="/Rashod_Korala_Resume.pdf"
               download="Rashod_Korala_Resume.pdf"
               style={{
-                fontFamily: sans,
+                fontFamily: jakartaSans,
                 fontSize: "clamp(11px,0.85vw,13px)",
                 color: "var(--color-heading)",
                 display: "inline-flex",
@@ -507,7 +504,7 @@ export default function CVContent() {
             ].map((item) => (
               <div key={item} style={{ display: "flex", alignItems: "center", gap: 9 }}>
                 <div style={{ width: 4, height: 4, borderRadius: "50%", background: "var(--color-border-strong)", flexShrink: 0 }} />
-                <span style={{ fontFamily: sans, fontSize: "clamp(12px,0.92vw,14px)", color: "var(--color-body-secondary)", fontWeight: 400, lineHeight: 1.65 }}>
+                <span style={{ fontFamily: jakartaSans, fontSize: "clamp(12px,0.92vw,14px)", color: "var(--color-body-secondary)", fontWeight: 400, lineHeight: 1.65 }}>
                   {item}
                 </span>
               </div>
@@ -552,7 +549,7 @@ export default function CVContent() {
                       flexShrink: 0,
                     }} />
                     <span style={{
-                      fontFamily: sans,
+                      fontFamily: jakartaSans,
                       fontSize: "clamp(11px,0.85vw,13px)",
                       color: skill.strong ? "var(--color-heading)" : "var(--color-body-secondary)",
                       fontWeight: skill.strong ? 500 : 400,
@@ -570,10 +567,10 @@ export default function CVContent() {
               <SidebarLabel>Certifications</SidebarLabel>
               {certs.map((c) => (
                 <div key={c.name} style={{ marginBottom: 10 }}>
-                  <p style={{ fontFamily: sans, fontSize: "clamp(11px,0.85vw,13px)", color: "var(--color-body-secondary)", fontWeight: 400, lineHeight: 1.6 }}>
+                  <p style={{ fontFamily: jakartaSans, fontSize: "clamp(11px,0.85vw,13px)", color: "var(--color-body-secondary)", fontWeight: 400, lineHeight: 1.6 }}>
                     {c.name}
                   </p>
-                  <p style={{ fontFamily: sans, fontSize: "clamp(10px,0.78vw,11px)", color: "var(--color-label)", fontWeight: 400 }}>
+                  <p style={{ fontFamily: jakartaSans, fontSize: "clamp(11px,0.78vw,12px)", color: "var(--color-label)", fontWeight: 400 }}>
                     {c.issuer}
                   </p>
                 </div>
@@ -583,13 +580,13 @@ export default function CVContent() {
             {/* Education */}
             <div>
               <SidebarLabel>Education</SidebarLabel>
-              <p style={{ fontFamily: sans, fontSize: "clamp(12px,0.9vw,14px)", color: "var(--color-heading)", fontWeight: 400, lineHeight: 1.55 }}>
+              <p style={{ fontFamily: jakartaSans, fontSize: "clamp(12px,0.9vw,14px)", color: "var(--color-heading)", fontWeight: 400, lineHeight: 1.55 }}>
                 BSc Computer Science
               </p>
-              <p style={{ fontFamily: sans, fontSize: "clamp(11px,0.85vw,13px)", color: "var(--color-body-secondary)", fontWeight: 400, lineHeight: 1.55 }}>
+              <p style={{ fontFamily: jakartaSans, fontSize: "clamp(11px,0.85vw,13px)", color: "var(--color-body-secondary)", fontWeight: 400, lineHeight: 1.55 }}>
                 Minor in Business Admin
               </p>
-              <p style={{ fontFamily: sans, fontSize: "clamp(10px,0.78vw,11px)", color: "var(--color-label)", fontWeight: 400, marginTop: 2 }}>
+              <p style={{ fontFamily: jakartaSans, fontSize: "clamp(11px,0.78vw,12px)", color: "var(--color-label)", fontWeight: 400, marginTop: 2 }}>
                 Memorial University · 2025
               </p>
             </div>

@@ -9,7 +9,7 @@ export default function Loading() {
             <div className="absolute inset-0 border-2 border-line rounded-full" />
             <div className="absolute inset-0 border-2 border-transparent border-t-nav-indicator rounded-full animate-spin" />
           </div>
-          <span className="font-reading text-[13px] tracking-[0.06em] font-light text-label">
+          <span className="font-sans text-[13px] tracking-[0.06em] font-light text-label">
             Loading
           </span>
         </div>

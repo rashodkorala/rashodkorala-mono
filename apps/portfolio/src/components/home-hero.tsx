@@ -1,7 +1,7 @@
 'use client'
 import Image from "next/image";
-import Link from "next/link";
 import { motion } from "framer-motion";
+import { cormorantGaramond } from "@/lib/font";
 
 const ease: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
@@ -12,12 +12,6 @@ const reveal = {
     transition: { duration: 1, delay: d, ease },
   }),
 };
-
-const navLinks = [
-  { label: "Work",    href: "/work" },
-  { label: "About",   href: "/about" },
-  { label: "Contact", href: "/contact" },
-];
 
 const socials = [
   { label: "GitHub",    href: "https://github.com/rashodkorala" },
@@ -41,23 +35,7 @@ export default function HomeHero({ imageSrc }: HomeHeroProps = {}) {
         }
       `}</style>
 
-      <div className="min-h-svh bg-page flex flex-col w-full lg:h-screen lg:overflow-hidden lg:pl-sidenav">
-
-        {/* Nav — mobile/tablet only */}
-        <nav className="lg:hidden shrink-0 flex items-center justify-between px-page-px sm:px-page-px-sm md:px-page-px-md py-fib-21 sm:py-fib-34">
-          <Link href="/" className="font-body text-[13px] text-heading tracking-[0.02em] no-underline">
-            RK
-          </Link>
-          <ul className="flex gap-fib-21 sm:gap-fib-34 list-none m-0 p-0">
-            {navLinks.map(({ label, href }) => (
-              <li key={href}>
-                <Link href={href} className="font-body text-[13px] text-heading tracking-[0.02em] no-underline">
-                  {label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </nav>
+      <div className="min-h-svh bg-page flex flex-col w-full lg:h-screen lg:overflow-hidden lg:pl-sidenav pt-16 lg:pt-20">
 
         {/* Main two-column grid — φ split 55fr/34fr */}
         <main className="flex-1 min-h-0 grid grid-cols-1 md:grid-cols-[55fr_34fr] w-full px-page-px sm:px-page-px-sm md:px-page-px-md lg:px-page-px-lg gap-fib-21 md:gap-fib-34">
@@ -76,24 +54,26 @@ export default function HomeHero({ imageSrc }: HomeHeroProps = {}) {
                 animate="visible"
               >
                 <motion.span
-                  className="hero-name font-display tracking-[0.03em] text-heading block mb-[0.08em]"
+                  className="hero-name text-heading block uppercase"
+                  style={{ fontFamily: cormorantGaramond, fontWeight: 500, letterSpacing: "-0.1em" }}
                   variants={reveal}
                   custom={0.2}
                 >
-                  RASHOD
+                  Rashod
                 </motion.span>
                 <motion.span
-                  className="hero-name font-display font-normal tracking-[-0.01em] text-heading block"
+                  className="hero-name text-heading block uppercase italic"
+                  style={{ fontFamily: cormorantGaramond, fontWeight: 400, letterSpacing: "-0.01em" }}
                   variants={reveal}
                   custom={0.35}
                 >
-                  KORALA
+                  Korala
                 </motion.span>
               </motion.h1>
 
               <motion.div className="md:max-w-[61.8%]" initial="hidden" animate="visible">
                 <motion.p
-                  className="font-serif font-normal text-[clamp(13px,1.1vw,25px)] text-body-secondary leading-[1.6] tracking-[0.01em] mb-fib-21"
+                  className="font-sans font-normal text-[clamp(13px,1.1vw,25px)] text-body-secondary leading-[1.6] tracking-[0.01em] mb-fib-21"
                   variants={reveal}
                   custom={0.55}
                 >
@@ -101,7 +81,7 @@ export default function HomeHero({ imageSrc }: HomeHeroProps = {}) {
                 </motion.p>
 
                 <motion.p
-                  className="font-serif font-normal text-[clamp(13px,1.1vw,25px)] text-body-secondary leading-[1.6] tracking-[0.01em]"
+                  className="font-sans font-normal text-[clamp(13px,1.1vw,25px)] text-body-secondary leading-[1.6] tracking-[0.01em]"
                   variants={reveal}
                   custom={0.7}
                 >

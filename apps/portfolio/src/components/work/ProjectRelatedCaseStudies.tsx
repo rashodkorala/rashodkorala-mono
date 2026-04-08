@@ -92,7 +92,7 @@ export default function ProjectRelatedCaseStudies({
                   </div>
                 )}
                 <div className="flex items-start justify-between gap-4">
-                  <h3 className="font-serif text-xl font-semibold leading-snug tracking-tight text-title transition-colors group-hover:text-heading md:text-[1.35rem]">
+                  <h3 className="font-sans text-xl font-semibold leading-snug tracking-tight text-title transition-colors group-hover:text-heading md:text-[1.35rem]">
                     {cs.title}
                   </h3>
                   <span className="mt-1 shrink-0 text-faint transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-body-secondary">

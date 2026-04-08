@@ -1,10 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
+import { jakartaSans } from "@/lib/font";
 import { supabase } from "@/lib/supabase";
-
-const serif = "var(--font-active-display), 'Georgia', serif";
-const sans  = "var(--font-active-sans), system-ui, sans-serif";
 
 interface FormState {
   firstName: string;
@@ -28,10 +26,10 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
     <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
       <label style={{
         fontSize: "clamp(10px, 0.8vw, 12px)",
-        color: "#8a8a7a",
+        color: "var(--color-body-secondary)",
         letterSpacing: "0.1em",
         textTransform: "uppercase",
-        fontFamily: sans,
+        fontFamily: jakartaSans,
       }}>
         {label}
       </label>
@@ -81,28 +79,28 @@ export default function ContactContent() {
         .ct-input, .ct-textarea {
           background: transparent;
           border: none;
-          border-bottom: 1px solid #c4c0b8;
+          border-bottom: 1px solid var(--color-border-strong);
           padding: clamp(8px, 1vw, 14px) 0;
           font-size: clamp(14px, 1.2vw, 18px);
-          font-family: var(--font-active-sans), system-ui, sans-serif;
-          color: #1a1a1a;
+          font-family: ${jakartaSans};
+          color: var(--color-heading);
           outline: none;
           width: 100%;
           transition: border-color 0.2s;
           -webkit-appearance: none;
           border-radius: 0;
         }
-        .ct-input:focus, .ct-textarea:focus { border-bottom-color: #1a1a1a; }
-        .ct-input::placeholder, .ct-textarea::placeholder { color: #b4b0a8; }
+        .ct-input:focus, .ct-textarea:focus { border-bottom-color: var(--color-heading); }
+        .ct-input::placeholder, .ct-textarea::placeholder { color: var(--color-faint); }
         .ct-textarea { resize: none; min-height: clamp(80px, 10vw, 130px); }
 
         .ct-btn {
-          background: #1a1a1a;
-          color: #f0ede8;
+          background: var(--color-heading);
+          color: var(--color-inverse);
           border: none;
           padding: clamp(12px, 1.4vw, 20px) clamp(28px, 3vw, 48px);
           font-size: clamp(12px, 1vw, 15px);
-          font-family: var(--font-active-sans), system-ui, sans-serif;
+          font-family: ${jakartaSans};
           font-weight: 500;
           letter-spacing: 0.06em;
           text-transform: uppercase;
@@ -134,10 +132,10 @@ export default function ContactContent() {
           {/* Left — heading + contact info */}
           <div>
             <h1 style={{
-              fontFamily: serif,
+              fontFamily: jakartaSans,
               fontWeight: 700,
               fontSize: "clamp(44px, 7vw, 96px)",
-              color: "#1a1a1a",
+              color: "var(--color-heading)",
               letterSpacing: "-0.02em",
               lineHeight: 0.88,
               marginBottom: "clamp(28px, 4vw, 56px)",
@@ -145,7 +143,7 @@ export default function ContactContent() {
               Get
               <span
                 className="ct-heading-indent"
-                style={{ paddingLeft: "clamp(28px, 4vw, 64px)", display: "block", color: "#6b6b6b" }}
+                style={{ paddingLeft: "clamp(28px, 4vw, 64px)", display: "block", color: "var(--color-body-secondary)" }}
               >
                 in touch
               </span>
@@ -155,18 +153,18 @@ export default function ContactContent() {
               <div key={label} style={{ marginBottom: "clamp(20px, 2.5vw, 36px)" }}>
                 <p style={{
                   fontSize: "clamp(10px, 0.8vw, 12px)",
-                  color: "#8a8a7a",
+                  color: "var(--color-body-secondary)",
                   letterSpacing: "0.1em",
                   textTransform: "uppercase",
-                  fontFamily: sans,
+                  fontFamily: jakartaSans,
                   marginBottom: "6px",
                 }}>
                   {label}
                 </p>
                 <p style={{
-                  fontFamily: serif,
+                  fontFamily: jakartaSans,
                   fontSize: "clamp(16px, 1.6vw, 24px)",
-                  color: "#1a1a1a",
+                  color: "var(--color-heading)",
                   fontWeight: 600,
                   letterSpacing: "-0.01em",
                 }}>
@@ -175,7 +173,7 @@ export default function ContactContent() {
                       href={href}
                       target={href.startsWith("mailto") ? undefined : "_blank"}
                       rel={href.startsWith("mailto") ? undefined : "noopener noreferrer"}
-                      style={{ color: "#1a1a1a", textDecoration: "underline", textUnderlineOffset: "4px" }}
+                      style={{ color: "var(--color-link)", textDecoration: "underline", textUnderlineOffset: "4px" }}
                     >
                       {value}
                     </a>
@@ -186,8 +184,8 @@ export default function ContactContent() {
 
             {/* Availability */}
             <div style={{ display: "flex", alignItems: "center", gap: "10px", marginTop: "clamp(24px, 3vw, 44px)" }}>
-              <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: "#4a7c59", flexShrink: 0 }} />
-              <span style={{ fontSize: "clamp(12px, 0.95vw, 15px)", color: "#4a7c59", fontFamily: sans, fontWeight: 500 }}>
+              <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: "var(--color-success)", flexShrink: 0 }} />
+              <span style={{ fontSize: "clamp(12px, 0.95vw, 15px)", color: "var(--color-success)", fontFamily: jakartaSans, fontWeight: 500 }}>
                 Available for new projects
               </span>
             </div>
@@ -198,16 +196,16 @@ export default function ContactContent() {
             {submitted ? (
               <div style={{ paddingTop: "clamp(32px, 5vw, 72px)" }}>
                 <p style={{
-                  fontFamily: serif,
+                  fontFamily: jakartaSans,
                   fontSize: "clamp(22px, 2.5vw, 36px)",
-                  color: "#1a1a1a",
+                  color: "var(--color-heading)",
                   fontWeight: 600,
                   marginBottom: "16px",
                   letterSpacing: "-0.01em",
                 }}>
                   Thank you, {form.firstName || "there"}.
                 </p>
-                <p style={{ fontSize: "clamp(13px, 1vw, 16px)", color: "#8a8a7a", fontFamily: sans, lineHeight: 1.6 }}>
+                <p style={{ fontSize: "clamp(13px, 1vw, 16px)", color: "var(--color-body-secondary)", fontFamily: jakartaSans, lineHeight: 1.6 }}>
                   Your message has been sent. I&rsquo;ll be in touch within 48 hours.
                 </p>
               </div>
@@ -240,7 +238,7 @@ export default function ContactContent() {
                 </Field>
 
                 {error && (
-                  <p style={{ fontSize: "13px", color: "#c0392b", fontFamily: sans }}>
+                  <p style={{ fontSize: "13px", color: "var(--color-error)", fontFamily: jakartaSans }}>
                     {error}
                   </p>
                 )}
@@ -249,7 +247,7 @@ export default function ContactContent() {
                   <button className="ct-btn" type="submit" disabled={submitting}>
                     {submitting ? "Sending…" : "Send message"}
                   </button>
-                  <span style={{ fontSize: "clamp(10px, 0.8vw, 12px)", color: "#8a8a7a", fontFamily: sans }}>
+                  <span style={{ fontSize: "clamp(10px, 0.8vw, 12px)", color: "var(--color-body-secondary)", fontFamily: jakartaSans }}>
                     No spam, ever.
                   </span>
                 </div>
