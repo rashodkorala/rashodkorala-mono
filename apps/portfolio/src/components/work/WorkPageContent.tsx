@@ -241,7 +241,7 @@ export default function WorkPageContent({ projects, caseStudies }: WorkPageConte
             <div>
               <h1 style={{
                 fontFamily: cormorantGaramond,
-                fontSize: "clamp(48px, 7vw, 92px)",
+                fontSize: "clamp(48px, 7vw, 128px)",
                 fontWeight: 300,
                 color: "var(--color-heading)",
                 letterSpacing: "-0.025em",
@@ -252,7 +252,7 @@ export default function WorkPageContent({ projects, caseStudies }: WorkPageConte
               </h1>
               <h1 style={{
                 fontFamily: cormorantGaramond,
-                fontSize: "clamp(48px, 7vw, 92px)",
+                fontSize: "clamp(48px, 7vw, 128px)",
                 fontWeight: 300,
                 color: "var(--color-body-secondary)",
                 letterSpacing: "-0.025em",
@@ -267,7 +267,7 @@ export default function WorkPageContent({ projects, caseStudies }: WorkPageConte
             <div>
               <h1 style={{
                 fontFamily: cormorantGaramond,
-                fontSize: "clamp(48px, 7vw, 92px)",
+                fontSize: "clamp(48px, 7vw, 128px)",
                 fontWeight: 400,
                 color: "var(--color-heading)",
                 letterSpacing: "-0.025em",
@@ -278,7 +278,7 @@ export default function WorkPageContent({ projects, caseStudies }: WorkPageConte
               </h1>
               <h1 style={{
                 fontFamily: cormorantGaramond,
-                fontSize: "clamp(48px, 7vw, 92px)",
+                fontSize: "clamp(48px, 7vw, 128px)",
                 fontWeight: 400,
                 color: "var(--color-body-secondary)",
                 letterSpacing: "-0.025em",

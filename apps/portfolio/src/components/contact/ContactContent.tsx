@@ -1,258 +1,201 @@
-"use client";
+import React from "react";
+type ContactRow = { label: string; value: string; href: string | null };
 
-import React, { useState } from "react";
-import { jakartaSans } from "@/lib/font";
-import { supabase } from "@/lib/supabase";
+type ContactGroup = { title: string; items: ContactRow[] };
 
-interface FormState {
-  firstName: string;
-  lastName: string;
-  email: string;
-  company: string;
-  projectType: string;
-  message: string;
-}
-
-const contactDetails = [
-  { label: "Email",    value: "hello@rashodkorala.com", href: "mailto:hello@rashodkorala.com" },
-  { label: "Based in", value: "Canada",                   href: null },
-  { label: "GitHub",   value: "rashodkorala",             href: "https://github.com/rashodkorala" },
-  { label: "LinkedIn", value: "rashodk",                  href: "https://linkedin.com/in/rashodk" },
-  { label: "Response", value: "Within 48 hours",          href: null },
+const contactGroups: ContactGroup[] = [
+  {
+    title: "Reach me",
+    items: [
+      { label: "Email", value: "hello@rashodkorala.com", href: "mailto:hello@rashodkorala.com" },
+      { label: "Based in", value: "Canada", href: null },
+      { label: "Typical response", value: "Within 48 hours", href: null },
+    ],
+  },
+  {
+    title: "Studios & portfolio",
+    items: [
+      {
+        label: "R&D Creative Agency",
+        value: "r-d-creative.vercel.app",
+        href: "https://r-d-creative.vercel.app/",
+      },
+      {
+        label: "AetherLabs",
+        value: "aetherlabs.art",
+        href: "https://www.aetherlabs.art",
+      },
+      {
+        label: "Photography",
+        value: "photos.rashodkorala.com",
+        href: "https://photos.rashodkorala.com",
+      },
+    ],
+  },
+  {
+    title: "Social",
+    items: [
+      { label: "GitHub", value: "rashodkorala", href: "https://github.com/rashodkorala" },
+      { label: "Instagram", value: "@rashodk_", href: "https://instagram.com/rashodk_" },
+      { label: "LinkedIn", value: "rashodk", href: "https://linkedin.com/in/rashodk" },
+    ],
+  },
 ];
 
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
+const [reachGroup, ...linkGroups] = contactGroups;
+
+const linkUnderlineClass = "text-link underline decoration-link-underline underline-offset-4 transition-colors hover:text-link-hover";
+
+function groupHeadingId(title: string) {
+  return `ct-group-${title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")}`;
+}
+
+function ContactField({ label, value, href }: ContactRow) {
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "8px" }}>
-      <label style={{
-        fontSize: "clamp(10px, 0.8vw, 12px)",
-        color: "var(--color-body-secondary)",
-        letterSpacing: "0.1em",
-        textTransform: "uppercase",
-        fontFamily: jakartaSans,
-      }}>
+    <div className="ct-contact-field mb-[clamp(var(--fib-13),1.8vw,var(--fib-21))]">
+      <p className="mb-fib-8 font-sans text-label uppercase tracking-caps text-body-secondary">
         {label}
-      </label>
-      {children}
+      </p>
+      <p className="ct-contact-value font-sans font-semibold leading-[1.35] tracking-h2 text-heading">
+        {href ? (
+          <a
+            href={href}
+            target={href.startsWith("mailto") ? undefined : "_blank"}
+            rel={href.startsWith("mailto") ? undefined : "noopener noreferrer"}
+            className={linkUnderlineClass}
+          >
+            {value}
+          </a>
+        ) : (
+          value
+        )}
+      </p>
     </div>
   );
 }
 
+function ContactGroupSection({
+  group,
+  sectionId,
+}: {
+  group: ContactGroup;
+  sectionId?: string;
+}) {
+  return (
+    <section
+      className="ct-contact-group"
+      id={sectionId}
+      aria-labelledby={groupHeadingId(group.title)}
+    >
+      <h2
+        id={groupHeadingId(group.title)}
+        className="mb-[clamp(var(--fib-21),2vw,1.375rem)] font-sans text-label font-semibold uppercase tracking-caps text-heading"
+      >
+        {group.title}
+      </h2>
+      {group.items.map((row, i) => (
+        <ContactField key={`${group.title}-${row.label}-${i}`} {...row} />
+      ))}
+    </section>
+  );
+}
+
 export default function ContactContent() {
-  const [form, setForm] = useState<FormState>({
-    firstName: "", lastName: "", email: "",
-    company: "", projectType: "", message: "",
-  });
-  const [submitted, setSubmitted] = useState(false);
-  const [submitting, setSubmitting] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setSubmitting(true);
-    setError(null);
-    try {
-      const { error: sbError } = await supabase.from("contact_submissions").insert({
-        first_name: form.firstName,
-        last_name: form.lastName,
-        email: form.email,
-        company: form.company || null,
-        project_type: form.projectType || null,
-        message: form.message,
-      });
-      if (sbError) throw sbError;
-      setSubmitted(true);
-    } catch {
-      setError("Something went wrong. Please try emailing me directly.");
-    } finally {
-      setSubmitting(false);
-    }
-  };
-
   return (
     <>
       <style>{`
-        .ct-input, .ct-textarea {
-          background: transparent;
-          border: none;
-          border-bottom: 1px solid var(--color-border-strong);
-          padding: clamp(8px, 1vw, 14px) 0;
-          font-size: clamp(14px, 1.2vw, 18px);
-          font-family: ${jakartaSans};
+        .ct-contact-value {
+          font-size: clamp(var(--fib-21), 1.45vw, 1.375rem);
+        }
+        .ct-contact-grid {
+          display: grid;
+          grid-template-columns: 1fr;
+          align-items: start;
+          column-gap: clamp(var(--fib-34), 5vw, var(--fib-89));
+          row-gap: clamp(var(--fib-34), 5vw, var(--fib-55));
+        }
+        @media (min-width: 1024px) {
+          .ct-contact-grid {
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+            column-gap: clamp(var(--fib-34), 6vw, var(--fib-89));
+            row-gap: 0;
+          }
+        }
+        .ct-hero-contact {
+          font-family: var(--font-jakarta), system-ui, sans-serif;
+          font-weight: 700;
+          letter-spacing: var(--tracking-h1);
+          line-height: 0.88;
           color: var(--color-heading);
-          outline: none;
-          width: 100%;
-          transition: border-color 0.2s;
-          -webkit-appearance: none;
-          border-radius: 0;
+          font-size: clamp(2.75rem, 7vw, 8rem);
         }
-        .ct-input:focus, .ct-textarea:focus { border-bottom-color: var(--color-heading); }
-        .ct-input::placeholder, .ct-textarea::placeholder { color: var(--color-faint); }
-        .ct-textarea { resize: none; min-height: clamp(80px, 10vw, 130px); }
-
-        .ct-btn {
-          background: var(--color-heading);
-          color: var(--color-inverse);
-          border: none;
-          padding: clamp(12px, 1.4vw, 20px) clamp(28px, 3vw, 48px);
-          font-size: clamp(12px, 1vw, 15px);
-          font-family: ${jakartaSans};
-          font-weight: 500;
-          letter-spacing: 0.06em;
-          text-transform: uppercase;
-          cursor: pointer;
-          transition: opacity 0.2s;
+        @media (min-width: 1024px) {
+          .ct-hero-contact {
+            font-size: clamp(2.375rem, 4.2vw, 5.25rem);
+          }
         }
-        .ct-btn:hover:not(:disabled) { opacity: 0.82; }
-        .ct-btn:disabled { opacity: 0.45; cursor: not-allowed; }
-
-        @media (max-width: 720px) {
-          .ct-main-grid { grid-template-columns: 1fr !important; gap: 40px !important; }
-          .ct-name-row { grid-template-columns: 1fr !important; }
-          .ct-heading-indent { padding-left: clamp(20px, 8vw, 40px) !important; }
+        .ct-reach-section {
+          margin-top: clamp(var(--fib-34), 5vw, var(--fib-55));
+          padding-top: clamp(var(--fib-34), 3.5vw, 2.5rem);
+          border-top: 1px solid var(--color-border-subtle);
         }
+        @media (min-width: 1024px) {
+          .ct-reach-section {
+            border-top: none;
+            padding-top: 0;
+            margin-top: clamp(var(--fib-34), 5vw, var(--fib-89));
+          }
+        }
+        .ct-col-links .ct-contact-group + .ct-contact-group {
+          margin-top: clamp(var(--fib-34), 4vw, var(--fib-55));
+          padding-top: clamp(var(--fib-34), 3.5vw, 2.5rem);
+          border-top: 1px solid var(--color-border-subtle);
+        }
+        .ct-contact-field:last-child { margin-bottom: 0 !important; }
       `}</style>
 
-      <div style={{ paddingBottom: "89px" }}>
-
-        {/* Main two-column grid */}
-        <main
-          className="ct-main-grid"
-          style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr",
-            alignItems: "start",
-            gap: "clamp(32px, 6vw, 100px)",
-          }}
-        >
-          {/* Left — heading + contact info */}
-          <div>
-            <h1 style={{
-              fontFamily: jakartaSans,
-              fontWeight: 700,
-              fontSize: "clamp(44px, 7vw, 96px)",
-              color: "var(--color-heading)",
-              letterSpacing: "-0.02em",
-              lineHeight: 0.88,
-              marginBottom: "clamp(28px, 4vw, 56px)",
-            }}>
+      {/* lg+: fill viewport below fixed header and vertically center */}
+      <div className="pb-fib-89 lg:flex lg:min-h-[calc(100dvh-var(--header-h-lg))] lg:flex-col lg:justify-center">
+        <main className="ct-contact-grid min-w-0 max-w-full">
+          <div className="ct-col-intro">
+            <h1 className="ct-hero-contact mb-[clamp(var(--fib-21),3.5vw,var(--fib-34))]">
               Get
-              <span
-                className="ct-heading-indent"
-                style={{ paddingLeft: "clamp(28px, 4vw, 64px)", display: "block", color: "var(--color-body-secondary)" }}
-              >
+              <span className="block pl-[clamp(var(--fib-21),3.5vw,var(--fib-55))] text-body-secondary">
                 in touch
               </span>
             </h1>
 
-            {contactDetails.map(({ label, value, href }) => (
-              <div key={label} style={{ marginBottom: "clamp(20px, 2.5vw, 36px)" }}>
-                <p style={{
-                  fontSize: "clamp(10px, 0.8vw, 12px)",
-                  color: "var(--color-body-secondary)",
-                  letterSpacing: "0.1em",
-                  textTransform: "uppercase",
-                  fontFamily: jakartaSans,
-                  marginBottom: "6px",
-                }}>
-                  {label}
-                </p>
-                <p style={{
-                  fontFamily: jakartaSans,
-                  fontSize: "clamp(16px, 1.6vw, 24px)",
-                  color: "var(--color-heading)",
-                  fontWeight: 600,
-                  letterSpacing: "-0.01em",
-                }}>
-                  {href ? (
-                    <a
-                      href={href}
-                      target={href.startsWith("mailto") ? undefined : "_blank"}
-                      rel={href.startsWith("mailto") ? undefined : "noopener noreferrer"}
-                      style={{ color: "var(--color-link)", textDecoration: "underline", textUnderlineOffset: "4px" }}
-                    >
-                      {value}
-                    </a>
-                  ) : value}
-                </p>
-              </div>
-            ))}
+            <p className="mb-[clamp(var(--fib-21),3vw,var(--fib-34))] max-w-reading font-sans text-[length:clamp(var(--fib-21),1.3vw,1.125rem)] leading-body text-body-secondary">
+              For project inquiries or collaborations, email is best—see{" "}
+              <a href="#reach-me" className={linkUnderlineClass}>
+                Reach me
+              </a>{" "}
+              for details, or{" "}
+              <a href="mailto:hello@rashodkorala.com" className={linkUnderlineClass}>
+                open your mail app
+              </a>
+              .
+            </p>
 
-            {/* Availability */}
-            <div style={{ display: "flex", alignItems: "center", gap: "10px", marginTop: "clamp(24px, 3vw, 44px)" }}>
-              <div style={{ width: "8px", height: "8px", borderRadius: "50%", background: "var(--color-success)", flexShrink: 0 }} />
-              <span style={{ fontSize: "clamp(12px, 0.95vw, 15px)", color: "var(--color-success)", fontFamily: jakartaSans, fontWeight: 500 }}>
+            <div className="flex items-center gap-fib-13">
+              <div
+                className="h-fib-8 w-fib-8 shrink-0 rounded-full bg-[var(--color-success)]"
+                aria-hidden
+              />
+              <span className="font-sans text-nav font-medium text-[var(--color-success)]">
                 Available for new projects
               </span>
             </div>
+
+            <div className="ct-reach-section">
+              <ContactGroupSection group={reachGroup} sectionId="reach-me" />
+            </div>
           </div>
 
-          {/* Right — form */}
-          <div>
-            {submitted ? (
-              <div style={{ paddingTop: "clamp(32px, 5vw, 72px)" }}>
-                <p style={{
-                  fontFamily: jakartaSans,
-                  fontSize: "clamp(22px, 2.5vw, 36px)",
-                  color: "var(--color-heading)",
-                  fontWeight: 600,
-                  marginBottom: "16px",
-                  letterSpacing: "-0.01em",
-                }}>
-                  Thank you, {form.firstName || "there"}.
-                </p>
-                <p style={{ fontSize: "clamp(13px, 1vw, 16px)", color: "var(--color-body-secondary)", fontFamily: jakartaSans, lineHeight: 1.6 }}>
-                  Your message has been sent. I&rsquo;ll be in touch within 48 hours.
-                </p>
-              </div>
-            ) : (
-              <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "clamp(20px, 2.5vw, 32px)" }}>
-                {/* Name row */}
-                <div className="ct-name-row" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "clamp(16px, 2vw, 32px)" }}>
-                  <Field label="First name">
-                    <input className="ct-input" name="firstName" type="text" placeholder="Jane" value={form.firstName} onChange={handleChange} />
-                  </Field>
-                  <Field label="Last name">
-                    <input className="ct-input" name="lastName" type="text" placeholder="Smith" value={form.lastName} onChange={handleChange} />
-                  </Field>
-                </div>
-
-                <Field label="Email">
-                  <input className="ct-input" name="email" type="email" placeholder="jane@company.com" value={form.email} onChange={handleChange} required />
-                </Field>
-
-                <Field label="Company / Brand">
-                  <input className="ct-input" name="company" type="text" placeholder="Optional" value={form.company} onChange={handleChange} />
-                </Field>
-
-                <Field label="Project type">
-                  <input className="ct-input" name="projectType" type="text" placeholder="e.g. Web app, Mobile, Consulting" value={form.projectType} onChange={handleChange} />
-                </Field>
-
-                <Field label="Message">
-                  <textarea className="ct-textarea ct-input" name="message" placeholder="Tell me about your project, timeline, and goals..." value={form.message} onChange={handleChange} required />
-                </Field>
-
-                {error && (
-                  <p style={{ fontSize: "13px", color: "var(--color-error)", fontFamily: jakartaSans }}>
-                    {error}
-                  </p>
-                )}
-
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "clamp(8px, 1vw, 16px)" }}>
-                  <button className="ct-btn" type="submit" disabled={submitting}>
-                    {submitting ? "Sending…" : "Send message"}
-                  </button>
-                  <span style={{ fontSize: "clamp(10px, 0.8vw, 12px)", color: "var(--color-body-secondary)", fontFamily: jakartaSans }}>
-                    No spam, ever.
-                  </span>
-                </div>
-              </form>
-            )}
+          <div className="ct-col-links">
+            {linkGroups.map((group) => (
+              <ContactGroupSection key={group.title} group={group} />
+            ))}
           </div>
         </main>
       </div>

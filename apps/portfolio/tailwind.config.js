@@ -140,6 +140,15 @@ module.exports = {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
+      keyframes: {
+        "loader-scan": {
+          from: { transform: "translateX(-100%)" },
+          to:   { transform: "translateX(100%)" },
+        },
+      },
+      animation: {
+        "loader-scan": "loader-scan 1.65s ease-in-out infinite",
+      },
     },
   },
   plugins: [require("tailwind-scrollbar-hide"), require("tailwindcss-animate")],

@@ -50,7 +50,7 @@ function formatInlineSegment(s: string, config: MarkdownParserConfig): string {
     const safe = sanitizeUrl(url)
     if (!safe) return `![${escapeHtml(alt)}](${escapeHtml(url)})`
     const altText = alt || safe.split("/").pop()?.split("?")[0] || "Image"
-    return `<span class="block my-6"><img src="${safe}" alt="${escapeHtml(altText)}" class="w-full h-auto rounded-lg border ${config.imgBorder} object-cover" loading="lazy" /></span>`
+    return `<span class="theview-md-img-wrap"><img src="${safe}" alt="${escapeHtml(altText)}" class="${config.img} border ${config.imgBorder}" loading="lazy" /></span>`
   })
   // Links
   t = t.replace(/\[([^\]]+)\]\(([^)]+)\)/g, (_, label, url) => {

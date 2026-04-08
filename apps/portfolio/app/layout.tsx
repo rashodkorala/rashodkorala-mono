@@ -82,7 +82,7 @@ export default function RootLayout({
     return (
         <html
             lang="en"
-            className="bg-page text-body"
+            className="dark bg-page text-body"
             suppressHydrationWarning
         >
             <body

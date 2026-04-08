@@ -43,6 +43,7 @@ export const portfolioTheme: ThemeConfig = {
       prose-blockquote:border-l-4 prose-blockquote:border-black/20
       prose-blockquote:pl-4 prose-blockquote:italic prose-blockquote:text-black/60
       prose-img:rounded-lg prose-img:my-8
+      [&_.theview-md-img-wrap]:block [&_.theview-md-img-wrap]:my-8 [&_.theview-md-img-wrap]:text-center
       [&_table]:border-collapse [&_table]:w-full
       [&_th]:text-left [&_th]:font-medium [&_th]:text-black
       [&_td]:text-black/70`,
@@ -63,7 +64,7 @@ export const portfolioTheme: ThemeConfig = {
     code: "text-black/80 bg-black/5 px-2 py-0.5 rounded text-sm font-mono",
     pre: "bg-black/5 border border-black/10 rounded-lg p-4 overflow-x-auto my-6",
     a: "text-black underline decoration-black/20 hover:decoration-black/60 transition-colors",
-    img: "w-full h-auto rounded-lg object-cover",
+    img: "max-w-full w-auto h-auto max-h-[min(80vh,900px)] max-[900px]:max-h-[min(68dvh,560px)] rounded-lg object-contain mx-auto",
     imgBorder: "border-black/10",
     ul: "my-6 pl-6 list-disc space-y-2 marker:text-black/30 [&_li]:pl-0.5",
     ol: "my-6 pl-6 list-decimal list-outside space-y-2 marker:text-black/30 [&_li]:pl-0.5",

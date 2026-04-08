@@ -28,7 +28,7 @@ function normalizeHref(url: string | null | undefined): string | null {
 
 function MetaLabel({ children }: { children: React.ReactNode }) {
   return (
-    <p style={{ fontSize: "clamp(10px, 0.8vw, 12px)", color: "var(--color-body-secondary)", letterSpacing: "0.08em", textTransform: "uppercase", fontFamily: jakartaSans, marginBottom: 8 }}>
+    <p style={{ fontSize: "clamp(10px, 0.8vw, 15px)", color: "var(--color-body-secondary)", letterSpacing: "0.08em", textTransform: "uppercase", fontFamily: jakartaSans, marginBottom: 8 }}>
       {children}
     </p>
   );
@@ -36,7 +36,7 @@ function MetaLabel({ children }: { children: React.ReactNode }) {
 
 function MetaValue({ children }: { children: React.ReactNode }) {
   return (
-    <p style={{ fontFamily: jakartaSans, fontSize: "clamp(15px, 1.3vw, 20px)", color: "var(--color-heading)", fontWeight: 500, letterSpacing: "-0.01em", lineHeight: 1.3 }}>
+    <p style={{ fontFamily: jakartaSans, fontSize: "clamp(15px, 1.3vw, 24px)", color: "var(--color-heading)", fontWeight: 500, letterSpacing: "-0.01em", lineHeight: 1.3 }}>
       {children}
     </p>
   );
@@ -297,7 +297,7 @@ export default function ProjectPage({ project }: { project: Project }) {
           className="pd-title-row"
           style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 24, marginBottom: "clamp(6px, 1vw, 16px)", flexWrap: "wrap" }}
         >
-          <h1 style={{ fontFamily: cormorantGaramond, fontWeight: 600, fontSize: "clamp(40px, 7vw, 96px)", color: "var(--color-heading)", letterSpacing: "-0.025em", lineHeight: 0.9 }}>
+          <h1 style={{ fontFamily: cormorantGaramond, fontWeight: 600, fontSize: "clamp(40px, 7vw, 128px)", color: "var(--color-heading)", letterSpacing: "-0.025em", lineHeight: 0.9 }}>
             {project.title}
           </h1>
 
@@ -324,7 +324,7 @@ export default function ProjectPage({ project }: { project: Project }) {
         </div>
 
         {project.subtitle && (
-          <p style={{ fontFamily: jakartaSans, fontSize: "clamp(18px, 2vw, 28px)", color: "var(--color-body-secondary)", fontWeight: 300, marginBottom: "clamp(24px, 3vw, 44px)", letterSpacing: "0" }}>
+          <p style={{ fontFamily: jakartaSans, fontSize: "clamp(18px, 2vw, 38px)", color: "var(--color-body-secondary)", fontWeight: 300, marginBottom: "clamp(24px, 3vw, 44px)", letterSpacing: "0" }}>
             {project.subtitle}
           </p>
         )}
@@ -360,7 +360,7 @@ export default function ProjectPage({ project }: { project: Project }) {
           {/* ── Left ── */}
           <div>
             {project.short_description && (
-              <p id="pd-overview" style={{ fontSize: "clamp(14px, 1.15vw, 18px)", color: "var(--color-body)", lineHeight: 1.65, fontFamily: jakartaSans, fontWeight: 400, marginBottom: "clamp(32px, 4vw, 56px)", maxWidth: "var(--measure-reading)" }}>
+              <p id="pd-overview" style={{ fontSize: "clamp(14px, 1.15vw, 22px)", color: "var(--color-body)", lineHeight: 1.65, fontFamily: jakartaSans, fontWeight: 400, marginBottom: "clamp(32px, 4vw, 56px)", maxWidth: "var(--measure-reading)" }}>
                 {project.short_description}
               </p>
             )}

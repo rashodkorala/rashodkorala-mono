@@ -3,6 +3,7 @@ import Link from "next/link";
 import { jakartaSans, cormorantGaramond } from "@/lib/font";
 import type { CaseStudy, Project } from "@/lib/types";
 import { renderMarkdown, type MarkdownParserConfig } from "@rashodkorala/theView";
+import CaseStudyMediaBlocks from "./CaseStudyMediaBlocks";
 import MobileToc from "./MobileToc";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
@@ -64,15 +65,23 @@ const mdConfig: MarkdownParserConfig = {
   code: "cs-code",
   pre: "cs-pre",
   hr: "cs-hr",
-  img: "cs-img",
-  imgBorder: "cs-img-border",
+  img: "cs-md-img",
+  imgBorder: "cs-md-img-border",
 };
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
 function SidebarLabel({ children }: { children: React.ReactNode }) {
   return (
-    <p style={{ fontSize: "clamp(11px,0.8vw,13px)", color: "var(--color-body-secondary)", letterSpacing: "0.1em", textTransform: "uppercase", fontFamily: jakartaSans, marginBottom: 8 }}>
+    <p style={{
+      fontSize: "var(--text-label)",
+      color: "var(--color-body-secondary)",
+      letterSpacing: "var(--tracking-caps)",
+      textTransform: "uppercase",
+      fontFamily: jakartaSans,
+      margin: 0,
+      marginBottom: "var(--fib-8)",
+    }}>
       {children}
     </p>
   );
@@ -80,19 +89,32 @@ function SidebarLabel({ children }: { children: React.ReactNode }) {
 
 function SidebarValue({ children }: { children: React.ReactNode }) {
   return (
-    <p style={{ fontFamily: jakartaSans, fontSize: "clamp(14px,1.2vw,18px)", color: "var(--color-heading)", fontWeight: 400, letterSpacing: "-0.01em", lineHeight: 1.45 }}>
+    <p style={{
+      fontFamily: jakartaSans,
+      fontSize: "var(--text-lead)",
+      color: "var(--color-heading)",
+      fontWeight: 400,
+      letterSpacing: "var(--tracking-h2)",
+      lineHeight: "var(--leading-sub)",
+      margin: 0,
+    }}>
       {children}
     </p>
   );
 }
 
-function SidebarDivider() {
-  return <div style={{ height: 1, background: "var(--color-border)" }} />;
+function SidebarDivider({ className }: { className?: string }) {
+  return (
+    <div
+      className={className ? `cs-sidebar-divider ${className}` : "cs-sidebar-divider"}
+      aria-hidden
+    />
+  );
 }
 
 function ArrowIcon() {
   return (
-    <svg viewBox="0 0 12 12" fill="none" style={{ width: 11, height: 11, flexShrink: 0 }}>
+    <svg viewBox="0 0 12 12" fill="none" style={{ width: "var(--fib-13)", height: "var(--fib-13)", flexShrink: 0 }}>
       <path d="M2 10L10 2M10 2H4M10 2V8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
@@ -101,11 +123,9 @@ function ArrowIcon() {
 function PageNav({ sections }: { sections: { id: string; label: string }[] }) {
   if (sections.length < 2) return null;
   return (
-    <div>
-      <p style={{ fontSize: "11px", color: "var(--color-body-secondary)", letterSpacing: "0.14em", textTransform: "uppercase", fontFamily: jakartaSans, marginBottom: 14 }}>
-        On this page
-      </p>
-      <nav style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+    <div className="cs-sidebar-meta-row">
+      <SidebarLabel>On this page</SidebarLabel>
+      <nav className="cs-page-nav" aria-label="On this page">
         {sections.map(({ id, label }) => (
           <a key={id} href={`#${id}`} className="cs-nav-link">
             <span className="cs-nav-dash" />
@@ -197,21 +217,49 @@ export default function CaseStudyPage({ caseStudy }: { caseStudy: CaseStudy }) {
       <style>{`
         /* Markdown prose */
         .cs-h1,.cs-h2,.cs-h3 { font-family:${cormorantGaramond}; color:var(--color-heading); letter-spacing:-0.02em; }
-        .cs-h1 { font-size:clamp(28px,3vw,44px); font-weight:400; margin:clamp(32px,4vw,56px) 0 clamp(12px,1.2vw,18px); line-height:1.05; }
-        .cs-h2 { font-size:clamp(22px,2.4vw,36px); font-weight:700; margin:clamp(28px,3.5vw,52px) 0 clamp(12px,1.2vw,18px); line-height:1.18; }
-        .cs-h3 { font-size:clamp(18px,1.8vw,26px); font-weight:500; margin:clamp(20px,2.5vw,36px) 0 clamp(8px,0.8vw,12px); line-height:1.25; }
-        .cs-p  { font-size:clamp(17px,1.05vw,23px); color:var(--color-body); line-height:1.65; letter-spacing:0; font-family:${jakartaSans}; margin-bottom:clamp(14px,1.4vw,20px); max-width:68ch; }
-        .cs-ul { padding-left:0; list-style:none; margin-bottom:clamp(14px,1.4vw,20px); max-width:68ch; }
-        .cs-li { font-size:clamp(17px,1.05vw,23px); color:var(--color-body); line-height:1.65; font-family:${jakartaSans}; padding-left:20px; position:relative; margin-bottom:8px; }
+        .cs-h1 { font-size:clamp(28px,3vw,58px); font-weight:400; margin:clamp(32px,4vw,56px) 0 clamp(12px,1.2vw,18px); line-height:1.05; }
+        .cs-h2 { font-size:clamp(22px,2.4vw,46px); font-weight:700; margin:clamp(28px,3.5vw,52px) 0 clamp(12px,1.2vw,18px); line-height:1.18; }
+        .cs-h3 { font-size:clamp(18px,1.8vw,34px); font-weight:500; margin:clamp(20px,2.5vw,36px) 0 clamp(8px,0.8vw,12px); line-height:1.25; }
+        .cs-p  { font-size:clamp(17px,calc(13.67px + 0.434vw),22px); color:var(--color-body); line-height:1.65; letter-spacing:0; font-family:${jakartaSans}; margin-bottom:clamp(14px,1.4vw,20px); }
+        .cs-ul { padding-left:0; list-style:none; margin-bottom:clamp(14px,1.4vw,20px); }
+        .cs-li { font-size:clamp(17px,calc(13.67px + 0.434vw),22px); color:var(--color-body); line-height:1.65; font-family:${jakartaSans}; padding-left:20px; position:relative; margin-bottom:8px; }
         .cs-li::before { content:'–'; position:absolute; left:0; color:var(--color-body-secondary); }
         .cs-blockquote { border-left:3px solid var(--color-heading); padding:clamp(12px,1.5vw,20px) clamp(16px,2vw,28px); margin:clamp(24px,3vw,40px) 0; }
-        .cs-blockquote .cs-p { font-family:${cormorantGaramond}; font-size:clamp(18px,1.8vw,26px); color:var(--color-heading); font-style:italic; line-height:1.6; margin:0; }
+        .cs-blockquote .cs-p { font-family:${cormorantGaramond}; font-size:clamp(18px,1.8vw,34px); color:var(--color-heading); font-style:italic; line-height:1.6; margin:0; }
         .cs-strong { font-weight:600; color:var(--color-heading); }
         .cs-em { font-style:italic; }
         .cs-a  { color:var(--color-link); text-decoration:underline; text-underline-offset:3px; }
         .cs-code { font-size:0.875em; background:var(--color-surface); padding:2px 6px; font-family:${jakartaSans}; }
         .cs-pre  { background:var(--color-surface-elevated); color:var(--color-inverse); padding:clamp(14px,1.5vw,20px); overflow-x:auto; margin:clamp(16px,2vw,24px) 0; font-size:13px; line-height:1.6; font-family:${jakartaSans}; }
         .cs-hr   { border:none; border-top:1px solid var(--color-border-subtle); margin:clamp(24px,3vw,40px) 0; }
+
+        /* Markdown inline images — cap height (portraits) on small viewports */
+        .theview-md-img-wrap { display:block; margin:clamp(22px,2.8vw,32px) 0; text-align:center; }
+        .theview-md-img-wrap .cs-md-img { display:inline-block; vertical-align:middle; max-width:100%; width:auto; height:auto; max-height:min(80vh,900px); object-fit:contain; object-position:center; border-radius:8px; }
+        .theview-md-img-wrap .cs-md-img-border { border:1px solid var(--color-border-subtle); }
+        @media (max-width:900px) { .theview-md-img-wrap .cs-md-img { max-height:min(68dvh,520px); } }
+
+        /* Before/after + gallery — intrinsic aspect (portrait + landscape), contain; lightbox for full screen */
+        .cs-case-thumb-btn { padding:0; border:none; margin:0; width:100%; cursor:pointer; display:block; text-align:center; background:transparent; font:inherit; transition:opacity 0.2s; }
+        .cs-case-thumb-btn:hover { opacity:0.92; }
+        .cs-case-thumb-btn:focus-visible { outline:2px solid var(--color-heading); outline-offset:3px; }
+        .cs-case-ba-frame, .cs-case-gallery-frame {
+          display:flex; align-items:center; justify-content:center; width:100%;
+          background:var(--color-surface); border-radius:4px; overflow:hidden;
+        }
+        .cs-case-ba-img, .cs-case-gallery-img {
+          width:100%; max-width:100%; height:auto; display:block; object-fit:contain;
+        }
+        .cs-case-ba-img { max-height:min(78vh,900px); }
+        .cs-case-gallery-img { max-height:min(70vh,760px); }
+        .cs-case-gallery-lead .cs-case-gallery-img { max-height:min(80vh,920px); }
+        .cs-case-gallery-lead { grid-column:span 2; }
+        @media (max-width:600px) { .cs-case-gallery-lead { grid-column:auto; } }
+        @media (max-width:900px) {
+          .cs-case-ba-img { max-height:min(66dvh,640px); }
+          .cs-case-gallery-img { max-height:min(54dvh,480px); }
+          .cs-case-gallery-lead .cs-case-gallery-img { max-height:min(58dvh,540px); }
+        }
 
         /* Tags + tool pills */
         .cs-tag, .cs-tool {
@@ -221,13 +269,69 @@ export default function CaseStudyPage({ caseStudy }: { caseStudy: CaseStudy }) {
         }
         .cs-tool { font-size:clamp(11px,0.85vw,13px); letter-spacing:0.03em; text-transform:none; padding:6px 14px; }
 
-        /* Sidebar link */
-        .cs-sidebar-link { font-family:${jakartaSans}; font-size:clamp(12px,0.95vw,14px); color:var(--color-link); text-decoration:underline; text-underline-offset:4px; display:inline-flex; align-items:center; gap:5px; }
+        /* Sticky aside — tokens only (no inline hardcoded px) */
+        .cs-sidebar {
+          position: sticky;
+          top: calc(4 * var(--fib-8));
+          display: flex;
+          flex-direction: column;
+          gap: 0;
+        }
 
-        /* In-page nav */
-        .cs-nav-link { font-size:clamp(11px,0.9vw,13px); color:var(--color-body-secondary); font-family:${jakartaSans}; text-decoration:none; letter-spacing:0.01em; display:flex; align-items:center; gap:8px; transition:color 0.15s; }
+        .cs-sidebar-stack {
+          display: flex;
+          flex-direction: column;
+          gap: var(--fib-21);
+        }
+
+        /* Horizontal rules — explicit separators; spacing comes from parent flex gap */
+        .cs-sidebar-divider {
+          height: 1px;
+          margin: 0;
+          flex-shrink: 0;
+          width: 100%;
+          border: none;
+          background: var(--color-border);
+        }
+
+        /* Role / timeline block */
+        .cs-sidebar-meta {
+          display: flex;
+          flex-direction: column;
+          gap: var(--fib-21);
+        }
+
+        /* Meta is hidden on small screens — don’t leave a stray rule above links */
+        @media (max-width: 900px) {
+          .cs-sidebar-divider--after-meta { display: none; }
+        }
+
+        /* Sidebar link */
+        .cs-sidebar-link { font-family:${jakartaSans}; font-size:clamp(12px,0.95vw,14px); color:var(--color-link); text-decoration:underline; text-underline-offset:4px; display:inline-flex; align-items:center; gap:var(--fib-8); }
+
+        .cs-page-nav {
+          display: flex;
+          flex-direction: column;
+          gap: var(--fib-8);
+          margin: 0;
+          padding: 0;
+        }
+
+        /* In-page nav — matches global nav/caption scale */
+        .cs-nav-link {
+          font-size: var(--text-nav-size);
+          line-height: var(--leading-ui);
+          color: var(--color-body-secondary);
+          font-family: ${jakartaSans};
+          text-decoration: none;
+          letter-spacing: var(--tracking-ui);
+          display: flex;
+          align-items: center;
+          gap: var(--fib-8);
+          transition: color 0.15s;
+        }
         .cs-nav-link:hover { color:var(--color-heading); }
-        .cs-nav-dash { width:14px; height:1px; background:currentColor; flex-shrink:0; display:inline-block; }
+        .cs-nav-dash { width:var(--fib-13); height:1px; background:currentColor; flex-shrink:0; display:inline-block; }
 
         /* Back link */
         .cs-back-link:hover { color: var(--color-heading); }
@@ -240,21 +344,45 @@ export default function CaseStudyPage({ caseStudy }: { caseStudy: CaseStudy }) {
         /* Stats bar */
         .cs-stats-grid { display:grid; grid-template-columns:repeat(4,1fr); border-top:1px solid var(--color-border); border-bottom:1px solid var(--color-border); }
 
-        /* Mobile sticky TOC */
+        /* Mobile sticky TOC — wrapper hidden on desktop */
+        .cs-mobile-toc-wrap { display:none; }
         .cs-mobile-toc { display:none; }
         .cs-mobile-toc-summary {
-          list-style:none; display:flex; align-items:center; justify-content:space-between;
-          padding:12px 0; cursor:pointer; font-size:10px; color:var(--color-body-secondary);
-          letter-spacing:0.14em; text-transform:uppercase; font-family:${jakartaSans}; user-select:none;
+          list-style: none;
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          padding: var(--fib-13) 0;
+          cursor: pointer;
+          font-size: var(--text-label);
+          color: var(--color-body-secondary);
+          letter-spacing: var(--tracking-caps);
+          text-transform: uppercase;
+          font-family: ${jakartaSans};
+          user-select: none;
         }
         .cs-mobile-toc-summary::-webkit-details-marker { display:none; }
-        .cs-mobile-toc-nav { padding-bottom:14px; display:flex; flex-direction:column; gap:10px; }
+        .cs-mobile-toc-nav {
+          padding-bottom: var(--fib-13);
+          display: flex;
+          flex-direction: column;
+          gap: var(--fib-8);
+        }
 
         @media (max-width:900px) {
           .cs-body-grid     { grid-template-columns:1fr !important; }
-          .cs-sidebar       { position:static !important; order:-1; }
+          /* Live site / GitHub → On this page → article */
+          .cs-sidebar       { position:static !important; order:1; }
+          .cs-mobile-toc-wrap {
+            display:flex;
+            flex-direction:column;
+            gap:var(--fib-13);
+            order:2;
+          }
+          .cs-case-article  { order:3; }
           .cs-sidebar-meta  { display:none; }
           .cs-desktop-toc   { display:none; }
+          .cs-sidebar-divider--desktop-only { display:none; }
           .cs-mobile-toc    {
             display:block; position:sticky; top:0; z-index:10;
             background:var(--color-page);
@@ -307,7 +435,7 @@ export default function CaseStudyPage({ caseStudy }: { caseStudy: CaseStudy }) {
           className="cs-title-row"
           style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 24, marginBottom: "clamp(24px,3vw,40px)", flexWrap: "wrap" }}
         >
-          <h1 style={{ fontFamily: cormorantGaramond, fontWeight: 500, fontSize: "clamp(44px,7.5vw,112px)", color: "var(--color-heading)", letterSpacing: "-0.025em", lineHeight: 1.02 }}>
+          <h1 style={{ fontFamily: cormorantGaramond, fontWeight: 500, fontSize: "clamp(44px,7.5vw,144px)", color: "var(--color-heading)", letterSpacing: "-0.025em", lineHeight: 1.02 }}>
             {titleLine1}
             {titleLine2 && (
               <span style={{ paddingLeft: "clamp(28px,4vw,64px)", display: "block" }}>
@@ -349,22 +477,10 @@ export default function CaseStudyPage({ caseStudy }: { caseStudy: CaseStudy }) {
             ].filter(item => item.value).map((item, i, arr) => (
               <div key={item.label} style={{ padding: "clamp(16px,2vw,28px) clamp(12px,1.5vw,20px)", borderRight: i < arr.length - 1 ? "1px solid var(--color-border)" : "none" }}>
                 <p style={{ ...sectionLabel, marginBottom: 6 }}>{item.label}</p>
-                <p style={{ fontFamily: jakartaSans, fontSize: "clamp(15px,1.4vw,22px)", color: "var(--color-heading)", fontWeight: 500, letterSpacing: "-0.01em", lineHeight: 1.2 }}>{item.value}</p>
+                <p style={{ fontFamily: jakartaSans, fontSize: "clamp(15px,1.4vw,26px)", color: "var(--color-heading)", fontWeight: 500, letterSpacing: "-0.01em", lineHeight: 1.2 }}>{item.value}</p>
               </div>
             ))}
           </div>
-        )}
-
-        {/* Mobile sticky TOC — hidden on desktop, sticky bar on mobile */}
-        {sections.length > 1 && (
-          <MobileToc
-            sections={sections}
-            wrapperClass="cs-mobile-toc"
-            summaryClass="cs-mobile-toc-summary"
-            navClass="cs-mobile-toc-nav"
-            linkClass="cs-nav-link"
-            dashClass="cs-nav-dash"
-          />
         )}
 
         {/* Body: prose | sidebar */}
@@ -372,59 +488,30 @@ export default function CaseStudyPage({ caseStudy }: { caseStudy: CaseStudy }) {
             φ = 55/34 ≈ 1.618. Gap clamp bounds → Fibonacci: 32→34px, 72→55px. */}
         <div
           className="cs-body-grid"
-          style={{ display: "grid", gridTemplateColumns: "minmax(0,1fr) clamp(220px,22vw,300px)", gap: "clamp(34px,5vw,55px)", alignItems: "start" }}
+          style={{
+            display: "grid",
+            gridTemplateColumns: "minmax(0,1fr) clamp(13.75rem,22vw,18.75rem)",
+            gap: "clamp(var(--fib-34),5vw,var(--fib-55))",
+            alignItems: "start",
+          }}
         >
           {/* ── Left ── */}
-          <article>
+          <article className="cs-case-article">
             {/* Markdown body */}
             {mdHtml && (
               <div
-                className="max-w-reading w-full"
+                style={{ maxWidth: "80ch", width: "100%" }}
                 dangerouslySetInnerHTML={{ __html: mdHtml }}
               />
             )}
 
-            {/* Before / After */}
-            {(ba?.beforeImage || ba?.afterImage) && (
-              <section id="cs-before-after" style={{ margin: "clamp(24px,3vw,44px) 0" }}>
-                <p style={{ ...sectionLabel, marginBottom: "clamp(12px,1.2vw,16px)" }}>Before / After</p>
-                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "clamp(8px,1vw,16px)" }}>
-                  {ba.beforeImage && (
-                    <div>
-                      <p style={{ fontSize: "clamp(10px,0.75vw,11px)", color: "var(--color-body-secondary)", fontFamily: jakartaSans, marginBottom: 6, letterSpacing: "0.06em", textTransform: "uppercase" }}>Before</p>
-                      <div style={{ position: "relative", aspectRatio: "4/3", overflow: "hidden" }}>
-                        <Image src={mediaUrl(ba.beforeImage)} alt="Before" fill className="object-cover" sizes="(max-width:900px) 50vw, 27vw" />
-                      </div>
-                    </div>
-                  )}
-                  {ba.afterImage && (
-                    <div>
-                      <p style={{ fontSize: "clamp(10px,0.75vw,11px)", color: "var(--color-body-secondary)", fontFamily: jakartaSans, marginBottom: 6, letterSpacing: "0.06em", textTransform: "uppercase" }}>After</p>
-                      <div style={{ position: "relative", aspectRatio: "4/3", overflow: "hidden" }}>
-                        <Image src={mediaUrl(ba.afterImage)} alt="After" fill className="object-cover" sizes="(max-width:900px) 50vw, 27vw" />
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </section>
-            )}
-
-            {/* Screenshot gallery */}
-            {screenshots.length > 0 && (
-              <div id="cs-gallery" style={{ margin: "clamp(24px,3vw,44px) 0" }}>
-                <p style={{ ...sectionLabel, marginBottom: "clamp(12px,1.2vw,16px)" }}>Gallery</p>
-                <div
-                  className="cs-img-duo"
-                  style={{ display: "grid", gridTemplateColumns: screenshots.length === 1 ? "1fr" : "1fr 1fr", gap: "clamp(8px,1vw,16px)" }}
-                >
-                  {screenshots.map((src, i) => (
-                    <div key={i} style={{ position: "relative", overflow: "hidden", aspectRatio: i === 0 && screenshots.length > 2 ? "16/9" : "4/3", gridColumn: i === 0 && screenshots.length > 2 ? "span 2" : undefined }}>
-                      <Image src={src} alt={`${caseStudy.title} screenshot ${i + 1}`} fill className="object-cover" sizes="(max-width:900px) 100vw, 55vw" />
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
+            <CaseStudyMediaBlocks
+              caseTitle={caseStudy.title}
+              beforeSrc={ba?.beforeImage ? mediaUrl(ba.beforeImage) : null}
+              afterSrc={ba?.afterImage ? mediaUrl(ba.afterImage) : null}
+              screenshotSrcs={screenshots}
+              sectionLabel={sectionLabel}
+            />
 
             {/* Stack */}
             {stack.length > 0 && (
@@ -438,53 +525,72 @@ export default function CaseStudyPage({ caseStudy }: { caseStudy: CaseStudy }) {
           </article>
 
           {/* ── Sidebar ── */}
-          <aside className="cs-sidebar" style={{ position: "sticky", top: 32, display: "flex", flexDirection: "column", gap: "clamp(20px,2.2vw,30px)" }}>
+          <aside className="cs-sidebar">
+            <div className="cs-sidebar-stack">
+              <div className="cs-sidebar-meta">
+                {caseStudy.role && (
+                  <div className="cs-sidebar-meta-row">
+                    <SidebarLabel>Role</SidebarLabel>
+                    <SidebarValue>{caseStudy.role}</SidebarValue>
+                  </div>
+                )}
+                {caseStudy.role && caseStudy.timeline && <SidebarDivider />}
+                {caseStudy.timeline && (
+                  <div className="cs-sidebar-meta-row">
+                    <SidebarLabel>Timeline</SidebarLabel>
+                    <SidebarValue>{caseStudy.timeline}</SidebarValue>
+                  </div>
+                )}
+              </div>
 
-            <div className="cs-sidebar-meta">
-              {caseStudy.role && (
-                <>
-                  <div><SidebarLabel>Role</SidebarLabel><SidebarValue>{caseStudy.role}</SidebarValue></div>
-                  <SidebarDivider />
-                </>
+              {(caseStudy.role || caseStudy.timeline) && (liveLink || ghLink) && (
+                <SidebarDivider className="cs-sidebar-divider--after-meta" />
               )}
 
-              {caseStudy.timeline && (
-                <>
-                  <div><SidebarLabel>Timeline</SidebarLabel><SidebarValue>{caseStudy.timeline}</SidebarValue></div>
-                  <SidebarDivider />
-                </>
-              )}
-            </div>
-
-            {liveLink && (
-              <>
-                <div>
+              {liveLink && (
+                <div className="cs-sidebar-meta-row">
                   <SidebarLabel>Live site</SidebarLabel>
                   <a className="cs-sidebar-link" href={liveLink.url} target="_blank" rel="noreferrer">
                     {liveLink.url.replace(/^https?:\/\//, "")} <ArrowIcon />
                   </a>
                 </div>
-                <SidebarDivider />
-              </>
-            )}
+              )}
 
-            {ghLink && (
-              <>
-                <div>
+              {liveLink && ghLink && <SidebarDivider />}
+
+              {ghLink && (
+                <div className="cs-sidebar-meta-row">
                   <SidebarLabel>GitHub</SidebarLabel>
                   <a className="cs-sidebar-link" href={ghLink.url} target="_blank" rel="noreferrer">
                     {ghLink.url.replace(/^https?:\/\//, "")} <ArrowIcon />
                   </a>
                 </div>
-                <SidebarDivider />
-              </>
-            )}
+              )}
 
-            {/* In-page navigation — hidden on mobile (mobile TOC is sticky above) */}
-            <div className="cs-desktop-toc">
-              {sections.length > 1 && <PageNav sections={sections} />}
+              {(caseStudy.role || caseStudy.timeline || liveLink || ghLink) && sections.length > 1 && (
+                <SidebarDivider className="cs-sidebar-divider--desktop-only" />
+              )}
+
+              {/* In-page navigation — desktop only; mobile TOC is after Live/GitHub in grid */}
+              <div className="cs-desktop-toc">
+                {sections.length > 1 && <PageNav sections={sections} />}
+              </div>
             </div>
           </aside>
+
+          {sections.length > 1 && (
+            <div className="cs-mobile-toc-wrap">
+              <SidebarDivider />
+              <MobileToc
+                sections={sections}
+                wrapperClass="cs-mobile-toc"
+                summaryClass="cs-mobile-toc-summary"
+                navClass="cs-mobile-toc-nav"
+                linkClass="cs-nav-link"
+                dashClass="cs-nav-dash"
+              />
+            </div>
+          )}
         </div>
 
         {/* Related projects */}
