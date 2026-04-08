@@ -9,6 +9,22 @@ import {
   getActiveNavSectionId,
 } from "@/lib/portfolio-nav";
 
+/** Returns a back-navigation target for sub-pages, null for top-level pages. */
+function getBackTarget(pathname: string): { href: string; label: string } | null {
+  if (pathname.startsWith("/work/")) return { href: "/work", label: "Work" };
+  return null;
+}
+
+/** Returns the short label for the current page (used as mobile centre title). */
+function getMobilePageLabel(pathname: string): string {
+  if (pathname === "/") return "About";
+  if (pathname === "/work") return "Work";
+  if (pathname.startsWith("/work/")) return "Work";
+  if (pathname.startsWith("/contact")) return "Contact";
+  if (pathname.startsWith("/cv")) return "CV";
+  return "";
+}
+
 export default function TopBar() {
   const pathname = usePathname();
   const [active, setActive] = useState("");
@@ -18,6 +34,9 @@ export default function TopBar() {
     setActive(getActiveNavSectionId(pathname));
     setIsMobileMenuOpen(false);
   }, [pathname]);
+
+  const backTarget  = getBackTarget(pathname);
+  const mobileLabel = getMobilePageLabel(pathname);
 
   // Spacing changes — all hardcoded values mapped to nearest Fibonacci step:
   //   h-16 (64px) / lg:h-20 (80px)  — kept as-is, structural header heights
@@ -42,41 +61,59 @@ export default function TopBar() {
         href="/"
         className="hidden min-w-0 items-center gap-fib-13 group shrink-0 lg:inline-flex"
       >
-        <span className="h-fib-34 w-fib-34 inline-flex shrink-0 items-center justify-center rounded-sm bg-surface-elevated text-inverse font-display text-xl leading-none">
+        <span className="uppercase font-sans h-fib-34 w-fib-34 inline-flex shrink-0 items-center justify-center rounded-sm bg-surface-elevated text-inverse font-sans text-xl leading-none">
           R
-        </span>
-        <span className="font-sans text-base md:text-lg lg:text-xl tracking-[0.01em] text-heading truncate group-hover:opacity-80 transition-opacity">
-          Rashod Korala
         </span>
       </Link>
 
-      <div className="lg:hidden flex w-full min-w-0 flex-1 items-center justify-end">
-        <button
-          type="button"
-          aria-label="Toggle navigation menu"
-          aria-expanded={isMobileMenuOpen}
-          onClick={() => setIsMobileMenuOpen((prev) => !prev)}
-          className="group inline-flex h-fib-34 w-fib-34 items-center justify-center rounded-md border border-line-strong text-body transition-colors hover:border-line-hover"
-        >
-          <span className="sr-only">Menu</span>
-          <span className="relative inline-flex h-4 w-5 flex-col justify-between">
-            <span
-              className={`h-px w-full bg-current transition-all duration-300 ${
-                isMobileMenuOpen ? "translate-y-[7px] rotate-45" : ""
-              }`}
-            />
-            <span
-              className={`h-px w-full bg-current transition-opacity duration-300 ${
-                isMobileMenuOpen ? "opacity-0" : "opacity-100"
-              }`}
-            />
-            <span
-              className={`h-px w-full bg-current transition-all duration-300 ${
-                isMobileMenuOpen ? "-translate-y-[7px] -rotate-45" : ""
-              }`}
-            />
-          </span>
-        </button>
+      {/* ── Mobile header: 3-column grid ────────────────────────────────────── */}
+      <div className="lg:hidden grid w-full items-center" style={{ gridTemplateColumns: "1fr auto 1fr" }}>
+
+        {/* Left: back arrow on sub-pages, logo mark on top-level */}
+        {backTarget ? (
+          <Link
+            href={backTarget.href}
+            className="inline-flex items-center gap-1 text-body-secondary hover:text-heading transition-colors min-w-0"
+            style={{ fontSize: "13px", fontFamily: "var(--font-jakarta)", letterSpacing: "0.02em", minHeight: "34px" }}
+          >
+            <svg viewBox="0 0 16 16" fill="none" style={{ width: 15, height: 15, flexShrink: 0 }}>
+              <path d="M10 3L5 8L10 13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            <span>{backTarget.label}</span>
+          </Link>
+        ) : (
+          <Link
+            href="/"
+            className="inline-flex h-fib-34 w-fib-34 items-center justify-center rounded-sm bg-surface-elevated text-inverse font-sans text-sm font-bold shrink-0"
+            aria-label="Home"
+          >
+            R
+          </Link>
+        )}
+
+        {/* Centre: current page label */}
+        <span className="font-sans text-heading text-center px-2" style={{ fontSize: "13px", letterSpacing: "0.04em" }}>
+          {mobileLabel}
+        </span>
+
+        {/* Right: theme toggle + hamburger */}
+        <div className="flex items-center justify-end gap-2">
+          <ThemeToggle />
+          <button
+            type="button"
+            aria-label="Toggle navigation menu"
+            aria-expanded={isMobileMenuOpen}
+            onClick={() => setIsMobileMenuOpen((prev) => !prev)}
+            className="group inline-flex h-fib-34 w-fib-34 items-center justify-center rounded-md border border-line-strong text-body transition-colors hover:border-line-hover"
+          >
+            <span className="sr-only">Menu</span>
+            <span className="relative inline-flex h-4 w-5 flex-col justify-between">
+              <span className={`h-px w-full bg-current transition-all duration-300 ${isMobileMenuOpen ? "translate-y-[7px] rotate-45" : ""}`} />
+              <span className={`h-px w-full bg-current transition-opacity duration-300 ${isMobileMenuOpen ? "opacity-0" : "opacity-100"}`} />
+              <span className={`h-px w-full bg-current transition-all duration-300 ${isMobileMenuOpen ? "-translate-y-[7px] -rotate-45" : ""}`} />
+            </span>
+          </button>
+        </div>
       </div>
 
       {isMobileMenuOpen && (
@@ -109,7 +146,7 @@ export default function TopBar() {
                           : "w-fib-8 group-hover:w-fib-13 bg-nav-indicator-subtle"
                       }`}
                     />
-                    <span className="font-sans text-sm tracking-[0.05em]">
+                    <span className="font-sans text-sm tracking-[0.03em]">
                       {label}
                     </span>
                   </Link>

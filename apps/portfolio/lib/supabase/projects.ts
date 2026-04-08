@@ -31,7 +31,7 @@ export async function getProjectBySlug(slug: string): Promise<Project | null> {
 
   const { data: caseStudies } = await supabase
     .from('case_studies')
-    .select('id, slug, title, tags, gallery, content_md, featured, order')
+    .select('id, slug, title, tags, gallery, cover_path, content_md, featured, order')
     .eq('project_id', data.id)
     .order('featured', { ascending: false })
     .order('order', { ascending: true });

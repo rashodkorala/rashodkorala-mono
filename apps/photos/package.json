@@ -10,10 +10,10 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@rashodkorala/posthog-next": "workspace:*",
-    "@rashodkorala/theView": "workspace:*",
     "@radix-ui/react-select": "^2.2.6",
     "@radix-ui/react-slot": "^1.2.3",
+    "@rashodkorala/posthog-next": "workspace:*",
+    "@rashodkorala/theView": "workspace:*",
     "@supabase/auth-helpers-nextjs": "^0.10.0",
     "@supabase/auth-ui-react": "^0.4.7",
     "@supabase/auth-ui-shared": "^0.1.8",
@@ -22,6 +22,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "framer-motion": "^12.23.24",
+    "geist": "^1.7.0",
     "jszip": "^3.10.1",
     "lucide-react": "^0.513.0",
     "next": "15.3.6",

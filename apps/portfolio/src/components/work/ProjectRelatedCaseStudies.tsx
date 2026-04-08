@@ -20,6 +20,7 @@ function plainTextExcerpt(md: string, max = 150): string {
 }
 
 function mediaUrl(path: string) {
+  if (path.startsWith("http")) return path;
   return `${baseUrl}/storage/v1/object/public/media/${path}`;
 }
 
@@ -35,7 +36,7 @@ export default function ProjectRelatedCaseStudies({
   return (
     <ul className="space-y-4 md:space-y-5" aria-labelledby={headingId}>
       {caseStudies.map((cs) => {
-        const thumb = cs.gallery?.[0];
+        const thumb = cs.cover_path ?? cs.gallery?.[0] ?? null;
         const excerpt = plainTextExcerpt(cs.content_md ?? "");
         const tags = (cs.tags ?? []).filter(Boolean).slice(0, 3);
 
@@ -92,7 +93,7 @@ export default function ProjectRelatedCaseStudies({
                   </div>
                 )}
                 <div className="flex items-start justify-between gap-4">
-                  <h3 className="font-serif text-xl font-semibold leading-snug tracking-tight text-title transition-colors group-hover:text-heading md:text-[1.35rem]">
+                  <h3 className="font-sans text-xl font-semibold leading-snug tracking-tight text-title transition-colors group-hover:text-heading md:text-[1.35rem]">
                     {cs.title}
                   </h3>
                   <span className="mt-1 shrink-0 text-faint transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-body-secondary">

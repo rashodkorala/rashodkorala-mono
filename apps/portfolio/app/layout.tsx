@@ -2,41 +2,31 @@ import { Metadata } from 'next'
 import '@/styles/globals.css'
 
 import { PostHogProvider } from '@rashodkorala/posthog-next'
-import { Cormorant_Garamond, Geist_Mono, Geist, Plus_Jakarta_Sans } from 'next/font/google';
-import SideNav from '@/src/components/side-nav';
+import { Plus_Jakarta_Sans, Cormorant_Garamond, JetBrains_Mono } from 'next/font/google'
+import SideNav from '@/src/components/side-nav'
+import TopBar from '@/src/components/top-bar'
 
-const geistSans = Geist({
-    variable: "--font-geist-sans",
-    subsets: ["latin"],
-    display: "swap",
-    adjustFontFallback: true,
-    fallback: ['system-ui', 'arial'],
-});
+const jakartaSans = Plus_Jakarta_Sans({
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700'],
+  variable: '--font-jakarta',
+  display: 'swap',
+})
 
-const geistMono = Geist_Mono({
-    variable: "--font-geist-mono",
-    subsets: ["latin"],
-    display: "swap",
-    adjustFontFallback: true,
-    fallback: ['ui-monospace', 'monospace'],
-});
-
-// Display / serif — Cormorant Garamond (weights match bold headings across Work, CV, etc.)
 const cormorantGaramond = Cormorant_Garamond({
-    variable: "--font-cormorant",
-    subsets: ["latin"],
-    weight: ["300", "400", "500", "600", "700"],
-    style: ["normal", "italic"],
-    display: "swap",
-});
+  subsets: ['latin'],
+  weight: ['300', '400', '500', '600', '700'],
+  style: ['normal', 'italic'],
+  variable: '--font-cormorant',
+  display: 'swap',
+})
 
-// Body font — Plus Jakarta Sans
-const plusJakartaSans = Plus_Jakarta_Sans({
-    variable: "--font-dm-sans",
-    subsets: ["latin"],
-    weight: ["300", "400", "500"],
-    display: "swap",
-});
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ['latin'],
+  weight: ['400', '500', '600'],
+  variable: '--font-mono',
+  display: 'swap',
+})
 
 export const metadata: Metadata = {
     metadataBase: new URL('https://rashodkorala.com'),
@@ -90,9 +80,16 @@ export default function RootLayout({
     children: React.ReactNode
 }) {
     return (
-        <html lang="en" className="bg-page text-body" suppressHydrationWarning>
-            <body className={`${geistSans.variable} ${geistMono.variable} ${cormorantGaramond.variable} ${plusJakartaSans.variable}`}>
+        <html
+            lang="en"
+            className="dark bg-page text-body"
+            suppressHydrationWarning
+        >
+            <body
+                className={`${jakartaSans.variable} ${cormorantGaramond.variable} ${jetbrainsMono.variable}`}
+            >
                 <PostHogProvider app="portfolio">
+                    <TopBar />
                     <SideNav />
                     {children}
                 </PostHogProvider>

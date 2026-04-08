@@ -9,16 +9,45 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        sans: ["var(--font-geist-sans)", "ui-sans-serif", "system-ui", "sans-serif"],
-        mono: ["var(--font-geist-mono)", "ui-monospace", "monospace"],
-        serif: ["var(--font-playfair)", "Georgia", "serif"],
-        display: ["var(--font-cormorant)", "Georgia", "serif"],  // Cormorant Garamond
-        body: ["var(--font-dm-sans)", "system-ui", "sans-serif"],  // Plus Jakarta Sans
-        reading: ["'Helvetica Neue'", "Helvetica", "Arial", "sans-serif"],
+        sans:    ["var(--font-jakarta)", "system-ui", "sans-serif"],
+        body:    ["var(--font-jakarta)", "system-ui", "sans-serif"],
+        reading: ["var(--font-jakarta)", "system-ui", "sans-serif"],
+        mono: [
+          "var(--font-mono)",
+          "ui-monospace",
+          "SFMono-Regular",
+          "Menlo",
+          "monospace",
+        ],
+        display: ["var(--font-cormorant)", "Georgia", "serif"],
+        serif:   ["var(--font-cormorant)", "Georgia", "serif"],
       },
       fontSize: {
         display: "var(--text-display)",
         prose: "var(--text-body-size)",
+        h1: "var(--text-h1)",
+        h2: "var(--text-h2)",
+        h3: "var(--text-h3)",
+        lead: "var(--text-lead)",
+        caption: "var(--text-caption)",
+        label: "var(--text-label)",
+        nav: "var(--text-nav-size)",
+      },
+      lineHeight: {
+        tight: "var(--leading-tight)",
+        display: "var(--leading-display)",
+        heading: "var(--leading-heading)",
+        sub: "var(--leading-sub)",
+        body: "var(--leading-body)",
+        ui: "var(--leading-ui)",
+      },
+      letterSpacing: {
+        display: "var(--tracking-display)",
+        h1: "var(--tracking-h1)",
+        h2: "var(--tracking-h2)",
+        body: "var(--tracking-body)",
+        ui: "var(--tracking-ui)",
+        caps: "var(--tracking-caps)",
       },
       spacing: {
         // ── Structural layout tokens (consume CSS vars, unchanged names) ──────
@@ -45,6 +74,8 @@ module.exports = {
       maxWidth: {
         // Content cap for ultrawide screens — 89rem = 1424px (fib-89 × 16)
         content: "var(--content-max-w)",
+        // Comfortable reading measure for prose / long-form body copy
+        reading: "var(--measure-reading)",
       },
       colors: {
         cream: "#e9e6e0",
@@ -108,6 +139,15 @@ module.exports = {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+      },
+      keyframes: {
+        "loader-scan": {
+          from: { transform: "translateX(-100%)" },
+          to:   { transform: "translateX(100%)" },
+        },
+      },
+      animation: {
+        "loader-scan": "loader-scan 1.65s ease-in-out infinite",
       },
     },
   },
