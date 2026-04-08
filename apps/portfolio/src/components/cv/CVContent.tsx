@@ -218,9 +218,9 @@ function SectionHeader({ title }: { title: string }) {
       <h2 style={{
         fontFamily: serif,
         fontSize: "clamp(18px,1.8vw,26px)",
-        fontWeight: 700,
+        fontWeight: 600,
         color: "var(--color-heading)",
-        letterSpacing: "-0.015em",
+        letterSpacing: "-0.02em",
         whiteSpace: "nowrap",
         lineHeight: 1,
       }}>
@@ -269,7 +269,7 @@ function EntryGrid({ entries, showTags = true }: { entries: Entry[]; showTags?: 
             fontFamily: sans,
             fontSize: "clamp(10px,0.78vw,11px)",
             color: "var(--color-label)",
-            fontWeight: 300,
+            fontWeight: 400,
             lineHeight: 1.6,
             paddingTop: 4,
           }}>
@@ -287,10 +287,10 @@ function EntryGrid({ entries, showTags = true }: { entries: Entry[]; showTags?: 
               fontFamily: serif,
               fontSize: "clamp(15px,1.4vw,21px)",
               color: "var(--color-heading)",
-              fontWeight: 700,
+              fontWeight: 600,
               marginBottom: 3,
               lineHeight: 1.2,
-              letterSpacing: "-0.01em",
+              letterSpacing: "-0.015em",
             }}>
               {e.title}
             </p>
@@ -298,7 +298,7 @@ function EntryGrid({ entries, showTags = true }: { entries: Entry[]; showTags?: 
               fontFamily: sans,
               fontSize: "clamp(11px,0.85vw,13px)",
               color: "var(--color-body-secondary)",
-              fontWeight: 300,
+              fontWeight: 400,
               marginBottom: "clamp(8px,1vw,12px)",
             }}>
               {e.org}
@@ -307,8 +307,8 @@ function EntryGrid({ entries, showTags = true }: { entries: Entry[]; showTags?: 
               fontFamily: sans,
               fontSize: "clamp(12px,0.92vw,14px)",
               color: "var(--color-body-secondary)",
-              fontWeight: 300,
-              lineHeight: 1.8,
+              fontWeight: 400,
+              lineHeight: 1.65,
             }}>
               {e.description}
             </p>
@@ -321,7 +321,7 @@ function EntryGrid({ entries, showTags = true }: { entries: Entry[]; showTags?: 
                     color: "var(--color-body-secondary)",
                     border: "1px solid var(--color-border-strong)",
                     padding: "3px 9px",
-                    fontWeight: 300,
+                    fontWeight: 400,
                     letterSpacing: "0.03em",
                   }}>
                     {t}
@@ -349,16 +349,21 @@ export default function CVContent() {
            At 1440px viewport: content = 1440-302 = 1138px — comfortable.
            At 1280px viewport: content = 1280-302 = 978px — still ok.
            Below 1200px the sidenav + CV sidebar together feel cramped,
-           so collapse the CV sidebar into a stacked header section. */
+           so collapse the CV sidebar into a stacked section after main content. */
         @media (max-width: 1200px) {
           .cv-body-grid  { grid-template-columns: 1fr !important; }
+          .cv-main       { order: 1; }
           .cv-sidebar    {
+            order: 2;
             border-right: none !important;
-            border-bottom: 1px solid var(--color-border) !important;
+            border-top: 1px solid var(--color-border) !important;
+            border-bottom: none !important;
             padding-right: 0 !important;
-            padding-bottom: clamp(24px,3vw,40px) !important;
+            padding-top: clamp(24px,3vw,40px) !important;
+            padding-bottom: 0 !important;
             margin-right: 0 !important;
-            margin-bottom: clamp(28px,3.5vw,44px) !important;
+            margin-top: clamp(28px,3.5vw,44px) !important;
+            margin-bottom: 0 !important;
             /* Lay skills/certs/education horizontally instead of stacking */
             flex-direction: row !important;
             flex-wrap: wrap !important;
@@ -367,18 +372,22 @@ export default function CVContent() {
           }
         }
         @media (max-width: 640px) {
-          .cv-hero-inner { flex-direction: column !important; align-items: flex-start !important; gap: 20px !important; }
-          .cv-hero-meta  { text-align: left !important; align-items: flex-start !important; }
-          .cv-sidebar    { flex-direction: column !important; }
+          .cv-hero-inner      { flex-direction: column !important; align-items: flex-start !important; gap: 20px !important; }
+          .cv-hero-meta       { text-align: left !important; align-items: flex-start !important; }
+          .cv-sidebar         { flex-direction: column !important; }
+          .cv-competency-grid { grid-template-columns: repeat(2, 1fr) !important; }
         }
         @media (max-width: 480px) {
-          .cv-entry-date-col { display: none !important; }
-          .cv-entry-grid     { grid-template-columns: 1fr !important; }
+          .cv-entry-date-col  { display: none !important; }
+          .cv-entry-grid      { grid-template-columns: 1fr !important; }
+        }
+        @media (max-width: 380px) {
+          .cv-competency-grid { grid-template-columns: 1fr !important; }
         }
         @media print {
           .cv-no-print   { display: none !important; }
           .cv-body-grid  { grid-template-columns: clamp(160px,17vw,220px) 1fr !important; }
-          .cv-sidebar    { flex-direction: column !important; border-right: 1px solid #d4d0c8 !important; border-bottom: none !important; }
+          .cv-sidebar    { order: 0 !important; flex-direction: column !important; border-right: 1px solid #d4d0c8 !important; border-top: none !important; border-bottom: none !important; padding-top: 0 !important; margin-top: 0 !important; }
         }
       `}</style>
 
@@ -480,7 +489,7 @@ export default function CVContent() {
         {/* ── Professional Competency ───────────────────────────────────────── */}
         <div style={{ marginBottom: "clamp(28px,3.5vw,48px)" }}>
           <SectionHeader title="Professional Competency" />
-          <div style={{
+          <div className="cv-competency-grid" style={{
             display: "grid",
             gridTemplateColumns: "repeat(3, 1fr)",
             gap: "clamp(6px,0.8vw,10px) clamp(16px,2vw,32px)",
@@ -498,7 +507,7 @@ export default function CVContent() {
             ].map((item) => (
               <div key={item} style={{ display: "flex", alignItems: "center", gap: 9 }}>
                 <div style={{ width: 4, height: 4, borderRadius: "50%", background: "var(--color-border-strong)", flexShrink: 0 }} />
-                <span style={{ fontFamily: sans, fontSize: "clamp(12px,0.92vw,14px)", color: "var(--color-body-secondary)", fontWeight: 300, lineHeight: 1.75 }}>
+                <span style={{ fontFamily: sans, fontSize: "clamp(12px,0.92vw,14px)", color: "var(--color-body-secondary)", fontWeight: 400, lineHeight: 1.65 }}>
                   {item}
                 </span>
               </div>
@@ -546,7 +555,7 @@ export default function CVContent() {
                       fontFamily: sans,
                       fontSize: "clamp(11px,0.85vw,13px)",
                       color: skill.strong ? "var(--color-heading)" : "var(--color-body-secondary)",
-                      fontWeight: skill.strong ? 400 : 300,
+                      fontWeight: skill.strong ? 500 : 400,
                       lineHeight: 1.75,
                     }}>
                       {skill.name}
@@ -561,10 +570,10 @@ export default function CVContent() {
               <SidebarLabel>Certifications</SidebarLabel>
               {certs.map((c) => (
                 <div key={c.name} style={{ marginBottom: 10 }}>
-                  <p style={{ fontFamily: sans, fontSize: "clamp(11px,0.85vw,13px)", color: "var(--color-body-secondary)", fontWeight: 300, lineHeight: 1.6 }}>
+                  <p style={{ fontFamily: sans, fontSize: "clamp(11px,0.85vw,13px)", color: "var(--color-body-secondary)", fontWeight: 400, lineHeight: 1.6 }}>
                     {c.name}
                   </p>
-                  <p style={{ fontFamily: sans, fontSize: "clamp(10px,0.78vw,11px)", color: "var(--color-label)", fontWeight: 300 }}>
+                  <p style={{ fontFamily: sans, fontSize: "clamp(10px,0.78vw,11px)", color: "var(--color-label)", fontWeight: 400 }}>
                     {c.issuer}
                   </p>
                 </div>
@@ -577,17 +586,17 @@ export default function CVContent() {
               <p style={{ fontFamily: sans, fontSize: "clamp(12px,0.9vw,14px)", color: "var(--color-heading)", fontWeight: 400, lineHeight: 1.55 }}>
                 BSc Computer Science
               </p>
-              <p style={{ fontFamily: sans, fontSize: "clamp(11px,0.85vw,13px)", color: "var(--color-body-secondary)", fontWeight: 300, lineHeight: 1.55 }}>
+              <p style={{ fontFamily: sans, fontSize: "clamp(11px,0.85vw,13px)", color: "var(--color-body-secondary)", fontWeight: 400, lineHeight: 1.55 }}>
                 Minor in Business Admin
               </p>
-              <p style={{ fontFamily: sans, fontSize: "clamp(10px,0.78vw,11px)", color: "var(--color-label)", fontWeight: 300, marginTop: 2 }}>
+              <p style={{ fontFamily: sans, fontSize: "clamp(10px,0.78vw,11px)", color: "var(--color-label)", fontWeight: 400, marginTop: 2 }}>
                 Memorial University · 2025
               </p>
             </div>
           </aside>
 
           {/* ── Main content ───────────────────────────────────────────────── */}
-          <main style={{ display: "flex", flexDirection: "column" as const, gap: "clamp(36px,4.5vw,60px)" }}>
+          <main className="cv-main" style={{ display: "flex", flexDirection: "column" as const, gap: "clamp(36px,4.5vw,60px)" }}>
 
             <section>
               <SectionHeader title="Experience" />
