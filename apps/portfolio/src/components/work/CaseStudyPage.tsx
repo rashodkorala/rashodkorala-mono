@@ -87,22 +87,6 @@ function SidebarLabel({ children }: { children: React.ReactNode }) {
   );
 }
 
-function SidebarValue({ children }: { children: React.ReactNode }) {
-  return (
-    <p style={{
-      fontFamily: jakartaSans,
-      fontSize: "var(--text-lead)",
-      color: "var(--color-heading)",
-      fontWeight: 400,
-      letterSpacing: "var(--tracking-h2)",
-      lineHeight: "var(--leading-sub)",
-      margin: 0,
-    }}>
-      {children}
-    </p>
-  );
-}
-
 function SidebarDivider({ className }: { className?: string }) {
   return (
     <div
@@ -184,9 +168,24 @@ export default function CaseStudyPage({ caseStudy }: { caseStudy: CaseStudy }) {
   const liveLink = links.find(l => l.type === "live" || l.label?.toLowerCase().includes("live") || l.label?.toLowerCase().includes("site"));
   const ghLink   = links.find(l => l.type === "github" || l.label?.toLowerCase().includes("github") || l.label?.toLowerCase().includes("git"));
 
-  // Stats bar
   const subtitle = caseStudy.summary ?? null;
-  const statusLabel = caseStudy.status ? (caseStudy.status.charAt(0).toUpperCase() + caseStudy.status.slice(1)) : null;
+
+  const statsBarItems: (
+    | { label: string; type: "text"; value: string }
+    | { label: string; type: "link"; href: string; text: string }
+  )[] = [
+    ...(caseStudy.timeline
+      ? [{ label: "Timeline", type: "text" as const, value: caseStudy.timeline }]
+      : []),
+    ...(liveLink
+      ? [{
+          label: "Live site",
+          type: "link" as const,
+          href: liveLink.url,
+          text: liveLink.url.replace(/^https?:\/\//, ""),
+        }]
+      : []),
+  ];
 
   // Two-line title: first word large, rest indented
   const titleWords = caseStudy.title.split(" ");
@@ -294,18 +293,6 @@ export default function CaseStudyPage({ caseStudy }: { caseStudy: CaseStudy }) {
           background: var(--color-border);
         }
 
-        /* Role / timeline block */
-        .cs-sidebar-meta {
-          display: flex;
-          flex-direction: column;
-          gap: var(--fib-21);
-        }
-
-        /* Meta is hidden on small screens — don’t leave a stray rule above links */
-        @media (max-width: 900px) {
-          .cs-sidebar-divider--after-meta { display: none; }
-        }
-
         /* Sidebar link */
         .cs-sidebar-link { font-family:${jakartaSans}; font-size:clamp(12px,0.95vw,14px); color:var(--color-link); text-decoration:underline; text-underline-offset:4px; display:inline-flex; align-items:center; gap:var(--fib-8); }
 
@@ -341,8 +328,10 @@ export default function CaseStudyPage({ caseStudy }: { caseStudy: CaseStudy }) {
           scroll-margin-top: 72px;
         }
 
-        /* Stats bar */
-        .cs-stats-grid { display:grid; grid-template-columns:repeat(4,1fr); border-top:1px solid var(--color-border); border-bottom:1px solid var(--color-border); }
+        /* Stats bar — Timeline + Live site (1–2 columns) */
+        .cs-stats-grid { display:grid; border-top:1px solid var(--color-border); border-bottom:1px solid var(--color-border); }
+        .cs-stats-grid[data-stats-cols="1"] { grid-template-columns: minmax(0, 1fr); }
+        .cs-stats-grid[data-stats-cols="2"] { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 
         /* Mobile sticky TOC — wrapper hidden on desktop */
         .cs-mobile-toc-wrap { display:none; }
@@ -380,7 +369,6 @@ export default function CaseStudyPage({ caseStudy }: { caseStudy: CaseStudy }) {
             order:2;
           }
           .cs-case-article  { order:3; }
-          .cs-sidebar-meta  { display:none; }
           .cs-desktop-toc   { display:none; }
           .cs-sidebar-divider--desktop-only { display:none; }
           .cs-mobile-toc    {
@@ -392,12 +380,10 @@ export default function CaseStudyPage({ caseStudy }: { caseStudy: CaseStudy }) {
           [id^="cs-md-"], #cs-before-after, #cs-gallery, #cs-stack, #cs-related {
             scroll-margin-top: var(--mobile-toc-height, 56px);
           }
-          .cs-stats-grid    { grid-template-columns:repeat(2,1fr) !important; }
           .cs-related-grid  { grid-template-columns:1fr 1fr !important; }
           .cs-outcomes-grid { grid-template-columns:repeat(3,1fr) !important; }
         }
         @media (max-width:600px) {
-          .cs-stats-grid    { grid-template-columns:1fr 1fr !important; }
           .cs-img-duo       { grid-template-columns:1fr !important; }
           .cs-outcomes-grid { grid-template-columns:1fr !important; }
           .cs-related-grid  { grid-template-columns:1fr !important; }
@@ -467,19 +453,57 @@ export default function CaseStudyPage({ caseStudy }: { caseStudy: CaseStudy }) {
           </div>
         )}
 
-        {/* Stats bar */}
-        {[caseStudy.role, caseStudy.timeline, statusLabel].some(Boolean) && (
-          <div className="cs-stats-grid" style={{ marginBottom: "clamp(32px,4vw,56px)" }}>
-            {[
-              { label: "Role",     value: caseStudy.role },
-              { label: "Timeline", value: caseStudy.timeline },
-              { label: "Status",   value: statusLabel },
-            ].filter(item => item.value).map((item, i, arr) => (
-              <div key={item.label} style={{ padding: "clamp(16px,2vw,28px) clamp(12px,1.5vw,20px)", borderRight: i < arr.length - 1 ? "1px solid var(--color-border)" : "none" }}>
-                <p style={{ ...sectionLabel, marginBottom: 6 }}>{item.label}</p>
-                <p style={{ fontFamily: jakartaSans, fontSize: "clamp(15px,1.4vw,26px)", color: "var(--color-heading)", fontWeight: 500, letterSpacing: "-0.01em", lineHeight: 1.2 }}>{item.value}</p>
-              </div>
-            ))}
+        {/* Stats bar — timeline + live site only (same row) */}
+        {statsBarItems.length > 0 && (
+          <div
+            className="cs-stats-grid"
+            data-stats-cols={statsBarItems.length === 1 ? "1" : "2"}
+            style={{ marginBottom: "clamp(32px,4vw,62px)" }}
+          >
+            {statsBarItems.map((item, i, arr) => {
+              const valueStyle: React.CSSProperties = {
+                fontFamily: jakartaSans,
+                fontSize: "clamp(15px,1.4vw,26px)",
+                color: "var(--color-heading)",
+                fontWeight: 500,
+                letterSpacing: "-0.01em",
+                lineHeight: 1.2,
+                margin: 0,
+              };
+              return (
+                <div
+                  key={item.label}
+                  style={{
+                    padding: "clamp(16px,2vw,28px) clamp(12px,1.5vw,20px)",
+                    borderRight: i < arr.length - 1 ? "1px solid var(--color-border)" : "none",
+                  }}
+                >
+                  <p style={{ ...sectionLabel, marginBottom: 6 }}>{item.label}</p>
+                  {item.type === "text" ? (
+                    <p style={valueStyle}>{item.value}</p>
+                  ) : (
+                    <p style={{ ...valueStyle, color: "var(--color-link)" }}>
+                      <a
+                        href={item.href}
+                        target="_blank"
+                        rel="noreferrer"
+                        style={{
+                          color: "inherit",
+                          textDecoration: "underline",
+                          textUnderlineOffset: 4,
+                          display: "inline-flex",
+                          alignItems: "center",
+                          gap: "var(--fib-8)",
+                        }}
+                      >
+                        {item.text}
+                        <ArrowIcon />
+                      </a>
+                    </p>
+                  )}
+                </div>
+              );
+            })}
           </div>
         )}
 
@@ -527,37 +551,6 @@ export default function CaseStudyPage({ caseStudy }: { caseStudy: CaseStudy }) {
           {/* ── Sidebar ── */}
           <aside className="cs-sidebar">
             <div className="cs-sidebar-stack">
-              <div className="cs-sidebar-meta">
-                {caseStudy.role && (
-                  <div className="cs-sidebar-meta-row">
-                    <SidebarLabel>Role</SidebarLabel>
-                    <SidebarValue>{caseStudy.role}</SidebarValue>
-                  </div>
-                )}
-                {caseStudy.role && caseStudy.timeline && <SidebarDivider />}
-                {caseStudy.timeline && (
-                  <div className="cs-sidebar-meta-row">
-                    <SidebarLabel>Timeline</SidebarLabel>
-                    <SidebarValue>{caseStudy.timeline}</SidebarValue>
-                  </div>
-                )}
-              </div>
-
-              {(caseStudy.role || caseStudy.timeline) && (liveLink || ghLink) && (
-                <SidebarDivider className="cs-sidebar-divider--after-meta" />
-              )}
-
-              {liveLink && (
-                <div className="cs-sidebar-meta-row">
-                  <SidebarLabel>Live site</SidebarLabel>
-                  <a className="cs-sidebar-link" href={liveLink.url} target="_blank" rel="noreferrer">
-                    {liveLink.url.replace(/^https?:\/\//, "")} <ArrowIcon />
-                  </a>
-                </div>
-              )}
-
-              {liveLink && ghLink && <SidebarDivider />}
-
               {ghLink && (
                 <div className="cs-sidebar-meta-row">
                   <SidebarLabel>GitHub</SidebarLabel>
@@ -567,7 +560,7 @@ export default function CaseStudyPage({ caseStudy }: { caseStudy: CaseStudy }) {
                 </div>
               )}
 
-              {(caseStudy.role || caseStudy.timeline || liveLink || ghLink) && sections.length > 1 && (
+              {ghLink && sections.length > 1 && (
                 <SidebarDivider className="cs-sidebar-divider--desktop-only" />
               )}
 

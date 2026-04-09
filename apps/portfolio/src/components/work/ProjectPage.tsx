@@ -435,16 +435,6 @@ export default function ProjectPage({ project }: { project: Project }) {
               <MetaValue>{year}</MetaValue>
             </div>
 
-            {project.role && (
-              <>
-                <Divider />
-                <div>
-                  <MetaLabel>Role</MetaLabel>
-                  <MetaValue>{project.role}</MetaValue>
-                </div>
-              </>
-            )}
-
             {project.timeline && (
               <>
                 <Divider />

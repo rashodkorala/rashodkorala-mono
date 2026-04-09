@@ -203,14 +203,35 @@ export default function WorkPageContent({ projects, caseStudies }: WorkPageConte
         .pf-item.span-8 { grid-column: span 8; }
         .pf-item.span-6 { grid-column: span 6; }
 
+        .pf-header-controls {
+          display: flex;
+          flex-direction: column;
+          align-items: flex-end;
+          gap: 10px;
+          padding-bottom: clamp(4px, 0.5vw, 10px);
+        }
+
         @media (max-width: 720px) {
           .pf-item.span-7,
           .pf-item.span-5,
           .pf-item.span-4,
           .pf-item.span-8,
           .pf-item.span-6 { grid-column: span 12 !important; }
-          .pf-header-row { flex-direction: column !important; align-items: flex-start !important; gap: 8px !important; }
-          .pf-header-meta { text-align: left !important; }
+          .pf-header-row {
+            flex-direction: column !important;
+            align-items: stretch !important;
+            gap: clamp(12px, 3vw, 20px) !important;
+          }
+          /* Toggle left, year / count right — same row */
+          .pf-header-controls {
+            flex-direction: row !important;
+            align-items: flex-end !important;
+            justify-content: space-between !important;
+            width: 100% !important;
+            gap: 12px !important;
+          }
+          .pf-header-meta { text-align: right !important; min-width: 0; }
+          .pf-header-toggle { flex-shrink: 0; }
         }
 
         @media (min-width: 721px) and (max-width: 1080px) {
@@ -291,13 +312,16 @@ export default function WorkPageContent({ projects, caseStudies }: WorkPageConte
             </div>
           )}
 
-          <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", gap: 10, paddingBottom: "clamp(4px, 0.5vw, 10px)" }}>
+          <div className="pf-header-controls">
             {/* Styled toggle */}
-            <div style={{
-              display: "inline-flex",
-              border: "1px solid var(--color-border)",
-              overflow: "hidden",
-            }}>
+            <div
+              className="pf-header-toggle"
+              style={{
+                display: "inline-flex",
+                border: "1px solid var(--color-border)",
+                overflow: "hidden",
+              }}
+            >
               {(["projects", "case-studies"] as const).map((value, i) => (
                 <button
                   key={value}
