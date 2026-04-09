@@ -71,7 +71,7 @@ export default function CaseStudiesList({ items }: CaseStudiesListProps) {
       >
         {items.map((item, index) => {
           const year = new Date(item.created_at).getFullYear();
-          const metaParts = [String(year), item.role].filter(Boolean);
+          const metaParts = [String(year)].filter(Boolean);
           const thumb = listThumb(item);
 
           return (

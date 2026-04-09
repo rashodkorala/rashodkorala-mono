@@ -58,14 +58,6 @@ export default async function ViewProjectPage({ params }: { params: Promise<{ sl
 
       {/* Meta */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-        {project.role && (
-          <Card>
-            <CardHeader className="pb-1">
-              <CardTitle className="text-xs text-muted-foreground uppercase tracking-wide">Role</CardTitle>
-            </CardHeader>
-            <CardContent className="text-sm font-medium">{project.role}</CardContent>
-          </Card>
-        )}
         {project.timeline && (
           <Card>
             <CardHeader className="pb-1">
