@@ -99,14 +99,16 @@ export function CaseStudyForm({ caseStudy, availableProjects }: CaseStudyFormPro
     if (files.length === 0) return
     setGalleryFiles(prev => [...prev, ...files])
     const previews = await Promise.all(
-      files.map(
-        (file) =>
-          new Promise<string>((resolve) => {
-            const reader = new FileReader()
-            reader.onloadend = () => resolve(reader.result as string)
-            reader.readAsDataURL(file)
-          })
-      )
+      files.map((file) => {
+        if (file.type.startsWith("video/")) {
+          return Promise.resolve(URL.createObjectURL(file))
+        }
+        return new Promise<string>((resolve) => {
+          const reader = new FileReader()
+          reader.onloadend = () => resolve(reader.result as string)
+          reader.readAsDataURL(file)
+        })
+      })
     )
     setGalleryPreviewUrls(prev => [...prev, ...previews])
   }
@@ -174,30 +176,47 @@ export function CaseStudyForm({ caseStudy, availableProjects }: CaseStudyFormPro
     const file = e.target.files?.[0]
     if (!file) return
     if (!formData.slug.trim()) {
-      toast.error("Add a slug before attaching inline images")
+      toast.error("Add a slug before attaching inline media")
       return
     }
 
     setIsUploadingInlineImage(true)
     try {
-      const body = new FormData()
-      body.append("file", file)
-      body.append("slug", formData.slug)
-      const response = await fetch("/api/case-studies/upload-inline-image", {
-        method: "POST",
-        body,
-      })
-      if (!response.ok) {
-        const payload = await response.json().catch(() => ({ error: "Failed to upload inline image" }))
-        throw new Error(payload.error || "Failed to upload inline image")
+      // Get a signed upload URL from the server (avoids Next.js body size limits)
+      const urlRes = await fetch(
+        `/api/case-studies/signed-upload-url?slug=${encodeURIComponent(formData.slug)}&filename=${encodeURIComponent(file.name)}`
+      )
+      if (!urlRes.ok) {
+        const payload = await urlRes.json().catch(() => ({ error: "Failed to get upload URL" }))
+        throw new Error(payload.error || "Failed to get upload URL")
       }
-      const payload = await response.json()
-      const publicUrl: string = payload.publicUrl
-      const alt = file.name.replace(/\.[^/.]+$/, "")
-      insertMarkdownAtCursor(`\n![${alt}](${publicUrl})\n`)
-      toast.success("Image uploaded and inserted into markdown")
+      const { signedUrl, publicUrl } = await urlRes.json()
+
+      // Upload directly from the browser to Supabase — no Next.js body limit
+      // Supabase signed upload endpoint expects multipart FormData (file under "" key)
+      // Remap video/quicktime (.mov) → video/mp4 since Supabase doesn't accept quicktime
+      const mimeType = file.type === "video/quicktime" ? "video/mp4" : file.type
+      const uploadBlob = mimeType !== file.type ? new Blob([file], { type: mimeType }) : file
+      const uploadForm = new FormData()
+      uploadForm.append("cacheControl", "3600")
+      uploadForm.append("", uploadBlob, file.name)
+      const uploadRes = await fetch(signedUrl, {
+        method: "PUT",
+        body: uploadForm,
+      })
+      if (!uploadRes.ok) {
+        const errText = await uploadRes.text().catch(() => "")
+        throw new Error(`Upload failed (${uploadRes.status})${errText ? `: ${errText}` : ""}`)
+      }
+
+      const isVid = file.type.startsWith("video/")
+      const snippet = isVid
+        ? `\n<video src="${publicUrl}" autoplay muted loop playsInline style="width:100%"></video>\n`
+        : `\n![${file.name.replace(/\.[^/.]+$/, "")}](${publicUrl})\n`
+      insertMarkdownAtCursor(snippet)
+      toast.success(isVid ? "Video uploaded and inserted" : "Image uploaded and inserted")
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Failed to attach image")
+      toast.error(error instanceof Error ? error.message : "Failed to attach media")
     } finally {
       setIsUploadingInlineImage(false)
       if (inlineImageInputRef.current) inlineImageInputRef.current.value = ""
@@ -381,7 +400,7 @@ export function CaseStudyForm({ caseStudy, availableProjects }: CaseStudyFormPro
             <input
               ref={inlineImageInputRef}
               type="file"
-              accept="image/*"
+              accept="image/*,video/*"
               className="hidden"
               onChange={handleInlineImageAttach}
             />
@@ -392,7 +411,7 @@ export function CaseStudyForm({ caseStudy, availableProjects }: CaseStudyFormPro
               disabled={isUploadingInlineImage}
               onClick={() => inlineImageInputRef.current?.click()}
             >
-              {isUploadingInlineImage ? "Uploading..." : "Attach image"}
+              {isUploadingInlineImage ? "Uploading..." : "Attach media"}
             </Button>
           </div>
         </div>
@@ -410,24 +429,32 @@ export function CaseStudyForm({ caseStudy, availableProjects }: CaseStudyFormPro
         <h3 className="font-semibold">Media</h3>
         <div className="space-y-2">
           <Label>Gallery</Label>
-          <Input type="file" accept="image/*" multiple onChange={handleGalleryImageUpload} />
+          <Input type="file" accept="image/*,video/*" multiple onChange={handleGalleryImageUpload} />
           {(existingGallery.length > 0 || galleryPreviewUrls.length > 0) && (
             <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-              {existingGallery.map((path, i) => (
-                <div key={`existing-${path}-${i}`} className="relative">
-                  <img
-                    src={`${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/media/${path}`}
-                    alt={`Gallery ${i + 1}`}
-                    className="w-full h-24 object-cover rounded"
-                  />
-                  <button type="button" onClick={() => removeExistingGalleryImage(i)} className="absolute top-1 right-1 rounded bg-black/60 p-1">
-                    <IconX className="h-3 w-3 text-white" />
-                  </button>
-                </div>
-              ))}
+              {existingGallery.map((path, i) => {
+                const src = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/media/${path}`
+                const isVid = /\.(mp4|webm|mov|ogg)$/i.test(path)
+                return (
+                  <div key={`existing-${path}-${i}`} className="relative">
+                    {isVid ? (
+                      <video src={src} className="w-full h-24 object-cover rounded" muted playsInline />
+                    ) : (
+                      <img src={src} alt={`Gallery ${i + 1}`} className="w-full h-24 object-cover rounded" />
+                    )}
+                    <button type="button" onClick={() => removeExistingGalleryImage(i)} className="absolute top-1 right-1 rounded bg-black/60 p-1">
+                      <IconX className="h-3 w-3 text-white" />
+                    </button>
+                  </div>
+                )
+              })}
               {galleryPreviewUrls.map((url, i) => (
                 <div key={`new-${i}`} className="relative">
-                  <img src={url} alt={`Gallery ${i + 1}`} className="w-full h-24 object-cover rounded" />
+                  {galleryFiles[i]?.type.startsWith("video/") ? (
+                    <video src={url} className="w-full h-24 object-cover rounded" muted playsInline />
+                  ) : (
+                    <img src={url} alt={`Gallery ${i + 1}`} className="w-full h-24 object-cover rounded" />
+                  )}
                   <button type="button" onClick={() => removeGalleryImage(i)} className="absolute top-1 right-1 rounded bg-black/60 p-1">
                     <IconX className="h-3 w-3 text-white" />
                   </button>

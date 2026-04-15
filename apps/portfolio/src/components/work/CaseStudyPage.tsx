@@ -18,11 +18,21 @@ function asStrings(v: unknown): string[] {
   return v.filter((x): x is string => typeof x === "string");
 }
 
+// Tags we want to preserve as raw HTML in rendered output
+const SAFE_HTML_TAGS = /^\/?(video|audio|source|track|figure|figcaption|picture)\b/i
+
 function sanitizeMd(md: string): string {
   return md
     .replace(/\{\/\*[\s\S]*?\*\/\}/g, "\n")
-    .replace(/<[^>\n]+\/>/g, "\n")
-    .replace(/<\/?[A-Za-z][^>\n]*>/g, "\n")
+    // Strip self-closing JSX components (e.g. <Component />) but not safe HTML
+    .replace(/<([^>\n]+)\/>/g, (match, inner) =>
+      SAFE_HTML_TAGS.test(inner.trim()) ? match : "\n"
+    )
+    // Strip HTML/JSX tags but preserve safe media tags
+    .replace(/<\/?[A-Za-z][^>\n]*>/g, (match) => {
+      const inner = match.replace(/^<\/?/, "").replace(/>$/, "")
+      return SAFE_HTML_TAGS.test(inner.trim()) ? match : "\n"
+    })
     .replace(/[ \t]+\n/g, "\n")
     .replace(/\n{3,}/g, "\n\n")
     .replace(/[ \t]{2,}/g, " ")

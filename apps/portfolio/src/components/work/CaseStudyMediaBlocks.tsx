@@ -5,6 +5,10 @@ import { useCallback, useMemo, useState, type CSSProperties } from "react";
 import { jakartaSans } from "@/lib/font";
 import ProjectPhotoLightbox from "./ProjectPhotoLightbox";
 
+function isVideo(url: string): boolean {
+  return /\.(mp4|webm|mov|ogg)$/i.test(url.split("?")[0]);
+}
+
 type CaseStudyMediaBlocksProps = {
   caseTitle: string;
   beforeSrc: string | null;
@@ -127,19 +131,29 @@ export default function CaseStudyMediaBlocks({
                   key={`${src}-${i}`}
                   type="button"
                   className={isWideLead ? "cs-case-thumb-btn cs-case-gallery-lead" : "cs-case-thumb-btn"}
-                  aria-label={`Open gallery image ${i + 1} of ${screenshotSrcs.length} — ${caseTitle}`}
+                  aria-label={`Open gallery item ${i + 1} of ${screenshotSrcs.length} — ${caseTitle}`}
                   onClick={() => openAt(galleryOffset + i)}
                 >
                   <div className="cs-case-gallery-frame">
-                    <Image
-                      src={src}
-                      alt={`${caseTitle} — gallery ${i + 1}`}
-                      width={2000}
-                      height={1600}
-                      sizes={isWideLead ? "(max-width:900px) 100vw, min(900px, 75vw)" : "(max-width:900px) 48vw, 28vw"}
-                      className="cs-case-gallery-img"
-                      style={{ width: "100%", height: "auto" }}
-                    />
+                    {isVideo(src) ? (
+                      <video
+                        src={src}
+                        muted
+                        playsInline
+                        className="cs-case-gallery-img"
+                        style={{ width: "100%", height: "auto" }}
+                      />
+                    ) : (
+                      <Image
+                        src={src}
+                        alt={`${caseTitle} — gallery ${i + 1}`}
+                        width={2000}
+                        height={1600}
+                        sizes={isWideLead ? "(max-width:900px) 100vw, min(900px, 75vw)" : "(max-width:900px) 48vw, 28vw"}
+                        className="cs-case-gallery-img"
+                        style={{ width: "100%", height: "auto" }}
+                      />
+                    )}
                   </div>
                 </button>
               );
