@@ -1,6 +1,7 @@
 "use server"
 
 import { createClient } from "@/lib/supabase/server"
+import { requestPortfolioRevalidation } from "@/lib/revalidate-portfolio"
 import { revalidatePath } from "next/cache"
 import type { CaseStudy, CaseStudyDB, CaseStudyFormData } from "@/lib/types/case-study"
 
@@ -262,6 +263,7 @@ export async function createOrUpdateCaseStudy(
 
   revalidatePath("/protected/case-studies")
   revalidatePath("/protected/work")
+  await requestPortfolioRevalidation()
 
   return transformCaseStudy(data)
 }
@@ -297,4 +299,5 @@ export async function deleteCaseStudy(id: string): Promise<void> {
 
   revalidatePath("/protected/case-studies")
   revalidatePath("/protected/work")
+  await requestPortfolioRevalidation()
 }
