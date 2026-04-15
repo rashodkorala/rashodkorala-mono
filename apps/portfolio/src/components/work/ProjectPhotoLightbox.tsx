@@ -126,7 +126,7 @@ export default function ProjectPhotoLightbox({
           Full screen image. Swipe left or right to change image. Use on-screen buttons or arrow keys for
           previous and next. Escape to close.
         </p>
-        <div className="relative flex min-h-0 flex-1 items-center justify-center px-2 pb-4 pt-2 sm:px-4 md:px-10">
+        <div className="relative flex min-h-0 min-w-0 flex-1 items-center justify-center overflow-x-hidden px-2 pb-4 pt-2 sm:px-4 md:px-10">
           {hasMultiple && (
             <button
               type="button"
@@ -141,7 +141,7 @@ export default function ProjectPhotoLightbox({
             </button>
           )}
           <div
-            className="pointer-events-auto relative mx-auto w-full max-w-6xl px-10 sm:px-12 md:px-14"
+            className="pointer-events-auto relative mx-auto h-full min-h-0 w-full min-w-0 max-w-full sm:max-w-6xl px-3 sm:px-8 md:px-12"
             style={{ height: "min(78dvh, calc(100dvh - 140px))", touchAction: hasMultiple ? "none" : "auto" }}
             onTouchStart={onTouchStart}
             onTouchEnd={onTouchEnd}

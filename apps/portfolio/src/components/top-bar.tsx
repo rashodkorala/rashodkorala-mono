@@ -22,6 +22,7 @@ function getMobilePageLabel(pathname: string): string {
   if (pathname.startsWith("/work/")) return "Work";
   if (pathname.startsWith("/contact")) return "Contact";
   if (pathname.startsWith("/cv")) return "CV";
+  if (pathname.startsWith("/privacy")) return "Privacy";
   return "";
 }
 
