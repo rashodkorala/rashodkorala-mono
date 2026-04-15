@@ -267,7 +267,7 @@ export default function HomeHero({ imageSrc }: HomeHeroProps = {}) {
           custom={0.9}
         >
 
-          <div className="flex w-full max-w-full flex-wrap justify-center gap-x-4 gap-y-2 sm:w-auto sm:justify-end">
+          <div className="flex w-full max-w-full flex-wrap justify-center gap-x-4 gap-y-2 sm:w-auto sm:justify-end sm:items-center">
             {socials.map((s) => (
               <a
                 key={s.label}
@@ -279,6 +279,12 @@ export default function HomeHero({ imageSrc }: HomeHeroProps = {}) {
                 {s.label}
               </a>
             ))}
+            <Link
+              href="/privacy"
+              className="font-body font-medium text-xs text-body-secondary underline underline-offset-4 tracking-[0.01em] transition-opacity hover:opacity-80 sm:text-[13px]"
+            >
+              Privacy
+            </Link>
           </div>
         </motion.footer>
       </div>

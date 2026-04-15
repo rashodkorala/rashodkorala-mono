@@ -159,12 +159,6 @@ function renderTable(
 }
 
 export function renderMarkdown(content: string, config: MarkdownParserConfig): string {
-  const isHTML = /<[a-z][\s\S]*>/i.test(content.trim())
-
-  if (isHTML) {
-    return `<div class="blog-content">${content}</div>`
-  }
-
   const d = resolveDefaults(config)
   const lines = content.split(/\n/)
   const blocks: string[] = []
@@ -176,6 +170,17 @@ export function renderMarkdown(content: string, config: MarkdownParserConfig): s
 
     if (trimmed === "") {
       i++
+      continue
+    }
+
+    // Raw HTML block passthrough — lines starting with an HTML tag are passed through as-is
+    if (/^<[a-zA-Z]/.test(trimmed)) {
+      const htmlLines: string[] = []
+      while (i < lines.length && lines[i].trim() !== "") {
+        htmlLines.push(lines[i])
+        i++
+      }
+      blocks.push(htmlLines.join("\n"))
       continue
     }
 

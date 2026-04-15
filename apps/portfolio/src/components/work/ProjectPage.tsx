@@ -66,7 +66,7 @@ function CoverPlaceholder({ initial }: { initial: string }) {
 
 function GalleryImage({ src, alt, style }: { src: string; alt: string; style?: React.CSSProperties }) {
   return (
-    <div style={{ position: "relative", overflow: "hidden", background: "#c4beb6", ...style }}>
+    <div style={{ position: "relative", overflow: "hidden", background: "#c4beb6", minWidth: 0, ...style }}>
       <Image src={src} alt={alt} fill className="object-cover" sizes="(max-width: 900px) 100vw, 55vw" />
     </div>
   );
@@ -215,7 +215,8 @@ export default function ProjectPage({ project }: { project: Project }) {
         .pd-view-more-btn:hover { background: var(--color-heading); color: var(--color-inverse); }
 
         .pd-gallery-thumb {
-          padding: 0; border: none; margin: 0; width: 100%; cursor: pointer; display: block;
+          padding: 0; border: none; margin: 0; width: 100%; max-width: 100%; min-width: 0;
+          cursor: pointer; display: block; box-sizing: border-box;
           text-align: left; background: transparent; font: inherit; color: inherit;
           transition: opacity 0.2s;
         }
@@ -258,10 +259,19 @@ export default function ProjectPage({ project }: { project: Project }) {
             scroll-margin-top: var(--mobile-toc-height, 56px);
           }
           .pd-related-grid { grid-template-columns: 1fr 1fr !important; }
+          /* One column + cancel span-2 on lead thumb — avoids implicit grid tracks / horizontal overflow */
+          .pd-photos-grid {
+            grid-template-columns: 1fr !important;
+            min-width: 0;
+            width: 100%;
+          }
+          .pd-photo-wide {
+            grid-column: span 1 !important;
+            aspect-ratio: 16 / 9 !important;
+          }
         }
         @media (max-width: 600px) {
-          .pd-photos-grid  { grid-template-columns: 1fr !important; }
-          .pd-photo-wide   { grid-column: span 1 !important; aspect-ratio: 4/3 !important; }
+          .pd-photo-wide   { aspect-ratio: 4 / 3 !important; }
           .pd-related-grid { grid-template-columns: 1fr !important; }
           .pd-title-row    { flex-direction: column !important; align-items: flex-start !important; }
         }
@@ -358,7 +368,7 @@ export default function ProjectPage({ project }: { project: Project }) {
           style={{ display: "grid", gridTemplateColumns: "55fr 34fr", gap: "clamp(34px, 5vw, 55px)", alignItems: "start" }}
         >
           {/* ── Left ── */}
-          <div>
+          <div style={{ minWidth: 0 }}>
             {project.short_description && (
               <p id="pd-overview" style={{ fontSize: "clamp(14px, 1.15vw, 22px)", color: "var(--color-body)", lineHeight: 1.65, fontFamily: jakartaSans, fontWeight: 400, marginBottom: "clamp(32px, 4vw, 56px)", maxWidth: "var(--measure-reading)" }}>
                 {project.short_description}
@@ -372,7 +382,14 @@ export default function ProjectPage({ project }: { project: Project }) {
                 {/* gap: 16px→13px (fib); margin-bottom: 16px→13px, 24px→21px (fib) */}
                 <div
                   className="pd-photos-grid"
-                  style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "clamp(8px, 1.2vw, 13px)", marginBottom: hiddenCount > 0 && !galleryExpanded ? "clamp(13px, 1.5vw, 21px)" : 0 }}
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "1fr 1fr",
+                    gap: "clamp(8px, 1.2vw, 13px)",
+                    marginBottom: hiddenCount > 0 && !galleryExpanded ? "clamp(13px, 1.5vw, 21px)" : 0,
+                    minWidth: 0,
+                    width: "100%",
+                  }}
                 >
                   {visibleMedia.map((m, globalIdx) => {
                     const src = galleryResolvedUrls[globalIdx] ?? resolveUrl(m.url) ?? m.url;
@@ -380,7 +397,7 @@ export default function ProjectPage({ project }: { project: Project }) {
                       <button
                         key={`${m.url}-${globalIdx}`}
                         type="button"
-                        className="pd-gallery-thumb"
+                        className={`pd-gallery-thumb${globalIdx === 0 ? " pd-photo-wide" : ""}`}
                         aria-label={`Open photo ${globalIdx + 1} of ${media.length} in full screen`}
                         onClick={() => setLightboxIndex(globalIdx)}
                         style={globalIdx === 0
