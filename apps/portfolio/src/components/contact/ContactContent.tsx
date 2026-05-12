@@ -1,4 +1,6 @@
 import React from "react";
+import CalendlyPopupButton from "./CalendlyPopupButton";
+import { Suspense } from "react";
 type ContactRow = { label: string; value: string; href: string | null };
 
 type ContactGroup = { title: string; items: ContactRow[] };
@@ -166,15 +168,18 @@ export default function ContactContent() {
             </h1>
 
             <p className="mb-[clamp(var(--fib-21),3vw,var(--fib-34))] max-w-reading font-sans text-[length:clamp(var(--fib-21),1.3vw,1.125rem)] leading-body text-body-secondary">
-              For project inquiries or collaborations, email is best—see{" "}
-              <a href="#reach-me" className={linkUnderlineClass}>
-                Reach me
-              </a>{" "}
-              for details, or{" "}
+              Email is the best way to reach me for project inquiries and
+              collaborations. Find the details below, or{" "}
               <a href="mailto:hello@rashodkorala.com" className={linkUnderlineClass}>
                 open your mail app
-              </a>
-              .
+              </a>{" "}
+              directly. If you would rather talk,{" "}
+              <Suspense>
+                <CalendlyPopupButton className={linkUnderlineClass}>
+                  book a quick coffee chat
+                </CalendlyPopupButton>
+              </Suspense>{" "}
+              and let&rsquo;s connect.
             </p>
 
             <div className="flex items-center gap-fib-13">
@@ -189,6 +194,20 @@ export default function ContactContent() {
 
             <div className="ct-reach-section">
               <ContactGroupSection group={reachGroup} sectionId="reach-me" />
+              <link
+                href="https://assets.calendly.com/assets/external/widget.css"
+                rel="stylesheet"
+              />
+              <div className="ct-contact-field mb-[clamp(var(--fib-13),1.8vw,var(--fib-21))]">
+                <p className="mb-fib-8 font-sans text-label uppercase tracking-caps text-body-secondary">
+                  Book a call
+                </p>
+                <p className="ct-contact-value font-sans font-semibold leading-[1.35] tracking-h2 text-heading">
+                  <Suspense>
+                    <CalendlyPopupButton className={linkUnderlineClass} />
+                  </Suspense>
+                </p>
+              </div>
             </div>
           </div>
 

@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 
 export default function ContactPage() {
   return (
-    <PageShell>
+    <PageShell noScroll>
       <ContactContent />
     </PageShell>
   );

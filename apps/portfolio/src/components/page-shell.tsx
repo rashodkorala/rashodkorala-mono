@@ -4,9 +4,10 @@ import { useRef } from "react";
 
 interface PageShellProps {
   children: React.ReactNode;
+  noScroll?: boolean;
 }
 
-export default function PageShell({ children }: PageShellProps) {
+export default function PageShell({ children, noScroll }: PageShellProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   return (
@@ -17,7 +18,7 @@ export default function PageShell({ children }: PageShellProps) {
           with some block/flex descendants). Padding uses --page-px-* tokens. */}
       <div
         ref={scrollRef}
-        className="h-full min-w-0 overflow-y-auto lg:ml-sidenav scrollbar-hide"
+        className={`h-full min-w-0 lg:ml-sidenav scrollbar-hide ${noScroll ? "overflow-y-auto lg:overflow-hidden" : "overflow-y-auto"}`}
       >
         <div className="box-border mx-auto w-[min(100%,var(--content-max-w))] min-w-0 px-page-px sm:px-page-px-sm md:px-page-px-md lg:px-page-px-lg xl:px-page-px-xl pt-16 lg:pt-20">
           {children}

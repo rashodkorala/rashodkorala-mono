@@ -57,7 +57,7 @@ export default function TopBar() {
   //   w-2 (8px) → w-fib-8 (8px) ✓  — default indicator
   //   w-4 (16px) → w-fib-13 (13px)  — hover indicator
   return (
-    <header className="fixed top-0 left-0 right-0 z-40 flex w-full h-16 lg:h-20 flex-nowrap items-center justify-center gap-2 px-fib-13 sm:px-fib-21 md:px-fib-34 lg:justify-between lg:gap-fib-13 lg:px-fib-55 bg-surface-overlay backdrop-blur">
+    <header className="fixed top-0 left-0 right-0 z-40 flex w-full h-16 lg:h-20 flex-nowrap items-center justify-center gap-2 px-fib-13 sm:px-fib-21 md:px-fib-34 lg:justify-between lg:gap-fib-13 lg:px-fib-55 bg-page">
       <Link
         href="/"
         className="hidden min-w-0 items-center gap-fib-13 group shrink-0 lg:inline-flex"
