@@ -13,16 +13,12 @@ export const metadata: Metadata = {
 };
 
 export default async function WorkPage() {
-  let projects: Project[] = [];
-  let caseStudies: CaseStudy[] = [];
-  try {
-    [projects, caseStudies] = await Promise.all([
-      getCachedAllProjects(),
-      getCachedCaseStudies(),
-    ]);
-  } catch (error) {
-    console.error("Failed to load work page data:", error);
-  }
+  // Do not catch Supabase errors and fall back to []: ISR would cache that empty
+  // response as a successful render, so /work could go blank after revalidation.
+  const [projects, caseStudies] = await Promise.all([
+    getCachedAllProjects(),
+    getCachedCaseStudies(),
+  ]);
   return (
     <PageShell>
       <WorkPageContent projects={projects} caseStudies={caseStudies} />
