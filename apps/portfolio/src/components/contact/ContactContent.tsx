@@ -1,5 +1,6 @@
 import React from "react";
 import CalendlyPopupButton from "./CalendlyPopupButton";
+import CalendlyInlineWidget from "./CalendlyInlineWidget";
 import { Suspense } from "react";
 type ContactRow = { label: string; value: string; href: string | null };
 
@@ -194,10 +195,6 @@ export default function ContactContent() {
 
             <div className="ct-reach-section">
               <ContactGroupSection group={reachGroup} sectionId="reach-me" />
-              <link
-                href="https://assets.calendly.com/assets/external/widget.css"
-                rel="stylesheet"
-              />
               <div className="ct-contact-field mb-[clamp(var(--fib-13),1.8vw,var(--fib-21))]">
                 <p className="mb-fib-8 font-sans text-label uppercase tracking-caps text-body-secondary">
                   Book a call
@@ -218,6 +215,12 @@ export default function ContactContent() {
           </div>
         </main>
       </div>
+
+      <link
+        href="https://assets.calendly.com/assets/external/widget.css"
+        rel="stylesheet"
+      />
+      <CalendlyInlineWidget />
     </>
   );
 }
