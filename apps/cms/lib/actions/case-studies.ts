@@ -1,6 +1,7 @@
 "use server"
 
 import { createClient } from "@/lib/supabase/server"
+import { requestPortfolioRevalidation } from "@/lib/revalidate-portfolio"
 import { revalidatePath } from "next/cache"
 import type { CaseStudy, CaseStudyDB, CaseStudyFormData } from "@/lib/types/case-study"
 
@@ -176,8 +177,11 @@ export async function createOrUpdateCaseStudy(
     const ext = file.name.split(".").pop()
     const uuid = crypto.randomUUID()
     const path = `case-studies/${formData.slug}/assets/${uuid}.${ext}`
-    const { error: uploadError } = await supabase.storage.from("media").upload(path, file)
-    if (uploadError) throw new Error(`Failed to upload gallery image: ${uploadError.message}`)
+    // Remap video/quicktime (.mov) → video/mp4 since Supabase doesn't accept quicktime
+    const mimeType = file.type === "video/quicktime" ? "video/mp4" : file.type
+    const uploadBlob = mimeType !== file.type ? new Blob([file], { type: mimeType }) : file
+    const { error: uploadError } = await supabase.storage.from("media").upload(path, uploadBlob, { contentType: mimeType })
+    if (uploadError) throw new Error(`Failed to upload gallery file: ${uploadError.message}`)
     galleryPaths.push(path)
   }
 
@@ -259,6 +263,7 @@ export async function createOrUpdateCaseStudy(
 
   revalidatePath("/protected/case-studies")
   revalidatePath("/protected/work")
+  await requestPortfolioRevalidation()
 
   return transformCaseStudy(data)
 }
@@ -294,4 +299,5 @@ export async function deleteCaseStudy(id: string): Promise<void> {
 
   revalidatePath("/protected/case-studies")
   revalidatePath("/protected/work")
+  await requestPortfolioRevalidation()
 }

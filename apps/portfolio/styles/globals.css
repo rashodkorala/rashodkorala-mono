@@ -18,8 +18,8 @@
     --color-body: #2b2b2b;
     --color-body-secondary: #6b6560;
     --color-body-tertiary: rgba(43, 43, 43, 0.55);
-    --color-caption: rgba(43, 43, 43, 0.45);
-    --color-label: rgba(43, 43, 43, 0.35);
+    --color-caption: rgba(43, 43, 43, 0.6);
+    --color-label: rgba(43, 43, 43, 0.55);
     --color-faint: rgba(43, 43, 43, 0.25);
     --color-inverse: #e9e6e0;
 
@@ -49,13 +49,40 @@
     --color-ctrl-hover: #e9e6e0;
     --color-ctrl-border: rgba(43, 43, 43, 0.20);
 
+    /* ─── Semantic status colors ─── */
+    --color-success: #4a7c59;
+    --color-error:   #c0392b;
+
     /* ─── Document surface (case study cards) ─── */
     --color-doc-bg: #e4e0d8;
 
-    /* ─── Typography scale ─── */
-    --text-display: clamp(3.25rem, 9vw, 6rem);
-    --text-body-size: clamp(0.8125rem, 0.72rem + 0.4vw, 0.9375rem);
+    /* ─── Typography scale (fluid 375px–1440px where noted) ─── */
+    --text-display: clamp(3.25rem, 9vw, 10rem);
+    --text-body-size: clamp(1.0625rem, 1.04rem + 0.094vw, 1.25rem);
     --text-nav-size: clamp(0.8125rem, 0.7rem + 0.45vw, 1rem);
+    --text-h1: clamp(2rem, 1.72rem + 1.1268vw, 3.25rem);
+    --text-h2: clamp(1.5rem, 1.33rem + 0.6573vw, 2.375rem);
+    --text-h3: clamp(1.25rem, 1.14rem + 0.4695vw, 1.875rem);
+    --text-lead: clamp(1.125rem, 1.05rem + 0.2817vw, 1.5rem);
+    --text-caption: clamp(0.75rem, 0.706rem + 0.1878vw, 0.875rem);
+    --text-label: clamp(0.6875rem, 0.6435rem + 0.1878vw, 0.8125rem);
+
+    --leading-tight: 1.1;
+    --leading-display: 1.15;
+    --leading-heading: 1.3;
+    --leading-sub: 1.45;
+    --leading-body: 1.65;
+    --leading-ui: 1.4;
+
+    --tracking-display: -0.03em;
+    --tracking-h1: -0.02em;
+    --tracking-h2: -0.01em;
+    --tracking-body: 0em;
+    --tracking-ui: 0.01em;
+    --tracking-caps: 0.08em;
+
+    /* Optimal reading measure for body columns (see Typography Audit) */
+    --measure-reading: 65ch;
 
     /* ─── Fibonacci spacing scale (px → rem, base 16px) ───────────────────────
      *  Fib sequence:  8   13   21   34   55   89   144
@@ -98,33 +125,33 @@
   .dark {
     /* ─── Surface tokens ─── */
     --color-page: #151311;
-    --color-surface: #171514;
-    --color-surface-raised: #1c1a17;
+    --color-surface: #1c1a17;
+    --color-surface-raised: #23201e;
     --color-surface-elevated: #2a2725;
     --color-surface-overlay: rgba(21, 19, 17, 0.85);
     --color-surface-overlay-strong: rgba(21, 19, 17, 0.95);
 
     /* ─── Text hierarchy ─── */
-    --color-heading: #f0ebe4;
-    --color-title: #eee8e0;
-    --color-body: #d4cfc8;
-    --color-body-secondary: #b8b0a9;
-    --color-body-tertiary: #a9a29b;
-    --color-caption: #9f9791;
-    --color-label: #8f8781;
-    --color-faint: #5c5650;
-    --color-inverse: #ece7df;
+    --color-heading: #ddd7cf;
+    --color-title: #d9d3cb;
+    --color-body: #bfb9b2;
+    --color-body-secondary: #a09891;
+    --color-body-tertiary: #928b84;
+    --color-caption: #88807a;
+    --color-label: #7a736d;
+    --color-faint: #4e4844;
+    --color-inverse: #d6d0c8;
 
     /* ─── Navigation ─── */
-    --color-nav-active: #d7d2cc;
-    --color-nav-inactive: #8f8780;
-    --color-nav-hover: #beb8b1;
+    --color-nav-active: #c4beb8;
+    --color-nav-inactive: #7a736d;
+    --color-nav-hover: #a8a09a;
     --color-nav-indicator: #7d756f;
     --color-nav-indicator-subtle: #4d4844;
 
     /* ─── Links & icons ─── */
-    --color-link: #e8e2db;
-    --color-link-hover: #e2ddd6;
+    --color-link: #ccc6be;
+    --color-link-hover: #c6c0b8;
     --color-link-underline: #6b6560;
     --color-icon: #77706a;
     --color-icon-hover: #e2ddd6;
@@ -141,6 +168,10 @@
     --color-ctrl-hover: #1a1817;
     --color-ctrl-border: #2f2c2a;
 
+    /* ─── Semantic status colors ─── */
+    --color-success: #5a9e6f;
+    --color-error:   #e55039;
+
     /* ─── Document surface ─── */
     --color-doc-bg: #1c1a17;
   }
@@ -149,10 +180,32 @@
 @layer base {
   body {
     @apply antialiased;
-    font-family: var(--font-active-sans);
+    font-family: var(--font-jakarta), system-ui, sans-serif;
     background-color: var(--color-page);
     color: var(--color-body);
-    transition: background-color 240ms ease, color 240ms ease;
+    font-size: var(--text-body-size);
+    line-height: var(--leading-body);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    body {
+      transition: background-color 240ms ease, color 240ms ease;
+    }
+  }
+
+  p {
+    margin-bottom: 1.4em;
+    text-wrap: pretty;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
+    text-wrap: balance;
+    font-family: var(--font-cormorant), Georgia, serif;
   }
 }
 

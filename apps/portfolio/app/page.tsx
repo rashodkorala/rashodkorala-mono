@@ -13,5 +13,13 @@ export const metadata: Metadata = {
 };
 
 export default function Index() {
-  return <HomeHero imageSrc="/about.jpg" />;
+  return (
+    <>
+      <link
+        href="https://assets.calendly.com/assets/external/widget.css"
+        rel="stylesheet"
+      />
+      <HomeHero imageSrc="/about.jpg" />
+    </>
+  );
 }

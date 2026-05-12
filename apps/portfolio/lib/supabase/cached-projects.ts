@@ -1,4 +1,5 @@
 import { unstable_cache } from "next/cache"
+import { cache } from "react"
 import { getAllProjects, getProjectBySlug } from "./projects"
 import type { Project } from "@/lib/types"
 
@@ -13,10 +14,16 @@ export async function getCachedAllProjects(): Promise<Project[]> {
   )()
 }
 
+/**
+ * Not cached with `unstable_cache`: that would store `null` for up to REVALIDATE when
+ * the slug was missing once (e.g. visited before publish). `/work` uses a separate
+ * cached `getCachedAllProjects()` key, so the grid could show a project while this
+ * route kept serving a stale 404. CMS `revalidatePath` does not touch the portfolio app.
+ *
+ * `cache()` dedupes the two calls in `generateMetadata` + page for the same request.
+ */
+const getProjectBySlugForRequest = cache(async (slug: string) => getProjectBySlug(slug))
+
 export async function getCachedProjectBySlug(slug: string): Promise<Project | null> {
-  return unstable_cache(
-    () => getProjectBySlug(slug),
-    ["project-by-slug", slug],
-    { revalidate: REVALIDATE, tags: [...TAGS, `project-${slug}`] }
-  )()
+  return getProjectBySlugForRequest(slug)
 }

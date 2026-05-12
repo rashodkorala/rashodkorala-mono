@@ -2,12 +2,11 @@
 
 import { useState } from "react";
 import MobileToc from "./MobileToc";
+import ProjectPhotoLightbox from "./ProjectPhotoLightbox";
 import Image from "next/image";
 import Link from "next/link";
+import { jakartaSans, cormorantGaramond } from "@/lib/font";
 import type { Project, CaseStudy } from "@/lib/types";
-
-const serif = "var(--font-cormorant), 'Georgia', serif";
-const sans  = "var(--font-dm-sans), system-ui, sans-serif";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
 
@@ -29,7 +28,7 @@ function normalizeHref(url: string | null | undefined): string | null {
 
 function MetaLabel({ children }: { children: React.ReactNode }) {
   return (
-    <p style={{ fontSize: "clamp(10px, 0.8vw, 12px)", color: "#8a8a7a", letterSpacing: "0.1em", textTransform: "uppercase", fontFamily: sans, marginBottom: 8 }}>
+    <p style={{ fontSize: "clamp(10px, 0.8vw, 15px)", color: "var(--color-body-secondary)", letterSpacing: "0.08em", textTransform: "uppercase", fontFamily: jakartaSans, marginBottom: 8 }}>
       {children}
     </p>
   );
@@ -37,20 +36,20 @@ function MetaLabel({ children }: { children: React.ReactNode }) {
 
 function MetaValue({ children }: { children: React.ReactNode }) {
   return (
-    <p style={{ fontFamily: serif, fontSize: "clamp(15px, 1.3vw, 20px)", color: "#1a1a1a", fontWeight: 600, letterSpacing: "-0.01em", lineHeight: 1.3 }}>
+    <p style={{ fontFamily: jakartaSans, fontSize: "clamp(15px, 1.3vw, 24px)", color: "var(--color-heading)", fontWeight: 500, letterSpacing: "-0.01em", lineHeight: 1.3 }}>
       {children}
     </p>
   );
 }
 
 function Divider() {
-  return <div style={{ height: 1, background: "rgba(26,26,26,0.1)" }} />;
+  return <div style={{ height: 1, background: "var(--color-border)" }} />;
 }
 
 function ArrowIcon() {
   return (
     <svg viewBox="0 0 12 12" fill="none" style={{ width: 11, height: 11, flexShrink: 0 }}>
-      <path d="M2 10L10 2M10 2H4M10 2V8" stroke="#1a1a1a" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M2 10L10 2M10 2H4M10 2V8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
     </svg>
   );
 }
@@ -58,7 +57,7 @@ function ArrowIcon() {
 function CoverPlaceholder({ initial }: { initial: string }) {
   return (
     <div style={{ width: "100%", height: "100%", background: "linear-gradient(135deg, #c4beb6 0%, #a8a49c 40%, #8a8880 100%)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-      <span style={{ fontFamily: serif, fontSize: "clamp(4rem, 12vw, 10rem)", fontWeight: 700, color: "#f0ede8", opacity: 0.18 }}>
+      <span style={{ fontFamily: jakartaSans, fontSize: "clamp(4rem, 12vw, 10rem)", fontWeight: 700, color: "var(--color-inverse)", opacity: 0.18 }}>
         {initial}
       </span>
     </div>
@@ -67,7 +66,7 @@ function CoverPlaceholder({ initial }: { initial: string }) {
 
 function GalleryImage({ src, alt, style }: { src: string; alt: string; style?: React.CSSProperties }) {
   return (
-    <div style={{ position: "relative", overflow: "hidden", background: "#c4beb6", ...style }}>
+    <div style={{ position: "relative", overflow: "hidden", background: "#c4beb6", minWidth: 0, ...style }}>
       <Image src={src} alt={alt} fill className="object-cover" sizes="(max-width: 900px) 100vw, 55vw" />
     </div>
   );
@@ -85,18 +84,18 @@ function RelatedCard({ cs }: { cs: CaseStudy }) {
           <Image src={thumb} alt={cs.title} fill className="object-cover" sizes="(max-width: 900px) 50vw, 25vw" />
         ) : (
           <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <span style={{ fontFamily: serif, fontSize: "clamp(2rem, 4vw, 4rem)", fontWeight: 700, color: "#f0ede8", opacity: 0.3 }}>
+            <span style={{ fontFamily: jakartaSans, fontSize: "clamp(2rem, 4vw, 4rem)", fontWeight: 700, color: "var(--color-inverse)", opacity: 0.3 }}>
               {cs.title.charAt(0)}
             </span>
           </div>
         )}
       </div>
       <div style={{ paddingTop: "clamp(8px, 0.8vw, 12px)" }}>
-        <p style={{ fontFamily: serif, fontSize: "clamp(14px, 1.2vw, 18px)", color: "#1a1a1a", fontWeight: 600, margin: "0 0 3px", letterSpacing: "-0.01em" }}>
+        <p style={{ fontFamily: jakartaSans, fontSize: "clamp(14px, 1.2vw, 18px)", color: "var(--color-heading)", fontWeight: 500, margin: "0 0 3px", letterSpacing: "0.007em" }}>
           {cs.title}
         </p>
         {cs.tags && cs.tags.length > 0 && (
-          <p style={{ fontSize: "clamp(10px, 0.8vw, 12px)", color: "#8a8a7a", fontFamily: sans, margin: 0, letterSpacing: "0.02em" }}>
+          <p style={{ fontSize: "clamp(10px, 0.8vw, 12px)", color: "var(--color-body-secondary)", fontFamily: jakartaSans, margin: 0, letterSpacing: "0.02em" }}>
             {cs.tags.slice(0, 2).join(" · ")}
           </p>
         )}
@@ -111,7 +110,7 @@ function PageNav({ sections }: { sections: { id: string; label: string }[] }) {
   if (sections.length === 0) return null;
   return (
     <div>
-      <p style={{ fontSize: "10px", color: "#b4b0a8", letterSpacing: "0.14em", textTransform: "uppercase", fontFamily: sans, marginBottom: 14 }}>
+      <p style={{ fontSize: "10px", color: "var(--color-body-secondary)", letterSpacing: "0.14em", textTransform: "uppercase", fontFamily: jakartaSans, marginBottom: 14 }}>
         On this page
       </p>
       <nav style={{ display: "flex", flexDirection: "column", gap: 10 }}>
@@ -121,8 +120,8 @@ function PageNav({ sections }: { sections: { id: string; label: string }[] }) {
             href={`#${id}`}
             style={{
               fontSize: "clamp(11px, 0.9vw, 13px)",
-              color: "#8a8a7a",
-              fontFamily: sans,
+              color: "var(--color-body-secondary)",
+              fontFamily: jakartaSans,
               textDecoration: "none",
               letterSpacing: "0.01em",
               transition: "color 0.15s",
@@ -130,8 +129,8 @@ function PageNav({ sections }: { sections: { id: string; label: string }[] }) {
               alignItems: "center",
               gap: 8,
             }}
-            onMouseEnter={e => (e.currentTarget.style.color = "#1a1a1a")}
-            onMouseLeave={e => (e.currentTarget.style.color = "#8a8a7a")}
+            onMouseEnter={e => (e.currentTarget.style.color = "var(--color-heading)")}
+            onMouseLeave={e => (e.currentTarget.style.color = "var(--color-body-secondary)")}
           >
             <span style={{ width: 14, height: 1, background: "currentColor", flexShrink: 0, display: "inline-block" }} />
             {label}
@@ -146,6 +145,7 @@ function PageNav({ sections }: { sections: { id: string; label: string }[] }) {
 
 export default function ProjectPage({ project }: { project: Project }) {
   const [galleryExpanded, setGalleryExpanded] = useState(false);
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   const coverSrc  = resolveUrl(project.cover_image);
   const logoSrc   = resolveUrl(project.logo);
@@ -155,6 +155,7 @@ export default function ProjectPage({ project }: { project: Project }) {
   const tech      = project.tech_stack ?? [];
   const media     = (project.project_media ?? []).filter(m => m.type === "image");
   const videos    = (project.project_media ?? []).filter(m => m.type === "video");
+  const galleryResolvedUrls = media.map(m => resolveUrl(m.url) ?? m.url);
   const related   = project.relatedCaseStudies ?? [];
 
   // First 3 images shown by default: 1 wide + 2 square
@@ -170,10 +171,10 @@ export default function ProjectPage({ project }: { project: Project }) {
 
   const sectionLabel: React.CSSProperties = {
     fontSize: "clamp(10px, 0.8vw, 12px)",
-    color: "#8a8a7a",
-    letterSpacing: "0.1em",
+    color: "var(--color-body-secondary)",
+    letterSpacing: "0.08em",
     textTransform: "uppercase",
-    fontFamily: sans,
+    fontFamily: jakartaSans,
     marginBottom: "clamp(16px, 1.8vw, 24px)",
   };
 
@@ -182,17 +183,17 @@ export default function ProjectPage({ project }: { project: Project }) {
       <style>{`
         .pd-tag {
           font-size: clamp(11px, 0.85vw, 13px);
-          color: #1a1a1a;
-          border: 1px solid #c4c0b8;
+          color: var(--color-heading);
+          border: 1px solid var(--color-border-strong);
           padding: 6px 14px;
-          font-family: var(--font-dm-sans), system-ui, sans-serif;
+          font-family: ${jakartaSans};
           letter-spacing: 0.03em;
           background: transparent;
         }
         .pd-meta-link {
-          font-family: var(--font-dm-sans), system-ui, sans-serif;
+          font-family: ${jakartaSans};
           font-size: clamp(13px, 1vw, 15px);
-          color: #1a1a1a;
+          color: var(--color-link);
           text-decoration: underline;
           text-underline-offset: 4px;
           display: inline-flex;
@@ -201,30 +202,45 @@ export default function ProjectPage({ project }: { project: Project }) {
         }
         .pd-view-more-btn {
           background: transparent;
-          border: 1px solid #c4c0b8;
+          border: 1px solid var(--color-border-strong);
           padding: clamp(10px, 1.2vw, 16px) clamp(20px, 2.5vw, 36px);
           font-size: clamp(11px, 0.9vw, 13px);
-          font-family: var(--font-dm-sans), system-ui, sans-serif;
+          font-family: ${jakartaSans};
           letter-spacing: 0.08em;
           text-transform: uppercase;
           cursor: pointer;
-          color: #1a1a1a;
+          color: var(--color-heading);
           transition: background 0.2s, color 0.2s;
         }
-        .pd-view-more-btn:hover { background: #1a1a1a; color: #f0ede8; }
+        .pd-view-more-btn:hover { background: var(--color-heading); color: var(--color-inverse); }
+
+        .pd-gallery-thumb {
+          padding: 0; border: none; margin: 0; width: 100%; max-width: 100%; min-width: 0;
+          cursor: pointer; display: block; box-sizing: border-box;
+          text-align: left; background: transparent; font: inherit; color: inherit;
+          transition: opacity 0.2s;
+        }
+        .pd-gallery-thumb:hover { opacity: 0.92; }
+        .pd-gallery-thumb:focus-visible {
+          outline: 2px solid var(--color-heading);
+          outline-offset: 3px;
+        }
+
+        /* Back link */
+        .pd-back-link:hover { color: var(--color-heading); }
 
         /* In-page nav link classes (used by MobileToc) */
-        .pd-nav-link { font-size:clamp(11px,0.9vw,13px); color:#8a8a7a; font-family:var(--font-dm-sans),system-ui,sans-serif; text-decoration:none; letter-spacing:0.01em; display:flex; align-items:center; gap:8px; transition:color 0.15s; }
-        .pd-nav-link:hover { color:#1a1a1a; }
+        .pd-nav-link { font-size:clamp(11px,0.9vw,13px); color:var(--color-body-secondary); font-family:${jakartaSans}; text-decoration:none; letter-spacing:0.01em; display:flex; align-items:center; gap:8px; transition:color 0.15s; }
+        .pd-nav-link:hover { color:var(--color-heading); }
         .pd-nav-dash { width:14px; height:1px; background:currentColor; flex-shrink:0; display:inline-block; }
 
         /* Mobile sticky TOC */
         .pd-mobile-toc { display: none; }
         .pd-mobile-toc-summary {
           list-style: none; display: flex; align-items: center; justify-content: space-between;
-          padding: 12px 0; cursor: pointer; font-size: 10px; color: #b4b0a8;
+          padding: 12px 0; cursor: pointer; font-size: 10px; color: var(--color-body-secondary);
           letter-spacing: 0.14em; text-transform: uppercase;
-          font-family: var(--font-dm-sans), system-ui, sans-serif; user-select: none;
+          font-family: ${jakartaSans}; user-select: none;
         }
         .pd-mobile-toc-summary::-webkit-details-marker { display: none; }
         .pd-mobile-toc-nav { padding-bottom: 14px; display: flex; flex-direction: column; gap: 10px; }
@@ -235,45 +251,70 @@ export default function ProjectPage({ project }: { project: Project }) {
           .pd-desktop-toc  { display: none; }
           .pd-mobile-toc   {
             display: block; position: sticky; top: 0; z-index: 10;
-            background: var(--color-page, #f0ede8);
-            border-bottom: 1px solid rgba(26,26,26,0.08);
+            background: var(--color-page);
+            border-bottom: 1px solid var(--color-border-subtle);
             margin-bottom: clamp(24px, 3vw, 44px);
           }
           #pd-overview, #pd-photos, #pd-video, #pd-tech, #pd-related {
             scroll-margin-top: var(--mobile-toc-height, 56px);
           }
           .pd-related-grid { grid-template-columns: 1fr 1fr !important; }
+          /* One column + cancel span-2 on lead thumb — avoids implicit grid tracks / horizontal overflow */
+          .pd-photos-grid {
+            grid-template-columns: 1fr !important;
+            min-width: 0;
+            width: 100%;
+          }
+          .pd-photo-wide {
+            grid-column: span 1 !important;
+            aspect-ratio: 16 / 9 !important;
+          }
         }
         @media (max-width: 600px) {
-          .pd-photos-grid  { grid-template-columns: 1fr !important; }
-          .pd-photo-wide   { grid-column: span 1 !important; aspect-ratio: 4/3 !important; }
+          .pd-photo-wide   { aspect-ratio: 4 / 3 !important; }
           .pd-related-grid { grid-template-columns: 1fr !important; }
           .pd-title-row    { flex-direction: column !important; align-items: flex-start !important; }
         }
       `}</style>
 
-      <div style={{ paddingBottom: "89px", fontFamily: sans }}>
+      <div style={{ paddingBottom: "89px", fontFamily: jakartaSans }}>
 
-        {/* Breadcrumb */}
-        <p style={{ fontSize: "clamp(11px, 0.85vw, 13px)", color: "#8a8a7a", letterSpacing: "0.04em", marginBottom: "clamp(16px, 2vw, 28px)", display: "flex", alignItems: "center", gap: 8 }}>
-          <Link href="/work" style={{ color: "#8a8a7a", textDecoration: "none" }}>Work</Link>
-          &nbsp;/&nbsp;
-          <span style={{ color: "#1a1a1a" }}>{project.title}</span>
-        </p>
+        {/* Breadcrumb / back */}
+        <div style={{ display: "flex", alignItems: "center", gap: "clamp(8px,1vw,12px)", marginBottom: "clamp(20px,2.5vw,32px)" }}>
+          <Link
+            href="/work"
+            className="pd-back-link"
+            style={{
+              display: "inline-flex", alignItems: "center", gap: 5,
+              color: "var(--color-body-secondary)", textDecoration: "none",
+              fontFamily: jakartaSans, fontSize: "clamp(12px, 0.85vw, 13px)",
+              letterSpacing: "0.04em", padding: "6px 0", transition: "color 0.15s",
+            }}
+          >
+            <svg viewBox="0 0 16 16" fill="none" style={{ width: 14, height: 14, flexShrink: 0 }}>
+              <path d="M10 3L5 8L10 13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            Work
+          </Link>
+          <span style={{ color: "var(--color-border-strong)", fontSize: "12px", userSelect: "none" }}>/</span>
+          <span style={{ fontFamily: jakartaSans, fontSize: "clamp(12px, 0.85vw, 13px)", color: "var(--color-heading)", letterSpacing: "0.04em" }}>
+            {project.title}
+          </span>
+        </div>
 
         {/* Title row */}
         <div
           className="pd-title-row"
           style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 24, marginBottom: "clamp(6px, 1vw, 16px)", flexWrap: "wrap" }}
         >
-          <h1 style={{ fontFamily: serif, fontWeight: 700, fontSize: "clamp(40px, 7vw, 96px)", color: "#1a1a1a", letterSpacing: "-0.025em", lineHeight: 0.9 }}>
+          <h1 style={{ fontFamily: cormorantGaramond, fontWeight: 600, fontSize: "clamp(40px, 7vw, 128px)", color: "var(--color-heading)", letterSpacing: "-0.025em", lineHeight: 0.9 }}>
             {project.title}
           </h1>
 
           <div style={{
             width: "clamp(44px, 4vw, 64px)",
             height: "clamp(44px, 4vw, 64px)",
-            background: "#1a1a1a",
+            background: "var(--color-heading)",
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -285,7 +326,7 @@ export default function ProjectPage({ project }: { project: Project }) {
             {logoSrc ? (
               <Image src={logoSrc} alt={`${project.title} logo`} fill className="object-cover" sizes="64px" />
             ) : (
-              <span style={{ color: "#f0ede8", fontSize: "clamp(14px, 1.4vw, 22px)", fontWeight: 700, fontFamily: serif }}>
+              <span style={{ color: "var(--color-inverse)", fontSize: "clamp(14px, 1.4vw, 22px)", fontWeight: 700, fontFamily: jakartaSans }}>
                 {project.title.slice(0, 2).toUpperCase()}
               </span>
             )}
@@ -293,7 +334,7 @@ export default function ProjectPage({ project }: { project: Project }) {
         </div>
 
         {project.subtitle && (
-          <p style={{ fontFamily: serif, fontSize: "clamp(18px, 2vw, 28px)", color: "#6b6b6b", fontWeight: 400, marginBottom: "clamp(24px, 3vw, 44px)", letterSpacing: "-0.01em" }}>
+          <p style={{ fontFamily: jakartaSans, fontSize: "clamp(18px, 2vw, 38px)", color: "var(--color-body-secondary)", fontWeight: 300, marginBottom: "clamp(24px, 3vw, 44px)", letterSpacing: "0" }}>
             {project.subtitle}
           </p>
         )}
@@ -327,9 +368,9 @@ export default function ProjectPage({ project }: { project: Project }) {
           style={{ display: "grid", gridTemplateColumns: "55fr 34fr", gap: "clamp(34px, 5vw, 55px)", alignItems: "start" }}
         >
           {/* ── Left ── */}
-          <div>
+          <div style={{ minWidth: 0 }}>
             {project.short_description && (
-              <p id="pd-overview" style={{ fontSize: "clamp(14px, 1.15vw, 18px)", color: "#3a3a3a", lineHeight: 1.8, fontFamily: sans, fontWeight: 400, marginBottom: "clamp(32px, 4vw, 56px)" }}>
+              <p id="pd-overview" style={{ fontSize: "clamp(14px, 1.15vw, 22px)", color: "var(--color-body)", lineHeight: 1.65, fontFamily: jakartaSans, fontWeight: 400, marginBottom: "clamp(32px, 4vw, 56px)", maxWidth: "var(--measure-reading)" }}>
                 {project.short_description}
               </p>
             )}
@@ -341,19 +382,37 @@ export default function ProjectPage({ project }: { project: Project }) {
                 {/* gap: 16px→13px (fib); margin-bottom: 16px→13px, 24px→21px (fib) */}
                 <div
                   className="pd-photos-grid"
-                  style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "clamp(8px, 1.2vw, 13px)", marginBottom: hiddenCount > 0 && !galleryExpanded ? "clamp(13px, 1.5vw, 21px)" : 0 }}
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "1fr 1fr",
+                    gap: "clamp(8px, 1.2vw, 13px)",
+                    marginBottom: hiddenCount > 0 && !galleryExpanded ? "clamp(13px, 1.5vw, 21px)" : 0,
+                    minWidth: 0,
+                    width: "100%",
+                  }}
                 >
-                  {visibleMedia.map((m, i) => (
-                    <GalleryImage
-                      key={i}
-                      src={m.url}
-                      alt={`${project.title} photo ${i + 1}`}
-                      style={i === 0
-                        ? { gridColumn: "span 2", aspectRatio: "16 / 9" } as React.CSSProperties
-                        : { aspectRatio: "4 / 3" }
-                      }
-                    />
-                  ))}
+                  {visibleMedia.map((m, globalIdx) => {
+                    const src = galleryResolvedUrls[globalIdx] ?? resolveUrl(m.url) ?? m.url;
+                    return (
+                      <button
+                        key={`${m.url}-${globalIdx}`}
+                        type="button"
+                        className={`pd-gallery-thumb${globalIdx === 0 ? " pd-photo-wide" : ""}`}
+                        aria-label={`Open photo ${globalIdx + 1} of ${media.length} in full screen`}
+                        onClick={() => setLightboxIndex(globalIdx)}
+                        style={globalIdx === 0
+                          ? { gridColumn: "span 2", aspectRatio: "16 / 9" } as React.CSSProperties
+                          : { aspectRatio: "4 / 3" }
+                        }
+                      >
+                        <GalleryImage
+                          src={src}
+                          alt={`${project.title} photo ${globalIdx + 1}`}
+                          style={{ width: "100%", height: "100%", minHeight: 0 }}
+                        />
+                      </button>
+                    );
+                  })}
                 </div>
 
                 {/* Expand / collapse */}
@@ -392,16 +451,6 @@ export default function ProjectPage({ project }: { project: Project }) {
               <MetaLabel>Year</MetaLabel>
               <MetaValue>{year}</MetaValue>
             </div>
-
-            {project.role && (
-              <>
-                <Divider />
-                <div>
-                  <MetaLabel>Role</MetaLabel>
-                  <MetaValue>{project.role}</MetaValue>
-                </div>
-              </>
-            )}
 
             {project.timeline && (
               <>
@@ -467,11 +516,11 @@ export default function ProjectPage({ project }: { project: Project }) {
         {/* Related case studies */}
         {related.length > 0 && (
           <>
-            <div id="pd-related" style={{ height: 1, background: "rgba(26,26,26,0.1)", margin: "clamp(32px, 4vw, 56px) 0 0" }} />
+            <div id="pd-related" style={{ height: 1, background: "var(--color-border)", margin: "clamp(32px, 4vw, 56px) 0 0" }} />
             <div style={{ marginTop: "clamp(24px, 3vw, 44px)" }}>
               <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: "clamp(16px, 1.8vw, 24px)" }}>
                 <p style={{ ...sectionLabel, marginBottom: 0 }}>Related case studies</p>
-                <Link href="/work" style={{ fontSize: "clamp(11px, 0.85vw, 13px)", color: "#1a1a1a", textDecoration: "underline", textUnderlineOffset: "4px", fontFamily: sans }}>
+                <Link href="/work" style={{ fontSize: "clamp(11px, 0.85vw, 13px)", color: "var(--color-link)", textDecoration: "underline", textUnderlineOffset: "4px", fontFamily: jakartaSans }}>
                   View all
                 </Link>
               </div>
@@ -483,6 +532,16 @@ export default function ProjectPage({ project }: { project: Project }) {
               </div>
             </div>
           </>
+        )}
+
+        {lightboxIndex !== null && galleryResolvedUrls.length > 0 && (
+          <ProjectPhotoLightbox
+            images={galleryResolvedUrls}
+            projectTitle={project.title}
+            index={lightboxIndex}
+            onClose={() => setLightboxIndex(null)}
+            onIndexChange={setLightboxIndex}
+          />
         )}
       </div>
     </>

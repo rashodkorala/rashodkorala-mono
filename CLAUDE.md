@@ -116,6 +116,7 @@ Folder structure within `media` bucket:
 - `apps/cms/app/auth/confirm/route.ts` — Email confirmation callback
 
 ### Server Actions (CMS)
+- `apps/cms/lib/revalidate-portfolio.ts` — Server-side fetch to portfolio `/api/revalidate` after project/case-study mutations
 - `apps/cms/lib/actions/projects.ts` — CRUD for projects table
 - `apps/cms/lib/actions/case-studies.ts` — CRUD for case_studies table (content_md inline, cover/gallery stored as paths in media bucket)
 - `apps/cms/lib/actions/photos.ts` — Photo metadata management
@@ -124,6 +125,7 @@ Folder structure within `media` bucket:
 - `apps/cms/lib/actions/about.ts` — About page management
 
 ### Portfolio Data Layer
+- `apps/portfolio/app/api/revalidate/route.ts` — POST (Bearer `PORTFOLIO_REVALIDATE_SECRET`); `revalidateTag` for `projects` / `case-studies` + paths `/`, `/work`
 - `apps/portfolio/lib/supabase/projects.ts` — Queries `projects` table
 - `apps/portfolio/lib/supabase/cached-projects.ts` — unstable_cache wrappers, tags: ['projects']
 - `apps/portfolio/lib/supabase/case-studies.ts` — Queries `case_studies`, resolves cover_path → public URL
@@ -144,6 +146,13 @@ NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
 
 # CMS AI Features
 OPENAI_API_KEY
+
+# CMS → Portfolio on-demand ISR (optional; omit locally if portfolio not reachable)
+PORTFOLIO_REVALIDATE_URL          # e.g. https://yourdomain.com/api/revalidate
+PORTFOLIO_REVALIDATE_SECRET       # shared long random string (same value on CMS + portfolio)
+
+# Portfolio (server-only; pair with CMS vars above for instant cache bust after publishes)
+PORTFOLIO_REVALIDATE_SECRET
 
 # Photos App (server-only)
 SUPABASE_SERVICE_ROLE_KEY

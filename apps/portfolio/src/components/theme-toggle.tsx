@@ -18,19 +18,23 @@ function applyTheme(theme: Theme) {
 }
 
 function getThemeFromDom(): Theme {
-  if (typeof document === "undefined") return "light";
+  if (typeof document === "undefined") return "dark";
   return document.documentElement.classList.contains("dark") ? "dark" : "light";
 }
 
 export default function ThemeToggle() {
   const [theme, setTheme] = useState<Theme>("dark");
   const [ready, setReady] = useState(false);
+  /** Lucide SVGs can differ SSR vs client (e.g. aria-hidden); skip icons until mounted. */
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
-    const initial = getThemeFromDom() === "dark" ? "dark" : resolveInitialTheme();
+    /* Prefer localStorage so a saved light choice wins over the default `dark` class on <html>. */
+    const initial = resolveInitialTheme();
     setTheme(initial);
     applyTheme(initial);
     setReady(true);
+    setMounted(true);
   }, []);
 
   useEffect(() => {
@@ -72,7 +76,15 @@ export default function ThemeToggle() {
       aria-label={ready ? `Switch to ${nextTheme} theme` : "Toggle theme"}
       className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-ctrl-border bg-ctrl text-ctrl-text backdrop-blur transition hover:bg-ctrl-hover"
     >
-      {theme === "dark" ? <Sun className="h-4 w-4" strokeWidth={1.8} /> : <Moon className="h-4 w-4" strokeWidth={1.8} />}
+      {mounted ? (
+        theme === "dark" ? (
+          <Sun className="h-4 w-4 shrink-0" strokeWidth={1.8} aria-hidden />
+        ) : (
+          <Moon className="h-4 w-4 shrink-0" strokeWidth={1.8} aria-hidden />
+        )
+      ) : (
+        <span className="block h-4 w-4 shrink-0" aria-hidden />
+      )}
     </button>
   );
 }

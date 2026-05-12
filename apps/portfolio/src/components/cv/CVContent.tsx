@@ -3,13 +3,8 @@
 import React from "react";
 
 // Design: editorial sidebar layout
-// Sidebar: narrow fixed (clamp 160–224px) with skills/certs/education
+// Sidebar: narrow fluid column with skills/certs/education
 // Main: chronological entries with date column + content column
-// Hero: large serif name left, contact meta right
-// Fonts: use semantic CSS vars controlled by apps/portfolio/config/typography.ts
-
-const serif = "var(--font-active-display), 'Georgia', serif";
-const sans  = "var(--font-active-sans), system-ui, sans-serif";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
@@ -196,134 +191,80 @@ const accelerators: Entry[] = [
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
+const metaLinkClass =
+  "inline-flex items-center gap-1 font-sans text-[length:clamp(var(--text-label),0.88vw,0.8125rem)] text-body-secondary underline decoration-line-hover underline-offset-3 transition-colors hover:text-body";
+
 const DownloadIcon = () => (
-  <svg viewBox="0 0 12 12" fill="none" style={{ width: 10, height: 10, flexShrink: 0 }}>
+  <svg viewBox="0 0 12 12" fill="none" className="h-fib-13 w-fib-13 shrink-0">
     <path d="M6 1v7M6 8l-3-3M6 8l3-3M1 11h10" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 );
 
 const ArrowIcon = () => (
-  <svg viewBox="0 0 12 12" fill="none" style={{ width: 10, height: 10, flexShrink: 0 }}>
+  <svg viewBox="0 0 12 12" fill="none" className="h-fib-13 w-fib-13 shrink-0">
     <path d="M2 10L10 2M10 2H4M10 2V8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
   </svg>
 );
 
 function HRule() {
-  return <div style={{ height: 1, background: "var(--color-border)", margin: "0 0 clamp(20px,2.5vw,36px)" }} />;
+  return <div className="mb-[clamp(var(--fib-21),2.5vw,var(--fib-34))] h-px bg-line" />;
 }
 
 function SectionHeader({ title }: { title: string }) {
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: 16, marginBottom: "clamp(16px,2vw,28px)" }}>
-      <h2 style={{
-        fontFamily: serif,
-        fontSize: "clamp(18px,1.8vw,26px)",
-        fontWeight: 700,
-        color: "var(--color-heading)",
-        letterSpacing: "-0.015em",
-        whiteSpace: "nowrap",
-        lineHeight: 1,
-      }}>
+    <div className="mb-[clamp(var(--fib-21),2vw,var(--fib-34))] flex items-center gap-fib-21">
+      <h2 className="whitespace-nowrap font-serif text-h3 font-normal leading-none tracking-h1 text-heading">
         {title}
       </h2>
-      <div style={{ flex: 1, height: 1, background: "var(--color-border)" }} />
+      <div className="h-px min-w-0 flex-1 bg-line" />
     </div>
   );
 }
 
 function SidebarLabel({ children }: { children: React.ReactNode }) {
   return (
-    <p style={{
-      fontFamily: sans,
-      fontSize: "clamp(10px,0.78vw,11px)",
-      color: "var(--color-label)",
-      letterSpacing: "0.12em",
-      textTransform: "uppercase" as const,
-      fontWeight: 400,
-      marginBottom: "clamp(8px,1vw,12px)",
-    }}>
+    <p className="mb-[clamp(var(--fib-8),1vw,var(--fib-13))] font-sans text-[length:var(--text-label)] font-normal uppercase tracking-caps text-[color:var(--color-label)]">
       {children}
     </p>
   );
 }
 
 function EntryGrid({ entries, showTags = true }: { entries: Entry[]; showTags?: boolean }) {
-  const subBorder = "1px solid var(--color-border-subtle)";
   return (
     <>
-      {entries.map((e, i) => (
+      {entries.map((e) => (
         <div
           key={e.id}
-          className="cv-entry-grid"
-          style={{
-            display: "grid",
-            gridTemplateColumns: "clamp(72px,9vw,108px) 1fr",
-            gap: "clamp(12px,2vw,24px)",
-            paddingBottom: i < entries.length - 1 ? "clamp(20px,2.5vw,32px)" : 0,
-            borderBottom: i < entries.length - 1 ? subBorder : "none",
-            marginBottom: i < entries.length - 1 ? "clamp(20px,2.5vw,32px)" : 0,
-          }}
+          className="cv-entry-grid mb-[clamp(var(--fib-21),2.5vw,var(--fib-34))] grid [grid-template-columns:clamp(4.5rem,9vw,6.75rem)_1fr] gap-[clamp(var(--fib-13),2vw,var(--fib-21))] border-b border-line-subtle pb-[clamp(var(--fib-21),2.5vw,var(--fib-34))] last:mb-0 last:border-b-0 last:pb-0"
         >
-          {/* Date column — hidden on mobile via .cv-entry-date-col */}
-          <p className="cv-entry-date-col" style={{
-            fontFamily: sans,
-            fontSize: "clamp(10px,0.78vw,11px)",
-            color: "var(--color-label)",
-            fontWeight: 300,
-            lineHeight: 1.6,
-            paddingTop: 4,
-          }}>
+          <p className="cv-entry-date-col pt-1 font-sans text-[length:var(--text-label)] font-normal leading-relaxed text-[color:var(--color-label)]">
             {e.date.includes("—") ? (
               <>
                 {e.date.split("—")[0].trim()} —<br />
                 {e.date.split("—")[1].trim()}
               </>
-            ) : e.date}
+            ) : (
+              e.date
+            )}
           </p>
 
-          {/* Content column */}
           <div>
-            <p style={{
-              fontFamily: serif,
-              fontSize: "clamp(15px,1.4vw,21px)",
-              color: "var(--color-heading)",
-              fontWeight: 700,
-              marginBottom: 3,
-              lineHeight: 1.2,
-              letterSpacing: "-0.01em",
-            }}>
+            <p className="mb-0.5 font-sans text-[length:clamp(0.9375rem,1.4vw,1.625rem)] font-semibold leading-tight tracking-h2 text-heading">
               {e.title}
             </p>
-            <p style={{
-              fontFamily: sans,
-              fontSize: "clamp(11px,0.85vw,13px)",
-              color: "var(--color-body-secondary)",
-              fontWeight: 300,
-              marginBottom: "clamp(8px,1vw,12px)",
-            }}>
+            <p className="mb-[clamp(var(--fib-8),1vw,var(--fib-13))] font-sans text-[length:clamp(var(--text-caption),0.85vw,0.8125rem)] font-normal text-body-secondary">
               {e.org}
             </p>
-            <p style={{
-              fontFamily: sans,
-              fontSize: "clamp(12px,0.92vw,14px)",
-              color: "var(--color-body-secondary)",
-              fontWeight: 300,
-              lineHeight: 1.8,
-            }}>
+            <p className="max-w-reading font-sans text-[length:clamp(var(--text-caption),0.92vw,1.0625rem)] font-normal leading-body text-body-secondary">
               {e.description}
             </p>
             {showTags && e.tags && e.tags.length > 0 && (
-              <div style={{ display: "flex", flexWrap: "wrap" as const, gap: 5, marginTop: 10 }}>
+              <div className="mt-fib-13 flex flex-wrap gap-fib-8">
                 {e.tags.map((t) => (
-                  <span key={t} style={{
-                    fontFamily: sans,
-                    fontSize: "clamp(10px,0.75vw,11px)",
-                    color: "var(--color-body-secondary)",
-                    border: "1px solid var(--color-border-strong)",
-                    padding: "3px 9px",
-                    fontWeight: 300,
-                    letterSpacing: "0.03em",
-                  }}>
+                  <span
+                    key={t}
+                    className="border border-line-strong px-fib-13 py-fib-8 font-sans text-[length:clamp(var(--text-label),0.75vw,var(--text-caption))] font-normal tracking-ui text-body-secondary"
+                  >
                     {t}
                   </span>
                 ))}
@@ -339,87 +280,74 @@ function EntryGrid({ entries, showTags = true }: { entries: Entry[]; showTags?: 
 // ─── Main ─────────────────────────────────────────────────────────────────────
 
 export default function CVContent() {
-  const border = "1px solid var(--color-border)";
-
   return (
     <>
       <style>{`
-        /* CV body grid: sidebar only appears when there is enough content-area
-           width AFTER the global sidenav (192px) + page padding (~110px).
-           At 1440px viewport: content = 1440-302 = 1138px — comfortable.
-           At 1280px viewport: content = 1280-302 = 978px — still ok.
-           Below 1200px the sidenav + CV sidebar together feel cramped,
-           so collapse the CV sidebar into a stacked header section. */
+        /* CV body grid: sidebar collapses below 1200px (sidenav + CV rail). */
         @media (max-width: 1200px) {
           .cv-body-grid  { grid-template-columns: 1fr !important; }
+          .cv-main       { order: 1; }
           .cv-sidebar    {
+            order: 2;
             border-right: none !important;
-            border-bottom: 1px solid var(--color-border) !important;
+            border-top: 1px solid var(--color-border) !important;
+            border-bottom: none !important;
             padding-right: 0 !important;
-            padding-bottom: clamp(24px,3vw,40px) !important;
+            padding-top: clamp(var(--fib-21), 3vw, 2.5rem) !important;
+            padding-bottom: 0 !important;
             margin-right: 0 !important;
-            margin-bottom: clamp(28px,3.5vw,44px) !important;
-            /* Lay skills/certs/education horizontally instead of stacking */
+            margin-top: clamp(var(--fib-34), 3.5vw, 2.75rem) !important;
+            margin-bottom: 0 !important;
             flex-direction: row !important;
             flex-wrap: wrap !important;
-            gap: clamp(28px,4vw,56px) !important;
+            gap: clamp(var(--fib-34), 4vw, var(--fib-55)) !important;
             align-items: flex-start;
           }
         }
         @media (max-width: 640px) {
-          .cv-hero-inner { flex-direction: column !important; align-items: flex-start !important; gap: 20px !important; }
-          .cv-hero-meta  { text-align: left !important; align-items: flex-start !important; }
-          .cv-sidebar    { flex-direction: column !important; }
+          .cv-hero-inner      { flex-direction: column !important; align-items: flex-start !important; gap: var(--fib-21) !important; }
+          .cv-hero-meta       { text-align: left !important; align-items: flex-start !important; }
+          .cv-sidebar         { flex-direction: column !important; }
+          .cv-competency-grid { grid-template-columns: repeat(2, 1fr) !important; }
         }
         @media (max-width: 480px) {
-          .cv-entry-date-col { display: none !important; }
-          .cv-entry-grid     { grid-template-columns: 1fr !important; }
+          .cv-entry-date-col  { display: none !important; }
+          .cv-entry-grid      { grid-template-columns: 1fr !important; }
+        }
+        @media (max-width: 380px) {
+          .cv-competency-grid { grid-template-columns: 1fr !important; }
+        }
+        .cv-hero-name {
+          font-size: clamp(2.75rem, 7vw, 8rem);
         }
         @media print {
           .cv-no-print   { display: none !important; }
-          .cv-body-grid  { grid-template-columns: clamp(160px,17vw,220px) 1fr !important; }
-          .cv-sidebar    { flex-direction: column !important; border-right: 1px solid #d4d0c8 !important; border-bottom: none !important; }
+          .cv-body-grid  { grid-template-columns: clamp(10rem, 17vw, 13.75rem) 1fr !important; }
+          .cv-sidebar    {
+            order: 0 !important;
+            flex-direction: column !important;
+            border-right: 1px solid var(--color-border) !important;
+            border-top: none !important;
+            border-bottom: none !important;
+            padding-top: 0 !important;
+            margin-top: 0 !important;
+          }
         }
       `}</style>
 
-      <div style={{ fontFamily: sans, color: "var(--color-heading)", paddingBottom: "var(--fib-89)" }}>
+      <div className="pb-fib-89 font-sans text-heading">
 
-        {/* ── Hero ─────────────────────────────────────────────────────────── */}
         <div
-          className="cv-hero-inner"
-          style={{
-            display: "flex",
-            alignItems: "flex-end",
-            justifyContent: "space-between",
-            flexWrap: "wrap" as const,
-            gap: "var(--fib-21)",
-            paddingBottom: "clamp(20px,3vw,44px)",
-          }}
+          className="cv-hero-inner flex flex-wrap items-end justify-between gap-fib-21 pb-[clamp(var(--fib-21),3vw,var(--fib-55))]"
         >
-          <h1 style={{
-            fontFamily: serif,
-            fontWeight: 700,
-            fontSize: "clamp(44px,7vw,104px)",
-            color: "var(--color-heading)",
-            letterSpacing: "-0.025em",
-            lineHeight: 0.88,
-          }}>
+          <h1 className="cv-hero-name font-serif font-light leading-[0.88] tracking-[-0.025em] text-heading">
             Rashod
-            <span style={{ display: "block", paddingLeft: "clamp(var(--fib-21),4vw,var(--fib-55))" }}>
+            <span className="block pl-[clamp(var(--fib-21),4vw,var(--fib-55))]">
               Korala
             </span>
           </h1>
 
-          <div
-            className="cv-hero-meta"
-            style={{
-              display: "flex",
-              flexDirection: "column" as const,
-              alignItems: "flex-end",
-              gap: 4,
-              paddingBottom: "clamp(4px,0.5vw,10px)",
-            }}
-          >
+          <div className="cv-hero-meta flex flex-col items-end gap-1 pb-[clamp(var(--fib-8),0.5vw,var(--fib-13))]">
             {[
               { text: "Canada", href: null },
               { text: "hello@rashodkorala.com", href: "mailto:hello@rashodkorala.com" },
@@ -431,44 +359,25 @@ export default function CVContent() {
                 <a
                   key={text}
                   href={href}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  style={{
-                    fontFamily: sans,
-                    fontSize: "clamp(11px,0.88vw,13px)",
-                    color: "var(--color-body-secondary)",
-                    display: "inline-flex",
-                    alignItems: "center",
-                    gap: 4,
-                    textDecoration: "underline",
-                    textUnderlineOffset: 3,
-                    textDecorationColor: "var(--color-border-hover)",
-                  }}
+                  target={href.startsWith("http") ? "_blank" : undefined}
+                  rel={href.startsWith("http") ? "noopener noreferrer" : undefined}
+                  className={metaLinkClass}
                 >
                   {text} <ArrowIcon />
                 </a>
               ) : (
-                <p key={text} style={{ fontFamily: sans, fontSize: "clamp(11px,0.88vw,13px)", color: "var(--color-body-secondary)" }}>
+                <p
+                  key={text}
+                  className="font-sans text-[length:clamp(var(--text-label),0.88vw,0.8125rem)] text-body-secondary"
+                >
                   {text}
                 </p>
-              )
+              ),
             )}
             <a
-              className="cv-no-print"
+              className="cv-no-print mt-1 inline-flex items-center gap-fib-8 font-sans text-[length:clamp(var(--text-label),0.85vw,0.8125rem)] text-heading underline decoration-line-hover underline-offset-4 transition-colors hover:text-body"
               href="/Rashod_Korala_Resume.pdf"
               download="Rashod_Korala_Resume.pdf"
-              style={{
-                fontFamily: sans,
-                fontSize: "clamp(11px,0.85vw,13px)",
-                color: "var(--color-heading)",
-                display: "inline-flex",
-                alignItems: "center",
-                gap: 5,
-                textDecoration: "underline",
-                textUnderlineOffset: 4,
-                textDecorationColor: "var(--color-border-hover)",
-                marginTop: 4,
-              }}
             >
               Download PDF <DownloadIcon />
             </a>
@@ -477,14 +386,11 @@ export default function CVContent() {
 
         <HRule />
 
-        {/* ── Professional Competency ───────────────────────────────────────── */}
-        <div style={{ marginBottom: "clamp(28px,3.5vw,48px)" }}>
+        <div className="mb-[clamp(var(--fib-34),3.5vw,var(--fib-55))]">
           <SectionHeader title="Professional Competency" />
-          <div style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(3, 1fr)",
-            gap: "clamp(6px,0.8vw,10px) clamp(16px,2vw,32px)",
-          }}>
+          <div
+            className="cv-competency-grid grid grid-cols-3 gap-x-[clamp(var(--fib-21),2vw,var(--fib-34))] gap-y-[clamp(var(--fib-8),0.8vw,var(--fib-13))]"
+          >
             {[
               "Full Stack Engineering",
               "AI Workflow Automation",
@@ -496,9 +402,9 @@ export default function CVContent() {
               "Client Delivery Management",
               "Project Management",
             ].map((item) => (
-              <div key={item} style={{ display: "flex", alignItems: "center", gap: 9 }}>
-                <div style={{ width: 4, height: 4, borderRadius: "50%", background: "var(--color-border-strong)", flexShrink: 0 }} />
-                <span style={{ fontFamily: sans, fontSize: "clamp(12px,0.92vw,14px)", color: "var(--color-body-secondary)", fontWeight: 300, lineHeight: 1.75 }}>
+              <div key={item} className="flex items-center gap-fib-13">
+                <div className="size-1 shrink-0 rounded-full bg-line-strong" />
+                <span className="font-sans text-[length:clamp(var(--text-caption),0.92vw,0.875rem)] font-normal leading-body text-body-secondary">
                   {item}
                 </span>
               </div>
@@ -508,47 +414,32 @@ export default function CVContent() {
 
         <HRule />
 
-        {/* ── Body: sidebar + main ─────────────────────────────────────────── */}
         <div
-          className="cv-body-grid"
-          style={{
-            display: "grid",
-            gridTemplateColumns: "clamp(160px,17vw,220px) 1fr",
-          }}
+          className="cv-body-grid grid [grid-template-columns:clamp(10rem,17vw,13.75rem)_1fr]"
         >
 
-          {/* ── Sidebar ────────────────────────────────────────────────────── */}
           <aside
-            className="cv-sidebar"
-            style={{
-              borderRight: border,
-              padding: "0 clamp(16px,2vw,32px) 0 0",
-              marginRight: "clamp(24px,3vw,48px)",
-              display: "flex",
-              flexDirection: "column" as const,
-              gap: "clamp(28px,3vw,44px)",
-            }}
+            className="cv-sidebar flex flex-col gap-[clamp(var(--fib-34),3vw,2.75rem)] border-r border-line pr-[clamp(var(--fib-21),2vw,var(--fib-34))] mr-[clamp(var(--fib-21),3vw,3rem)]"
           >
-            {/* Skills */}
             {skills.map((group) => (
               <div key={group.label}>
                 <SidebarLabel>{group.label}</SidebarLabel>
                 {group.items.map((skill) => (
-                  <div key={skill.name} style={{ display: "flex", alignItems: "center", gap: 9, marginBottom: 4 }}>
-                    <div style={{
-                      width: 4,
-                      height: 4,
-                      borderRadius: "50%",
-                      background: skill.strong ? "var(--color-heading)" : "var(--color-border-strong)",
-                      flexShrink: 0,
-                    }} />
-                    <span style={{
-                      fontFamily: sans,
-                      fontSize: "clamp(11px,0.85vw,13px)",
-                      color: skill.strong ? "var(--color-heading)" : "var(--color-body-secondary)",
-                      fontWeight: skill.strong ? 400 : 300,
-                      lineHeight: 1.75,
-                    }}>
+                  <div key={skill.name} className="mb-1 flex items-center gap-fib-13">
+                    <div
+                      className={
+                        skill.strong
+                          ? "size-1 shrink-0 rounded-full bg-heading"
+                          : "size-1 shrink-0 rounded-full bg-line-strong"
+                      }
+                    />
+                    <span
+                      className={
+                        skill.strong
+                          ? "font-sans text-[length:clamp(var(--text-label),0.85vw,0.8125rem)] font-medium leading-body text-heading"
+                          : "font-sans text-[length:clamp(var(--text-label),0.85vw,0.8125rem)] font-normal leading-body text-body-secondary"
+                      }
+                    >
                       {skill.name}
                     </span>
                   </div>
@@ -556,38 +447,35 @@ export default function CVContent() {
               </div>
             ))}
 
-            {/* Certifications */}
             <div>
               <SidebarLabel>Certifications</SidebarLabel>
               {certs.map((c) => (
-                <div key={c.name} style={{ marginBottom: 10 }}>
-                  <p style={{ fontFamily: sans, fontSize: "clamp(11px,0.85vw,13px)", color: "var(--color-body-secondary)", fontWeight: 300, lineHeight: 1.6 }}>
+                <div key={c.name} className="mb-fib-13">
+                  <p className="font-sans text-[length:clamp(var(--text-label),0.85vw,0.8125rem)] font-normal leading-relaxed text-body-secondary">
                     {c.name}
                   </p>
-                  <p style={{ fontFamily: sans, fontSize: "clamp(10px,0.78vw,11px)", color: "var(--color-label)", fontWeight: 300 }}>
+                  <p className="font-sans text-[length:var(--text-label)] font-normal text-[color:var(--color-label)]">
                     {c.issuer}
                   </p>
                 </div>
               ))}
             </div>
 
-            {/* Education */}
             <div>
               <SidebarLabel>Education</SidebarLabel>
-              <p style={{ fontFamily: sans, fontSize: "clamp(12px,0.9vw,14px)", color: "var(--color-heading)", fontWeight: 400, lineHeight: 1.55 }}>
+              <p className="font-sans text-[length:clamp(var(--text-caption),0.9vw,0.875rem)] font-normal leading-sub text-heading">
                 BSc Computer Science
               </p>
-              <p style={{ fontFamily: sans, fontSize: "clamp(11px,0.85vw,13px)", color: "var(--color-body-secondary)", fontWeight: 300, lineHeight: 1.55 }}>
+              <p className="font-sans text-[length:clamp(var(--text-label),0.85vw,0.8125rem)] font-normal leading-sub text-body-secondary">
                 Minor in Business Admin
               </p>
-              <p style={{ fontFamily: sans, fontSize: "clamp(10px,0.78vw,11px)", color: "var(--color-label)", fontWeight: 300, marginTop: 2 }}>
+              <p className="mt-0.5 font-sans text-[length:var(--text-label)] font-normal text-[color:var(--color-label)]">
                 Memorial University · 2025
               </p>
             </div>
           </aside>
 
-          {/* ── Main content ───────────────────────────────────────────────── */}
-          <main style={{ display: "flex", flexDirection: "column" as const, gap: "clamp(36px,4.5vw,60px)" }}>
+          <main className="cv-main flex flex-col gap-[clamp(var(--fib-34),4.5vw,3.75rem)]">
 
             <section>
               <SectionHeader title="Experience" />

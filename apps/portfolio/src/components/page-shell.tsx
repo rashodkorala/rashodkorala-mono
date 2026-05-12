@@ -4,22 +4,23 @@ import { useRef } from "react";
 
 interface PageShellProps {
   children: React.ReactNode;
+  noScroll?: boolean;
 }
 
-export default function PageShell({ children }: PageShellProps) {
+export default function PageShell({ children, noScroll }: PageShellProps) {
   const scrollRef = useRef<HTMLDivElement>(null);
 
   return (
     <div className="h-screen overflow-hidden bg-page text-body">
-      {/* max-w-[var(--content-max-w)] caps the content at 89rem (1424px) so it
-          never stretches illegibly on 4K/ultrawide displays. mx-auto keeps it
-          centred once the viewport exceeds that width. All horizontal padding
-          uses the Fibonacci-derived --page-px-* tokens. */}
+      {/* --content-max-w (120rem ≈ 1920px) caps line length on 4K/ultrawide.
+          w-[min(100%,var(--content-max-w))] + mx-auto centers the column once
+          the main pane is wider than the cap (more reliable than max-w alone
+          with some block/flex descendants). Padding uses --page-px-* tokens. */}
       <div
         ref={scrollRef}
-        className="h-full overflow-y-auto lg:ml-sidenav scrollbar-hide"
+        className={`h-full min-w-0 lg:ml-sidenav scrollbar-hide ${noScroll ? "overflow-y-auto lg:overflow-hidden" : "overflow-y-auto"}`}
       >
-        <div className="max-w-[var(--content-max-w)] mx-auto px-page-px sm:px-page-px-sm md:px-page-px-md lg:px-page-px-lg xl:px-page-px-xl pt-12 lg:pt-16">
+        <div className="box-border mx-auto w-[min(100%,var(--content-max-w))] min-w-0 px-page-px sm:px-page-px-sm md:px-page-px-md lg:px-page-px-lg xl:px-page-px-xl pt-16 lg:pt-20">
           {children}
         </div>
       </div>
