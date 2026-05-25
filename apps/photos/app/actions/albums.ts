@@ -116,10 +116,10 @@ export async function getAlbum(slug: string): Promise<AlbumDetail | null> {
     const photos: AlbumPhoto[] = (entries || []).map((entry: Record<string, unknown>) => {
       const photo = entry.photos as { id: string; image_url: string; title: string; alt_text: string | null } | null;
       return {
-        id: entry.id,
-        photoId: entry.photo_id,
-        caption: entry.caption ?? null,
-        position: entry.position,
+        id: entry.id as string,
+        photoId: entry.photo_id as string,
+        caption: (entry.caption as string | null) ?? null,
+        position: entry.position as number,
         imageUrl: photo?.image_url ?? "",
         title: photo?.title ?? "",
         altText: photo?.alt_text ?? null,
