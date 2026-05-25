@@ -57,21 +57,21 @@ export async function getAlbums(): Promise<AlbumSummary[]> {
         if (album.cover_path) {
           const { data: urlData } = supabase.storage
             .from("media")
-            .getPublicUrl(album.cover_path);
+            .getPublicUrl(album.cover_path as string);
           coverUrl = urlData.publicUrl;
         }
 
         return {
-          id: album.id,
-          slug: album.slug,
-          title: album.title,
-          description: album.description ?? null,
+          id: album.id as string,
+          slug: album.slug as string,
+          title: album.title as string,
+          description: (album.description as string | null) ?? null,
           coverUrl,
-          location: album.location ?? null,
-          dateFrom: album.date_from ?? null,
-          dateTo: album.date_to ?? null,
-          tags: album.tags || [],
-          featured: album.featured,
+          location: (album.location as string | null) ?? null,
+          dateFrom: (album.date_from as string | null) ?? null,
+          dateTo: (album.date_to as string | null) ?? null,
+          tags: (album.tags as string[]) || [],
+          featured: album.featured as boolean,
           photoCount: count ?? 0,
         };
       })
