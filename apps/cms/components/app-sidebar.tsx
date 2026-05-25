@@ -4,6 +4,7 @@ import * as React from "react"
 import {
   IconUser,
   IconDashboard,
+  IconLayoutGrid,
   IconPhoto,
   IconSettings,
   IconBriefcase,
@@ -39,6 +40,11 @@ const data = {
       title: "Photos",
       url: "/protected/photos",
       icon: IconPhoto,
+    },
+    {
+      title: "Albums",
+      url: "/protected/albums",
+      icon: IconLayoutGrid,
     },
     {
       title: "About",

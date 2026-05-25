@@ -1,8 +1,17 @@
 import { MetadataRoute } from 'next';
+import { getAlbums } from './actions/albums';
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const baseUrl = 'https://photos.rashodkorala.com';
   const currentDate = new Date();
+
+  const albums = await getAlbums();
+  const albumEntries: MetadataRoute.Sitemap = albums.map((album) => ({
+    url: `${baseUrl}/albums/${album.slug}`,
+    lastModified: currentDate,
+    changeFrequency: 'weekly' as const,
+    priority: 0.8,
+  }));
 
   return [
     {
@@ -29,6 +38,13 @@ export default function sitemap(): MetadataRoute.Sitemap {
       changeFrequency: 'daily',
       priority: 0.9,
     },
+    {
+      url: `${baseUrl}/albums`,
+      lastModified: currentDate,
+      changeFrequency: 'weekly',
+      priority: 0.9,
+    },
+    ...albumEntries,
   ];
 }
 

@@ -1,6 +1,7 @@
 "use client";
 
 import PhotoGallery from "@/components/PhotoGallery";
+import FeaturedAlbums from "@/components/FeaturedAlbums";
 import { useEffect } from "react";
 import { motion } from "framer-motion";
 import ThemeToggle from "../ThemeToggle";
@@ -29,6 +30,8 @@ const Index = () => {
 
     return (
         <div className="bg-background text-foreground transition-colors duration-300 relative">
+            <FeaturedAlbums />
+
             <motion.section
                 id="gallery"
                 className="px-6 md:px-12 lg:px-16 py-16 border-b border-border"
