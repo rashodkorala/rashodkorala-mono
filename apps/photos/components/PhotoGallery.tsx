@@ -103,12 +103,12 @@ const PhotoGallery = ({
                             </div>
                         </div>
                     ) : (
-                        <div className="flex justify-center gap-3 flex-wrap">
+                        <div className="flex justify-center gap-2 flex-wrap">
                             {categories.map((category) => (
                                 <button
                                     key={category}
                                     onClick={() => setSelectedCategory(category)}
-                                    className={`px-4 py-2 transition-colors border ${selectedCategory === category
+                                    className={`min-h-[44px] px-3 sm:px-4 py-2 text-xs sm:text-sm transition-colors border ${selectedCategory === category
                                         ? 'bg-foreground text-background border-foreground'
                                         : 'bg-transparent text-muted-foreground border-border hover:text-foreground'
                                         }`}
@@ -123,7 +123,7 @@ const PhotoGallery = ({
 
             {/* Photo Grid */}
             <motion.div
-                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6"
+                className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 md:gap-6"
                 initial="hidden"
                 animate="visible"
                 variants={{
@@ -209,7 +209,7 @@ const PhotoGallery = ({
                                 </p>
                             </motion.div>
                             <button
-                                className="absolute top-4 right-4 text-white text-3xl hover:text-gray-300 transition-colors"
+                                className="absolute top-2 right-2 sm:top-4 sm:right-4 min-h-[44px] min-w-[44px] flex items-center justify-center text-white text-3xl hover:text-gray-300 transition-colors"
                                 onClick={() => setSelectedPhoto(null)}
                             >
                                 ×

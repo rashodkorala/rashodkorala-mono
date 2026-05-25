@@ -44,7 +44,7 @@ const Albums = ({ albums }: AlbumsProps) => {
   return (
     <div className="bg-background text-foreground transition-colors duration-300">
       <motion.section
-        className="px-6 md:px-12 lg:px-16 py-12 border-b border-border"
+        className="px-4 sm:px-6 md:px-12 lg:px-16 py-12 border-b border-border"
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, margin: "-100px" }}
@@ -95,7 +95,7 @@ const Albums = ({ albums }: AlbumsProps) => {
           </motion.div>
         ) : (
           <motion.div
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 md:gap-8"
             initial="hidden"
             animate="visible"
             variants={containerVariants}

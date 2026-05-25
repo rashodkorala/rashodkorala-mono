@@ -37,7 +37,7 @@ const OpeningAnimation = () => {
             <button
                 type="button"
                 onClick={completeIntro}
-                className="absolute top-5 right-5 md:top-8 md:right-8 text-xs md:text-sm tracking-[0.08em] uppercase text-muted-foreground hover:text-foreground transition-colors"
+                className="absolute top-4 right-4 md:top-8 md:right-8 min-h-[44px] min-w-[44px] flex items-center justify-end px-2 text-xs md:text-sm tracking-[0.08em] uppercase text-muted-foreground hover:text-foreground transition-colors"
             >
                 Skip intro
             </button>

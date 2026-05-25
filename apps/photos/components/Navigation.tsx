@@ -80,11 +80,11 @@ const Navigation = () => {
             className="bg-background border-b border-border lg:border-b-0 lg:border-r lg:min-h-screen lg:w-80 flex-shrink-0 lg:sticky lg:top-0 relative"
         >
             {/* Theme Toggle for Mobile - Top Right */}
-            <div className="absolute top-5 right-6 lg:hidden z-10">
+            <div className="absolute top-4 right-4 lg:hidden z-10">
                 <ThemeToggle />
             </div>
-            <div className="flex lg:flex-col items-center lg:items-start justify-between lg:justify-between px-6 py-5 lg:p-10 h-full lg:min-h-screen">
-                <div className="space-y-6 w-full">
+            <div className="flex lg:flex-col items-center lg:items-start justify-between lg:justify-between px-4 sm:px-6 py-4 sm:py-5 lg:p-10 h-full lg:min-h-screen">
+                <div className="space-y-4 lg:space-y-6 w-full">
                     <motion.div
                         initial={{ y: -20, opacity: 0 }}
                         animate={{ y: 0, opacity: 1 }}
@@ -92,10 +92,10 @@ const Navigation = () => {
                         className="flex items-start justify-between gap-4"
                     >
                         <Link href="/" className="block">
-                            <p className="text-sm uppercase tracking-[0.45em] text-muted-foreground w-full ">
+                            <p className="text-xs sm:text-sm uppercase tracking-[0.45em] text-muted-foreground w-full">
                                 Rashod Korala
                             </p>
-                            <p className="text-2xl lg:text-3xl font-light tracking-tight text-foreground">
+                            <p className="text-xl sm:text-2xl lg:text-3xl font-light tracking-tight text-foreground">
                                 Photo Journal
                             </p>
                         </Link>
@@ -111,7 +111,7 @@ const Navigation = () => {
                         Based in St. John&apos;s, working worldwide.
                     </motion.p>
 
-                    <nav className="flex justify-between md:justify-start items-center md:items-start w-full gap-5 lg:flex-col lg:gap-3 text-sm font-medium uppercase tracking-[0.35em] text-muted-foreground">
+                    <nav className="flex justify-between md:justify-start items-center md:items-start w-full gap-1 sm:gap-3 lg:flex-col lg:gap-3 text-xs font-medium uppercase tracking-[0.3em] sm:tracking-[0.35em] text-muted-foreground">
                         {navItems.map((item, index) => {
                             const isActive =
                                 pathname !== "/"
@@ -131,7 +131,7 @@ const Navigation = () => {
                                     <Link
                                         href={item.path}
                                         onClick={(e) => handleClick(e, item.path)}
-                                        className={`transition-colors ${isActive
+                                        className={`block min-h-[44px] flex items-center transition-colors ${isActive
                                             ? "text-foreground"
                                             : "text-muted-foreground hover:text-foreground/70"
                                             }`}

@@ -34,7 +34,7 @@ const Index = () => {
 
             <motion.section
                 id="gallery"
-                className="px-6 md:px-12 lg:px-16 py-16 border-b border-border"
+                className="px-4 sm:px-6 md:px-12 lg:px-16 py-12 sm:py-16 border-b border-border"
                 initial="hidden"
                 whileInView="visible"
                 viewport={{ once: true, margin: "-100px" }}
@@ -63,7 +63,7 @@ const Index = () => {
 
             <motion.section
                 id="contact"
-                className="px-6 md:px-12 lg:px-16 py-16 flex flex-col gap-6"
+                className="px-4 sm:px-6 md:px-12 lg:px-16 py-12 sm:py-16 flex flex-col gap-6"
                 initial="hidden"
                 whileInView="visible"
                 viewport={{ once: true, margin: "-100px" }}
@@ -84,7 +84,7 @@ const Index = () => {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.6, delay: 0.2 }}
-                    className="text-4xl md:text-5xl font-light max-w-3xl leading-tight"
+                    className="text-3xl sm:text-4xl md:text-5xl font-light max-w-3xl leading-tight"
                 >
                     Commissions, collaborations, and quiet conversations.
                 </motion.h2>

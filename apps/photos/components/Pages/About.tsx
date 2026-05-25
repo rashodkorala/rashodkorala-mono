@@ -16,7 +16,7 @@ const About = () => {
     return (
         <div className="bg-background text-foreground transition-colors duration-300">
             <motion.section
-                className="px-6 md:px-12 lg:px-16 py-12 border-b border-border"
+                className="px-4 sm:px-6 md:px-12 lg:px-16 py-12 border-b border-border"
                 initial="hidden"
                 whileInView="visible"
                 viewport={{ once: true, margin: "-100px" }}
@@ -43,7 +43,7 @@ const About = () => {
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         transition={{ duration: 0.7, delay: 0.3 }}
-                        className="text-[clamp(3rem,8vw,6.5rem)] leading-[0.95] font-light"
+                        className="text-[clamp(2.5rem,8vw,6.5rem)] leading-[0.95] font-light"
                     >
                         About Me
                     </motion.h1>
@@ -84,7 +84,7 @@ const About = () => {
             </motion.section>
 
             <motion.section
-                className="px-6 md:px-12 lg:px-16 py-16 border-b border-border"
+                className="px-4 sm:px-6 md:px-12 lg:px-16 py-12 sm:py-16 border-b border-border"
                 initial="hidden"
                 whileInView="visible"
                 viewport={{ once: true, margin: "-100px" }}
@@ -106,7 +106,7 @@ const About = () => {
                         whileInView={{ opacity: 1, y: 0 }}
                         viewport={{ once: true }}
                         transition={{ duration: 0.6, delay: 0.2 }}
-                        className="text-4xl md:text-5xl font-light max-w-3xl leading-tight"
+                        className="text-3xl sm:text-4xl md:text-5xl font-light max-w-3xl leading-tight"
                     >
                         My approach to photography.
                     </motion.h2>
@@ -152,7 +152,7 @@ const About = () => {
             </motion.section>
 
             <motion.section
-                className="px-6 md:px-12 lg:px-16 py-16 flex flex-col gap-6"
+                className="px-4 sm:px-6 md:px-12 lg:px-16 py-12 sm:py-16 flex flex-col gap-6"
                 initial="hidden"
                 whileInView="visible"
                 viewport={{ once: true, margin: "-100px" }}
@@ -173,7 +173,7 @@ const About = () => {
                     whileInView={{ opacity: 1, y: 0 }}
                     viewport={{ once: true }}
                     transition={{ duration: 0.6, delay: 0.2 }}
-                    className="text-4xl md:text-5xl font-light max-w-3xl leading-tight"
+                    className="text-3xl sm:text-4xl md:text-5xl font-light max-w-3xl leading-tight"
                 >
                     Let&apos;s work together.
                 </motion.h2>

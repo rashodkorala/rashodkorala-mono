@@ -50,7 +50,7 @@ const AlbumDetailPage = ({ album }: AlbumDetailProps) => {
     <div className="bg-background text-foreground transition-colors duration-300">
       {/* Hero section */}
       <motion.section
-        className="px-6 md:px-12 lg:px-16 py-12 border-b border-border"
+        className="px-4 sm:px-6 md:px-12 lg:px-16 py-12 border-b border-border"
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, margin: "-100px" }}
@@ -115,7 +115,7 @@ const AlbumDetailPage = ({ album }: AlbumDetailProps) => {
             initial={{ opacity: 0, scale: 0.99 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8, delay: 0.3 }}
-            className="relative w-full aspect-[21/9] overflow-hidden"
+            className="relative w-full aspect-[4/3] sm:aspect-video md:aspect-[21/9] overflow-hidden"
           >
             <Image
               src={album.coverUrl}
@@ -133,7 +133,7 @@ const AlbumDetailPage = ({ album }: AlbumDetailProps) => {
       {/* Description / narrative */}
       {album.description && (
         <motion.section
-          className="px-6 md:px-12 lg:px-16 py-14 border-b border-border"
+          className="px-4 sm:px-6 md:px-12 lg:px-16 py-10 sm:py-14 border-b border-border"
           initial="hidden"
           whileInView="visible"
           viewport={{ once: true, margin: "-100px" }}
@@ -159,7 +159,7 @@ const AlbumDetailPage = ({ album }: AlbumDetailProps) => {
 
       {/* Photo grid */}
       <motion.section
-        className="px-6 md:px-12 lg:px-16 py-16"
+        className="px-4 sm:px-6 md:px-12 lg:px-16 py-12 sm:py-16"
         initial="hidden"
         whileInView="visible"
         viewport={{ once: true, margin: "-100px" }}
@@ -189,7 +189,7 @@ const AlbumDetailPage = ({ album }: AlbumDetailProps) => {
           </p>
         ) : (
           <motion.div
-            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 md:gap-6"
             initial="hidden"
             animate="visible"
             variants={containerVariants}
@@ -264,7 +264,7 @@ const AlbumDetailPage = ({ album }: AlbumDetailProps) => {
                 </motion.div>
               )}
               <button
-                className="absolute top-4 right-4 text-white text-3xl hover:text-gray-300 transition-colors"
+                className="absolute top-2 right-2 sm:top-4 sm:right-4 min-h-[44px] min-w-[44px] flex items-center justify-center text-white text-3xl hover:text-gray-300 transition-colors"
                 onClick={() => setSelectedPhoto(null)}
               >
                 ×

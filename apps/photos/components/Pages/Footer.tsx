@@ -12,14 +12,14 @@ const Footer = () => {
             transition={{ duration: 0.6 }}
             className="border-t border-border bg-background transition-colors duration-300"
         >
-            <div className="px-6 md:px-12 lg:px-16 py-12 flex flex-col gap-10">
+            <div className="px-4 sm:px-6 md:px-12 lg:px-16 py-10 sm:py-12 flex flex-col gap-8 sm:gap-10">
                 <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8">
                     <motion.p
                         initial={{ opacity: 0, x: -20 }}
                         whileInView={{ opacity: 1, x: 0 }}
                         viewport={{ once: true }}
                         transition={{ duration: 0.5, delay: 0.1 }}
-                        className="text-4xl md:text-5xl font-light uppercase tracking-[0.6em]"
+                        className="text-3xl sm:text-4xl md:text-5xl font-light uppercase tracking-[0.4em] sm:tracking-[0.6em]"
                     >
                         Photos
                     </motion.p>
