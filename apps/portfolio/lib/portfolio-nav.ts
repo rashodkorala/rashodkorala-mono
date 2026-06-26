@@ -18,7 +18,7 @@ export const PORTFOLIO_NAV: readonly PortfolioNavItem[] = [
 
 export function getActiveNavSectionId(pathname: string): string {
   if (pathname === "/") return "about";
-  if (pathname.startsWith("/work") || pathname.startsWith("/projects")) {
+  if (pathname.startsWith("/work") || pathname.startsWith("/projects") || pathname.startsWith("/apps")) {
     return "work";
   }
   if (pathname.startsWith("/cv")) return "cv";
