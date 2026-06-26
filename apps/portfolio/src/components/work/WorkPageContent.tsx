@@ -390,6 +390,80 @@ export default function WorkPageContent({ projects, caseStudies }: WorkPageConte
         {/* Projects tab */}
         {tab === "projects" && (
           <>
+            <motion.div
+              initial={{ opacity: 0, y: 21 }}
+              animate={isInView ? { opacity: 1, y: 0 } : {}}
+              transition={{ duration: 0.65, delay: 0.28, ease: [0.16, 1, 0.3, 1] }}
+              style={{
+                marginBottom: "clamp(21px, 3vw, 55px)",
+              }}
+            >
+              <Link
+                href="/apps"
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "minmax(0, 1fr) minmax(116px, 180px)",
+                  gap: "clamp(16px, 2vw, 34px)",
+                  alignItems: "center",
+                  border: "1px solid var(--color-border)",
+                  background: "var(--color-surface-raised)",
+                  color: "inherit",
+                  padding: "clamp(18px, 3vw, 34px)",
+                  textDecoration: "none",
+                }}
+              >
+                <div>
+                  <p style={{
+                    fontFamily: jakartaSans,
+                    fontSize: "11px",
+                    fontWeight: 600,
+                    letterSpacing: "0.14em",
+                    textTransform: "uppercase",
+                    color: "var(--color-body-secondary)",
+                    margin: "0 0 10px",
+                  }}>
+                    Apps
+                  </p>
+                  <h2 style={{
+                    fontFamily: cormorantGaramond,
+                    fontSize: "clamp(30px, 4vw, 56px)",
+                    fontWeight: 400,
+                    lineHeight: 1,
+                    color: "var(--color-heading)",
+                    margin: 0,
+                  }}>
+                    InkBar
+                  </h2>
+                  <p style={{
+                    maxWidth: "54ch",
+                    fontFamily: jakartaSans,
+                    fontSize: "clamp(13px, 0.9vw, 15px)",
+                    lineHeight: 1.6,
+                    color: "var(--color-body-secondary)",
+                    margin: "13px 0 0",
+                  }}>
+                    A cocktail spec scaler for iPhone. Scale, convert, batch, and keep house specs
+                    in one offline app.
+                  </p>
+                </div>
+                <div style={{
+                  position: "relative",
+                  aspectRatio: "1320 / 2868",
+                  overflow: "hidden",
+                  background: "#f7f2e8",
+                  border: "1px solid var(--color-border-subtle)",
+                }}>
+                  <Image
+                    src="/inkbar/scaler.png"
+                    alt="InkBar cocktail scaler screen."
+                    fill
+                    className="object-cover"
+                    sizes="180px"
+                  />
+                </div>
+              </Link>
+            </motion.div>
+
             {projects.length === 0 ? (
               <p style={{ fontFamily: jakartaSans, fontSize: "14px", color: "var(--color-body-secondary)" }}>
                 No projects to show yet.
