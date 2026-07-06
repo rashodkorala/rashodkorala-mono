@@ -399,7 +399,7 @@ export default function WorkPageContent({ projects, caseStudies }: WorkPageConte
               }}
             >
               <Link
-                href="/apps"
+                href="/apps/inkbar"
                 style={{
                   display: "grid",
                   gridTemplateColumns: "minmax(0, 1fr) minmax(116px, 180px)",

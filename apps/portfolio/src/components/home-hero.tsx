@@ -200,7 +200,7 @@ export default function HomeHero({ imageSrc }: HomeHeroProps = {}) {
                   variants={reveal}
                   custom={0.55}
                 >
-                  I am a software engineer and entrepreneur based in St. John&rsquo;s, Newfoundland, recently graduated and actively building experience across product, design, and technology. I am drawn to the craft of building, where I take an idea and shape it through code and design into something that solves a real problem. I am looking for roles where I can contribute meaningfully from day one, keep learning, and build things that matter.
+                  Just a guy with big dreams, from Sri Lanka, now based in St. John&rsquo;s, Newfoundland. I love turning new ideas into real things, and I do it by building products that solve genuine problems.
                 </motion.p>
 
                 <motion.p
@@ -209,28 +209,15 @@ export default function HomeHero({ imageSrc }: HomeHeroProps = {}) {
                   custom={0.7}
                 >
                   I{" "}
-                  <Link
-                    href="/work"
-                    className="font-medium text-heading underline underline-offset-[0.2em] decoration-from-font transition-opacity hover:opacity-80"
-                  >
-                    work
-                  </Link>{" "}
-                  across the full arc from discovery to delivery, covering product design (UI/UX) and full-stack engineering, with a focus on translating complex technical ideas into outcomes that matter.
-                </motion.p>
-                <motion.p
-                  className="hero-bio-text font-sans font-normal text-body-secondary leading-[var(--leading-body)] tracking-[0.01em]"
-                  variants={reveal}
-                  custom={0.85}
-                >
                   <a
                     href="https://photos.rashodkorala.com"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="font-medium text-heading underline underline-offset-[0.2em] decoration-from-font transition-opacity hover:opacity-80"
                   >
-                    Photography
-                  </a>{" "}
-                  runs alongside all of it, shaping how I see and communicate.
+                    photograph
+                  </a>
+                  , mostly nature, people, culture, and food, small moments that shape how I see the world.
                 </motion.p>
               </motion.div>
             </div>
