@@ -3,13 +3,13 @@ import WorkPageContent from "@/src/components/work/WorkPageContent";
 import PageShell from "@/src/components/page-shell";
 import { getCachedAllProjects } from "@/lib/supabase/cached-projects";
 import { getCachedCaseStudies } from "@/lib/supabase/cached-case-studies";
-import type { Project, CaseStudy } from "@/lib/types";
+import { buildWorkItems } from "@/lib/work";
 
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
   title: "Work",
-  description: "Case studies and projects by Rashod Korala.",
+  description: "Projects and case studies by Rashod Korala.",
 };
 
 export default async function WorkPage() {
@@ -21,7 +21,7 @@ export default async function WorkPage() {
   ]);
   return (
     <PageShell>
-      <WorkPageContent projects={projects} caseStudies={caseStudies} />
+      <WorkPageContent items={buildWorkItems(projects, caseStudies)} />
     </PageShell>
   );
 }

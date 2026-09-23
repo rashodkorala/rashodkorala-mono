@@ -24,6 +24,12 @@ const nextConfig = {
   images: {
     remotePatterns: [supabaseImageRemotePattern()],
   },
+  async redirects() {
+    return [
+      // Projects used to live at /work/projects/{slug}; every piece of work is now /work/{slug}.
+      { source: "/work/projects/:slug", destination: "/work/:slug", permanent: true },
+    ];
+  },
 };
 
 module.exports = nextConfig;

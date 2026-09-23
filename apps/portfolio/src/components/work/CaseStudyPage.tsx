@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { jakartaSans, cormorantGaramond } from "@/lib/font";
 import type { CaseStudy, Project } from "@/lib/types";
-import { renderMarkdown, type MarkdownParserConfig } from "@rashodkorala/theView";
+import { CASE_STUDY_PROSE_CSS, renderStory } from "@/lib/case-study-markdown";
 import CaseStudyMediaBlocks from "./CaseStudyMediaBlocks";
 import MobileToc from "./MobileToc";
 
@@ -17,67 +17,6 @@ function asStrings(v: unknown): string[] {
   if (!Array.isArray(v)) return [];
   return v.filter((x): x is string => typeof x === "string");
 }
-
-// Tags we want to preserve as raw HTML in rendered output
-const SAFE_HTML_TAGS = /^\/?(video|audio|source|track|figure|figcaption|picture)\b/i
-
-function sanitizeMd(md: string): string {
-  return md
-    .replace(/\{\/\*[\s\S]*?\*\/\}/g, "\n")
-    // Strip self-closing JSX components (e.g. <Component />) but not safe HTML
-    .replace(/<([^>\n]+)\/>/g, (match, inner) =>
-      SAFE_HTML_TAGS.test(inner.trim()) ? match : "\n"
-    )
-    // Strip HTML/JSX tags but preserve safe media tags
-    .replace(/<\/?[A-Za-z][^>\n]*>/g, (match) => {
-      const inner = match.replace(/^<\/?/, "").replace(/>$/, "")
-      return SAFE_HTML_TAGS.test(inner.trim()) ? match : "\n"
-    })
-    .replace(/[ \t]+\n/g, "\n")
-    .replace(/\n{3,}/g, "\n\n")
-    .replace(/[ \t]{2,}/g, " ")
-    .trim();
-}
-
-function slugify(text: string): string {
-  return "cs-md-" + text.toLowerCase().replace(/[^a-z0-9\s]/g, "").trim().replace(/\s+/g, "-");
-}
-
-/** Extract H2 headings from raw markdown for the "On this page" nav. */
-function extractMdHeadings(md: string): { id: string; label: string }[] {
-  return md.split("\n")
-    .filter(line => /^##\s/.test(line))
-    .map(line => ({ label: line.replace(/^##\s+/, "").trim(), id: "" }))
-    .map(h => ({ ...h, id: slugify(h.label) }));
-}
-
-/** Inject id attributes into rendered h1/h2/h3 tags based on their text content. */
-function injectHeadingIds(html: string): string {
-  return html.replace(/<(h[1-3])([^>]*)>([\s\S]*?)<\/\1>/gi, (_, tag, attrs, content) => {
-    const text = content.replace(/<[^>]+>/g, "").trim();
-    const id = slugify(text);
-    return `<${tag}${attrs} id="${id}">${content}</${tag}>`;
-  });
-}
-
-// Markdown class config — styled via .cs-prose-* in <style> block
-const mdConfig: MarkdownParserConfig = {
-  h1: "cs-h1",
-  h2: "cs-h2",
-  h3: "cs-h3",
-  p: "cs-p",
-  ul: "cs-ul",
-  li: "cs-li",
-  blockquote: "cs-blockquote",
-  strong: "cs-strong",
-  em: "cs-em",
-  a: "cs-a",
-  code: "cs-code",
-  pre: "cs-pre",
-  hr: "cs-hr",
-  img: "cs-md-img",
-  imgBorder: "cs-md-img-border",
-};
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
 
@@ -136,7 +75,7 @@ function RelatedProjectCard({ project }: { project: Project }) {
   const fills = ["#a8a49c", "#d8d2c8", "#cac4bc", "#b8b2aa"];
   const fill  = fills[project.title.charCodeAt(0) % fills.length];
   return (
-    <Link href={`/work/projects/${project.slug}`} style={{ textDecoration: "none", display: "block" }}>
+    <Link href={`/work/${project.slug}`} style={{ textDecoration: "none", display: "block" }}>
       <div style={{ width: "100%", aspectRatio: "16/9", background: fill, overflow: "hidden", position: "relative" }}>
         {cover ? (
           <Image src={cover} alt={project.title} fill className="object-cover" sizes="(max-width:900px) 50vw, 25vw" />
@@ -203,9 +142,7 @@ export default function CaseStudyPage({ caseStudy }: { caseStudy: CaseStudy }) {
   const titleLine2 = titleWords.length > 1 ? titleWords.slice(1).join(" ") : null;
 
   // Markdown
-  const sanitized = caseStudy.content_md ? sanitizeMd(caseStudy.content_md) : "";
-  const mdHtml = sanitized ? injectHeadingIds(renderMarkdown(sanitized, mdConfig)) : "";
-  const mdHeadings = sanitized ? extractMdHeadings(sanitized) : [];
+  const { html: mdHtml, headings: mdHeadings } = renderStory(caseStudy.content_md);
 
   // In-page nav sections — markdown H2s first, then fixed sections
   const sections: { id: string; label: string }[] = [
@@ -224,29 +161,7 @@ export default function CaseStudyPage({ caseStudy }: { caseStudy: CaseStudy }) {
   return (
     <>
       <style>{`
-        /* Markdown prose */
-        .cs-h1,.cs-h2,.cs-h3 { font-family:${cormorantGaramond}; color:var(--color-heading); letter-spacing:-0.02em; }
-        .cs-h1 { font-size:clamp(28px,3vw,58px); font-weight:400; margin:clamp(32px,4vw,56px) 0 clamp(12px,1.2vw,18px); line-height:1.05; }
-        .cs-h2 { font-size:clamp(22px,2.4vw,46px); font-weight:700; margin:clamp(28px,3.5vw,52px) 0 clamp(12px,1.2vw,18px); line-height:1.18; }
-        .cs-h3 { font-size:clamp(18px,1.8vw,34px); font-weight:500; margin:clamp(20px,2.5vw,36px) 0 clamp(8px,0.8vw,12px); line-height:1.25; }
-        .cs-p  { font-size:clamp(17px,calc(13.67px + 0.434vw),22px); color:var(--color-body); line-height:1.65; letter-spacing:0; font-family:${jakartaSans}; margin-bottom:clamp(14px,1.4vw,20px); }
-        .cs-ul { padding-left:0; list-style:none; margin-bottom:clamp(14px,1.4vw,20px); }
-        .cs-li { font-size:clamp(17px,calc(13.67px + 0.434vw),22px); color:var(--color-body); line-height:1.65; font-family:${jakartaSans}; padding-left:20px; position:relative; margin-bottom:8px; }
-        .cs-li::before { content:'–'; position:absolute; left:0; color:var(--color-body-secondary); }
-        .cs-blockquote { border-left:3px solid var(--color-heading); padding:clamp(12px,1.5vw,20px) clamp(16px,2vw,28px); margin:clamp(24px,3vw,40px) 0; }
-        .cs-blockquote .cs-p { font-family:${cormorantGaramond}; font-size:clamp(18px,1.8vw,34px); color:var(--color-heading); font-style:italic; line-height:1.6; margin:0; }
-        .cs-strong { font-weight:600; color:var(--color-heading); }
-        .cs-em { font-style:italic; }
-        .cs-a  { color:var(--color-link); text-decoration:underline; text-underline-offset:3px; }
-        .cs-code { font-size:0.875em; background:var(--color-surface); padding:2px 6px; font-family:${jakartaSans}; }
-        .cs-pre  { background:var(--color-surface-elevated); color:var(--color-inverse); padding:clamp(14px,1.5vw,20px); overflow-x:auto; margin:clamp(16px,2vw,24px) 0; font-size:13px; line-height:1.6; font-family:${jakartaSans}; }
-        .cs-hr   { border:none; border-top:1px solid var(--color-border-subtle); margin:clamp(24px,3vw,40px) 0; }
-
-        /* Markdown inline images — cap height (portraits) on small viewports */
-        .theview-md-img-wrap { display:block; margin:clamp(22px,2.8vw,32px) 0; text-align:center; }
-        .theview-md-img-wrap .cs-md-img { display:inline-block; vertical-align:middle; max-width:100%; width:auto; height:auto; max-height:min(80vh,900px); object-fit:contain; object-position:center; border-radius:8px; }
-        .theview-md-img-wrap .cs-md-img-border { border:1px solid var(--color-border-subtle); }
-        @media (max-width:900px) { .theview-md-img-wrap .cs-md-img { max-height:min(68dvh,520px); } }
+        ${CASE_STUDY_PROSE_CSS}
 
         /* Before/after + gallery — intrinsic aspect (portrait + landscape), contain; lightbox for full screen */
         .cs-case-thumb-btn { padding:0; border:none; margin:0; width:100%; cursor:pointer; display:block; text-align:center; background:transparent; font:inherit; transition:opacity 0.2s; }

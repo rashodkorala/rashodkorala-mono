@@ -3,6 +3,8 @@
 import { useState } from "react";
 import MobileToc from "./MobileToc";
 import ProjectPhotoLightbox from "./ProjectPhotoLightbox";
+import CaseStudyMediaBlocks from "./CaseStudyMediaBlocks";
+import { CASE_STUDY_PROSE_CSS, type StoryHeading } from "@/lib/case-study-markdown";
 import Image from "next/image";
 import Link from "next/link";
 import { jakartaSans, cormorantGaramond } from "@/lib/font";
@@ -22,6 +24,26 @@ function normalizeHref(url: string | null | undefined): string | null {
   if (!t) return null;
   if (/^https?:\/\//i.test(t)) return t;
   return `https://${t}`;
+}
+
+/**
+ * The project's case study, pre-rendered on the server and shown as the body of this page
+ * (so a piece of work has one page, not a project page plus a separate case study page).
+ */
+export interface ProjectStory {
+  id: string;
+  title: string;
+  html: string;
+  headings: StoryHeading[];
+  readingMinutes: number | null;
+  beforeSrc: string | null;
+  afterSrc: string | null;
+  gallery: string[];
+  stack: string[];
+  role: string | null;
+  timeline: string | null;
+  liveUrl: string | null;
+  githubUrl: string | null;
 }
 
 // ─── Sub-components ───────────────────────────────────────────────────────────
@@ -143,20 +165,26 @@ function PageNav({ sections }: { sections: { id: string; label: string }[] }) {
 
 // ─── Main component ───────────────────────────────────────────────────────────
 
-export default function ProjectPage({ project }: { project: Project }) {
+export default function ProjectPage({ project, story = null }: { project: Project; story?: ProjectStory | null }) {
   const [galleryExpanded, setGalleryExpanded] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   const coverSrc  = resolveUrl(project.cover_image);
   const logoSrc   = resolveUrl(project.logo);
-  const liveUrl   = normalizeHref(project.live_url);
-  const githubUrl = normalizeHref(project.github_url);
+  const liveUrl   = normalizeHref(project.live_url) ?? normalizeHref(story?.liveUrl);
+  const githubUrl = normalizeHref(project.github_url) ?? normalizeHref(story?.githubUrl);
   const year      = new Date(project.created_at).getFullYear();
-  const tech      = project.tech_stack ?? [];
+  const role      = project.role || story?.role || null;
+  const timeline  = project.timeline || story?.timeline || null;
+  const tech      = Array.from(
+    new Map([...(project.tech_stack ?? []), ...(story?.stack ?? [])].map((t) => [t.toLowerCase(), t])).values()
+  );
   const media     = (project.project_media ?? []).filter(m => m.type === "image");
   const videos    = (project.project_media ?? []).filter(m => m.type === "video");
   const galleryResolvedUrls = media.map(m => resolveUrl(m.url) ?? m.url);
-  const related   = project.relatedCaseStudies ?? [];
+  // Other case studies about this project (the primary one is already the story below).
+  const related   = (project.relatedCaseStudies ?? []).filter((cs) => cs.id !== story?.id);
+  const storyHasMedia = !!story && (!!story.beforeSrc || !!story.afterSrc || story.gallery.length > 0);
 
   // First 3 images shown by default: 1 wide + 2 square
   const visibleMedia  = galleryExpanded ? media : media.slice(0, 3);
@@ -164,10 +192,16 @@ export default function ProjectPage({ project }: { project: Project }) {
 
   // Build in-page nav based on what sections actually exist
   const sections: { id: string; label: string }[] = [];
-  if (project.short_description) sections.push({ id: "pd-overview",  label: "Overview" });
+  if (story) {
+    sections.push(...story.headings);
+    if (story.beforeSrc || story.afterSrc) sections.push({ id: "cs-before-after", label: "Before / After" });
+    if (story.gallery.length > 0)          sections.push({ id: "cs-gallery",      label: "Gallery" });
+  } else if (project.short_description) {
+    sections.push({ id: "pd-overview", label: "Overview" });
+  }
   if (media.length > 0)          sections.push({ id: "pd-photos",    label: "Photos" });
   if (videos.length > 0)         sections.push({ id: "pd-video",     label: "Video" });
-  if (related.length > 0)        sections.push({ id: "pd-related",   label: "Case studies" });
+  if (related.length > 0)        sections.push({ id: "pd-related",   label: "More case studies" });
 
   const sectionLabel: React.CSSProperties = {
     fontSize: "clamp(10px, 0.8vw, 12px)",
@@ -181,6 +215,15 @@ export default function ProjectPage({ project }: { project: Project }) {
   return (
     <>
       <style>{`
+        ${story ? CASE_STUDY_PROSE_CSS : ""}
+        .pd-story-eyebrow {
+          font-family: ${jakartaSans};
+          font-size: clamp(10px, 0.8vw, 12px);
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+          color: var(--color-body-secondary);
+          margin-bottom: clamp(8px, 1vw, 14px);
+        }
         .pd-tag {
           font-size: clamp(11px, 0.85vw, 13px);
           color: var(--color-heading);
@@ -369,7 +412,28 @@ export default function ProjectPage({ project }: { project: Project }) {
         >
           {/* ── Left ── */}
           <div style={{ minWidth: 0 }}>
-            {project.short_description && (
+            {story && (
+              <article id="pd-story" style={{ marginBottom: "clamp(32px, 4vw, 56px)" }}>
+                <p className="pd-story-eyebrow">
+                  Case study{story.readingMinutes ? ` · ${story.readingMinutes} min read` : ""}
+                </p>
+                <h2 style={{ fontFamily: cormorantGaramond, fontWeight: 500, fontSize: "clamp(28px, 3.2vw, 56px)", color: "var(--color-heading)", letterSpacing: "-0.02em", lineHeight: 1.08, marginBottom: "clamp(20px, 2.5vw, 36px)" }}>
+                  {story.title}
+                </h2>
+                <div style={{ maxWidth: "80ch", width: "100%" }} dangerouslySetInnerHTML={{ __html: story.html }} />
+                {storyHasMedia && (
+                  <CaseStudyMediaBlocks
+                    caseTitle={story.title}
+                    beforeSrc={story.beforeSrc}
+                    afterSrc={story.afterSrc}
+                    screenshotSrcs={story.gallery}
+                    sectionLabel={sectionLabel}
+                  />
+                )}
+              </article>
+            )}
+
+            {!story && project.short_description && (
               <p id="pd-overview" style={{ fontSize: "clamp(14px, 1.15vw, 22px)", color: "var(--color-body)", lineHeight: 1.65, fontFamily: jakartaSans, fontWeight: 400, marginBottom: "clamp(32px, 4vw, 56px)", maxWidth: "var(--measure-reading)" }}>
                 {project.short_description}
               </p>
@@ -452,12 +516,22 @@ export default function ProjectPage({ project }: { project: Project }) {
               <MetaValue>{year}</MetaValue>
             </div>
 
-            {project.timeline && (
+            {role && (
+              <>
+                <Divider />
+                <div>
+                  <MetaLabel>Role</MetaLabel>
+                  <MetaValue>{role}</MetaValue>
+                </div>
+              </>
+            )}
+
+            {timeline && (
               <>
                 <Divider />
                 <div>
                   <MetaLabel>Timeline</MetaLabel>
-                  <MetaValue>{project.timeline}</MetaValue>
+                  <MetaValue>{timeline}</MetaValue>
                 </div>
               </>
             )}
@@ -519,7 +593,7 @@ export default function ProjectPage({ project }: { project: Project }) {
             <div id="pd-related" style={{ height: 1, background: "var(--color-border)", margin: "clamp(32px, 4vw, 56px) 0 0" }} />
             <div style={{ marginTop: "clamp(24px, 3vw, 44px)" }}>
               <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: "clamp(16px, 1.8vw, 24px)" }}>
-                <p style={{ ...sectionLabel, marginBottom: 0 }}>Related case studies</p>
+                <p style={{ ...sectionLabel, marginBottom: 0 }}>More case studies</p>
                 <Link href="/work" style={{ fontSize: "clamp(11px, 0.85vw, 13px)", color: "var(--color-link)", textDecoration: "underline", textUnderlineOffset: "4px", fontFamily: jakartaSans }}>
                   View all
                 </Link>
