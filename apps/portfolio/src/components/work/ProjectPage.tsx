@@ -4,7 +4,8 @@ import { useState } from "react";
 import MobileToc from "./MobileToc";
 import ProjectPhotoLightbox from "./ProjectPhotoLightbox";
 import Image from "next/image";
-import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { jakartaSans, cormorantGaramond } from "@/lib/font";
 import type { Project, CaseStudy } from "@/lib/types";
 
@@ -107,11 +108,12 @@ function RelatedCard({ cs }: { cs: CaseStudy }) {
 // ─── In-page navigation ───────────────────────────────────────────────────────
 
 function PageNav({ sections }: { sections: { id: string; label: string }[] }) {
+  const t = useTranslations("Common");
   if (sections.length === 0) return null;
   return (
     <div>
       <p style={{ fontSize: "10px", color: "var(--color-body-secondary)", letterSpacing: "0.14em", textTransform: "uppercase", fontFamily: jakartaSans, marginBottom: 14 }}>
-        On this page
+        {t("onThisPage")}
       </p>
       <nav style={{ display: "flex", flexDirection: "column", gap: 10 }}>
         {sections.map(({ id, label }) => (
@@ -144,6 +146,9 @@ function PageNav({ sections }: { sections: { id: string; label: string }[] }) {
 // ─── Main component ───────────────────────────────────────────────────────────
 
 export default function ProjectPage({ project }: { project: Project }) {
+  const t = useTranslations("Project");
+  const tCommon = useTranslations("Common");
+  const tNav = useTranslations("Nav");
   const [galleryExpanded, setGalleryExpanded] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
@@ -164,10 +169,10 @@ export default function ProjectPage({ project }: { project: Project }) {
 
   // Build in-page nav based on what sections actually exist
   const sections: { id: string; label: string }[] = [];
-  if (project.short_description) sections.push({ id: "pd-overview",  label: "Overview" });
-  if (media.length > 0)          sections.push({ id: "pd-photos",    label: "Photos" });
-  if (videos.length > 0)         sections.push({ id: "pd-video",     label: "Video" });
-  if (related.length > 0)        sections.push({ id: "pd-related",   label: "Case studies" });
+  if (project.short_description) sections.push({ id: "pd-overview",  label: t("overview") });
+  if (media.length > 0)          sections.push({ id: "pd-photos",    label: t("photos") });
+  if (videos.length > 0)         sections.push({ id: "pd-video",     label: t("video") });
+  if (related.length > 0)        sections.push({ id: "pd-related",   label: t("caseStudies") });
 
   const sectionLabel: React.CSSProperties = {
     fontSize: "clamp(10px, 0.8vw, 12px)",
@@ -294,7 +299,7 @@ export default function ProjectPage({ project }: { project: Project }) {
             <svg viewBox="0 0 16 16" fill="none" style={{ width: 14, height: 14, flexShrink: 0 }}>
               <path d="M10 3L5 8L10 13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
-            Work
+            {tNav("work")}
           </Link>
           <span style={{ color: "var(--color-border-strong)", fontSize: "12px", userSelect: "none" }}>/</span>
           <span style={{ fontFamily: jakartaSans, fontSize: "clamp(12px, 0.85vw, 13px)", color: "var(--color-heading)", letterSpacing: "0.04em" }}>
@@ -324,7 +329,7 @@ export default function ProjectPage({ project }: { project: Project }) {
             overflow: "hidden",
           }}>
             {logoSrc ? (
-              <Image src={logoSrc} alt={`${project.title} logo`} fill className="object-cover" sizes="64px" />
+              <Image src={logoSrc} alt={t("logoAlt", { title: project.title })} fill className="object-cover" sizes="64px" />
             ) : (
               <span style={{ color: "var(--color-inverse)", fontSize: "clamp(14px, 1.4vw, 22px)", fontWeight: 700, fontFamily: jakartaSans }}>
                 {project.title.slice(0, 2).toUpperCase()}
@@ -378,7 +383,7 @@ export default function ProjectPage({ project }: { project: Project }) {
             {/* Photos */}
             {media.length > 0 && (
               <div id="pd-photos" style={{ marginBottom: "clamp(32px, 4vw, 56px)" }}>
-                <p style={sectionLabel}>Project photos</p>
+                <p style={sectionLabel}>{t("projectPhotos")}</p>
                 {/* gap: 16px→13px (fib); margin-bottom: 16px→13px, 24px→21px (fib) */}
                 <div
                   className="pd-photos-grid"
@@ -398,7 +403,7 @@ export default function ProjectPage({ project }: { project: Project }) {
                         key={`${m.url}-${globalIdx}`}
                         type="button"
                         className={`pd-gallery-thumb${globalIdx === 0 ? " pd-photo-wide" : ""}`}
-                        aria-label={`Open photo ${globalIdx + 1} of ${media.length} in full screen`}
+                        aria-label={t("openPhoto", { index: globalIdx + 1, total: media.length })}
                         onClick={() => setLightboxIndex(globalIdx)}
                         style={globalIdx === 0
                           ? { gridColumn: "span 2", aspectRatio: "16 / 9" } as React.CSSProperties
@@ -407,7 +412,7 @@ export default function ProjectPage({ project }: { project: Project }) {
                       >
                         <GalleryImage
                           src={src}
-                          alt={`${project.title} photo ${globalIdx + 1}`}
+                          alt={t("photoAlt", { title: project.title, index: globalIdx + 1 })}
                           style={{ width: "100%", height: "100%", minHeight: 0 }}
                         />
                       </button>
@@ -422,8 +427,8 @@ export default function ProjectPage({ project }: { project: Project }) {
                     onClick={() => setGalleryExpanded(v => !v)}
                   >
                     {galleryExpanded
-                      ? "Show less"
-                      : `View all photos  (+${hiddenCount})`}
+                      ? t("showLess")
+                      : t("viewAllPhotos", { count: hiddenCount })}
                   </button>
                 )}
               </div>
@@ -432,7 +437,7 @@ export default function ProjectPage({ project }: { project: Project }) {
             {/* Video */}
             {videos.length > 0 && (
               <div id="pd-video" style={{ marginBottom: "clamp(32px, 4vw, 56px)" }}>
-                <p style={sectionLabel}>Video</p>
+                <p style={sectionLabel}>{t("video")}</p>
                 <div style={{ display: "grid", gap: "clamp(8px, 1.2vw, 16px)" }}>
                   {videos.map((v, i) => (
                     <video key={i} src={v.url} controls style={{ width: "100%", display: "block" }} />
@@ -448,7 +453,7 @@ export default function ProjectPage({ project }: { project: Project }) {
 
             {/* Meta details */}
             <div>
-              <MetaLabel>Year</MetaLabel>
+              <MetaLabel>{tCommon("year")}</MetaLabel>
               <MetaValue>{year}</MetaValue>
             </div>
 
@@ -456,7 +461,7 @@ export default function ProjectPage({ project }: { project: Project }) {
               <>
                 <Divider />
                 <div>
-                  <MetaLabel>Timeline</MetaLabel>
+                  <MetaLabel>{tCommon("timeline")}</MetaLabel>
                   <MetaValue>{project.timeline}</MetaValue>
                 </div>
               </>
@@ -466,7 +471,7 @@ export default function ProjectPage({ project }: { project: Project }) {
               <>
                 <Divider />
                 <div>
-                  <MetaLabel>Live site</MetaLabel>
+                  <MetaLabel>{tCommon("liveSite")}</MetaLabel>
                   <a className="pd-meta-link" href={liveUrl} target="_blank" rel="noreferrer">
                     {liveUrl.replace(/^https?:\/\//, "")}
                     <ArrowIcon />
@@ -479,7 +484,7 @@ export default function ProjectPage({ project }: { project: Project }) {
               <>
                 <Divider />
                 <div>
-                  <MetaLabel>GitHub</MetaLabel>
+                  <MetaLabel>{tCommon("github")}</MetaLabel>
                   <a className="pd-meta-link" href={githubUrl} target="_blank" rel="noreferrer">
                     {githubUrl.replace(/^https?:\/\//, "")}
                     <ArrowIcon />
@@ -493,7 +498,7 @@ export default function ProjectPage({ project }: { project: Project }) {
               <>
                 <Divider />
                 <div id="pd-tech">
-                  <MetaLabel>Tools &amp; technology</MetaLabel>
+                  <MetaLabel>{t("toolsTechnology")}</MetaLabel>
                   <div style={{ display: "flex", flexWrap: "wrap", gap: 6, marginTop: 4 }}>
                     {tech.map(t => <span key={t} className="pd-tag">{t}</span>)}
                   </div>
@@ -519,9 +524,9 @@ export default function ProjectPage({ project }: { project: Project }) {
             <div id="pd-related" style={{ height: 1, background: "var(--color-border)", margin: "clamp(32px, 4vw, 56px) 0 0" }} />
             <div style={{ marginTop: "clamp(24px, 3vw, 44px)" }}>
               <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: "clamp(16px, 1.8vw, 24px)" }}>
-                <p style={{ ...sectionLabel, marginBottom: 0 }}>Related case studies</p>
+                <p style={{ ...sectionLabel, marginBottom: 0 }}>{t("relatedCaseStudies")}</p>
                 <Link href="/work" style={{ fontSize: "clamp(11px, 0.85vw, 13px)", color: "var(--color-link)", textDecoration: "underline", textUnderlineOffset: "4px", fontFamily: jakartaSans }}>
-                  View all
+                  {tCommon("viewAll")}
                 </Link>
               </div>
               <div

@@ -1,9 +1,10 @@
 "use client";
 
 import React, { useRef, useState } from "react";
-import Link from "next/link";
 import Image from "next/image";
 import { motion, useInView } from "framer-motion";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { jakartaSans, cormorantGaramond } from "@/lib/font";
 import type { Project, CaseStudy } from "@/lib/types";
 import CaseStudiesList from "./CaseStudiesList";
@@ -172,6 +173,7 @@ function ProjectCard({
 }
 
 export default function WorkPageContent({ projects, caseStudies }: WorkPageContentProps) {
+  const t = useTranslations("Work");
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-80px" });
   const [tab, setTab] = useState<"projects" | "case-studies">("projects");
@@ -269,7 +271,7 @@ export default function WorkPageContent({ projects, caseStudies }: WorkPageConte
                 lineHeight: 0.92,
                 margin: 0,
               }}>
-                Selected
+                {t("selected")}
               </h1>
               <h1 style={{
                 fontFamily: cormorantGaramond,
@@ -281,7 +283,7 @@ export default function WorkPageContent({ projects, caseStudies }: WorkPageConte
                 margin: 0,
                 paddingLeft: "clamp(21px, 3vw, 48px)",
               }}>
-                Work
+                {t("work")}
               </h1>
             </div>
           ) : (
@@ -295,7 +297,7 @@ export default function WorkPageContent({ projects, caseStudies }: WorkPageConte
                 lineHeight: 0.92,
                 margin: 0,
               }}>
-                Case
+                {t("case")}
               </h1>
               <h1 style={{
                 fontFamily: cormorantGaramond,
@@ -307,7 +309,7 @@ export default function WorkPageContent({ projects, caseStudies }: WorkPageConte
                 margin: 0,
                 paddingLeft: "clamp(21px, 3vw, 48px)",
               }}>
-                Studies
+                {t("studies")}
               </h1>
             </div>
           )}
@@ -341,7 +343,7 @@ export default function WorkPageContent({ projects, caseStudies }: WorkPageConte
                     transition: "background 0.18s, color 0.18s",
                   }}
                 >
-                  {value === "projects" ? "Projects" : "Case Studies"}
+                  {value === "projects" ? t("tabProjects") : t("tabCaseStudies")}
                 </button>
               ))}
             </div>
@@ -355,7 +357,7 @@ export default function WorkPageContent({ projects, caseStudies }: WorkPageConte
                   </span>
                 )}
                 <span style={{ fontFamily: jakartaSans, fontSize: "clamp(12px, 0.9vw, 14px)", color: "var(--color-body-secondary)", display: "block", marginTop: "4px" }}>
-                  {projects.length} project{projects.length !== 1 ? "s" : ""}
+                  {t("projectCount", { count: projects.length })}
                 </span>
               </div>
             )}
@@ -367,7 +369,7 @@ export default function WorkPageContent({ projects, caseStudies }: WorkPageConte
                   </span>
                 )}
                 <span style={{ fontFamily: jakartaSans, fontSize: "clamp(12px, 0.9vw, 14px)", color: "var(--color-body-secondary)", display: "block", marginTop: "4px" }}>
-                  {caseStudies.length} case {caseStudies.length !== 1 ? "studies" : "study"}
+                  {t("caseStudyCount", { count: caseStudies.length })}
                 </span>
               </div>
             )}
@@ -422,7 +424,7 @@ export default function WorkPageContent({ projects, caseStudies }: WorkPageConte
                     color: "var(--color-body-secondary)",
                     margin: "0 0 10px",
                   }}>
-                    Apps
+                    {t("appsEyebrow")}
                   </p>
                   <h2 style={{
                     fontFamily: cormorantGaramond,
@@ -442,8 +444,7 @@ export default function WorkPageContent({ projects, caseStudies }: WorkPageConte
                     color: "var(--color-body-secondary)",
                     margin: "13px 0 0",
                   }}>
-                    A cocktail spec scaler for iPhone. Scale, convert, batch, and keep house specs
-                    in one offline app.
+                    {t("inkbarBlurb")}
                   </p>
                 </div>
                 <div style={{
@@ -455,7 +456,7 @@ export default function WorkPageContent({ projects, caseStudies }: WorkPageConte
                 }}>
                   <Image
                     src="/inkbar/scaler.png"
-                    alt="InkBar cocktail scaler screen."
+                    alt={t("inkbarImageAlt")}
                     fill
                     className="object-cover"
                     sizes="180px"
@@ -466,7 +467,7 @@ export default function WorkPageContent({ projects, caseStudies }: WorkPageConte
 
             {projects.length === 0 ? (
               <p style={{ fontFamily: jakartaSans, fontSize: "14px", color: "var(--color-body-secondary)" }}>
-                No projects to show yet.
+                {t("noProjects")}
               </p>
             ) : (
               <div style={{
@@ -486,7 +487,7 @@ export default function WorkPageContent({ projects, caseStudies }: WorkPageConte
         {tab === "case-studies" && (
           caseStudies.length === 0 ? (
             <p style={{ fontFamily: jakartaSans, fontSize: "14px", color: "var(--color-body-secondary)" }}>
-              No case studies published yet.
+              {t("noCaseStudies")}
             </p>
           ) : (
             <CaseStudiesList items={caseStudies} />

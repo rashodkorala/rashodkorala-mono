@@ -3,6 +3,7 @@
 import { createClient } from "@/lib/supabase/server"
 import { requestPortfolioRevalidation } from "@/lib/revalidate-portfolio"
 import { revalidatePath } from "next/cache"
+import { planTranslation, queueTranslation, readSinhala, translationColumns } from "@/lib/translation/content"
 import type { CaseStudy, CaseStudyDB, CaseStudyFormData } from "@/lib/types/case-study"
 
 function transformCaseStudy(cs: CaseStudyDB): CaseStudy {
@@ -25,6 +26,9 @@ function transformCaseStudy(cs: CaseStudyDB): CaseStudy {
     timeline: cs.timeline ?? null,
     links: cs.links ?? [],
     stack: cs.stack ?? [],
+    sinhala: readSinhala(cs as unknown as Record<string, unknown>, "case_studies"),
+    translationStatus: cs.translation_status ?? null,
+    translatedAt: cs.translated_at ?? null,
     createdAt: cs.created_at,
     updatedAt: cs.updated_at,
   }
@@ -157,14 +161,18 @@ export async function createOrUpdateCaseStudy(
   let existingGalleryPaths: string[] = []
   let existingBeforeAfter: { beforeImage?: string | null; afterImage?: string | null } | null = null
   let existingCoverPath: string | null = null
+  let existingRow: Record<string, unknown> | null = null
   if (existingId) {
     const { data: existing } = await supabase
       .from("case_studies")
-      .select("gallery, before_after, cover_path")
+      .select<string, Pick<CaseStudyDB, "gallery" | "before_after" | "cover_path"> & Record<string, unknown>>(
+        `gallery, before_after, cover_path, ${translationColumns("case_studies")}`
+      )
       .eq("id", existingId)
       .eq("user_id", user.id)
       .single()
     if (existing) {
+      existingRow = existing
       existingGalleryPaths = existing.gallery || []
       existingBeforeAfter = existing.before_after || null
       existingCoverPath = existing.cover_path || null
@@ -236,13 +244,22 @@ export async function createOrUpdateCaseStudy(
     stack: formData.stack ?? [],
   }
 
+  const translation = planTranslation({
+    table: "case_studies",
+    english: payload,
+    existing: existingRow,
+    submitted: formData.sinhala,
+    markReviewed: formData.markTranslationReviewed,
+  })
+  const row = { ...payload, ...translation.update }
+
   let data
   let error
 
   if (existingId) {
     const result = await supabase
       .from("case_studies")
-      .update(payload)
+      .update(row)
       .eq("id", existingId)
       .eq("user_id", user.id)
       .select()
@@ -252,7 +269,7 @@ export async function createOrUpdateCaseStudy(
   } else {
     const result = await supabase
       .from("case_studies")
-      .insert(payload)
+      .insert(row)
       .select()
       .single()
     data = result.data
@@ -260,6 +277,8 @@ export async function createOrUpdateCaseStudy(
   }
 
   if (error) throw new Error(`Failed to save case study: ${error.message}`)
+
+  queueTranslation(supabase, "case_studies", data.id, translation.pending)
 
   revalidatePath("/protected/case-studies")
   revalidatePath("/protected/work")

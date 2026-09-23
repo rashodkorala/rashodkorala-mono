@@ -1,7 +1,8 @@
 'use client'
 import Image from "next/image";
-import Link from "next/link";
 import { motion } from "framer-motion";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { cormorantGaramond } from "@/lib/font";
 import CalendlyPopupButton from "@/src/components/contact/CalendlyPopupButton";
 
@@ -19,7 +20,6 @@ const socials = [
   { label: "GitHub",    href: "https://github.com/rashodkorala" },
   { label: "LinkedIn",  href: "https://linkedin.com/in/rashodk" },
   { label: "Instagram", href: "https://instagram.com/rashodkorala" },
-  { label: "CV",        href: "/cv" },
 ];
 
 /**
@@ -41,6 +41,10 @@ const HERO_PORTRAIT_SIZES =
 interface HomeHeroProps { imageSrc?: string; }
 
 export default function HomeHero({ imageSrc }: HomeHeroProps = {}) {
+  const t = useTranslations("Home");
+  const tNav = useTranslations("Nav");
+  const tCommon = useTranslations("Common");
+
   return (
     <>
       <style>{`
@@ -171,7 +175,9 @@ export default function HomeHero({ imageSrc }: HomeHeroProps = {}) {
 
             {/* Zone 2: name + bio */}
             <div className="flex flex-col justify-center">
+              {/* lang="en": the name stays in Latin script, so it keeps its display leading on /si. */}
               <motion.h1
+                lang="en"
                 className="mb-fib-34 min-w-0 leading-[0.88]"
                 initial="hidden"
                 animate="visible"
@@ -200,7 +206,7 @@ export default function HomeHero({ imageSrc }: HomeHeroProps = {}) {
                   variants={reveal}
                   custom={0.55}
                 >
-                  Just a guy with big dreams, from Sri Lanka, now based in St. John&rsquo;s, Newfoundland. I love turning new ideas into real things, and I do it by building products that solve genuine problems.
+                  {t("bio1")}
                 </motion.p>
 
                 <motion.p
@@ -208,16 +214,18 @@ export default function HomeHero({ imageSrc }: HomeHeroProps = {}) {
                   variants={reveal}
                   custom={0.7}
                 >
-                  I{" "}
-                  <a
-                    href="https://photos.rashodkorala.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="font-medium text-heading underline underline-offset-[0.2em] decoration-from-font transition-opacity hover:opacity-80"
-                  >
-                    photograph
-                  </a>
-                  , mostly nature, people, culture, and food, small moments that shape how I see the world.
+                  {t.rich("bio2", {
+                    photo: (chunks) => (
+                      <a
+                        href="https://photos.rashodkorala.com"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="font-medium text-heading underline underline-offset-[0.2em] decoration-from-font transition-opacity hover:opacity-80"
+                      >
+                        {chunks}
+                      </a>
+                    ),
+                  })}
                 </motion.p>
               </motion.div>
             </div>
@@ -233,7 +241,7 @@ export default function HomeHero({ imageSrc }: HomeHeroProps = {}) {
             {imageSrc ? (
               <Image
                 src={imageSrc}
-                alt="Rashod Korala"
+                alt={t("portraitAlt")}
                 fill
                 sizes={HERO_PORTRAIT_SIZES}
                 className="object-cover object-[center_20%] grayscale"
@@ -260,15 +268,21 @@ export default function HomeHero({ imageSrc }: HomeHeroProps = {}) {
               <a
                 key={s.label}
                 href={s.href}
-                target={s.href.startsWith("http") ? "_blank" : undefined}
-                rel={s.href.startsWith("http") ? "noopener noreferrer" : undefined}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="font-body font-medium text-xs text-heading underline underline-offset-4 tracking-[0.01em] sm:text-[13px]"
               >
                 {s.label}
               </a>
             ))}
+            <Link
+              href="/cv"
+              className="font-body font-medium text-xs text-heading underline underline-offset-4 tracking-[0.01em] sm:text-[13px]"
+            >
+              {tNav("cv")}
+            </Link>
             <CalendlyPopupButton className="font-body font-medium text-xs text-heading underline underline-offset-4 tracking-[0.01em] sm:text-[13px]">
-              Schedule a call
+              {tCommon("scheduleCall")}
             </CalendlyPopupButton>
           </div>
 
@@ -276,7 +290,7 @@ export default function HomeHero({ imageSrc }: HomeHeroProps = {}) {
             href="/privacy"
             className="font-body font-medium text-xs text-body-secondary underline underline-offset-4 tracking-[0.01em] transition-opacity hover:opacity-80 sm:text-[13px]"
           >
-            Privacy
+            {t("privacy")}
           </Link>
         </motion.footer>
       </div>

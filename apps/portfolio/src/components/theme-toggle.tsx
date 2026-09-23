@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { Moon, Sun } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 type Theme = "light" | "dark";
 
@@ -23,6 +24,7 @@ function getThemeFromDom(): Theme {
 }
 
 export default function ThemeToggle() {
+  const t = useTranslations("Theme");
   const [theme, setTheme] = useState<Theme>("dark");
   const [ready, setReady] = useState(false);
   /** Lucide SVGs can differ SSR vs client (e.g. aria-hidden); skip icons until mounted. */
@@ -73,7 +75,7 @@ export default function ThemeToggle() {
     <button
       type="button"
       onClick={toggleTheme}
-      aria-label={ready ? `Switch to ${nextTheme} theme` : "Toggle theme"}
+      aria-label={ready ? t(nextTheme === "light" ? "switchToLight" : "switchToDark") : t("toggle")}
       className="inline-flex h-9 w-9 items-center justify-center rounded-full border border-ctrl-border bg-ctrl text-ctrl-text backdrop-blur transition hover:bg-ctrl-hover"
     >
       {mounted ? (

@@ -1,32 +1,37 @@
 "use client";
 
-import Link from "next/link";
 import { useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
+import { Link, usePathname } from "@/i18n/navigation";
 import ThemeToggle from "@/src/components/theme-toggle";
+import LanguageSwitcher from "@/src/components/language-switcher";
 import {
   PORTFOLIO_NAV,
   getActiveNavSectionId,
 } from "@/lib/portfolio-nav";
 
+type NavLabelKey = "about" | "work" | "contact" | "cv" | "privacy";
+
 /** Returns a back-navigation target for sub-pages, null for top-level pages. */
-function getBackTarget(pathname: string): { href: string; label: string } | null {
-  if (pathname.startsWith("/work/")) return { href: "/work", label: "Work" };
+function getBackTarget(pathname: string): { href: string; labelKey: NavLabelKey } | null {
+  if (pathname.startsWith("/work/")) return { href: "/work", labelKey: "work" };
   return null;
 }
 
-/** Returns the short label for the current page (used as mobile centre title). */
-function getMobilePageLabel(pathname: string): string {
-  if (pathname === "/") return "About";
-  if (pathname === "/work") return "Work";
-  if (pathname.startsWith("/work/")) return "Work";
-  if (pathname.startsWith("/contact")) return "Contact";
-  if (pathname.startsWith("/cv")) return "CV";
-  if (pathname.startsWith("/privacy")) return "Privacy";
-  return "";
+/** Returns the `Nav` message key for the current page (used as mobile centre title). */
+function getMobilePageLabelKey(pathname: string): NavLabelKey | null {
+  if (pathname === "/") return "about";
+  if (pathname === "/work") return "work";
+  if (pathname.startsWith("/work/")) return "work";
+  if (pathname.startsWith("/contact")) return "contact";
+  if (pathname.startsWith("/cv")) return "cv";
+  if (pathname.startsWith("/privacy")) return "privacy";
+  return null;
 }
 
 export default function TopBar() {
+  const t = useTranslations("Nav");
+  // Locale-free pathname ("/work", not "/si/work").
   const pathname = usePathname();
   const [active, setActive] = useState("");
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -37,7 +42,7 @@ export default function TopBar() {
   }, [pathname]);
 
   const backTarget  = getBackTarget(pathname);
-  const mobileLabel = getMobilePageLabel(pathname);
+  const mobileLabelKey = getMobilePageLabelKey(pathname);
 
   // Spacing changes — all hardcoded values mapped to nearest Fibonacci step:
   //   h-16 (64px) / lg:h-20 (80px)  — kept as-is, structural header heights
@@ -75,18 +80,18 @@ export default function TopBar() {
           <Link
             href={backTarget.href}
             className="inline-flex items-center gap-1 text-body-secondary hover:text-heading transition-colors min-w-0"
-            style={{ fontSize: "13px", fontFamily: "var(--font-jakarta)", letterSpacing: "0.02em", minHeight: "34px" }}
+            style={{ fontSize: "13px", fontFamily: "var(--font-sans-stack)", letterSpacing: "0.02em", minHeight: "34px" }}
           >
             <svg viewBox="0 0 16 16" fill="none" style={{ width: 15, height: 15, flexShrink: 0 }}>
               <path d="M10 3L5 8L10 13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
-            <span>{backTarget.label}</span>
+            <span>{t(backTarget.labelKey)}</span>
           </Link>
         ) : (
           <Link
             href="/"
             className="inline-flex h-fib-34 w-fib-34 items-center justify-center rounded-sm bg-surface-elevated text-inverse font-sans text-sm font-bold shrink-0"
-            aria-label="Home"
+            aria-label={t("home")}
           >
             R
           </Link>
@@ -94,20 +99,21 @@ export default function TopBar() {
 
         {/* Centre: current page label */}
         <span className="font-sans text-heading text-center px-2" style={{ fontSize: "13px", letterSpacing: "0.04em" }}>
-          {mobileLabel}
+          {mobileLabelKey ? t(mobileLabelKey) : ""}
         </span>
 
-        {/* Right: theme toggle + hamburger */}
+        {/* Right: language + theme toggle + hamburger */}
         <div className="flex items-center justify-end gap-2">
+          <LanguageSwitcher />
           <ThemeToggle />
           <button
             type="button"
-            aria-label="Toggle navigation menu"
+            aria-label={t("toggleMenu")}
             aria-expanded={isMobileMenuOpen}
             onClick={() => setIsMobileMenuOpen((prev) => !prev)}
             className="group inline-flex h-fib-34 w-fib-34 items-center justify-center rounded-md border border-line-strong text-body transition-colors hover:border-line-hover"
           >
-            <span className="sr-only">Menu</span>
+            <span className="sr-only">{t("menu")}</span>
             <span className="relative inline-flex h-4 w-5 flex-col justify-between">
               <span className={`h-px w-full bg-current transition-all duration-300 ${isMobileMenuOpen ? "translate-y-[7px] rotate-45" : ""}`} />
               <span className={`h-px w-full bg-current transition-opacity duration-300 ${isMobileMenuOpen ? "opacity-0" : "opacity-100"}`} />
@@ -121,10 +127,10 @@ export default function TopBar() {
         // top-16 kept to align flush with header height
         <nav
           className="absolute left-0 right-0 top-16 z-50 border-b border-line bg-surface-overlay-strong px-fib-21 py-fib-21 shadow-[0_10px_30px_-15px_rgba(0,0,0,0.35)] backdrop-blur lg:hidden"
-          aria-label="Mobile primary"
+          aria-label={t("mobileNavLabel")}
         >
           <ul className="space-y-fib-13">
-            {PORTFOLIO_NAV.map(({ id, href, label }) => {
+            {PORTFOLIO_NAV.map(({ id, href }) => {
               const isExternal = href.startsWith("http");
               const isActive = active === id;
 
@@ -148,7 +154,7 @@ export default function TopBar() {
                       }`}
                     />
                     <span className="font-sans text-sm tracking-[0.03em]">
-                      {label}
+                      {t(id)}
                     </span>
                   </Link>
                 </li>
@@ -158,7 +164,8 @@ export default function TopBar() {
         </nav>
       )}
 
-      <div className="hidden shrink-0 items-center lg:flex">
+      <div className="hidden shrink-0 items-center gap-2 lg:flex">
+        <LanguageSwitcher />
         <ThemeToggle />
       </div>
     </header>

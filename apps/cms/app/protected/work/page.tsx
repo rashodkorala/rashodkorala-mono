@@ -3,6 +3,9 @@ import Link from "next/link"
 import { createClient } from "@/lib/supabase/server"
 import { getCaseStudies } from "@/lib/actions/case-studies"
 import { getProjects } from "@/lib/actions/projects"
+import { getTranslationQueue } from "@/lib/actions/translations"
+import { TranslationStatusBadge } from "@/components/translation/translation-status-badge"
+import { TranslateMissingButton } from "@/components/translation/translate-missing-button"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -31,9 +34,11 @@ export default async function WorkPage({ searchParams }: WorkPageProps) {
 
   await searchParams
 
-  const [caseStudies, projects] = await Promise.all([
+  const [caseStudies, projects, translationQueue] = await Promise.all([
     getCaseStudies(),
     getProjects(),
+    // Don't take the page down if the Sinhala columns haven't been migrated yet.
+    getTranslationQueue().catch(() => []),
   ])
 
   const allItems = [
@@ -68,12 +73,15 @@ export default async function WorkPage({ searchParams }: WorkPageProps) {
           <h1 className="text-2xl font-bold">Work</h1>
           <p className="text-sm text-muted-foreground">Manage projects and related case studies.</p>
         </div>
-        <Button asChild>
-          <Link href="/protected/work/new">
-            <IconPlus className="h-4 w-4 mr-2" />
-            New Entry
-          </Link>
-        </Button>
+        <div className="flex items-center gap-2">
+          <TranslateMissingButton count={translationQueue.length} />
+          <Button asChild>
+            <Link href="/protected/work/new">
+              <IconPlus className="h-4 w-4 mr-2" />
+              New Entry
+            </Link>
+          </Button>
+        </div>
       </div>
 
       {/* Stats */}
@@ -124,6 +132,7 @@ export default async function WorkPage({ searchParams }: WorkPageProps) {
               <TableRow>
                 <TableHead>Title</TableHead>
                 <TableHead>Kind</TableHead>
+                <TableHead>Sinhala</TableHead>
                 <TableHead>Updated</TableHead>
                 <TableHead className="w-[60px]" />
               </TableRow>
@@ -145,6 +154,9 @@ export default async function WorkPage({ searchParams }: WorkPageProps) {
                     <Badge variant="outline" className="text-xs capitalize">
                       {item.kind === "case_study" ? "Case Study" : "Project"}
                     </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <TranslationStatusBadge status={item.data.translationStatus} />
                   </TableCell>
                   <TableCell className="text-sm text-muted-foreground">
                     {new Date(item.updatedAt).toLocaleDateString("en-US", {

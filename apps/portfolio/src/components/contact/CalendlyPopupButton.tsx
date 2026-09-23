@@ -1,6 +1,7 @@
 'use client';
 import Script from "next/script";
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 
 interface CalendlyPopupButtonProps {
   className?: string;
@@ -8,6 +9,7 @@ interface CalendlyPopupButtonProps {
 }
 
 export default function CalendlyPopupButton({ className, children }: CalendlyPopupButtonProps) {
+  const t = useTranslations("Common");
   const [ready, setReady] = useState(false);
 
   function openCalendly() {
@@ -33,7 +35,7 @@ export default function CalendlyPopupButton({ className, children }: CalendlyPop
         disabled={!ready}
         className={`${className ?? ""} disabled:opacity-40`}
       >
-        {children ?? "Schedule a call"}
+        {children ?? t("scheduleCall")}
       </button>
     </>
   );

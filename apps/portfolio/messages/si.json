@@ -1,0 +1,391 @@
+{
+  "Metadata": {
+    "defaultTitle": "Rashod Korala | Software Developer",
+    "titleTemplate": "%s | Rashod Korala",
+    "description": "Next.js, React Native සහ AI විසඳුම් පිළිබඳ විශේෂඥතාවයක් ඇති Software Developer කෙනෙක්. පරිශීලකයා කේන්ද්‍ර කරගත් design එකක් සමඟ නව්‍ය ඩිජිටල් අත්දැකීම් නිර්මාණය කරනවා."
+  },
+  "Nav": {
+    "about": "මා ගැන",
+    "work": "වැඩ",
+    "photography": "ඡායාරූප",
+    "contact": "සම්බන්ධ වන්න",
+    "cv": "CV",
+    "privacy": "පෞද්ගලිකත්වය",
+    "home": "මුල් පිටුව",
+    "menu": "මෙනුව",
+    "toggleMenu": "නැවිගේෂන් මෙනුව විවෘත/වසන්න",
+    "mobileNavLabel": "ප්‍රධාන මෙනුව"
+  },
+  "Theme": {
+    "toggle": "තේමාව මාරු කරන්න",
+    "switchToLight": "ආලෝකමත් තේමාවට මාරු වන්න",
+    "switchToDark": "අඳුරු තේමාවට මාරු වන්න"
+  },
+  "LanguageSwitcher": {
+    "label": "භාෂාව",
+    "switchTo": "භාෂාව {language} වලට මාරු කරන්න",
+    "en": "English",
+    "si": "සිංහල"
+  },
+  "Common": {
+    "loading": "පූරණය වෙමින්",
+    "viewAll": "සියල්ල බලන්න",
+    "onThisPage": "මෙම පිටුවේ",
+    "liveSite": "සජීවී වෙබ් අඩවිය",
+    "github": "GitHub",
+    "timeline": "කාලසීමාව",
+    "year": "වර්ෂය",
+    "scheduleCall": "ඇමතුමක් වෙන් කරන්න"
+  },
+  "Home": {
+    "metaTitle": "මුල් පිටුව",
+    "metaDescription": "රෂොද් කොරල — නිව්ෆවුන්ඩ්ලන්තයේ සෙන්ට් ජෝන්ස් හි වාසය කරන software developer, ව්‍යවසායකයෙක් සහ ඡායාරූප ශිල්පියෙක්.",
+    "ogDescription": "නිව්ෆවුන්ඩ්ලන්තයේ සෙන්ට් ජෝන්ස් හි වාසය කරන software developer, ව්‍යවසායකයෙක් සහ ඡායාරූප ශිල්පියෙක්.",
+    "bio1": "ලොකු හීන තියෙන, ශ්‍රී ලංකාවෙන් ආපු, දැන් නිව්ෆවුන්ඩ්ලන්තයේ සෙන්ට් ජෝන්ස් වල ජීවත් වෙන කෙනෙක්. අලුත් අදහස් ඇත්ත දේවල් බවට පත් කරන්න මම ආසයි. ඒක මම කරන්නේ සැබෑ ගැටලු විසඳන නිෂ්පාදන හදලා.",
+    "bio2": "මම <photo>ඡායාරූප ගන්නවා</photo> — වැඩිපුරම ස්වභාවධර්මය, මිනිස්සු, සංස්කෘතිය සහ කෑම; මම ලෝකය දකින විදිහ හැඩගස්වන පුංචි මොහොතවල්.",
+    "portraitAlt": "Rashod Korala",
+    "privacy": "පෞද්ගලිකත්වය"
+  },
+  "Work": {
+    "metaTitle": "වැඩ",
+    "metaDescription": "රෂොද් කොරලගේ case studies සහ ව්‍යාපෘති.",
+    "selected": "තෝරාගත්",
+    "work": "වැඩ",
+    "case": "Case",
+    "studies": "Studies",
+    "tabProjects": "ව්‍යාපෘති",
+    "tabCaseStudies": "Case Studies",
+    "projectCount": "{count, plural, one {ව්‍යාපෘති #} other {ව්‍යාපෘති #}}",
+    "caseStudyCount": "{count, plural, one {case study #} other {case studies #}}",
+    "noProjects": "පෙන්වන්න තවම ව්‍යාපෘති නැහැ.",
+    "noCaseStudies": "තවම case studies පළ කරලා නැහැ.",
+    "appsEyebrow": "ඇප්ස්",
+    "inkbarBlurb": "iPhone සඳහා කොක්ටේල් spec scaler එකක්. එකම offline ඇප් එකක් තුළ scale කරන්න, ඒකක පරිවර්තනය කරන්න, batch හදන්න, house specs තියාගන්න.",
+    "inkbarImageAlt": "InkBar කොක්ටේල් scaler තිරය.",
+    "notFound": "හමු නොවීය",
+    "projectNotFound": "ව්‍යාපෘතිය හමු නොවීය",
+    "projectFallbackDescription": "රෂොද් කොරලගේ {title} ව්‍යාපෘතිය ගවේෂණය කරන්න."
+  },
+  "CaseStudy": {
+    "beforeAfter": "පෙර / පසු",
+    "before": "පෙර",
+    "after": "පසු",
+    "openBefore": "පෙර රූපය විවෘත කරන්න — {title}",
+    "openAfter": "පසු රූපය විවෘත කරන්න — {title}",
+    "gallery": "ගැලරිය",
+    "openGalleryItem": "ගැලරි අයිතම {total} න් {index} වැන්න විවෘත කරන්න — {title}",
+    "galleryItemAlt": "{title} — ගැලරිය {index}",
+    "technology": "තාක්ෂණය",
+    "related": "ආශ්‍රිත",
+    "toolsStack": "මෙවලම් සහ tech stack",
+    "relatedProjects": "ආශ්‍රිත ව්‍යාපෘති"
+  },
+  "Project": {
+    "overview": "දළ විශ්ලේෂණය",
+    "photos": "ඡායාරූප",
+    "video": "වීඩියෝ",
+    "caseStudies": "Case studies",
+    "projectPhotos": "ව්‍යාපෘති ඡායාරූප",
+    "openPhoto": "ඡායාරූප {total} න් {index} වැන්න සම්පූර්ණ තිරයෙන් විවෘත කරන්න",
+    "photoAlt": "{title} ඡායාරූපය {index}",
+    "logoAlt": "{title} ලාංඡනය",
+    "showLess": "අඩුවෙන් පෙන්වන්න",
+    "viewAllPhotos": "සියලු ඡායාරූප බලන්න (+{count})",
+    "toolsTechnology": "මෙවලම් සහ තාක්ෂණය",
+    "relatedCaseStudies": "ආශ්‍රිත case studies"
+  },
+  "Lightbox": {
+    "close": "ගැලරිය වසන්න",
+    "previous": "පෙර රූපය",
+    "next": "ඊළඟ රූපය",
+    "description": "සම්පූර්ණ තිර මාධ්‍ය. පෙර සහ ඊළඟ සඳහා තිරයේ ඇති බොත්තම් හෝ ඊතල යතුරු භාවිතා කරන්න. වැසීමට Escape ඔබන්න.",
+    "imageAlt": "{title} — රූප {total} න් {index} වැන්න"
+  },
+  "Contact": {
+    "metaTitle": "සම්බන්ධ වන්න",
+    "metaDescription": "රෂොද් කොරල සමඟ සම්බන්ධ වන්න.",
+    "heroLine1": "අපි",
+    "heroLine2": "කතා කරමු",
+    "intro": "ව්‍යාපෘති විමසීම් සහ එකතුව වැඩ කිරීම් සඳහා මට සම්බන්ධ වෙන්න හොඳම ක්‍රමය email එකයි. විස්තර පහතින් තියෙනවා, නැත්නම් කෙලින්ම <mail>ඔබේ mail ඇප් එක විවෘත කරන්න</mail>. කතා කරන්න කැමති නම්, <call>කෝපි කතාබහක් වෙන් කරගන්න</call> — අපි සම්බන්ධ වෙමු.",
+    "available": "නව ව්‍යාපෘති සඳහා සූදානම්",
+    "bookCall": "ඇමතුමක් වෙන් කරන්න",
+    "groupReach": "මට සම්බන්ධ වන්න",
+    "groupStudios": "ස්ටූඩියෝ සහ portfolio",
+    "groupSocial": "සමාජ මාධ්‍ය",
+    "email": "Email",
+    "basedIn": "වාසය",
+    "basedInValue": "කැනඩාව",
+    "typicalResponse": "සාමාන්‍ය ප්‍රතිචාර කාලය",
+    "typicalResponseValue": "පැය 48ක් ඇතුළත",
+    "photography": "ඡායාරූප"
+  },
+  "CV": {
+    "metaTitle": "CV",
+    "metaDescription": "රෂොද් කොරලගේ CV — Full Stack Developer සහ ව්‍යවසායක.",
+    "location": "කැනඩාව",
+    "downloadPdf": "PDF බාගන්න",
+    "competencyTitle": "වෘත්තීය නිපුණතා",
+    "competencies": {
+      "fullStack": "Full Stack ඉංජිනේරු කටයුතු",
+      "aiAutomation": "AI workflow ස්වයංක්‍රීයකරණය",
+      "productLeadership": "තාක්ෂණික නිෂ්පාදන නායකත්වය",
+      "productDiscovery": "නිෂ්පාදන සොයාගැනීම සහ පුනරාවර්තනය",
+      "architecture": "පද්ධති ගෘහ නිර්මාණය",
+      "uxSystems": "UI/UX පද්ධති design",
+      "collaboration": "හරස්-කණ්ඩායම් සහයෝගීතාව",
+      "clientDelivery": "සේවාදායක බෙදාහැරීම් කළමනාකරණය",
+      "projectManagement": "ව්‍යාපෘති කළමනාකරණය"
+    },
+    "skillGroups": {
+      "languages": "ක්‍රමලේඛන භාෂා",
+      "frameworks": "Frameworks සහ Libraries",
+      "databases": "දත්ත සමුදායන්",
+      "cloud": "Cloud සහ DevOps",
+      "tools": "මෙවලම් සහ වේදිකා",
+      "concepts": "සංකල්ප"
+    },
+    "certifications": "සහතික",
+    "certIssuers": {
+      "meta": "Meta · 2025 ඔක්තෝබර්",
+      "google": "Google · 2025 නොවැම්බර්",
+      "aws": "Amazon · සිදු වෙමින් පවතී",
+      "java": "2018"
+    },
+    "education": "අධ්‍යාපනය",
+    "degree": "පරිගණක විද්‍යාව පිළිබඳ BSc",
+    "minor": "ව්‍යාපාර පරිපාලනය අනු විෂයය ලෙස",
+    "school": "Memorial University · 2025",
+    "experienceTitle": "අත්දැකීම්",
+    "projectsTitle": "තෝරාගත් ව්‍යාපෘති",
+    "acceleratorsTitle": "Accelerators සහ වැඩසටහන්",
+    "entries": {
+      "rnd": {
+        "date": "2025 මාර්තු — වර්තමානය",
+        "title": "Technical Product Engineer සහ සම-නිර්මාතෘ",
+        "org": "R&D Creative Agency · සෙන්ට් ජෝන්ස්, NL",
+        "description": "විවිධ ක්ෂේත්‍රවල වෙබ් ව්‍යාපෘති, මුල් brief එකේ සිට production-ready ඩිජිටල් නිෂ්පාදන දක්වා සම්පූර්ණ චක්‍රයම මෙහෙයවූවා. සංවර්ධන workflows ස්වයංක්‍රීය කිරීමට Claude Code සහ OpenAI Codex ඇතුළු AI මෙවලම් භාවිතා කළා. Rob Roy, Konfusion සහ MOOV ඇතුළු සේවාදායකයින් සඳහා RESTful APIs සහ third-party integrations design කර ක්‍රියාත්මක කළා. UI/UX මූලධර්ම යොදාගෙන සජීවී නිෂ්පාදන වැඩිදියුණු කර, engagement සහ conversion වැඩි කළා."
+      },
+      "fyynd": {
+        "date": "2026 ජනවාරි — වර්තමානය",
+        "title": "Product Design උපදේශක",
+        "org": "Fyynd Fit · දුරස්ථ — අර්ධකාලීන",
+        "description": "mobile ඇප් එක සහ වෙබ් අඩවිය හරහා navigation ව්‍යුහය නැවත design කර, පරිශීලක බාධා අඩු කර ප්‍රධාන user flows සරල කළා. හරස්-වේදිකා අනුකූලතාව සඳහා දෘශ්‍ය design පද්ධතිය සම්පූර්ණයෙන් ප්‍රතිසංස්කරණය කළා. සංකීර්ණ තොරතුරු පහසුවෙන් කියවිය හැකි වන සේ data visualisation සහ layout වැඩිදියුණු කර, ප්‍රධාන ක්‍රියාවල conversion ඉහළ නැංවුවා."
+      },
+      "aetherlabs": {
+        "date": "2025 ජූනි — වර්තමානය",
+        "title": "සම-නිර්මාතෘ සහ ඉංජිනේරු කණ්ඩායම් නායක",
+        "org": "AetherLabs · සෙන්ට් ජෝන්ස්, NL",
+        "description": "ස්වාධීන කලාකරුවන්ට තම තොග, ලේඛන, provenance සහ ව්‍යාපාරික workflows කළමනාකරණය කිරීමට හැකි back-office වේදිකාවක් ගෘහ නිර්මාණය කර, එහි end-to-end සංවර්ධනය මෙහෙයවූවා. කලාකරුවන්, ගැලරි සහ කෞතුකාගාර සමඟ customer discovery සහ පරිශීලක සම්මුඛ සාකච්ඡා හරහා product-market fit ළඟා කරගත්තා. කැනඩාව පුරා කලාකරුවන් 30,000+ කට සහාය වන පරිදි වේදිකාව පුළුල් කළා. NFC-embedded සත්‍යතා සහතික workflows සහ AI-සහාය ලේඛන නිස්සාරණය ක්‍රියාත්මක කළා."
+      },
+      "paradies": {
+        "date": "2022 ජූනි — වර්තමානය",
+        "title": "තාක්ෂණික සහකාර",
+        "org": "Paradies Lagardère · සෙන්ට් ජෝන්ස් ජාත්‍යන්තර ගුවන්තොටුපළ — අර්ධකාලීන",
+        "description": "POS පද්ධති සහ ගනුදෙනු workflows කළමනාකරණය කරමින්, දෛනික සිල්ලර මෙහෙයුම්වල විශ්වසනීයත්වය පවත්වාගෙන ගියා. තොග සහ වෙළඳ භාණ්ඩ තීරණ සඳහා නිෂ්පාදන කාර්යසාධනය සහ විකුණුම් දත්ත විශ්ලේෂණය කර, අඩු කාර්යසාධනයක් තිබූ නිෂ්පාදන පෙළවල විකුණුම් 30%කින් වැඩි කිරීමට දායක වුණා."
+      },
+      "transcript": {
+        "date": "2025",
+        "title": "Transcript සැකසුම් Pipeline",
+        "org": "TypeScript · Node.js · Anthropic API",
+        "description": "තුන්-මට්ටමේ විශ්වාස වර්ගීකරණයක් සහ RESTful ingestion සේවා භාවිතයෙන්, රැස්වීම් transcripts ව්‍යුහගත CRM දත්ත බවට පරිවර්තනය කරන AI-බලගැන්වූ pipeline එකක්."
+      },
+      "moov": {
+        "date": "සංවර්ධනය වෙමින්",
+        "title": "MOOV Shopify වෙළඳසැල",
+        "org": "Shopify · Liquid · CSS · JavaScript",
+        "description": "smart alarm නිෂ්පාදනයක් දියත් කිරීම සඳහා custom design පද්ධතියක්, responsive UI සහ cross-browser සඳහා ප්‍රශස්ත කළ HTML5/CSS3 සහිත dark-theme Shopify වෙළඳසැලක්."
+      },
+      "fyyndProject": {
+        "date": "2026",
+        "title": "Fyynd Fit — ඇප් සහ වෙබ් අඩවි නැවත design කිරීම",
+        "org": "Figma · fyyndfit.com",
+        "description": "භාවිතයේ පහසුව සහ අතුරුමුහුණතේ එකමුතුකම වැඩිදියුණු කිරීමට navigation ව්‍යුහය, දෘශ්‍ය design පද්ධතිය සහ data visualisation ප්‍රතිසංස්කරණය කරමින් mobile ඇප් සහ වෙබ් අඩවි අත්දැකීම නැවත design කළා."
+      },
+      "aetherlabsProject": {
+        "date": "2025",
+        "title": "AetherLabs — Back Office වේදිකාව",
+        "org": "Next.js · TypeScript · Supabase · PostgreSQL",
+        "description": "තොග, provenance කළමනාකරණය, NFC-embedded සත්‍යතා සහතික workflows, CRM සහ ඉන්වොයිසි ඇතුළු කලාකරුවන්ගේ ව්‍යාපාරික මෙහෙයුම් සඳහා සම්පූර්ණ වේදිකාවක්."
+      },
+      "genesis": {
+        "date": "2026 ශීත ඍතුව",
+        "title": "Genesis Evolve",
+        "org": "Genesis Centre · කැනඩාව",
+        "description": "AetherLabs සමඟ 2026 ශීත ඍතු කණ්ඩායමට තේරී පත් වුණා. customer discovery, නිෂ්පාදන පුනරාවර්තනය සහ ආයෝජක pitch සූදානම සම්පූර්ණ කළා. විනිසුරුවන් සහ ආයෝජකයින්ගෙන් යුත් මණ්ඩලයක් ඉදිරියේ slide 15ක අවසාන pitch එකක් ඉදිරිපත් කළා."
+      },
+      "propel": {
+        "date": "2024",
+        "title": "Propel ICT Vision",
+        "org": "Propel · අත්ලාන්තික් කැනඩාව",
+        "description": "මුල් අදියරේ තාක්ෂණ ව්‍යාපාර සඳහා go-to-market උපාය මාර්ග, ආයෝජක සූදානම සහ product-market fit තහවුරු කිරීම කෙරෙහි අවධානය යොමු කළ accelerator වැඩසටහනට සහභාගී වුණා."
+      }
+    }
+  },
+  "Privacy": {
+    "metaTitle": "පෞද්ගලිකත්වය",
+    "metaDescription": "rashodkorala.com PostHog analytics භාවිතා කරන ආකාරය, එකතු කරන දත්ත සහ ඒවා තබාගන්නා කාලය.",
+    "title": "පෞද්ගලිකත්ව ප්‍රතිපත්තිය",
+    "lastUpdated": "අවසන් වරට යාවත්කාලීන කළේ 2026 අප්‍රේල්. මෙම පිටුව මෙම වෙබ් අඩවියේ analytics ගැන පමණක් විස්තර කරයි.",
+    "analyticsHeading": "Analytics (PostHog)",
+    "analyticsBody": "ගමනාගමනය සහ පිටු භාවිතා වන ආකාරය (උදාහරණයක් ලෙස කුමන පිටු බලනවාද සහ සාමාන්‍ය භාවිත රටා) තේරුම් ගැනීමට මෙම වෙබ් අඩවිය <posthog>PostHog</posthog> නම් product analytics සේවාව භාවිතා කරයි. එය වෙබ් අඩවිය වැඩිදියුණු කිරීමට උපකාරී වේ; ඔබේ දත්ත විකිණීමට එය භාවිතා නොකෙරේ.",
+    "collectHeading": "අප එකතු කරන දේ",
+    "collectBody": "ඔබ වෙබ් අඩවිය පිරික්සන විට, පිටු බැලීම් සහ සිදුවීම් හා සම්බන්ධ තාක්ෂණික සහ භාවිත තොරතුරු PostHog වෙත ලැබිය හැක; උදාහරණ ලෙස: පිටුවේ URL එක, referrer, browser සහ උපාංග වර්ගය, මෙහෙයුම් පද්ධතිය, IP ලිපිනයෙන් ලබාගත් දළ ස්ථානය (උදා. කලාපය/රට), වේලා මුද්‍රා, සහ සැසි වෙන්කර හඳුනාගැනීම සඳහා නිර්නාමික හෝ ව්‍යාජ නාමික හඳුනාගැනීමක් (උදා. cookie හෝ local storage හරහා). අප වෙනත් තැනක පැහැදිලිවම එසේ සකස් කර නොමැති නම්, ඔබේ නම, email ලිපිනය, හෝ වෙනත් සේවා හරහා ඔබ යවන පණිවිඩවල අන්තර්ගතය එකතු කිරීමට අප PostHog භාවිතා නොකරමු.",
+    "retentionHeading": "දත්ත තබාගැනීම",
+    "retentionBody": "සිදුවීම් දත්ත PostHog පද්ධතිවල ගබඩා කෙරෙන අතර, අපගේ PostHog ව්‍යාපෘතියේ සහ සැලැස්මේ සකසා ඇති කාලසීමාව තෙක් තබාගනු ලැබේ. විස්තර සැලැස්ම සහ සැකසුම් අනුව වෙනස් වේ; ඔවුන් දත්ත හසුරුවන සහ තබාගන්නා ආකාරය සඳහා <docs>PostHog හි පෞද්ගලිකත්වය සහ දත්ත පිළිබඳ ලේඛන</docs> බලන්න.",
+    "questions": "ප්‍රශ්න: <mail>hello@rashodkorala.com</mail>."
+  },
+  "Apps": {
+    "metaTitle": "ඇප්ස්",
+    "metaDescription": "රෂොද් කොරල විසින් නිර්මාණය කළ ඇප්ස්.",
+    "ogTitle": "රෂොද් කොරලගේ ඇප්ස්",
+    "ogDescription": "රෂොද් කොරල විසින් නිර්මාණය කළ ස්වාධීන ඇප්ස්.",
+    "eyebrow": "ඇප්ස්",
+    "title": "නිහඬව හැදූ, ප්‍රයෝජනවත් මෙවලම්.",
+    "intro": "එදිනෙදා වැඩ, නිර්මාණාත්මක කටයුතු සහ ප්‍රායෝගික ගණනය කිරීම් සඳහා නිශ්චිත අරමුණක් ඇති ඇප්ස් කුඩා එකතුවක්.",
+    "platformIphone": "iPhone",
+    "inkbarBlurb": "ඕනෑම කොක්ටේල් එකක් ඕනෑම batch එකකට තත්පර කිහිපයකින් scale කරන්න. oz, ml, cl සහ parts අතර පරිවර්තනය කරන්න, දියවීම ඇස්තමේන්තු කරන්න, house specs එකම තැනක තියාගන්න.",
+    "viewApp": "ඇප් එක බලන්න",
+    "inkbarImageAlt": "iPhone එකේ InkBar කොක්ටේල් scaler තිරය."
+  },
+  "InkBar": {
+    "metaDescription": "InkBar මඟින් offline වට්ටෝරු, ඒකක පරිවර්තනය සහ දියවීම් ඇස්තමේන්තු සමඟ iPhone එකේ කොක්ටේල් scale, පරිවර්තනය සහ batch කළ හැක.",
+    "ogTitle": "InkBar: කොක්ටේල් Scaler",
+    "ogDescription": "ඕනෑම කොක්ටේල් එකක් ඕනෑම batch එකකට තත්පර කිහිපයකින් scale කරන්න. oz, ml, cl සහ parts අතර පරිවර්තනය කරන්න, දියවීම ඇස්තමේන්තු කරන්න, house specs එකම තැනක තියාගන්න.",
+    "eyebrow": "iPhone සඳහා InkBar",
+    "title": "කොක්ටේල් ගණිතය, විසඳුණා.",
+    "intro": "ඕනෑම කොක්ටේල් එකක් ඕනෑම batch එකකට තත්පර කිහිපයකින් scale කරන්න. oz, ml, cl සහ parts අතර පරිවර්තනය කරන්න, batch සඳහා දියවීම ඇස්තමේන්තු කරන්න, ඔබේ house specs කියවීමට පහසු එකම තැනක තියාගන්න.",
+    "contactSupport": "සහාය සඳහා සම්බන්ධ වන්න",
+    "privacyPolicy": "පෞද්ගලිකත්ව ප්‍රතිපත්තිය",
+    "heroImageAlt": "Negroni කොක්ටේල් එකක් scale කරන තිරය පෙන්වන iPhone එකේ InkBar.",
+    "features": {
+      "scale": {
+        "title": "bar එකක ඇත්තටම වැඩ කරන හැම විදිහටම scale කරන්න",
+        "body": "multiplier එකකින්, අවශ්‍ය servings ගණනකින්, හෝ අවසාන batch පරිමාවකින් කොක්ටේල් එකක ප්‍රමාණය වෙනස් කරන්න."
+      },
+      "units": {
+        "title": "ඒකක අතර පහසුවෙන් මාරු වන්න",
+        "body": "oz, ml, cl හෝ parts වලින් specs ඇතුළත් කර, ඔබ වත් කරන ඒකකයෙන්ම batch එක කියවන්න."
+      },
+      "dilution": {
+        "title": "දියවීමත් සලකා batch කරන්න",
+        "body": "stirred, shaken සහ built බීම සඳහා අවශ්‍ය ජලය ඇස්තමේන්තු කරන්න; එවිට සූදානම් කළ batch එකක් සේවා ශක්තියට වඩා ළං වේ."
+      },
+      "specs": {
+        "title": "house specs අත ළඟම තියාගන්න",
+        "body": "කාර්යබහුල bar එකක් හරහා එක බැල්මෙන් කියවිය හැකි layout එකක, ඇප් එකේ ඇති සම්භාව්‍ය වට්ටෝරු සමඟම ඔබේම වට්ටෝරුත් සුරකින්න."
+      }
+    },
+    "screensEyebrow": "නිෂ්පාදන තිර",
+    "screensTitle": "සේවය අතරතුර කියවීමට හැදූ.",
+    "screensBody": "විශාල පාලන, සීමිත වෙනස්කම් (contrast) සහ සරල වට්ටෝරු දසුන් නිසා එක බීමක් හෝ සම්පූර්ණ batch එකක් scale කරන අතරතුර InkBar පහසුවෙන් කියවිය හැක.",
+    "screens": {
+      "scaler": {
+        "title": "Scale",
+        "alt": "multiplier, serving, පරිමාව සහ ඒකක පාලන සහිත Negroni වට්ටෝරුවක් පෙන්වන InkBar කොක්ටේල් scaler."
+      },
+      "specs": {
+        "title": "Specs",
+        "alt": "ඇප් එකේ ඇති සම්භාව්‍ය කොක්ටේල් පෙන්වන InkBar specs පුස්තකාලය."
+      },
+      "create": {
+        "title": "සාදන්න",
+        "alt": "අමුද්‍රව්‍ය සහ බීමේ විස්තර ක්ෂේත්‍ර සහිත InkBar නව වට්ටෝරු පෝරමය."
+      },
+      "settings": {
+        "title": "සැකසුම්",
+        "alt": "ඒකක සහ දියවීම් මනාපයන් පෙන්වන InkBar සැකසුම් තිරය."
+      },
+      "launch": {
+        "title": "ආරම්භය",
+        "alt": "ඇප් එකේ නාම සලකුණ සහ කොක්ටේල් වීදුරු අයිකනය සහිත InkBar ආරම්භක තිරය."
+      }
+    },
+    "privateEyebrow": "නිර්මාණයෙන්ම පෞද්ගලික",
+    "privateTitle": "ගිණුමක් නැහැ. ලුහුබැඳීමක් නැහැ. ජාල සම්බන්ධතාවයක් නැහැ.",
+    "noData": "කිසිදු දත්තයක් එකතු නොකෙරේ",
+    "offline": "සම්පූර්ණයෙන්ම offline ක්‍රියා කරයි",
+    "localSpecs": "සුරකින specs ඔබේ උපාංගයේම රැඳේ",
+    "helpTitle": "InkBar ගැන උදව් අවශ්‍යද?",
+    "helpBody": "ප්‍රශ්න, ගැටලු, නව විශේෂාංග අදහස් සහ දෝෂ වාර්තා සාදරයෙන් පිළිගනිමු.",
+    "openSupport": "සහාය පිටුව විවෘත කරන්න"
+  },
+  "InkBarPrivacy": {
+    "metaTitle": "InkBar පෞද්ගලිකත්ව ප්‍රතිපත්තිය",
+    "metaDescription": "InkBar කිසිවක් එකතු නොකරන ලෙස නිර්මාණය කර ඇත. iPhone ඇප් එකේ පෞද්ගලිකත්ව ප්‍රතිපත්තිය කියවන්න.",
+    "title": "InkBar පෞද්ගලිකත්ව ප්‍රතිපත්තිය",
+    "lastUpdated": "අවසන් වරට යාවත්කාලීන කළේ: 2026 ජූනි 26",
+    "intro": "InkBar කිසිවක් එකතු නොකරන ලෙස නිර්මාණය කර ඇත. එහි අර්ථය මෙම ප්‍රතිපත්තිය පැහැදිලි කරයි.",
+    "sections": {
+      "data": {
+        "title": "එකතු කරන දත්ත",
+        "body": "කිසිවක් නැත. InkBar ඔබෙන් ගිණුමක් සාදන ලෙස ඉල්ලා නොසිටින අතර, පෞද්ගලික තොරතුරු ඉල්ලා නොසිටියි, කිසිදු ආකාරයක analytics හෝ ලුහුබැඳීමක් ද අඩංගු නොවේ."
+      },
+      "network": {
+        "title": "ජාල භාවිතය",
+        "body": "InkBar සම්පූර්ණයෙන්ම offline ක්‍රියා කරයි. ඇප් එක කිසිදු ජාල සම්බන්ධතාවයක් ඇති නොකරන අතර ඔබේ උපාංගයෙන් පිටතට කිසිදු තොරතුරක් නොයවයි."
+      },
+      "storage": {
+        "title": "ඔබේ දත්ත ඇත්තේ කොහේද",
+        "body": "ඔබ සාදන ඕනෑම වට්ටෝරුවක් හෝ සටහනක් ඔබේ උපාංගයේම ගබඩා වේ. ඒවා කිසිවෙකුට කිසිදා සම්ප්‍රේෂණය නොකෙරේ. ඇප් එක ඉවත් කිරීමෙන් එම දත්තද ඉවත් වේ."
+      },
+      "thirdParties": {
+        "title": "තෙවන පාර්ශවයන්",
+        "body": "InkBar හි තෙවන පාර්ශව දැන්වීම්, analytics හෝ ලුහුබැඳීමේ මෘදුකාංග අඩංගු නොවන අතර කිසිවෙකු සමඟ දත්ත බෙදා නොගනී."
+      },
+      "children": {
+        "title": "ළමයින්",
+        "body": "InkBar කිසිදු දත්තයක් එකතු නොකරන නිසා, ළමයින්ගෙන්ද කිසිවක් එකතු නොකරයි. ඇප් එක මත්පැන් ගැන සඳහන් කරන නිසා, එය පිළිබිඹු කරන වයස් ශ්‍රේණිගත කිරීමක් එයට ඇත."
+      },
+      "changes": {
+        "title": "වෙනස්කම්",
+        "body": "මෙම ප්‍රතිපත්තිය වෙනස් වුවහොත්, යාවත්කාලීන කළ අනුවාදය නව දිනයක් සමඟ මෙම පිටුවේ පළ කෙරේ."
+      }
+    },
+    "contactTitle": "සම්බන්ධ වන්න",
+    "contactBody": "පෞද්ගලිකත්වය පිළිබඳ ප්‍රශ්න <mail>{email}</mail> වෙත යොමු කළ හැක."
+  },
+  "InkBarSupport": {
+    "metaTitle": "InkBar සහාය",
+    "metaDescription": "iPhone සඳහා කොක්ටේල් scale කිරීමේ මෙවලමක් වන InkBar සඳහා සහාය තොරතුරු සහ නිතර අසන ප්‍රශ්න.",
+    "title": "InkBar සහාය",
+    "intro": "InkBar යනු iPhone සඳහා කොක්ටේල් scale කිරීමේ මෙවලමකි. ඔබට ප්‍රශ්නයක්, ගැටලුවක් හෝ ඉල්ලීමක් ඇත්නම්, සම්බන්ධ වන්න — මම උදව් කරන්නම්.",
+    "contact": "සම්බන්ධ වන්න: <mail>{email}</mail>",
+    "responseTime": "සාමාන්‍ය ප්‍රතිචාර කාලය: ව්‍යාපාරික දින දෙකක් හෝ තුනක්.",
+    "faqTitle": "නිතර අසන ප්‍රශ්න",
+    "faq": {
+      "scaling": {
+        "question": "scale කිරීම ක්‍රියා කරන්නේ කොහොමද?",
+        "answer": "ක්‍රම තුනෙන් එකක් තෝරන්න. Multiplier මඟින් සම්පූර්ණ වට්ටෝරුව සාධකයකින් විශාල/කුඩා කරයි. Servings මඟින් අවශ්‍ය බීම ගණනකට scale කරයි. Batch volume මඟින් ඔබ සකසන අවසාන මුළු පරිමාවට වට්ටෝරුව scale කරයි."
+      },
+      "units": {
+        "question": "සහාය දක්වන ඒකක මොනවාද?",
+        "answer": "ounces, millilitres, centilitres සහ parts. ඔබට එක් ඒකකයකින් වට්ටෝරුවක් ඇතුළත් කර තවත් ඒකකයකින් එය කියවිය හැක."
+      },
+      "dilution": {
+        "question": "දියවීම් ඇස්තමේන්තුව කරන්නේ මොකක්ද?",
+        "answer": "බීම stirred, shaken හෝ built ද යන්න මත පදනම්ව, batch සඳහා ආසන්න ජල ප්‍රමාණයක් එකතු කරයි. මෙම අගයන් මාර්ගෝපදේශයක් පමණි; රස බලා සකස් කරන්න."
+      },
+      "storage": {
+        "question": "මගේ දත්ත ගබඩා වන්නේ කොහේද?",
+        "answer": "ඔබේ උපාංගයේ පමණි. InkBar හි ගිණුමක් නැති අතර ජාල සම්බන්ධතාවයක්ද ඇති නොකරයි; එබැවින් ඔබ සුරකින specs කිසිදා ඔබේ phone එකෙන් පිටතට නොයයි."
+      },
+      "dashes": {
+        "question": "dashes හෝ bar spoons සඳහා ප්‍රමාණ ආසන්න අගයන් ලෙස පෙනේ.",
+        "answer": "ඔව්, ඒවා ආසන්න අගයන්. dashes සහ bar spoons bartender අනුව වෙනස් වන නිසා, ඒවා නිශ්චිත මිනුමක් ලෙස නොව ආරම්භක ලක්ෂ්‍යයක් ලෙස සලකන්න."
+      }
+    },
+    "feedbackTitle": "ප්‍රතිපෝෂණ",
+    "feedbackBody": "නව විශේෂාංග අදහස් සහ දෝෂ වාර්තා <mail>{email}</mail> වෙත සාදරයෙන් පිළිගනිමු."
+  },
+  "NotFound": {
+    "eyebrow": "හමු නොවීය",
+    "body": "මෙම පිටුව නොපවතී. එය ගෙන යන්න හෝ ඉවත් කරන්න ඇති.",
+    "backHome": "මුල් පිටුවට"
+  },
+  "Error": {
+    "eyebrow": "යමක් වැරදුණා",
+    "title": "අනපේක්ෂිත දෝෂයක්",
+    "body": "මෙම පිටුව පූරණය කිරීමේදී දෝෂයක් ඇති වුණා. කරුණාකර නැවත උත්සාහ කරන්න.",
+    "retry": "නැවත උත්සාහ කරන්න"
+  }
+}

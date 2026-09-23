@@ -1,8 +1,38 @@
 import { revalidatePath, revalidateTag } from "next/cache"
 import { NextResponse } from "next/server"
+import { getAllCaseStudies } from "@/lib/supabase/case-studies"
+import { getAllProjects } from "@/lib/supabase/projects"
+import { routing } from "@/i18n/routing"
 
 const PROJECTS_TAG = "projects"
 const CASE_STUDIES_TAG = "case-studies"
+const BLOGS_TAG = "blogs-portfolio"
+
+const STATIC_PATHS = [
+  "/",
+  "/work",
+  "/work/projects",
+  "/contact",
+  "/cv",
+  "/privacy",
+  "/apps",
+  "/apps/inkbar",
+  "/apps/inkbar/support",
+  "/apps/inkbar/privacy",
+  "/inkbar",
+  "/inkbar/privacy",
+  "/inkbar/support",
+] as const
+
+/**
+ * Pages live under app/[locale]/, and the i18n middleware rewrites unprefixed English URLs
+ * to /en/*, so the cached entries are keyed by the prefixed path for every locale.
+ */
+function revalidateLocalizedPath(path: string) {
+  for (const locale of routing.locales) {
+    revalidatePath(path === "/" ? `/${locale}` : `/${locale}${path}`)
+  }
+}
 
 function unauthorized() {
   return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
@@ -25,8 +55,42 @@ export async function POST(request: Request) {
 
   revalidateTag(PROJECTS_TAG)
   revalidateTag(CASE_STUDIES_TAG)
-  revalidatePath("/")
-  revalidatePath("/work")
+  revalidateTag(BLOGS_TAG)
 
-  return NextResponse.json({ revalidated: true })
+  const slugPaths: string[] = []
+  try {
+    const [projects, caseStudies] = await Promise.all([
+      getAllProjects(),
+      getAllCaseStudies(),
+    ])
+    const slugs = new Set<string>()
+    for (const project of projects) {
+      if (project.slug) slugs.add(project.slug)
+    }
+    for (const study of caseStudies) {
+      if (study.slug) slugs.add(study.slug)
+    }
+    for (const slug of Array.from(slugs)) {
+      revalidateTag(`case-study-${slug}`)
+      revalidateLocalizedPath(`/work/${slug}`)
+      revalidateLocalizedPath(`/work/projects/${slug}`)
+      slugPaths.push(slug)
+    }
+  } catch (error) {
+    console.error("[revalidate] failed to load slugs for path revalidation:", error)
+  }
+
+  revalidatePath("/", "layout")
+
+  for (const path of STATIC_PATHS) {
+    revalidateLocalizedPath(path)
+  }
+
+  return NextResponse.json({
+    revalidated: true,
+    full: true,
+    tags: [PROJECTS_TAG, CASE_STUDIES_TAG, BLOGS_TAG],
+    staticPaths: STATIC_PATHS.length,
+    dynamicSlugs: slugPaths.length,
+  })
 }

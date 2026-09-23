@@ -10,7 +10,9 @@ import { Textarea } from "@/components/ui/textarea"
 import { Card } from "@/components/ui/card"
 import { IconX } from "@tabler/icons-react"
 import type { Project, ProjectFormData } from "@/lib/types/project"
+import type { SinhalaValues, TranslationStatus } from "@/lib/types/translation"
 import { createProject, updateProject } from "@/lib/actions/projects"
+import { SinhalaFieldsCard } from "@/components/translation/sinhala-fields-card"
 
 interface ProjectFormProps {
   project?: Project
@@ -58,6 +60,10 @@ export function ProjectForm({ project }: ProjectFormProps) {
   const [existingProjectMedia, setExistingProjectMedia] = useState(project?.projectMedia || [])
   const [mediaPreviewUrls, setMediaPreviewUrls] = useState<string[]>([])
   const [techInput, setTechInput] = useState("")
+  const [sinhala, setSinhala] = useState<SinhalaValues>(project?.sinhala ?? {})
+  const [translationStatus, setTranslationStatus] = useState<TranslationStatus | null>(project?.translationStatus ?? null)
+  const [translatedAt, setTranslatedAt] = useState<string | null>(project?.translatedAt ?? null)
+  const [markReviewed, setMarkReviewed] = useState(project?.translationStatus === "reviewed")
 
   const handleTitleChange = (title: string) => {
     setFormData(prev => ({
@@ -156,6 +162,8 @@ export function ProjectForm({ project }: ProjectFormProps) {
         clearCoverImage,
         existingProjectMedia,
         mediaFiles,
+        sinhala,
+        markTranslationReviewed: markReviewed,
       }
 
       if (isEditing && project) {
@@ -313,6 +321,30 @@ export function ProjectForm({ project }: ProjectFormProps) {
           )}
         </div>
       </Card>
+
+      <SinhalaFieldsCard
+        kind="project"
+        itemId={project?.id}
+        fields={[
+          { column: "title", label: "Title", english: formData.title },
+          { column: "subtitle", label: "Subtitle", english: formData.subtitle },
+          { column: "short_description", label: "Short Description", english: formData.shortDescription, rows: 3 },
+          { column: "role", label: "Role", english: formData.role },
+          { column: "timeline", label: "Timeline", english: formData.timeline },
+        ]}
+        values={sinhala}
+        onChange={setSinhala}
+        status={translationStatus}
+        translatedAt={translatedAt}
+        reviewed={markReviewed}
+        onReviewedChange={setMarkReviewed}
+        onTranslated={(result) => {
+          setSinhala(result.sinhala)
+          setTranslationStatus(result.status)
+          setTranslatedAt(result.translatedAt)
+          setMarkReviewed(false)
+        }}
+      />
 
       <div className="flex gap-3 justify-end">
         <Button type="button" variant="outline" onClick={() => router.push("/protected/work")} disabled={isLoading}>Cancel</Button>

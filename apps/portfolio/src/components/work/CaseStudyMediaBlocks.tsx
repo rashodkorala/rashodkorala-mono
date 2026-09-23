@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useCallback, useMemo, useState, type CSSProperties } from "react";
+import { useTranslations } from "next-intl";
 import { jakartaSans } from "@/lib/font";
 import ProjectPhotoLightbox from "./ProjectPhotoLightbox";
 
@@ -24,6 +25,7 @@ export default function CaseStudyMediaBlocks({
   screenshotSrcs,
   sectionLabel,
 }: CaseStudyMediaBlocksProps) {
+  const t = useTranslations("CaseStudy");
   const lightboxImages = useMemo(() => {
     const out: string[] = [];
     if (beforeSrc) out.push(beforeSrc);
@@ -61,21 +63,21 @@ export default function CaseStudyMediaBlocks({
     <>
       {hasBeforeAfter && (
         <section id="cs-before-after" style={{ margin: "clamp(24px,3vw,44px) 0" }}>
-          <p style={{ ...sectionLabel, marginBottom: "clamp(12px,1.2vw,16px)" }}>Before / After</p>
+          <p style={{ ...sectionLabel, marginBottom: "clamp(12px,1.2vw,16px)" }}>{t("beforeAfter")}</p>
           <div style={{ display: "grid", gridTemplateColumns: baCols, gap: "clamp(8px,1vw,16px)" }}>
             {beforeSrc && (
               <div>
-                <p style={captionStyle}>Before</p>
+                <p style={captionStyle}>{t("before")}</p>
                 <button
                   type="button"
                   className="cs-case-thumb-btn"
-                  aria-label={`Open before image — ${caseTitle}`}
+                  aria-label={t("openBefore", { title: caseTitle })}
                   onClick={() => openAt(0)}
                 >
                   <div className="cs-case-ba-frame">
                     <Image
                       src={beforeSrc}
-                      alt="Before"
+                      alt={t("before")}
                       width={1600}
                       height={2000}
                       sizes="(max-width:900px) 50vw, min(480px, 40vw)"
@@ -88,17 +90,17 @@ export default function CaseStudyMediaBlocks({
             )}
             {afterSrc && (
               <div>
-                <p style={captionStyle}>After</p>
+                <p style={captionStyle}>{t("after")}</p>
                 <button
                   type="button"
                   className="cs-case-thumb-btn"
-                  aria-label={`Open after image — ${caseTitle}`}
+                  aria-label={t("openAfter", { title: caseTitle })}
                   onClick={() => openAt(beforeSrc ? 1 : 0)}
                 >
                   <div className="cs-case-ba-frame">
                     <Image
                       src={afterSrc}
-                      alt="After"
+                      alt={t("after")}
                       width={1600}
                       height={2000}
                       sizes="(max-width:900px) 50vw, min(480px, 40vw)"
@@ -115,7 +117,7 @@ export default function CaseStudyMediaBlocks({
 
       {screenshotSrcs.length > 0 && (
         <div id="cs-gallery" style={{ margin: "clamp(24px,3vw,44px) 0" }}>
-          <p style={{ ...sectionLabel, marginBottom: "clamp(12px,1.2vw,16px)" }}>Gallery</p>
+          <p style={{ ...sectionLabel, marginBottom: "clamp(12px,1.2vw,16px)" }}>{t("gallery")}</p>
           <div
             className="cs-img-duo"
             style={{
@@ -131,7 +133,7 @@ export default function CaseStudyMediaBlocks({
                   key={`${src}-${i}`}
                   type="button"
                   className={isWideLead ? "cs-case-thumb-btn cs-case-gallery-lead" : "cs-case-thumb-btn"}
-                  aria-label={`Open gallery item ${i + 1} of ${screenshotSrcs.length} — ${caseTitle}`}
+                  aria-label={t("openGalleryItem", { index: i + 1, total: screenshotSrcs.length, title: caseTitle })}
                   onClick={() => openAt(galleryOffset + i)}
                 >
                   <div className="cs-case-gallery-frame">
@@ -146,7 +148,7 @@ export default function CaseStudyMediaBlocks({
                     ) : (
                       <Image
                         src={src}
-                        alt={`${caseTitle} — gallery ${i + 1}`}
+                        alt={t("galleryItemAlt", { title: caseTitle, index: i + 1 })}
                         width={2000}
                         height={1600}
                         sizes={isWideLead ? "(max-width:900px) 100vw, min(900px, 75vw)" : "(max-width:900px) 48vw, 28vw"}

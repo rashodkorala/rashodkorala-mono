@@ -23,6 +23,8 @@ pnpm build            # Build all apps
 pnpm lint             # Lint all apps
 pnpm clean            # Remove .next dirs
 pnpm clean:all        # Remove .next + node_modules
+pnpm translate        # Translate new/changed portfolio UI strings en.json → si.json (OpenAI)
+pnpm translate:check  # Fail if si.json is behind en.json
 ```
 
 ## Tech Stack
@@ -64,6 +66,7 @@ rashodkorala-mono/
 │       └── lib/supabase/       # Data layer: projects.ts, case-studies.ts + cached wrappers
 │
 ├── packages/
+│   ├── translate/                  # Shared English → Sinhala translation (OpenAI)
 │   └── theView/                    # Shared markdown rendering package
 │       ├── src/
 │       │   ├── utils/             # renderMarkdown() utility
@@ -160,6 +163,9 @@ SUPABASE_ANON_KEY
 SUPABASE_SERVICE_ACCOUNT_EMAIL
 SUPABASE_SERVICE_ACCOUNT_PASSWORD
 
+# Sinhala translation (CMS auto-translate + `pnpm translate`); optional model override
+TRANSLATION_MODEL                 # defaults to gpt-4o; uses OPENAI_API_KEY
+
 # Analytics
 NEXT_PUBLIC_POSTHOG_KEY
 NEXT_PUBLIC_POSTHOG_HOST
@@ -184,4 +190,6 @@ NEXT_PUBLIC_POSTHOG_HOST
 - Shared packages: Use workspace packages (`packages/*`) for code shared across multiple apps
 - Analytics: PostHog tracks page views and events on the portfolio — no custom analytics table
 - Case study content: `content_md` stored directly in DB; use `renderMarkdown()` from `@rashodkorala/theView` to render it
+- i18n (portfolio): next-intl, locales `en` (unprefixed URLs) + `si` (`/si/*`). All pages live under `app/[locale]/`; UI strings in `apps/portfolio/messages/{en,si}.json` (en is the source of truth; edit en, then `pnpm translate`). Use `Link`/`redirect` from `@/i18n/navigation`, and call `setRequestLocale` + set `alternates: localeAlternates(path, locale)` in every page
+- Sinhala content: `projects` / `case_studies` have `<field>_si` columns filled by the CMS on save (`apps/cms/lib/translation/content.ts`, shared OpenAI code in `packages/translate`). Portfolio swaps them in via `localizeProject` / `localizeCaseStudy` (`apps/portfolio/lib/localize.ts`), falling back to English
 - Media paths: case study cover/gallery images are stored as paths (not full URLs) in `cover_path` / `gallery_paths`; resolve via `supabase.storage.from('media').getPublicUrl(path)` before rendering

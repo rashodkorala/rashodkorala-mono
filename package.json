@@ -18,6 +18,8 @@
     "build:portfolio": "pnpm --filter @rashodkorala/portfolio build",
     "build:photos": "pnpm --filter @rashodkorala/photos build",
     "lint": "pnpm --filter \"./apps/*\" lint",
+    "translate": "pnpm --filter @rashodkorala/portfolio translate",
+    "translate:check": "pnpm --filter @rashodkorala/portfolio translate:check",
     "clean": "pnpm --filter \"./apps/*\" exec rm -rf node_modules .next",
     "clean:all": "rm -rf node_modules && pnpm clean"
   },

@@ -21,6 +21,12 @@ export interface Project {
   tech_stack?: string[] | null;
   live_url?: string;
   github_url?: string;
+  // Sinhala translations (filled by the CMS; empty → English is shown)
+  title_si?: string | null;
+  subtitle_si?: string | null;
+  short_description_si?: string | null;
+  role_si?: string | null;
+  timeline_si?: string | null;
   created_at: string;
   updated_at: string;
   relatedCaseStudies?: CaseStudy[];
@@ -54,6 +60,12 @@ export interface CaseStudy {
   timeline?: string | null;
   links?: CaseStudyLink[] | null;
   stack?: string[] | null;
+  // Sinhala translations (filled by the CMS; empty → English is shown)
+  title_si?: string | null;
+  summary_si?: string | null;
+  content_md_si?: string | null;
+  role_si?: string | null;
+  timeline_si?: string | null;
   created_at: string;
   updated_at: string;
   relatedProjects?: Project[];

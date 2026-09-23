@@ -1,22 +1,28 @@
 import React from "react";
+import { useTranslations } from "next-intl";
 import CalendlyPopupButton from "./CalendlyPopupButton";
 import CalendlyInlineWidget from "./CalendlyInlineWidget";
 import { Suspense } from "react";
 type ContactRow = { label: string; value: string; href: string | null };
 
-type ContactGroup = { title: string; items: ContactRow[] };
+/** `id` is stable (used for element ids); `title` is the translated heading. */
+type ContactGroup = { id: string; title: string; items: ContactRow[] };
 
-const contactGroups: ContactGroup[] = [
+type ContactT = ReturnType<typeof useTranslations<"Contact">>;
+
+const buildContactGroups = (t: ContactT): ContactGroup[] => [
   {
-    title: "Reach me",
+    id: "reach-me",
+    title: t("groupReach"),
     items: [
-      { label: "Email", value: "hello@rashodkorala.com", href: "mailto:hello@rashodkorala.com" },
-      { label: "Based in", value: "Canada", href: null },
-      { label: "Typical response", value: "Within 48 hours", href: null },
+      { label: t("email"), value: "hello@rashodkorala.com", href: "mailto:hello@rashodkorala.com" },
+      { label: t("basedIn"), value: t("basedInValue"), href: null },
+      { label: t("typicalResponse"), value: t("typicalResponseValue"), href: null },
     ],
   },
   {
-    title: "Studios & portfolio",
+    id: "studios-portfolio",
+    title: t("groupStudios"),
     items: [
       {
         label: "R&D Creative Agency",
@@ -29,14 +35,15 @@ const contactGroups: ContactGroup[] = [
         href: "https://www.aetherlabs.art",
       },
       {
-        label: "Photography",
+        label: t("photography"),
         value: "photos.rashodkorala.com",
         href: "https://photos.rashodkorala.com",
       },
     ],
   },
   {
-    title: "Social",
+    id: "social",
+    title: t("groupSocial"),
     items: [
       { label: "GitHub", value: "rashodkorala", href: "https://github.com/rashodkorala" },
       { label: "Instagram", value: "@rashodk_", href: "https://instagram.com/rashodk_" },
@@ -45,12 +52,10 @@ const contactGroups: ContactGroup[] = [
   },
 ];
 
-const [reachGroup, ...linkGroups] = contactGroups;
-
 const linkUnderlineClass = "text-link underline decoration-link-underline underline-offset-4 transition-colors hover:text-link-hover";
 
-function groupHeadingId(title: string) {
-  return `ct-group-${title.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "")}`;
+function groupHeadingId(id: string) {
+  return `ct-group-${id}`;
 }
 
 function ContactField({ label, value, href }: ContactRow) {
@@ -88,22 +93,25 @@ function ContactGroupSection({
     <section
       className="ct-contact-group"
       id={sectionId}
-      aria-labelledby={groupHeadingId(group.title)}
+      aria-labelledby={groupHeadingId(group.id)}
     >
       <h2
-        id={groupHeadingId(group.title)}
+        id={groupHeadingId(group.id)}
         className="mb-[clamp(var(--fib-21),2vw,1.375rem)] font-sans text-label font-semibold uppercase tracking-caps text-heading"
       >
         {group.title}
       </h2>
       {group.items.map((row, i) => (
-        <ContactField key={`${group.title}-${row.label}-${i}`} {...row} />
+        <ContactField key={`${group.id}-${i}`} {...row} />
       ))}
     </section>
   );
 }
 
 export default function ContactContent() {
+  const t = useTranslations("Contact");
+  const [reachGroup, ...linkGroups] = buildContactGroups(t);
+
   return (
     <>
       <style>{`
@@ -125,7 +133,7 @@ export default function ContactContent() {
           }
         }
         .ct-hero-contact {
-          font-family: var(--font-jakarta), system-ui, sans-serif;
+          font-family: var(--font-sans-stack);
           font-weight: 700;
           letter-spacing: var(--tracking-h1);
           line-height: 0.88;
@@ -162,25 +170,27 @@ export default function ContactContent() {
         <main className="ct-contact-grid min-w-0 max-w-full">
           <div className="ct-col-intro">
             <h1 className="ct-hero-contact mb-[clamp(var(--fib-21),3.5vw,var(--fib-34))]">
-              Get
+              {t("heroLine1")}
               <span className="block pl-[clamp(var(--fib-21),3.5vw,var(--fib-55))] text-body-secondary">
-                in touch
+                {t("heroLine2")}
               </span>
             </h1>
 
             <p className="mb-[clamp(var(--fib-21),3vw,var(--fib-34))] max-w-reading font-sans text-[length:clamp(var(--fib-21),1.3vw,1.125rem)] leading-body text-body-secondary">
-              Email is the best way to reach me for project inquiries and
-              collaborations. Find the details below, or{" "}
-              <a href="mailto:hello@rashodkorala.com" className={linkUnderlineClass}>
-                open your mail app
-              </a>{" "}
-              directly. If you would rather talk,{" "}
-              <Suspense>
-                <CalendlyPopupButton className={linkUnderlineClass}>
-                  book a quick coffee chat
-                </CalendlyPopupButton>
-              </Suspense>{" "}
-              and let&rsquo;s connect.
+              {t.rich("intro", {
+                mail: (chunks) => (
+                  <a href="mailto:hello@rashodkorala.com" className={linkUnderlineClass}>
+                    {chunks}
+                  </a>
+                ),
+                call: (chunks) => (
+                  <Suspense>
+                    <CalendlyPopupButton className={linkUnderlineClass}>
+                      {chunks}
+                    </CalendlyPopupButton>
+                  </Suspense>
+                ),
+              })}
             </p>
 
             <div className="flex items-center gap-fib-13">
@@ -189,15 +199,15 @@ export default function ContactContent() {
                 aria-hidden
               />
               <span className="font-sans text-nav font-medium text-[var(--color-success)]">
-                Available for new projects
+                {t("available")}
               </span>
             </div>
 
             <div className="ct-reach-section">
-              <ContactGroupSection group={reachGroup} sectionId="reach-me" />
+              <ContactGroupSection group={reachGroup} sectionId={reachGroup.id} />
               <div className="ct-contact-field mb-[clamp(var(--fib-13),1.8vw,var(--fib-21))]">
                 <p className="mb-fib-8 font-sans text-label uppercase tracking-caps text-body-secondary">
-                  Book a call
+                  {t("bookCall")}
                 </p>
                 <p className="ct-contact-value font-sans font-semibold leading-[1.35] tracking-h2 text-heading">
                   <Suspense>
@@ -210,7 +220,7 @@ export default function ContactContent() {
 
           <div className="ct-col-links">
             {linkGroups.map((group) => (
-              <ContactGroupSection key={group.title} group={group} />
+              <ContactGroupSection key={group.id} group={group} />
             ))}
           </div>
         </main>

@@ -11,7 +11,9 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Card } from "@/components/ui/card"
 import { IconX } from "@tabler/icons-react"
 import type { CaseStudy, CaseStudyFormData } from "@/lib/types/case-study"
+import type { SinhalaValues, TranslationStatus } from "@/lib/types/translation"
 import { createOrUpdateCaseStudy } from "@/lib/actions/case-studies"
+import { SinhalaFieldsCard } from "@/components/translation/sinhala-fields-card"
 
 interface CaseStudyFormProps {
   caseStudy?: CaseStudy
@@ -77,6 +79,11 @@ export function CaseStudyForm({ caseStudy, availableProjects }: CaseStudyFormPro
       ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/media/${caseStudy.beforeAfter.afterImage}`
       : null
   )
+
+  const [sinhala, setSinhala] = useState<SinhalaValues>(caseStudy?.sinhala ?? {})
+  const [translationStatus, setTranslationStatus] = useState<TranslationStatus | null>(caseStudy?.translationStatus ?? null)
+  const [translatedAt, setTranslatedAt] = useState<string | null>(caseStudy?.translatedAt ?? null)
+  const [markReviewed, setMarkReviewed] = useState(caseStudy?.translationStatus === "reviewed")
 
   const [tagsCsv, setTagsCsv] = useState((caseStudy?.tags || []).join(", "))
   const [stackCsv, setStackCsv] = useState((caseStudy?.stack || []).join(", "))
@@ -235,7 +242,7 @@ export function CaseStudyForm({ caseStudy, availableProjects }: CaseStudyFormPro
 
     try {
       await createOrUpdateCaseStudy(
-        { ...formData, existingGallery, galleryFiles },
+        { ...formData, existingGallery, galleryFiles, sinhala, markTranslationReviewed: markReviewed },
         caseStudy?.id,
         linkedProjectIds
       )
@@ -544,6 +551,30 @@ export function CaseStudyForm({ caseStudy, availableProjects }: CaseStudyFormPro
           </div>
         )}
       </Card>
+
+      <SinhalaFieldsCard
+        kind="case_study"
+        itemId={caseStudy?.id}
+        fields={[
+          { column: "title", label: "Title", english: formData.title },
+          { column: "summary", label: "Summary", english: formData.summary, rows: 2 },
+          { column: "role", label: "Role", english: formData.role },
+          { column: "timeline", label: "Timeline", english: formData.timeline },
+          { column: "content_md", label: "Content (Markdown)", english: formData.contentMd, rows: 16, markdown: true },
+        ]}
+        values={sinhala}
+        onChange={setSinhala}
+        status={translationStatus}
+        translatedAt={translatedAt}
+        reviewed={markReviewed}
+        onReviewedChange={setMarkReviewed}
+        onTranslated={(result) => {
+          setSinhala(result.sinhala)
+          setTranslationStatus(result.status)
+          setTranslatedAt(result.translatedAt)
+          setMarkReviewed(false)
+        }}
+      />
 
       <div className="flex gap-3 justify-end">
         <Button type="button" variant="outline" onClick={() => router.push("/protected/work")} disabled={isLoading}>Cancel</Button>

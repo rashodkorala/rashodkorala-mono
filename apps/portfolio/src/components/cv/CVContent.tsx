@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { useTranslations, type Messages } from "next-intl";
 
 // Design: editorial sidebar layout
 // Sidebar: narrow fluid column with skills/certs/education
@@ -8,9 +9,14 @@ import React from "react";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
+type CvT = ReturnType<typeof useTranslations<"CV">>;
+type EntryKey = keyof Messages["CV"]["entries"];
+
 interface SkillItem  { name: string; strong?: boolean; }
-interface SkillGroup { label: string; items: SkillItem[]; }
-interface Cert       { name: string; issuer: string; }
+interface SkillGroup { key: keyof Messages["CV"]["skillGroups"]; items: SkillItem[]; }
+interface Cert       { name: string; issuerKey: keyof Messages["CV"]["certIssuers"]; }
+/** Text (date/title/org/description) lives in messages under CV.entries.<id>. */
+interface EntryRef   { id: EntryKey; tags?: string[]; }
 interface Entry {
   id: string;
   date: string;
@@ -21,10 +27,11 @@ interface Entry {
 }
 
 // ─── Data ─────────────────────────────────────────────────────────────────────
+// Skill and certification names are proper nouns and stay untranslated.
 
 const skills: SkillGroup[] = [
   {
-    label: "Languages",
+    key: "languages",
     items: [
       { name: "TypeScript",  strong: true },
       { name: "JavaScript",  strong: true },
@@ -33,7 +40,7 @@ const skills: SkillGroup[] = [
     ],
   },
   {
-    label: "Frameworks & Libraries",
+    key: "frameworks",
     items: [
       { name: "React / Next.js", strong: true },
       { name: "React Native",    strong: true },
@@ -43,14 +50,14 @@ const skills: SkillGroup[] = [
     ],
   },
   {
-    label: "Databases",
+    key: "databases",
     items: [
       { name: "PostgreSQL", strong: true },
       { name: "Supabase",   strong: true },
     ],
   },
   {
-    label: "Cloud & DevOps",
+    key: "cloud",
     items: [
       { name: "AWS",       strong: true },
       { name: "Azure" },
@@ -60,7 +67,7 @@ const skills: SkillGroup[] = [
     ],
   },
   {
-    label: "Tools & Platforms",
+    key: "tools",
     items: [
       { name: "Figma" },
       { name: "Shopify / Liquid" },
@@ -73,7 +80,7 @@ const skills: SkillGroup[] = [
     ],
   },
   {
-    label: "Concepts",
+    key: "concepts",
     items: [
       { name: "REST APIs" },
       { name: "AI Automation" },
@@ -86,108 +93,53 @@ const skills: SkillGroup[] = [
 ];
 
 const certs: Cert[] = [
-  { name: "Meta Front-End Developer",         issuer: "Meta · Oct 2025" },
-  { name: "Google IT Support Professional",   issuer: "Google · Nov 2025" },
-  { name: "AWS Cloud Practitioner",           issuer: "Amazon · In progress" },
-  { name: "Master Java Comprehensive Developer", issuer: "2018" },
+  { name: "Meta Front-End Developer",            issuerKey: "meta" },
+  { name: "Google IT Support Professional",      issuerKey: "google" },
+  { name: "AWS Cloud Practitioner",              issuerKey: "aws" },
+  { name: "Master Java Comprehensive Developer", issuerKey: "java" },
 ];
 
-const experience: Entry[] = [
-  {
-    id: "rnd",
-    date: "Mar 2025 — Present",
-    title: "Technical Product Engineer & Co-Founder",
-    org: "R&D Creative Agency · St. John's, NL",
-    description:
-      "Led full-cycle delivery of web projects across multiple sectors, from brief to production-ready digital products. Leveraged AI tooling including Claude Code and OpenAI Codex to automate development workflows. Designed and implemented RESTful APIs and third-party integrations for clients including Rob Roy, Konfusion, and MOOV. Applied UI/UX principles to improve live products, enhancing engagement and conversion.",
-    tags: ["React", "Node.js", "Shopify", "Claude Code", "OpenAI Codex"],
-  },
-  {
-    id: "fyynd",
-    date: "Jan 2026 — Present",
-    title: "Product Design Consultant",
-    org: "Fyynd Fit · Remote — Part-Time",
-    description:
-      "Redesigned navigation architecture across mobile app and website, reducing user friction and simplifying core user flows. Overhauled the visual design system for cross-platform consistency. Improved data visualisation and layout to make complex information more scannable, driving higher conversion on key actions.",
-    tags: ["UI/UX", "Design Systems", "Mobile", "Figma"],
-  },
-  {
-    id: "aetherlabs",
-    date: "Jun 2025 — Present",
-    title: "Co-Founder & Engineering Team Lead",
-    org: "AetherLabs · St. John's, NL",
-    description:
-      "Architected and led end-to-end development of a back-office platform enabling independent artists to manage inventory, documentation, provenance, and business workflows. Drove product-market fit through customer discovery and user interviews with artists, galleries, and museums. Scaled the platform to support 30,000+ artists across Canada. Implemented NFC-embedded certificate-of-authenticity workflows and AI-assisted document extraction.",
-    tags: ["React Native", "Next.js", "Supabase", "PostgreSQL", "NFC"],
-  },
-  {
-    id: "paradies",
-    date: "Jun 2022 — Present",
-    title: "Technical Associate",
-    org: "Paradies Lagardère · St. John's International Airport — Part-Time",
-    description:
-      "Managed POS systems and transaction workflows, maintaining operational reliability across daily retail operations. Analysed product performance and sales data to inform stocking and merchandising decisions, contributing to a 30% increase in sales for underperforming product lines.",
-    tags: [],
-  },
+const competencies: (keyof Messages["CV"]["competencies"])[] = [
+  "fullStack",
+  "aiAutomation",
+  "productLeadership",
+  "productDiscovery",
+  "architecture",
+  "uxSystems",
+  "collaboration",
+  "clientDelivery",
+  "projectManagement",
 ];
 
-const projects: Entry[] = [
-  {
-    id: "transcript",
-    date: "2025",
-    title: "Transcript Processing Pipeline",
-    org: "TypeScript · Node.js · Anthropic API",
-    description:
-      "AI-powered pipeline that transforms meeting transcripts into structured CRM data using a three-tier confidence taxonomy and RESTful ingestion services.",
-    tags: ["TypeScript", "Anthropic API", "Node.js"],
-  },
-  {
-    id: "moov",
-    date: "In Development",
-    title: "MOOV Shopify Storefront",
-    org: "Shopify · Liquid · CSS · JavaScript",
-    description:
-      "Dark-themed Shopify storefront with a custom design system, responsive UI, and cross-browser-optimised HTML5/CSS3 for a smart alarm product launch.",
-    tags: ["Shopify", "Liquid", "CSS", "JavaScript"],
-  },
-  {
-    id: "fyynd-project",
-    date: "2026",
-    title: "Fyynd Fit — App & Website Redesign",
-    org: "Figma · fyyndfit.com",
-    description:
-      "Redesigned the mobile app and website experience, overhauling navigation architecture, visual design system, and data visualisation to improve usability and interface cohesion.",
-    tags: ["Figma", "UI/UX", "Mobile", "Web"],
-  },
-  {
-    id: "aetherlabs-project",
-    date: "2025",
-    title: "AetherLabs — Back Office Platform",
-    org: "Next.js · TypeScript · Supabase · PostgreSQL",
-    description:
-      "Comprehensive platform for artist business operations including inventory, provenance management, NFC-embedded certificate-of-authenticity workflows, CRM, and invoicing.",
-    tags: ["Next.js", "TypeScript", "Supabase", "PostgreSQL", "NFC"],
-  },
+const experience: EntryRef[] = [
+  { id: "rnd",        tags: ["React", "Node.js", "Shopify", "Claude Code", "OpenAI Codex"] },
+  { id: "fyynd",      tags: ["UI/UX", "Design Systems", "Mobile", "Figma"] },
+  { id: "aetherlabs", tags: ["React Native", "Next.js", "Supabase", "PostgreSQL", "NFC"] },
+  { id: "paradies",   tags: [] },
 ];
 
-const accelerators: Entry[] = [
-  {
-    id: "genesis",
-    date: "Winter 2026",
-    title: "Genesis Evolve",
-    org: "Genesis Centre · Canada",
-    description:
-      "Selected for the Winter 2026 cohort with AetherLabs. Completed customer discovery, product iteration, and investor pitch preparation. Delivered a final 15-slide pitch to a panel of judges and investors.",
-  },
-  {
-    id: "propel",
-    date: "2024",
-    title: "Propel ICT Vision",
-    org: "Propel · Atlantic Canada",
-    description:
-      "Participated in accelerator programming focused on go-to-market strategy, investor readiness, and product-market fit validation for early-stage tech ventures.",
-  },
+const projects: EntryRef[] = [
+  { id: "transcript",        tags: ["TypeScript", "Anthropic API", "Node.js"] },
+  { id: "moov",              tags: ["Shopify", "Liquid", "CSS", "JavaScript"] },
+  { id: "fyyndProject",      tags: ["Figma", "UI/UX", "Mobile", "Web"] },
+  { id: "aetherlabsProject", tags: ["Next.js", "TypeScript", "Supabase", "PostgreSQL", "NFC"] },
 ];
+
+const accelerators: EntryRef[] = [
+  { id: "genesis" },
+  { id: "propel" },
+];
+
+function resolveEntries(refs: EntryRef[], t: CvT): Entry[] {
+  return refs.map(({ id, tags }) => ({
+    id,
+    date: t(`entries.${id}.date`),
+    title: t(`entries.${id}.title`),
+    org: t(`entries.${id}.org`),
+    description: t(`entries.${id}.description`),
+    tags,
+  }));
+}
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 
@@ -280,6 +232,8 @@ function EntryGrid({ entries, showTags = true }: { entries: Entry[]; showTags?: 
 // ─── Main ─────────────────────────────────────────────────────────────────────
 
 export default function CVContent() {
+  const t = useTranslations("CV");
+
   return (
     <>
       <style>{`
@@ -340,7 +294,7 @@ export default function CVContent() {
         <div
           className="cv-hero-inner flex flex-wrap items-end justify-between gap-fib-21 pb-[clamp(var(--fib-21),3vw,var(--fib-55))]"
         >
-          <h1 className="cv-hero-name font-serif font-light leading-[0.88] tracking-[-0.025em] text-heading">
+          <h1 lang="en" className="cv-hero-name font-serif font-light leading-[0.88] tracking-[-0.025em] text-heading">
             Rashod
             <span className="block pl-[clamp(var(--fib-21),4vw,var(--fib-55))]">
               Korala
@@ -349,7 +303,7 @@ export default function CVContent() {
 
           <div className="cv-hero-meta flex flex-col items-end gap-1 pb-[clamp(var(--fib-8),0.5vw,var(--fib-13))]">
             {[
-              { text: "Canada", href: null },
+              { text: t("location"), href: null },
               { text: "hello@rashodkorala.com", href: "mailto:hello@rashodkorala.com" },
               { text: "rashodkorala.com", href: "https://rashodkorala.com" },
               { text: "github.com/rashodkorala", href: "https://github.com/rashodkorala" },
@@ -379,7 +333,7 @@ export default function CVContent() {
               href="/Rashod_Korala_Resume.pdf"
               download="Rashod_Korala_Resume.pdf"
             >
-              Download PDF <DownloadIcon />
+              {t("downloadPdf")} <DownloadIcon />
             </a>
           </div>
         </div>
@@ -387,25 +341,15 @@ export default function CVContent() {
         <HRule />
 
         <div className="mb-[clamp(var(--fib-34),3.5vw,var(--fib-55))]">
-          <SectionHeader title="Professional Competency" />
+          <SectionHeader title={t("competencyTitle")} />
           <div
             className="cv-competency-grid grid grid-cols-3 gap-x-[clamp(var(--fib-21),2vw,var(--fib-34))] gap-y-[clamp(var(--fib-8),0.8vw,var(--fib-13))]"
           >
-            {[
-              "Full Stack Engineering",
-              "AI Workflow Automation",
-              "Technical Product Leadership",
-              "Product Discovery & Iteration",
-              "System Architecture",
-              "UI/UX Systems Design",
-              "Cross-Functional Collaboration",
-              "Client Delivery Management",
-              "Project Management",
-            ].map((item) => (
-              <div key={item} className="flex items-center gap-fib-13">
+            {competencies.map((key) => (
+              <div key={key} className="flex items-center gap-fib-13">
                 <div className="size-1 shrink-0 rounded-full bg-line-strong" />
                 <span className="font-sans text-[length:clamp(var(--text-caption),0.92vw,0.875rem)] font-normal leading-body text-body-secondary">
-                  {item}
+                  {t(`competencies.${key}`)}
                 </span>
               </div>
             ))}
@@ -422,8 +366,8 @@ export default function CVContent() {
             className="cv-sidebar flex flex-col gap-[clamp(var(--fib-34),3vw,2.75rem)] border-r border-line pr-[clamp(var(--fib-21),2vw,var(--fib-34))] mr-[clamp(var(--fib-21),3vw,3rem)]"
           >
             {skills.map((group) => (
-              <div key={group.label}>
-                <SidebarLabel>{group.label}</SidebarLabel>
+              <div key={group.key}>
+                <SidebarLabel>{t(`skillGroups.${group.key}`)}</SidebarLabel>
                 {group.items.map((skill) => (
                   <div key={skill.name} className="mb-1 flex items-center gap-fib-13">
                     <div
@@ -448,29 +392,29 @@ export default function CVContent() {
             ))}
 
             <div>
-              <SidebarLabel>Certifications</SidebarLabel>
+              <SidebarLabel>{t("certifications")}</SidebarLabel>
               {certs.map((c) => (
                 <div key={c.name} className="mb-fib-13">
                   <p className="font-sans text-[length:clamp(var(--text-label),0.85vw,0.8125rem)] font-normal leading-relaxed text-body-secondary">
                     {c.name}
                   </p>
                   <p className="font-sans text-[length:var(--text-label)] font-normal text-[color:var(--color-label)]">
-                    {c.issuer}
+                    {t(`certIssuers.${c.issuerKey}`)}
                   </p>
                 </div>
               ))}
             </div>
 
             <div>
-              <SidebarLabel>Education</SidebarLabel>
+              <SidebarLabel>{t("education")}</SidebarLabel>
               <p className="font-sans text-[length:clamp(var(--text-caption),0.9vw,0.875rem)] font-normal leading-sub text-heading">
-                BSc Computer Science
+                {t("degree")}
               </p>
               <p className="font-sans text-[length:clamp(var(--text-label),0.85vw,0.8125rem)] font-normal leading-sub text-body-secondary">
-                Minor in Business Admin
+                {t("minor")}
               </p>
               <p className="mt-0.5 font-sans text-[length:var(--text-label)] font-normal text-[color:var(--color-label)]">
-                Memorial University · 2025
+                {t("school")}
               </p>
             </div>
           </aside>
@@ -478,18 +422,18 @@ export default function CVContent() {
           <main className="cv-main flex flex-col gap-[clamp(var(--fib-34),4.5vw,3.75rem)]">
 
             <section>
-              <SectionHeader title="Experience" />
-              <EntryGrid entries={experience} />
+              <SectionHeader title={t("experienceTitle")} />
+              <EntryGrid entries={resolveEntries(experience, t)} />
             </section>
 
             <section>
-              <SectionHeader title="Selected Projects" />
-              <EntryGrid entries={projects} />
+              <SectionHeader title={t("projectsTitle")} />
+              <EntryGrid entries={resolveEntries(projects, t)} />
             </section>
 
             <section>
-              <SectionHeader title="Accelerators & Programs" />
-              <EntryGrid entries={accelerators} showTags={false} />
+              <SectionHeader title={t("acceleratorsTitle")} />
+              <EntryGrid entries={resolveEntries(accelerators, t)} showTags={false} />
             </section>
 
           </main>

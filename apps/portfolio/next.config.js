@@ -1,4 +1,7 @@
-/** @type {import('next').NextConfig} */
+const createNextIntlPlugin = require("next-intl/plugin");
+
+const withNextIntl = createNextIntlPlugin("./i18n/request.ts");
+
 function supabaseImageRemotePattern() {
   const raw = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const fallback = {
@@ -18,6 +21,7 @@ function supabaseImageRemotePattern() {
   }
 }
 
+/** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
   transpilePackages: ["@rashodkorala/posthog-next"],
@@ -26,4 +30,4 @@ const nextConfig = {
   },
 };
 
-module.exports = nextConfig;
+module.exports = withNextIntl(nextConfig);

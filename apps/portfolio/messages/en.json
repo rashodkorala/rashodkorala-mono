@@ -1,0 +1,391 @@
+{
+  "Metadata": {
+    "defaultTitle": "Rashod Korala | Software Developer",
+    "titleTemplate": "%s | Rashod Korala",
+    "description": "Software Developer specializing in Next.js, React Native, and AI solutions. Building innovative digital experiences with a focus on user-centric design."
+  },
+  "Nav": {
+    "about": "About",
+    "work": "Work",
+    "photography": "Photography",
+    "contact": "Contact",
+    "cv": "CV",
+    "privacy": "Privacy",
+    "home": "Home",
+    "menu": "Menu",
+    "toggleMenu": "Toggle navigation menu",
+    "mobileNavLabel": "Mobile primary"
+  },
+  "Theme": {
+    "toggle": "Toggle theme",
+    "switchToLight": "Switch to light theme",
+    "switchToDark": "Switch to dark theme"
+  },
+  "LanguageSwitcher": {
+    "label": "Language",
+    "switchTo": "Switch language to {language}",
+    "en": "English",
+    "si": "සිංහල"
+  },
+  "Common": {
+    "loading": "Loading",
+    "viewAll": "View all",
+    "onThisPage": "On this page",
+    "liveSite": "Live site",
+    "github": "GitHub",
+    "timeline": "Timeline",
+    "year": "Year",
+    "scheduleCall": "Schedule a call"
+  },
+  "Home": {
+    "metaTitle": "Home",
+    "metaDescription": "Rashod Korala — Software developer, entrepreneur, and photographer based in St. John's, Newfoundland.",
+    "ogDescription": "Software developer, entrepreneur, and photographer based in St. John's, Newfoundland.",
+    "bio1": "Just a guy with big dreams, from Sri Lanka, now based in St. John’s, Newfoundland. I love turning new ideas into real things, and I do it by building products that solve genuine problems.",
+    "bio2": "I <photo>photograph</photo>, mostly nature, people, culture, and food, small moments that shape how I see the world.",
+    "portraitAlt": "Rashod Korala",
+    "privacy": "Privacy"
+  },
+  "Work": {
+    "metaTitle": "Work",
+    "metaDescription": "Case studies and projects by Rashod Korala.",
+    "selected": "Selected",
+    "work": "Work",
+    "case": "Case",
+    "studies": "Studies",
+    "tabProjects": "Projects",
+    "tabCaseStudies": "Case Studies",
+    "projectCount": "{count, plural, one {# project} other {# projects}}",
+    "caseStudyCount": "{count, plural, one {# case study} other {# case studies}}",
+    "noProjects": "No projects to show yet.",
+    "noCaseStudies": "No case studies published yet.",
+    "appsEyebrow": "Apps",
+    "inkbarBlurb": "A cocktail spec scaler for iPhone. Scale, convert, batch, and keep house specs in one offline app.",
+    "inkbarImageAlt": "InkBar cocktail scaler screen.",
+    "notFound": "Not found",
+    "projectNotFound": "Project Not Found",
+    "projectFallbackDescription": "Explore the {title} project by Rashod Korala."
+  },
+  "CaseStudy": {
+    "beforeAfter": "Before / After",
+    "before": "Before",
+    "after": "After",
+    "openBefore": "Open before image — {title}",
+    "openAfter": "Open after image — {title}",
+    "gallery": "Gallery",
+    "openGalleryItem": "Open gallery item {index} of {total} — {title}",
+    "galleryItemAlt": "{title} — gallery {index}",
+    "technology": "Technology",
+    "related": "Related",
+    "toolsStack": "Tools & tech stack",
+    "relatedProjects": "Related projects"
+  },
+  "Project": {
+    "overview": "Overview",
+    "photos": "Photos",
+    "video": "Video",
+    "caseStudies": "Case studies",
+    "projectPhotos": "Project photos",
+    "openPhoto": "Open photo {index} of {total} in full screen",
+    "photoAlt": "{title} photo {index}",
+    "logoAlt": "{title} logo",
+    "showLess": "Show less",
+    "viewAllPhotos": "View all photos (+{count})",
+    "toolsTechnology": "Tools & technology",
+    "relatedCaseStudies": "Related case studies"
+  },
+  "Lightbox": {
+    "close": "Close gallery",
+    "previous": "Previous image",
+    "next": "Next image",
+    "description": "Full screen media. Use on-screen buttons or arrow keys for previous and next. Escape to close.",
+    "imageAlt": "{title} — image {index} of {total}"
+  },
+  "Contact": {
+    "metaTitle": "Contact",
+    "metaDescription": "Get in touch with Rashod Korala.",
+    "heroLine1": "Get",
+    "heroLine2": "in touch",
+    "intro": "Email is the best way to reach me for project inquiries and collaborations. Find the details below, or <mail>open your mail app</mail> directly. If you would rather talk, <call>book a quick coffee chat</call> and let’s connect.",
+    "available": "Available for new projects",
+    "bookCall": "Book a call",
+    "groupReach": "Reach me",
+    "groupStudios": "Studios & portfolio",
+    "groupSocial": "Social",
+    "email": "Email",
+    "basedIn": "Based in",
+    "basedInValue": "Canada",
+    "typicalResponse": "Typical response",
+    "typicalResponseValue": "Within 48 hours",
+    "photography": "Photography"
+  },
+  "CV": {
+    "metaTitle": "CV",
+    "metaDescription": "Curriculum vitae of Rashod Korala — Full Stack Developer & Entrepreneur.",
+    "location": "Canada",
+    "downloadPdf": "Download PDF",
+    "competencyTitle": "Professional Competency",
+    "competencies": {
+      "fullStack": "Full Stack Engineering",
+      "aiAutomation": "AI Workflow Automation",
+      "productLeadership": "Technical Product Leadership",
+      "productDiscovery": "Product Discovery & Iteration",
+      "architecture": "System Architecture",
+      "uxSystems": "UI/UX Systems Design",
+      "collaboration": "Cross-Functional Collaboration",
+      "clientDelivery": "Client Delivery Management",
+      "projectManagement": "Project Management"
+    },
+    "skillGroups": {
+      "languages": "Languages",
+      "frameworks": "Frameworks & Libraries",
+      "databases": "Databases",
+      "cloud": "Cloud & DevOps",
+      "tools": "Tools & Platforms",
+      "concepts": "Concepts"
+    },
+    "certifications": "Certifications",
+    "certIssuers": {
+      "meta": "Meta · Oct 2025",
+      "google": "Google · Nov 2025",
+      "aws": "Amazon · In progress",
+      "java": "2018"
+    },
+    "education": "Education",
+    "degree": "BSc Computer Science",
+    "minor": "Minor in Business Admin",
+    "school": "Memorial University · 2025",
+    "experienceTitle": "Experience",
+    "projectsTitle": "Selected Projects",
+    "acceleratorsTitle": "Accelerators & Programs",
+    "entries": {
+      "rnd": {
+        "date": "Mar 2025 — Present",
+        "title": "Technical Product Engineer & Co-Founder",
+        "org": "R&D Creative Agency · St. John's, NL",
+        "description": "Led full-cycle delivery of web projects across multiple sectors, from brief to production-ready digital products. Leveraged AI tooling including Claude Code and OpenAI Codex to automate development workflows. Designed and implemented RESTful APIs and third-party integrations for clients including Rob Roy, Konfusion, and MOOV. Applied UI/UX principles to improve live products, enhancing engagement and conversion."
+      },
+      "fyynd": {
+        "date": "Jan 2026 — Present",
+        "title": "Product Design Consultant",
+        "org": "Fyynd Fit · Remote — Part-Time",
+        "description": "Redesigned navigation architecture across mobile app and website, reducing user friction and simplifying core user flows. Overhauled the visual design system for cross-platform consistency. Improved data visualisation and layout to make complex information more scannable, driving higher conversion on key actions."
+      },
+      "aetherlabs": {
+        "date": "Jun 2025 — Present",
+        "title": "Co-Founder & Engineering Team Lead",
+        "org": "AetherLabs · St. John's, NL",
+        "description": "Architected and led end-to-end development of a back-office platform enabling independent artists to manage inventory, documentation, provenance, and business workflows. Drove product-market fit through customer discovery and user interviews with artists, galleries, and museums. Scaled the platform to support 30,000+ artists across Canada. Implemented NFC-embedded certificate-of-authenticity workflows and AI-assisted document extraction."
+      },
+      "paradies": {
+        "date": "Jun 2022 — Present",
+        "title": "Technical Associate",
+        "org": "Paradies Lagardère · St. John's International Airport — Part-Time",
+        "description": "Managed POS systems and transaction workflows, maintaining operational reliability across daily retail operations. Analysed product performance and sales data to inform stocking and merchandising decisions, contributing to a 30% increase in sales for underperforming product lines."
+      },
+      "transcript": {
+        "date": "2025",
+        "title": "Transcript Processing Pipeline",
+        "org": "TypeScript · Node.js · Anthropic API",
+        "description": "AI-powered pipeline that transforms meeting transcripts into structured CRM data using a three-tier confidence taxonomy and RESTful ingestion services."
+      },
+      "moov": {
+        "date": "In Development",
+        "title": "MOOV Shopify Storefront",
+        "org": "Shopify · Liquid · CSS · JavaScript",
+        "description": "Dark-themed Shopify storefront with a custom design system, responsive UI, and cross-browser-optimised HTML5/CSS3 for a smart alarm product launch."
+      },
+      "fyyndProject": {
+        "date": "2026",
+        "title": "Fyynd Fit — App & Website Redesign",
+        "org": "Figma · fyyndfit.com",
+        "description": "Redesigned the mobile app and website experience, overhauling navigation architecture, visual design system, and data visualisation to improve usability and interface cohesion."
+      },
+      "aetherlabsProject": {
+        "date": "2025",
+        "title": "AetherLabs — Back Office Platform",
+        "org": "Next.js · TypeScript · Supabase · PostgreSQL",
+        "description": "Comprehensive platform for artist business operations including inventory, provenance management, NFC-embedded certificate-of-authenticity workflows, CRM, and invoicing."
+      },
+      "genesis": {
+        "date": "Winter 2026",
+        "title": "Genesis Evolve",
+        "org": "Genesis Centre · Canada",
+        "description": "Selected for the Winter 2026 cohort with AetherLabs. Completed customer discovery, product iteration, and investor pitch preparation. Delivered a final 15-slide pitch to a panel of judges and investors."
+      },
+      "propel": {
+        "date": "2024",
+        "title": "Propel ICT Vision",
+        "org": "Propel · Atlantic Canada",
+        "description": "Participated in accelerator programming focused on go-to-market strategy, investor readiness, and product-market fit validation for early-stage tech ventures."
+      }
+    }
+  },
+  "Privacy": {
+    "metaTitle": "Privacy",
+    "metaDescription": "How rashodkorala.com uses PostHog analytics, what data is collected, and retention.",
+    "title": "Privacy policy",
+    "lastUpdated": "Last updated April 2026. This page describes analytics on this website only.",
+    "analyticsHeading": "Analytics (PostHog)",
+    "analyticsBody": "This site uses <posthog>PostHog</posthog>, a product analytics service, to understand traffic and how pages are used (for example which pages are viewed and general usage patterns). That helps improve the site; it is not used to sell your data.",
+    "collectHeading": "What we collect",
+    "collectBody": "When you browse the site, PostHog may receive technical and usage information associated with page views and events, such as: the page URL, referrer, browser and device type, operating system, coarse location derived from IP (for example region/country), timestamps, and an anonymous or pseudonymous identifier (for example via a cookie or local storage) to distinguish sessions. We do not use PostHog to collect your name, email, or the contents of messages you send through other services unless we explicitly instrument that elsewhere.",
+    "retentionHeading": "Retention",
+    "retentionBody": "Event data is stored on PostHog’s systems and kept for the retention period configured on our PostHog project and plan. Details vary by plan and settings; see <docs>PostHog’s privacy and data documentation</docs> for how they handle and retain data.",
+    "questions": "Questions: <mail>hello@rashodkorala.com</mail>."
+  },
+  "Apps": {
+    "metaTitle": "Apps",
+    "metaDescription": "Apps built by Rashod Korala.",
+    "ogTitle": "Apps by Rashod Korala",
+    "ogDescription": "Independent apps built by Rashod Korala.",
+    "eyebrow": "Apps",
+    "title": "Useful tools, built quietly.",
+    "intro": "A small collection of focused apps for everyday work, creative practice, and practical calculations.",
+    "platformIphone": "iPhone",
+    "inkbarBlurb": "Scale any cocktail to any batch in seconds. Convert oz, ml, cl, and parts, estimate dilution, and keep house specs in one place.",
+    "viewApp": "View app",
+    "inkbarImageAlt": "InkBar cocktail scaler screen on iPhone."
+  },
+  "InkBar": {
+    "metaDescription": "InkBar scales, converts, and batches cocktails on iPhone with offline recipes, unit conversion, and dilution estimates.",
+    "ogTitle": "InkBar: Cocktail Scaler",
+    "ogDescription": "Scale any cocktail to any batch in seconds. Convert oz, ml, cl, and parts, estimate dilution, and keep house specs in one place.",
+    "eyebrow": "InkBar for iPhone",
+    "title": "Cocktail maths, settled.",
+    "intro": "Scale any cocktail to any batch in seconds. Convert oz, ml, cl, and parts, estimate dilution for batching, and keep your house specs in one readable place.",
+    "contactSupport": "Contact support",
+    "privacyPolicy": "Privacy policy",
+    "heroImageAlt": "InkBar on iPhone showing a Negroni cocktail scaling screen.",
+    "features": {
+      "scale": {
+        "title": "Scale every way a bar actually works",
+        "body": "Resize a cocktail by multiplier, target servings, or a finished batch volume."
+      },
+      "units": {
+        "title": "Move between units without friction",
+        "body": "Enter specs in oz, ml, cl, or parts, then read the batch back in the unit you pour with."
+      },
+      "dilution": {
+        "title": "Batch with dilution in mind",
+        "body": "Estimate water for stirred, shaken, and built drinks so a prepared batch lands closer to service strength."
+      },
+      "specs": {
+        "title": "Keep house specs close",
+        "body": "Save your own recipes alongside bundled classics in a layout made to glance at across a busy bar."
+      }
+    },
+    "screensEyebrow": "Product screens",
+    "screensTitle": "Built to be read mid-service.",
+    "screensBody": "Large controls, restrained contrast, and simple recipe views make InkBar easy to scan while scaling one drink or a full batch.",
+    "screens": {
+      "scaler": {
+        "title": "Scale",
+        "alt": "InkBar cocktail scaler showing a Negroni recipe with multiplier, serving, volume, and unit controls."
+      },
+      "specs": {
+        "title": "Specs",
+        "alt": "InkBar specs library showing bundled classic cocktails."
+      },
+      "create": {
+        "title": "Create",
+        "alt": "InkBar new recipe form with ingredient and drink detail fields."
+      },
+      "settings": {
+        "title": "Settings",
+        "alt": "InkBar settings screen showing unit and dilution preferences."
+      },
+      "launch": {
+        "title": "Launch",
+        "alt": "InkBar launch screen with the app wordmark and cocktail glass icon."
+      }
+    },
+    "privateEyebrow": "Private by design",
+    "privateTitle": "No account. No tracking. No network connection.",
+    "noData": "No data collected",
+    "offline": "Works fully offline",
+    "localSpecs": "Saved specs stay local",
+    "helpTitle": "Need help with InkBar?",
+    "helpBody": "Questions, problems, feature ideas, and bug reports are welcome.",
+    "openSupport": "Open support"
+  },
+  "InkBarPrivacy": {
+    "metaTitle": "InkBar Privacy Policy",
+    "metaDescription": "InkBar is designed to collect nothing. Read the privacy policy for the iPhone app.",
+    "title": "InkBar Privacy Policy",
+    "lastUpdated": "Last updated: 26 June 2026",
+    "intro": "InkBar is designed to collect nothing. This policy explains what that means.",
+    "sections": {
+      "data": {
+        "title": "Data collected",
+        "body": "None. InkBar does not ask you to create an account, does not request personal information, and does not include analytics or tracking of any kind."
+      },
+      "network": {
+        "title": "Network use",
+        "body": "InkBar works entirely offline. The app makes no network connections and sends no information off your device."
+      },
+      "storage": {
+        "title": "Where your data lives",
+        "body": "Any recipes or notes you create are stored locally on your device. They are never transmitted to anyone. Removing the app removes that data."
+      },
+      "thirdParties": {
+        "title": "Third parties",
+        "body": "InkBar contains no third-party advertising, analytics, or tracking software, and shares no data with anyone."
+      },
+      "children": {
+        "title": "Children",
+        "body": "Because InkBar collects no data, it collects none from children. The app references alcohol and carries an age rating to reflect that."
+      },
+      "changes": {
+        "title": "Changes",
+        "body": "If this policy changes, the updated version will be posted on this page with a new date."
+      }
+    },
+    "contactTitle": "Contact",
+    "contactBody": "Questions about privacy can be sent to <mail>{email}</mail>."
+  },
+  "InkBarSupport": {
+    "metaTitle": "InkBar Support",
+    "metaDescription": "Support information and common questions for InkBar, a cocktail scaling tool for iPhone.",
+    "title": "InkBar Support",
+    "intro": "InkBar is a cocktail scaling tool for iPhone. If you have a question, a problem, or a request, get in touch and I will help.",
+    "contact": "Contact: <mail>{email}</mail>",
+    "responseTime": "Typical response time: two to three business days.",
+    "faqTitle": "Common questions",
+    "faq": {
+      "scaling": {
+        "question": "How does scaling work?",
+        "answer": "Choose one of three modes. Multiplier resizes the whole recipe by a factor. Servings scales to a target number of drinks. Batch volume scales the recipe to a finished total you set."
+      },
+      "units": {
+        "question": "Which units are supported?",
+        "answer": "Ounces, millilitres, centilitres, and parts. You can enter a recipe in one unit and read it back in another."
+      },
+      "dilution": {
+        "question": "What does the dilution estimate do?",
+        "answer": "It adds approximate water for batching, based on whether the drink is stirred, shaken, or built. The figures are a guide, so taste and adjust."
+      },
+      "storage": {
+        "question": "Where is my data stored?",
+        "answer": "On your device only. InkBar has no account and makes no network connection, so your saved specs never leave your phone."
+      },
+      "dashes": {
+        "question": "The amounts for dashes or bar spoons look approximate.",
+        "answer": "They are. Dashes and bar spoons vary by bartender, so treat them as a starting point rather than an exact measure."
+      }
+    },
+    "feedbackTitle": "Feedback",
+    "feedbackBody": "Feature ideas and bug reports are welcome at <mail>{email}</mail>."
+  },
+  "NotFound": {
+    "eyebrow": "Not found",
+    "body": "This page doesn’t exist. It may have been moved or removed.",
+    "backHome": "Back to home"
+  },
+  "Error": {
+    "eyebrow": "Something went wrong",
+    "title": "Unexpected error",
+    "body": "An error occurred while loading this page. Please try again.",
+    "retry": "Try again"
+  }
+}

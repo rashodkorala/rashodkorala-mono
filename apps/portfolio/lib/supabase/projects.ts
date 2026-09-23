@@ -31,7 +31,9 @@ export async function getProjectBySlug(slug: string): Promise<Project | null> {
 
   const { data: caseStudies } = await supabase
     .from('case_studies')
-    .select('id, slug, title, tags, gallery, cover_path, content_md, featured, order')
+    // '*' (not a column list) so this keeps working whether or not the *_si
+    // translation columns have been migrated yet.
+    .select('*')
     .eq('project_id', data.id)
     .order('featured', { ascending: false })
     .order('order', { ascending: true });

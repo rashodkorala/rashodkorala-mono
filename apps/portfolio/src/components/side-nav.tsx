@@ -1,15 +1,16 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
-import Link from "next/link";
 import { motion } from "framer-motion";
+import { useTranslations } from "next-intl";
+import { Link, usePathname } from "@/i18n/navigation";
 import {
   PORTFOLIO_NAV,
   getActiveNavSectionId,
 } from "@/lib/portfolio-nav";
 
 export default function SideNav() {
+  const t = useTranslations("Nav");
   const pathname = usePathname();
   const [active, setActive] = useState("");
 
@@ -37,7 +38,7 @@ export default function SideNav() {
       <div className="flex-1 flex items-center">
         {/* space-y-6 (24px) → fib-21 (21px); xl/2xl bumps follow Fibonacci steps 21→34 */}
         <ul className="space-y-fib-21 xl:space-y-fib-21 2xl:space-y-fib-34">
-          {PORTFOLIO_NAV.map(({ id, href, label }) => (
+          {PORTFOLIO_NAV.map(({ id, href }) => (
             <li key={id}>
               <Link
                 href={href}
@@ -60,7 +61,7 @@ export default function SideNav() {
                   }`}
                 />
                 <span className="font-sans text-[length:var(--text-nav-size)] tracking-[0.03em] font-normal leading-none">
-                  {label}
+                  {t(id)}
                 </span>
               </Link>
             </li>

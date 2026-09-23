@@ -1,21 +1,18 @@
+/** `id` doubles as the translation key in the `Nav` namespace (messages/*.json). */
 export type PortfolioNavItem = {
-  id: string;
-  label: string;
+  id: "about" | "work" | "photography" | "contact" | "cv";
   href: string;
 };
 
 export const PORTFOLIO_NAV: readonly PortfolioNavItem[] = [
-  { id: "about", label: "About", href: "/" },
-  { id: "work", label: "Work", href: "/work" },
-  {
-    id: "photography",
-    label: "Photography",
-    href: "https://photos.rashodkorala.com",
-  },
-  { id: "contact", label: "Contact", href: "/contact" },
-  { id: "cv",      label: "CV",      href: "/cv" },
+  { id: "about", href: "/" },
+  { id: "work", href: "/work" },
+  { id: "photography", href: "https://photos.rashodkorala.com" },
+  { id: "contact", href: "/contact" },
+  { id: "cv", href: "/cv" },
 ] as const;
 
+/** `pathname` must be locale-free (next-intl's `usePathname` from `@/i18n/navigation`). */
 export function getActiveNavSectionId(pathname: string): string {
   if (pathname === "/") return "about";
   if (pathname.startsWith("/work") || pathname.startsWith("/projects") || pathname.startsWith("/apps")) {

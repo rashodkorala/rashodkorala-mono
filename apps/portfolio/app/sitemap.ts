@@ -1,20 +1,34 @@
 import { MetadataRoute } from "next"
 import { getCachedAllProjects } from "@/lib/supabase/cached-projects"
 import { getCachedCaseStudies } from "@/lib/supabase/cached-case-studies"
+import { localizedPath, routing, SITE_URL } from "@/i18n/routing"
 
-const BASE_URL = "https://rashodkorala.com"
+type Entry = MetadataRoute.Sitemap[number]
+type RouteSpec = Pick<Entry, "lastModified" | "changeFrequency" | "priority"> & { path: string }
+
+/** One sitemap entry per locale, each listing its hreflang siblings. */
+function localizedEntries({ path, ...rest }: RouteSpec): MetadataRoute.Sitemap {
+  const languages = Object.fromEntries(
+    routing.locales.map((locale) => [locale, `${SITE_URL}${localizedPath(path, locale)}`])
+  )
+  return routing.locales.map((locale) => ({
+    url: `${SITE_URL}${localizedPath(path, locale)}`,
+    alternates: { languages },
+    ...rest,
+  }))
+}
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const staticRoutes: MetadataRoute.Sitemap = [
-    { url: `${BASE_URL}/`, lastModified: new Date(), changeFrequency: "weekly", priority: 1 },
-    { url: `${BASE_URL}/work`, lastModified: new Date(), changeFrequency: "weekly", priority: 0.9 },
-    { url: `${BASE_URL}/about`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.7 },
-    { url: `${BASE_URL}/contact`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.6 },
-    { url: `${BASE_URL}/privacy`, lastModified: new Date(), changeFrequency: "yearly", priority: 0.3 },
-    { url: `${BASE_URL}/apps`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.6 },
-    { url: `${BASE_URL}/apps/inkbar`, lastModified: new Date(), changeFrequency: "monthly", priority: 0.7 },
-    { url: `${BASE_URL}/apps/inkbar/support`, lastModified: new Date(), changeFrequency: "yearly", priority: 0.4 },
-    { url: `${BASE_URL}/apps/inkbar/privacy`, lastModified: new Date(), changeFrequency: "yearly", priority: 0.4 },
+  const staticRoutes: RouteSpec[] = [
+    { path: "/", lastModified: new Date(), changeFrequency: "weekly", priority: 1 },
+    { path: "/work", lastModified: new Date(), changeFrequency: "weekly", priority: 0.9 },
+    { path: "/contact", lastModified: new Date(), changeFrequency: "monthly", priority: 0.6 },
+    { path: "/cv", lastModified: new Date(), changeFrequency: "monthly", priority: 0.6 },
+    { path: "/privacy", lastModified: new Date(), changeFrequency: "yearly", priority: 0.3 },
+    { path: "/apps", lastModified: new Date(), changeFrequency: "monthly", priority: 0.6 },
+    { path: "/apps/inkbar", lastModified: new Date(), changeFrequency: "monthly", priority: 0.7 },
+    { path: "/apps/inkbar/support", lastModified: new Date(), changeFrequency: "yearly", priority: 0.4 },
+    { path: "/apps/inkbar/privacy", lastModified: new Date(), changeFrequency: "yearly", priority: 0.4 },
   ]
 
   let projects: Awaited<ReturnType<typeof getCachedAllProjects>> = []
@@ -25,24 +39,24 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   } catch (error) {
     // Keep sitemap generation resilient in environments without DB/network access.
     console.error("Sitemap data fetch failed:", error)
-    return staticRoutes
+    return staticRoutes.flatMap(localizedEntries)
   }
 
-  const projectRoutes: MetadataRoute.Sitemap = projects.map((project) => ({
-    url: `${BASE_URL}/work/${project.slug}`,
+  const projectRoutes: RouteSpec[] = projects.map((project) => ({
+    path: `/work/${project.slug}`,
     lastModified: new Date(project.updated_at),
     changeFrequency: "monthly",
     priority: 0.8,
   }))
 
-  const caseStudyRoutes: MetadataRoute.Sitemap = caseStudies
+  const caseStudyRoutes: RouteSpec[] = caseStudies
     .filter((cs) => !projects.find((p) => p.slug === cs.slug))
     .map((cs) => ({
-      url: `${BASE_URL}/work/${cs.slug}`,
+      path: `/work/${cs.slug}`,
       lastModified: new Date(cs.updated_at),
       changeFrequency: "monthly",
       priority: 0.8,
     }))
 
-  return [...staticRoutes, ...projectRoutes, ...caseStudyRoutes]
+  return [...staticRoutes, ...projectRoutes, ...caseStudyRoutes].flatMap(localizedEntries)
 }

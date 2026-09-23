@@ -1,6 +1,7 @@
 'use client';
 
 import { useRef, useEffect } from 'react';
+import { useTranslations } from 'next-intl';
 
 interface Section { id: string; label: string; }
 
@@ -21,6 +22,7 @@ export default function MobileToc({
   linkClass,
   dashClass,
 }: MobileTocProps) {
+  const t = useTranslations('Common');
   const detailsRef = useRef<HTMLDetailsElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
 
@@ -49,7 +51,7 @@ export default function MobileToc({
     <div className={wrapperClass} ref={wrapperRef}>
       <details ref={detailsRef}>
         <summary className={summaryClass}>
-          On this page <span aria-hidden="true">↓</span>
+          {t('onThisPage')} <span aria-hidden="true">↓</span>
         </summary>
         <nav className={navClass}>
           {sections.map(({ id, label }) => (

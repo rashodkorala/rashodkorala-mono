@@ -1,3 +1,5 @@
+import type { SinhalaValues, TranslationInfo, TranslationStatus } from "./translation"
+
 export type ProjectMediaType = "image" | "video"
 
 export interface ProjectMediaItem {
@@ -21,12 +23,21 @@ export interface ProjectDB {
   tech_stack: string[] | null
   live_url: string | null
   github_url: string | null
+  // Sinhala translations (optional until the 20260923120000 migration is applied)
+  title_si?: string | null
+  subtitle_si?: string | null
+  short_description_si?: string | null
+  role_si?: string | null
+  timeline_si?: string | null
+  translation_hashes?: Record<string, string> | null
+  translation_status?: TranslationStatus | null
+  translated_at?: string | null
   created_at: string
   updated_at: string
 }
 
 // Application type (camelCase)
-export interface Project {
+export interface Project extends TranslationInfo {
   id: string
   userId: string
   slug: string
@@ -80,4 +91,7 @@ export interface ProjectFormData {
   clearCoverImage?: boolean
   existingProjectMedia?: ProjectMediaItem[]
   mediaFiles?: File[]
+  /** Sinhala values as shown in the editor; anything changed by hand is kept as-is. */
+  sinhala?: SinhalaValues
+  markTranslationReviewed?: boolean
 }

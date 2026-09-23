@@ -1,5 +1,6 @@
 import Image from "next/image";
-import Link from "next/link";
+import { useTranslations } from "next-intl";
+import { Link } from "@/i18n/navigation";
 import { jakartaSans, cormorantGaramond } from "@/lib/font";
 import type { CaseStudy, Project } from "@/lib/types";
 import { renderMarkdown, type MarkdownParserConfig } from "@rashodkorala/theView";
@@ -39,8 +40,12 @@ function sanitizeMd(md: string): string {
     .trim();
 }
 
+// Keep letters, combining marks and digits from any script — Sinhala headings are mostly
+// vowel signs (\p{M}), so an ASCII-only filter would collapse every id to "cs-md-".
+const NON_SLUG_CHARS = new RegExp("[^\\p{L}\\p{M}\\p{N}\\s]", "gu");
+
 function slugify(text: string): string {
-  return "cs-md-" + text.toLowerCase().replace(/[^a-z0-9\s]/g, "").trim().replace(/\s+/g, "-");
+  return "cs-md-" + text.toLowerCase().replace(NON_SLUG_CHARS, "").trim().replace(/\s+/g, "-");
 }
 
 /** Extract H2 headings from raw markdown for the "On this page" nav. */
@@ -115,11 +120,12 @@ function ArrowIcon() {
 }
 
 function PageNav({ sections }: { sections: { id: string; label: string }[] }) {
+  const t = useTranslations("Common");
   if (sections.length < 2) return null;
   return (
     <div className="cs-sidebar-meta-row">
-      <SidebarLabel>On this page</SidebarLabel>
-      <nav className="cs-page-nav" aria-label="On this page">
+      <SidebarLabel>{t("onThisPage")}</SidebarLabel>
+      <nav className="cs-page-nav" aria-label={t("onThisPage")}>
         {sections.map(({ id, label }) => (
           <a key={id} href={`#${id}`} className="cs-nav-link">
             <span className="cs-nav-dash" />
@@ -165,6 +171,9 @@ function RelatedProjectCard({ project }: { project: Project }) {
 // ─── Main component ───────────────────────────────────────────────────────────
 
 export default function CaseStudyPage({ caseStudy }: { caseStudy: CaseStudy }) {
+  const t = useTranslations("CaseStudy");
+  const tCommon = useTranslations("Common");
+  const tNav = useTranslations("Nav");
   const tags          = asStrings(caseStudy.tags);
   const stack         = asStrings(caseStudy.stack);
   const gallery       = asStrings(caseStudy.gallery).map(mediaUrl);
@@ -185,11 +194,11 @@ export default function CaseStudyPage({ caseStudy }: { caseStudy: CaseStudy }) {
     | { label: string; type: "link"; href: string; text: string }
   )[] = [
     ...(caseStudy.timeline
-      ? [{ label: "Timeline", type: "text" as const, value: caseStudy.timeline }]
+      ? [{ label: tCommon("timeline"), type: "text" as const, value: caseStudy.timeline }]
       : []),
     ...(liveLink
       ? [{
-          label: "Live site",
+          label: tCommon("liveSite"),
           type: "link" as const,
           href: liveLink.url,
           text: liveLink.url.replace(/^https?:\/\//, ""),
@@ -210,10 +219,10 @@ export default function CaseStudyPage({ caseStudy }: { caseStudy: CaseStudy }) {
   // In-page nav sections — markdown H2s first, then fixed sections
   const sections: { id: string; label: string }[] = [
     ...mdHeadings,
-    ...((ba?.beforeImage || ba?.afterImage) ? [{ id: "cs-before-after", label: "Before / After" }] : []),
-    ...(screenshots.length > 0 ? [{ id: "cs-gallery", label: "Gallery" }] : []),
-    ...(stack.length > 0 ? [{ id: "cs-stack", label: "Technology" }] : []),
-    ...(relatedProjects.length > 0 ? [{ id: "cs-related", label: "Related" }] : []),
+    ...((ba?.beforeImage || ba?.afterImage) ? [{ id: "cs-before-after", label: t("beforeAfter") }] : []),
+    ...(screenshots.length > 0 ? [{ id: "cs-gallery", label: t("gallery") }] : []),
+    ...(stack.length > 0 ? [{ id: "cs-stack", label: t("technology") }] : []),
+    ...(relatedProjects.length > 0 ? [{ id: "cs-related", label: t("related") }] : []),
   ];
 
   const sectionLabel: React.CSSProperties = {
@@ -418,7 +427,7 @@ export default function CaseStudyPage({ caseStudy }: { caseStudy: CaseStudy }) {
             <svg viewBox="0 0 16 16" fill="none" style={{ width: 14, height: 14, flexShrink: 0 }}>
               <path d="M10 3L5 8L10 13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
-            Work
+            {tNav("work")}
           </Link>
           <span style={{ color: "var(--color-border-strong)", fontSize: "12px", userSelect: "none" }}>/</span>
           <span style={{ fontFamily: jakartaSans, fontSize: "clamp(12px,0.85vw,13px)", color: "var(--color-heading)", letterSpacing: "0.04em" }}>
@@ -550,7 +559,7 @@ export default function CaseStudyPage({ caseStudy }: { caseStudy: CaseStudy }) {
             {/* Stack */}
             {stack.length > 0 && (
               <div id="cs-stack" style={{ marginTop: "clamp(24px,3vw,44px)" }}>
-                <p style={{ ...sectionLabel, marginBottom: "clamp(12px,1.2vw,16px)" }}>Tools &amp; tech stack</p>
+                <p style={{ ...sectionLabel, marginBottom: "clamp(12px,1.2vw,16px)" }}>{t("toolsStack")}</p>
                 <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
                   {stack.map(t => <span key={t} className="cs-tool">{t}</span>)}
                 </div>
@@ -563,7 +572,7 @@ export default function CaseStudyPage({ caseStudy }: { caseStudy: CaseStudy }) {
             <div className="cs-sidebar-stack">
               {ghLink && (
                 <div className="cs-sidebar-meta-row">
-                  <SidebarLabel>GitHub</SidebarLabel>
+                  <SidebarLabel>{tCommon("github")}</SidebarLabel>
                   <a className="cs-sidebar-link" href={ghLink.url} target="_blank" rel="noreferrer">
                     {ghLink.url.replace(/^https?:\/\//, "")} <ArrowIcon />
                   </a>
@@ -602,9 +611,9 @@ export default function CaseStudyPage({ caseStudy }: { caseStudy: CaseStudy }) {
             <div id="cs-related" style={{ height: 1, background: "var(--color-border)", margin: "clamp(32px,4vw,56px) 0 0" }} />
             <div style={{ marginTop: "clamp(20px,2.5vw,36px)" }}>
               <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: "clamp(12px,1.4vw,20px)" }}>
-                <p style={{ ...sectionLabel, marginBottom: 0 }}>Related projects</p>
+                <p style={{ ...sectionLabel, marginBottom: 0 }}>{t("relatedProjects")}</p>
                 <Link href="/work" style={{ fontSize: "clamp(11px,0.85vw,13px)", color: "var(--color-link)", textDecoration: "underline", textUnderlineOffset: "4px", fontFamily: jakartaSans }}>
-                  View all
+                  {tCommon("viewAll")}
                 </Link>
               </div>
               <div

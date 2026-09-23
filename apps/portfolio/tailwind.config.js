@@ -9,18 +9,13 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        sans:    ["var(--font-jakarta)", "system-ui", "sans-serif"],
-        body:    ["var(--font-jakarta)", "system-ui", "sans-serif"],
-        reading: ["var(--font-jakarta)", "system-ui", "sans-serif"],
-        mono: [
-          "var(--font-mono)",
-          "ui-monospace",
-          "SFMono-Regular",
-          "Menlo",
-          "monospace",
-        ],
-        display: ["var(--font-cormorant)", "Georgia", "serif"],
-        serif:   ["var(--font-cormorant)", "Georgia", "serif"],
+        // Stacks are defined on <body> in styles/globals.css (Latin face + Sinhala fallback).
+        sans:    ["var(--font-sans-stack)"],
+        body:    ["var(--font-sans-stack)"],
+        reading: ["var(--font-sans-stack)"],
+        mono:    ["var(--font-mono-stack)"],
+        display: ["var(--font-serif-stack)"],
+        serif:   ["var(--font-serif-stack)"],
       },
       fontSize: {
         display: "var(--text-display)",

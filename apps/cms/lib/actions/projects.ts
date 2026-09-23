@@ -3,6 +3,7 @@
 import { createClient } from "@/lib/supabase/server"
 import { requestPortfolioRevalidation } from "@/lib/revalidate-portfolio"
 import { revalidatePath } from "next/cache"
+import { planTranslation, queueTranslation, readSinhala, translationColumns } from "@/lib/translation/content"
 import type { Project, ProjectDB, ProjectFormData, ProjectMediaItem } from "@/lib/types/project"
 
 function transformProject(p: ProjectDB): Project {
@@ -21,6 +22,9 @@ function transformProject(p: ProjectDB): Project {
     techStack: p.tech_stack || [],
     liveUrl: p.live_url,
     githubUrl: p.github_url,
+    sinhala: readSinhala(p as unknown as Record<string, unknown>, "projects"),
+    translationStatus: p.translation_status ?? null,
+    translatedAt: p.translated_at ?? null,
     createdAt: p.created_at,
     updatedAt: p.updated_at,
   }
@@ -154,14 +158,23 @@ export async function createProject(data: ProjectFormData): Promise<Project> {
     github_url: data.githubUrl || null,
   }
 
+  const translation = planTranslation({
+    table: "projects",
+    english: payload,
+    existing: null,
+    submitted: data.sinhala,
+    markReviewed: data.markTranslationReviewed,
+  })
+
   const { data: result, error } = await supabase
     .from("projects")
-    .insert(payload)
+    .insert({ ...payload, ...translation.update })
     .select()
     .single()
 
   if (error) throw new Error(`Failed to create project: ${error.message}`)
 
+  queueTranslation(supabase, "projects", result.id, translation.pending)
   revalidatePath("/protected/work")
   await requestPortfolioRevalidation()
   return transformProject(result)
@@ -177,7 +190,9 @@ export async function updateProject(id: string, data: ProjectFormData): Promise<
 
   const { data: existing } = await supabase
     .from("projects")
-    .select("logo, cover_image, project_media")
+    .select<string, Pick<ProjectDB, "logo" | "cover_image" | "project_media"> & Record<string, unknown>>(
+      `logo, cover_image, project_media, ${translationColumns("projects")}`
+    )
     .eq("id", id)
     .eq("user_id", user.id)
     .single()
@@ -221,9 +236,17 @@ export async function updateProject(id: string, data: ProjectFormData): Promise<
     github_url: data.githubUrl || null,
   }
 
+  const translation = planTranslation({
+    table: "projects",
+    english: payload,
+    existing: existing ?? null,
+    submitted: data.sinhala,
+    markReviewed: data.markTranslationReviewed,
+  })
+
   const { data: result, error } = await supabase
     .from("projects")
-    .update(payload)
+    .update({ ...payload, ...translation.update })
     .eq("id", id)
     .eq("user_id", user.id)
     .select()
@@ -231,6 +254,7 @@ export async function updateProject(id: string, data: ProjectFormData): Promise<
 
   if (error) throw new Error(`Failed to update project: ${error.message}`)
 
+  queueTranslation(supabase, "projects", id, translation.pending)
   revalidatePath("/protected/work")
   await requestPortfolioRevalidation()
   return transformProject(result)

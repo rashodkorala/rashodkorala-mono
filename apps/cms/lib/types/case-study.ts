@@ -1,3 +1,5 @@
+import type { SinhalaValues, TranslationInfo, TranslationStatus } from "./translation"
+
 export interface BeforeAfter {
   beforeImage: string | null
   afterImage: string | null
@@ -23,12 +25,21 @@ export interface CaseStudyDB {
   timeline: string | null
   links: { label: string; url: string; type?: string }[]
   stack: string[]
+  // Sinhala translations (optional until the 20260923120000 migration is applied)
+  title_si?: string | null
+  summary_si?: string | null
+  content_md_si?: string | null
+  role_si?: string | null
+  timeline_si?: string | null
+  translation_hashes?: Record<string, string> | null
+  translation_status?: TranslationStatus | null
+  translated_at?: string | null
   created_at: string
   updated_at: string
 }
 
 // Application type (camelCase)
-export interface CaseStudy {
+export interface CaseStudy extends TranslationInfo {
   id: string
   userId: string
   projectId?: string | null
@@ -73,4 +84,7 @@ export interface CaseStudyFormData {
   stack: string[]
   coverImageFile?: File | null
   clearCoverImage?: boolean
+  /** Sinhala values as shown in the editor; anything changed by hand is kept as-is. */
+  sinhala?: SinhalaValues
+  markTranslationReviewed?: boolean
 }

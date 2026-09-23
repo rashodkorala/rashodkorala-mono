@@ -179,8 +179,12 @@
 
 @layer base {
   body {
+    /* Font stacks: Latin face first, Sinhala face as per-glyph fallback (see app/[locale]/layout.tsx). */
+    --font-sans-stack: var(--font-jakarta), var(--font-sinhala-sans), system-ui, sans-serif;
+    --font-serif-stack: var(--font-cormorant), var(--font-sinhala-serif), Georgia, serif;
+    --font-mono-stack: var(--font-mono), ui-monospace, SFMono-Regular, Menlo, var(--font-sinhala-sans), monospace;
     @apply antialiased;
-    font-family: var(--font-jakarta), system-ui, sans-serif;
+    font-family: var(--font-sans-stack);
     background-color: var(--color-page);
     color: var(--color-body);
     font-size: var(--text-body-size);
@@ -205,7 +209,22 @@
   h5,
   h6 {
     text-wrap: balance;
-    font-family: var(--font-cormorant), Georgia, serif;
+    font-family: var(--font-serif-stack);
+  }
+
+  /*
+   * Sinhala typography. Tracking tuned for Latin breaks up Sinhala conjuncts, and the
+   * tight display leading (0.88–1.05) clips vowel signs that sit above/below the line.
+   * Latin-only elements inside Sinhala pages (e.g. the hero name) opt out with lang="en".
+   */
+  :lang(si) {
+    letter-spacing: normal !important;
+  }
+  :lang(si):is(h1, h2, h3, h4, h5, h6) {
+    line-height: 1.35 !important;
+  }
+  :lang(si) p {
+    line-height: max(var(--leading-body, 1.6), 1.7);
   }
 }
 
