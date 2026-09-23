@@ -16,8 +16,8 @@ export default async function EditProjectPage({ params }: { params: Promise<{ sl
   if (!project) redirect("/protected/work")
 
   return (
-    <div className="p-6 max-w-4xl mx-auto space-y-6">
-      <div className="flex items-center gap-4">
+    <div className="space-y-2">
+      <div className="mx-auto flex max-w-7xl items-center gap-4 px-4 pt-4 md:px-8">
         <Button variant="ghost" size="sm" asChild>
           <Link href="/protected/work">
             <IconChevronLeft className="h-4 w-4 mr-1" />
@@ -25,8 +25,7 @@ export default async function EditProjectPage({ params }: { params: Promise<{ sl
           </Link>
         </Button>
         <div>
-          <h1 className="text-2xl font-bold">Edit Project</h1>
-          <p className="text-sm text-muted-foreground">{project.title}</p>
+          <p className="text-sm text-muted-foreground">Edit project</p>
         </div>
       </div>
       <ProjectForm project={project} />

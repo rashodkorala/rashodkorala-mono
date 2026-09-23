@@ -28,8 +28,8 @@ export default async function EditWorkPage({ params }: EditWorkPageProps) {
   const availableProjects = projects.map(p => ({ id: p.id, title: p.title, slug: p.slug }))
 
   return (
-    <div className="p-6 max-w-4xl mx-auto space-y-6">
-      <div className="flex items-center gap-4">
+    <div className="space-y-2">
+      <div className="mx-auto flex max-w-7xl items-center gap-4 px-4 pt-4 md:px-8">
         <Button variant="ghost" size="sm" asChild>
           <Link href="/protected/work">
             <IconChevronLeft className="h-4 w-4 mr-1" />
@@ -37,8 +37,7 @@ export default async function EditWorkPage({ params }: EditWorkPageProps) {
           </Link>
         </Button>
         <div>
-          <h1 className="text-2xl font-bold">Edit Case Study</h1>
-          <p className="text-sm text-muted-foreground">{caseStudy.title}</p>
+          <p className="text-sm text-muted-foreground">Edit case study</p>
         </div>
       </div>
       <CaseStudyForm caseStudy={caseStudy} availableProjects={availableProjects} />
