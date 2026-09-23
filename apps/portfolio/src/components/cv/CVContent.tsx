@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 
 // Design: editorial sidebar layout
 // Sidebar: narrow fluid column with skills/certs/education
@@ -8,184 +8,157 @@ import React from "react";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
 
-interface SkillItem  { name: string; strong?: boolean; }
-interface SkillGroup { label: string; items: SkillItem[]; }
+/**
+ * How a skill links to the entries that show it:
+ *   - `match` highlights the specific bullets that mention it (tested against context + bullets);
+ *   - `entries` links whole entries by id, for skills used there but not named in a bullet.
+ * Skills with neither (or that link to nothing) render as plain labels.
+ */
+interface Skill      { name: string; match?: RegExp; entries?: string[]; }
+interface SkillGroup { label: string; items: Skill[]; }
 interface Cert       { name: string; issuer: string; }
 interface Entry {
   id: string;
   date: string;
   title: string;
+  /** Company / client, plus any qualifier ("Paid client project", location…). */
   org: string;
-  description: string;
-  tags?: string[];
+  /** One-line context in italics under the org (what the product is). */
+  context?: string;
+  bullets: string[];
 }
 
 // ─── Data ─────────────────────────────────────────────────────────────────────
+// Mirrors public/Rashod_Korala_Resume.pdf — keep the two in sync.
+
+const profile =
+  "Full-stack engineer who can take a product from the circuit board to the App Store. I have been the only engineer on a connected hardware product, owning the firmware, the iPhone app, and the cloud backend through to real customers. I work carefully where mistakes are expensive, and my business background means I can explain technical trade-offs to people who decide on cost and risk.";
+
+const plain = (...names: string[]): Skill[] => names.map((name) => ({ name }));
 
 const skills: SkillGroup[] = [
   {
     label: "Languages",
     items: [
-      { name: "TypeScript",  strong: true },
-      { name: "JavaScript",  strong: true },
-      { name: "HTML5 / CSS3", strong: true },
-      { name: "Java" },
+      { name: "TypeScript" },
+      { name: "Swift", entries: ["moov", "aetherlabs"] },
+      { name: "Kotlin", entries: ["moov", "aetherlabs"] },
+      ...plain("Python", "C", "SQL"),
     ],
   },
   {
-    label: "Frameworks & Libraries",
+    label: "Mobile",
     items: [
-      { name: "React / Next.js", strong: true },
-      { name: "React Native",    strong: true },
-      { name: "Node.js",         strong: true },
-      { name: "Express" },
-      { name: "AngularJS" },
+      ...plain("SwiftUI", "Core NFC", "CoreBluetooth"),
+      { name: "AlarmKit", match: /AlarmKit/ },
+      ...plain("WidgetKit", "Jetpack Compose", "React Native"),
     ],
   },
   {
-    label: "Databases",
+    label: "Backend & Cloud",
     items: [
-      { name: "PostgreSQL", strong: true },
-      { name: "Supabase",   strong: true },
+      ...plain("Node.js", "NestJS", "Hono", "PostgreSQL", "Prisma", "Drizzle"),
+      { name: "AWS (Lambda, Aurora, RDS, Fargate, S3, KMS, Cognito)", match: /\bAWS\b|\bKMS\b|serverless/i },
     ],
   },
   {
-    label: "Cloud & DevOps",
+    label: "Embedded",
     items: [
-      { name: "AWS",       strong: true },
-      { name: "Azure" },
-      { name: "OpenShift" },
-      { name: "Docker" },
-      { name: "Git" },
+      { name: "nRF52840" },
+      { name: "Zephyr RTOS", entries: ["moov"] },
+      { name: "Bluetooth Low Energy" },
+      { name: "Over-the-air updates (MCUboot)", match: /over-the-air|firmware/i },
+      { name: "NFC (NTAG 424 DNA)", match: /\bNFC\b|NTAG/, entries: ["aetherlabs"] },
     ],
   },
   {
-    label: "Tools & Platforms",
+    label: "Practices",
     items: [
-      { name: "Figma" },
-      { name: "Shopify / Liquid" },
-      { name: "Cursor" },
-      { name: "Claude Code" },
-      { name: "OpenAI Codex" },
-      { name: "Maven" },
-      { name: "Framer Motion" },
-      { name: "NFC / NDEF" },
-    ],
-  },
-  {
-    label: "Concepts",
-    items: [
-      { name: "REST APIs" },
-      { name: "AI Automation" },
-      { name: "MCP Integrations" },
-      { name: "CI/CD" },
-      { name: "Microservices" },
-      { name: "Web Security" },
+      ...plain("Infrastructure as code (CDK, SST)", "Cloudflare", "CI/CD"),
+      { name: "Automated testing", match: /\btests?\b/i },
+      { name: "Security & access control", match: /secur|cryptograph|counterfeit/i },
+      { name: "Disaster recovery", match: /backups?|recovery|rollback/i },
     ],
   },
 ];
 
 const certs: Cert[] = [
-  { name: "Meta Front-End Developer",         issuer: "Meta · Oct 2025" },
-  { name: "Google IT Support Professional",   issuer: "Google · Nov 2025" },
-  { name: "AWS Cloud Practitioner",           issuer: "Amazon · In progress" },
-  { name: "Master Java Comprehensive Developer", issuer: "2018" },
+  { name: "Google IT Support Professional Certificate", issuer: "Google" },
+  { name: "Meta Front-End Developer Certificate",       issuer: "Meta" },
+  { name: "AWS Cloud Practitioner",                     issuer: "Amazon · In progress" },
 ];
 
 const experience: Entry[] = [
   {
-    id: "rnd",
-    date: "Mar 2025 — Present",
-    title: "Technical Product Engineer & Co-Founder",
-    org: "R&D Creative Agency · St. John's, NL",
-    description:
-      "Led full-cycle delivery of web projects across multiple sectors, from brief to production-ready digital products. Leveraged AI tooling including Claude Code and OpenAI Codex to automate development workflows. Designed and implemented RESTful APIs and third-party integrations for clients including Rob Roy, Konfusion, and MOOV. Applied UI/UX principles to improve live products, enhancing engagement and conversion.",
-    tags: ["React", "Node.js", "Shopify", "Claude Code", "OpenAI Codex"],
-  },
-  {
-    id: "fyynd",
-    date: "Jan 2026 — Present",
-    title: "Product Design Consultant",
-    org: "Fyynd Fit · Remote — Part-Time",
-    description:
-      "Redesigned navigation architecture across mobile app and website, reducing user friction and simplifying core user flows. Overhauled the visual design system for cross-platform consistency. Improved data visualisation and layout to make complex information more scannable, driving higher conversion on key actions.",
-    tags: ["UI/UX", "Design Systems", "Mobile", "Figma"],
+    id: "moov",
+    date: "Jun 2026 — Present",
+    title: "Software Engineering Intern (Mitacs)",
+    org: "Moov Technologies · St. John's, NL",
+    context: "Connected smart alarm: device firmware, iPhone app, and cloud backend",
+    bullets: [
+      "Sole engineer across firmware, iOS, and cloud; delivered the product's first end-to-end over-the-air update.",
+      "Audited the legacy backend with the team, found critical security flaws, and built a secure AWS replacement with 194 tests.",
+      "Cut monthly AWS costs by over 55% through right-sizing, while keeping the system ready to scale.",
+      "Resolved a firmware defect that bypassed the low-battery update check; added automatic rollback for failed updates.",
+      "Worked around iOS limits with AlarmKit and layered fallback alarms, so only the physical device can stop the alarm.",
+      "Rebuilt the iPhone app, won Apple's approval for restricted Screen Time access, and submitted it to the App Store.",
+    ],
   },
   {
     id: "aetherlabs",
-    date: "Jun 2025 — Present",
-    title: "Co-Founder & Engineering Team Lead",
-    org: "AetherLabs · St. John's, NL",
-    description:
-      "Architected and led end-to-end development of a back-office platform enabling independent artists to manage inventory, documentation, provenance, and business workflows. Drove product-market fit through customer discovery and user interviews with artists, galleries, and museums. Scaled the platform to support 30,000+ artists across Canada. Implemented NFC-embedded certificate-of-authenticity workflows and AI-assisted document extraction.",
-    tags: ["React Native", "Next.js", "Supabase", "PostgreSQL", "NFC"],
-  },
-  {
-    id: "paradies",
-    date: "Jun 2022 — Present",
-    title: "Technical Associate",
-    org: "Paradies Lagardère · St. John's International Airport — Part-Time",
-    description:
-      "Managed POS systems and transaction workflows, maintaining operational reliability across daily retail operations. Analysed product performance and sales data to inform stocking and merchandising decisions, contributing to a 30% increase in sales for underperforming product lines.",
-    tags: [],
+    date: "Aug 2024 — Present",
+    title: "Founding Engineer",
+    org: "AetherLabs · aetherlabs.art · Propel ICT & Genesis Evolve accelerators",
+    context: "Proof of authenticity for physical artwork",
+    bullets: [
+      "Designed, built, and launched a platform that uses NFC to give physical artwork a digital identity, so artists can create verifiable provenance for their work and anyone can confirm it with a tap.",
+      "Architected a serverless AWS backend that scales to zero when idle, keeping MVP running costs under $15 a month while ready to scale with demand.",
+      "Engineered a fault-tolerant backend for permanently deployed NFC tags, with server-side record correction, append-only audit history, and immutable, restore-tested backups with 35-day point-in-time recovery.",
+      "Implemented cryptographic tag authentication (NTAG 424 DNA, AES-CMAC) with per-tag keys managed in AWS KMS, preventing cloned or counterfeit chips from passing verification.",
+    ],
   },
 ];
 
 const projects: Entry[] = [
   {
+    id: "moov-shopify",
+    date: "Mar 2026 — Jun 2026",
+    title: "Moov Shopify Storefront",
+    org: "Paid client project",
+    bullets: [
+      "Built a custom Shopify 2.0 theme that merged two legacy websites into one storefront, with a custom product page and live pricing.",
+      "Made all site copy editable from Shopify admin, so the client can update content without a developer.",
+    ],
+  },
+  {
     id: "transcript",
-    date: "2025",
+    date: "GitHub",
     title: "Transcript Processing Pipeline",
-    org: "TypeScript · Node.js · Anthropic API",
-    description:
-      "AI-powered pipeline that transforms meeting transcripts into structured CRM data using a three-tier confidence taxonomy and RESTful ingestion services.",
-    tags: ["TypeScript", "Anthropic API", "Node.js"],
+    org: "AI tool for financial advisers",
+    bullets: [
+      "Built a tool that turns client meeting transcripts into CRM updates, action items, and follow-up emails, and designed it to flag anything uncertain for a person to check instead of guessing.",
+    ],
   },
   {
-    id: "moov",
-    date: "In Development",
-    title: "MOOV Shopify Storefront",
-    org: "Shopify · Liquid · CSS · JavaScript",
-    description:
-      "Dark-themed Shopify storefront with a custom design system, responsive UI, and cross-browser-optimised HTML5/CSS3 for a smart alarm product launch.",
-    tags: ["Shopify", "Liquid", "CSS", "JavaScript"],
-  },
-  {
-    id: "fyynd-project",
-    date: "2026",
-    title: "Fyynd Fit — App & Website Redesign",
-    org: "Figma · fyyndfit.com",
-    description:
-      "Redesigned the mobile app and website experience, overhauling navigation architecture, visual design system, and data visualisation to improve usability and interface cohesion.",
-    tags: ["Figma", "UI/UX", "Mobile", "Web"],
-  },
-  {
-    id: "aetherlabs-project",
-    date: "2025",
-    title: "AetherLabs — Back Office Platform",
-    org: "Next.js · TypeScript · Supabase · PostgreSQL",
-    description:
-      "Comprehensive platform for artist business operations including inventory, provenance management, NFC-embedded certificate-of-authenticity workflows, CRM, and invoicing.",
-    tags: ["Next.js", "TypeScript", "Supabase", "PostgreSQL", "NFC"],
+    id: "fyyndfit",
+    date: "Jan 2026",
+    title: "Fyyndfit",
+    org: "Dashboard & UI Design",
+    bullets: [
+      "Redesigned the progress dashboard of an AI fitness app so non-technical users could read their results at a glance.",
+    ],
   },
 ];
 
-const accelerators: Entry[] = [
+const additionalExperience: Entry[] = [
   {
-    id: "genesis",
-    date: "Winter 2026",
-    title: "Genesis Evolve",
-    org: "Genesis Centre · Canada",
-    description:
-      "Selected for the Winter 2026 cohort with AetherLabs. Completed customer discovery, product iteration, and investor pitch preparation. Delivered a final 15-slide pitch to a panel of judges and investors.",
-  },
-  {
-    id: "propel",
-    date: "2024",
-    title: "Propel ICT Vision",
-    org: "Propel · Atlantic Canada",
-    description:
-      "Participated in accelerator programming focused on go-to-market strategy, investor readiness, and product-market fit validation for early-stage tech ventures.",
+    id: "ls-travel-retail",
+    date: "Jun 2022 — Jun 2026",
+    title: "Sales Associate & Technical Support",
+    org: "LS Travel Retail",
+    bullets: [
+      "Became the go-to person for tech problems across several stores, fixing point-of-sale and network issues at peak hours.",
+    ],
   },
 ];
 
@@ -229,12 +202,33 @@ function SidebarLabel({ children }: { children: React.ReactNode }) {
   );
 }
 
-function EntryGrid({ entries, showTags = true }: { entries: Entry[]; showTags?: boolean }) {
+/**
+ * How `e` relates to the selected skill: `linked` if it shows the skill at all, and which
+ * bullets to emphasise (only those that name it — a whole-entry link emphasises none).
+ */
+function skillHits(e: Entry, skill: Skill): { linked: boolean; bullets: Set<string> } {
+  const bullets = new Set(skill.match ? e.bullets.filter((b) => skill.match!.test(b)) : []);
+  const inContext = !!skill.match && skill.match.test(`${e.context ?? ""} ${e.org}`);
+  // A match only in the context line (e.g. "device firmware") counts for the whole entry.
+  if (!bullets.size && inContext) e.bullets.forEach((b) => bullets.add(b));
+  const linked = bullets.size > 0 || !!skill.entries?.includes(e.id);
+  return { linked, bullets };
+}
+
+function EntryGrid({ entries, skill }: { entries: Entry[]; skill: Skill | null }) {
   return (
     <>
-      {entries.map((e) => (
+      {entries.map((e) => {
+        const result = skill ? skillHits(e, skill) : null;
+        const hits = result ? result.bullets : null;
+        const dimmed = !!result && !result.linked;
+        // Linked as a whole entry (no specific bullet): keep every bullet at full strength.
+        const emphasise = !!hits && hits.size > 0;
+        return (
         <div
           key={e.id}
+          data-cv-hit={result?.linked ? "true" : undefined}
+          style={{ opacity: dimmed ? 0.3 : 1, transition: "opacity 200ms ease" }}
           className="cv-entry-grid mb-[clamp(var(--fib-21),2.5vw,var(--fib-34))] grid [grid-template-columns:clamp(4.5rem,9vw,6.75rem)_1fr] gap-[clamp(var(--fib-13),2vw,var(--fib-21))] border-b border-line-subtle pb-[clamp(var(--fib-21),2.5vw,var(--fib-34))] last:mb-0 last:border-b-0 last:pb-0"
         >
           <p className="cv-entry-date-col pt-1 font-sans text-[length:var(--text-label)] font-normal leading-relaxed text-[color:var(--color-label)]">
@@ -252,34 +246,62 @@ function EntryGrid({ entries, showTags = true }: { entries: Entry[]; showTags?: 
             <p className="mb-0.5 font-sans text-[length:clamp(0.9375rem,1.4vw,1.625rem)] font-semibold leading-tight tracking-h2 text-heading">
               {e.title}
             </p>
-            <p className="mb-[clamp(var(--fib-8),1vw,var(--fib-13))] font-sans text-[length:clamp(var(--text-caption),0.85vw,0.8125rem)] font-normal text-body-secondary">
+            <p className="mb-0 font-sans text-[length:clamp(var(--text-caption),0.85vw,0.8125rem)] font-normal text-body-secondary">
               {e.org}
             </p>
-            <p className="max-w-reading font-sans text-[length:clamp(var(--text-caption),0.92vw,1.0625rem)] font-normal leading-body text-body-secondary">
-              {e.description}
-            </p>
-            {showTags && e.tags && e.tags.length > 0 && (
-              <div className="mt-fib-13 flex flex-wrap gap-fib-8">
-                {e.tags.map((t) => (
-                  <span
-                    key={t}
-                    className="border border-line-strong px-fib-13 py-fib-8 font-sans text-[length:clamp(var(--text-label),0.75vw,var(--text-caption))] font-normal tracking-ui text-body-secondary"
-                  >
-                    {t}
-                  </span>
-                ))}
-              </div>
+            {e.context && (
+              <p className="mb-0 mt-0.5 font-sans text-[length:clamp(var(--text-caption),0.85vw,0.8125rem)] font-normal italic text-[color:var(--color-label)]">
+                {e.context}
+              </p>
             )}
+            <ul className="mt-[clamp(var(--fib-8),1vw,var(--fib-13))] max-w-reading list-none space-y-fib-8 p-0">
+              {e.bullets.map((b) => {
+                const hit = !!hits && hits.has(b);
+                return (
+                  <li
+                    key={b}
+                    className={`relative pl-fib-21 font-sans text-[length:clamp(var(--text-caption),0.92vw,1.0625rem)] font-normal leading-body transition-colors before:absolute before:left-0 before:content-['–'] ${
+                      hit
+                        ? "text-heading before:text-heading"
+                        : `text-body-secondary before:text-[color:var(--color-label)] ${emphasise ? "opacity-50" : ""}`
+                    }`}
+                  >
+                    {b}
+                  </li>
+                );
+              })}
+            </ul>
           </div>
         </div>
-      ))}
+        );
+      })}
     </>
   );
+}
+
+const allEntries = () => [...experience, ...projects, ...additionalExperience];
+
+function hitCount(skill: Skill): number {
+  if (!skill.match && !skill.entries?.length) return 0;
+  return allEntries().filter((e) => skillHits(e, skill).linked).length;
 }
 
 // ─── Main ─────────────────────────────────────────────────────────────────────
 
 export default function CVContent() {
+  const [selected, setSelected] = useState<Skill | null>(null);
+
+  const toggleSkill = (skill: Skill) => {
+    const next = selected?.name === skill.name ? null : skill;
+    setSelected(next);
+    // On narrow screens the skills sit below the entries — bring the first match into view.
+    if (next && window.matchMedia("(max-width: 1200px)").matches) {
+      requestAnimationFrame(() =>
+        document.querySelector("[data-cv-hit]")?.scrollIntoView({ behavior: "smooth", block: "center" })
+      );
+    }
+  };
+
   return (
     <>
       <style>{`
@@ -289,44 +311,63 @@ export default function CVContent() {
           .cv-main       { order: 1; }
           .cv-sidebar    {
             order: 2;
-            border-right: none !important;
+            border-left: none !important;
             border-top: 1px solid var(--color-border) !important;
             border-bottom: none !important;
-            padding-right: 0 !important;
+            padding-left: 0 !important;
             padding-top: clamp(var(--fib-21), 3vw, 2.5rem) !important;
             padding-bottom: 0 !important;
-            margin-right: 0 !important;
+            margin-left: 0 !important;
             margin-top: clamp(var(--fib-34), 3.5vw, 2.75rem) !important;
             margin-bottom: 0 !important;
-            flex-direction: row !important;
-            flex-wrap: wrap !important;
-            gap: clamp(var(--fib-34), 4vw, var(--fib-55)) !important;
-            align-items: flex-start;
+            /* Groups side by side where there's room, one per row on phones. */
+            display: grid !important;
+            grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr));
+            gap: var(--fib-34) clamp(var(--fib-21), 4vw, var(--fib-55)) !important;
+            align-items: start;
+          }
+          .cv-sidebar-title, .cv-skill-hint { grid-column: 1 / -1; }
+          .cv-sidebar-title > div { margin-bottom: 0 !important; }
+          .cv-skill-hint { margin-bottom: 0 !important; }
+
+          /* Skills become wrapping pills instead of a long one-per-line list. */
+          .cv-skill-list { display: flex; flex-wrap: wrap; gap: var(--fib-8); }
+          .cv-skill {
+            width: auto !important;
+            margin: 0 !important;
+            padding: 5px 12px;
+            border: 1px solid var(--color-border-subtle);
+            border-radius: 999px;
+            text-decoration: none !important;
+            line-height: 1.4 !important;
+          }
+          .cv-skill-dot { display: none; }
+          button.cv-skill { border-color: var(--color-border-strong); color: var(--color-body); }
+          button.cv-skill[aria-pressed="true"] {
+            background: var(--color-heading);
+            border-color: var(--color-heading);
+            color: var(--color-page);
           }
         }
         @media (max-width: 640px) {
           .cv-hero-inner      { flex-direction: column !important; align-items: flex-start !important; gap: var(--fib-21) !important; }
           .cv-hero-meta       { text-align: left !important; align-items: flex-start !important; }
-          .cv-sidebar         { flex-direction: column !important; }
-          .cv-competency-grid { grid-template-columns: repeat(2, 1fr) !important; }
         }
         @media (max-width: 480px) {
           .cv-entry-date-col  { display: none !important; }
           .cv-entry-grid      { grid-template-columns: 1fr !important; }
-        }
-        @media (max-width: 380px) {
-          .cv-competency-grid { grid-template-columns: 1fr !important; }
         }
         .cv-hero-name {
           font-size: clamp(2.75rem, 7vw, 8rem);
         }
         @media print {
           .cv-no-print   { display: none !important; }
-          .cv-body-grid  { grid-template-columns: clamp(10rem, 17vw, 13.75rem) 1fr !important; }
+          .cv-body-grid  { grid-template-columns: 1fr clamp(10rem, 17vw, 13.75rem) !important; }
           .cv-sidebar    {
-            order: 0 !important;
+            order: 2 !important;
+            position: static !important;
             flex-direction: column !important;
-            border-right: 1px solid var(--color-border) !important;
+            border-left: 1px solid var(--color-border) !important;
             border-top: none !important;
             border-bottom: none !important;
             padding-top: 0 !important;
@@ -349,7 +390,7 @@ export default function CVContent() {
 
           <div className="cv-hero-meta flex flex-col items-end gap-1 pb-[clamp(var(--fib-8),0.5vw,var(--fib-13))]">
             {[
-              { text: "Canada", href: null },
+              { text: "St. John's, NL", href: null },
               { text: "hello@rashodkorala.com", href: "mailto:hello@rashodkorala.com" },
               { text: "rashodkorala.com", href: "https://rashodkorala.com" },
               { text: "github.com/rashodkorala", href: "https://github.com/rashodkorala" },
@@ -387,63 +428,67 @@ export default function CVContent() {
         <HRule />
 
         <div className="mb-[clamp(var(--fib-34),3.5vw,var(--fib-55))]">
-          <SectionHeader title="Professional Competency" />
-          <div
-            className="cv-competency-grid grid grid-cols-3 gap-x-[clamp(var(--fib-21),2vw,var(--fib-34))] gap-y-[clamp(var(--fib-8),0.8vw,var(--fib-13))]"
-          >
-            {[
-              "Full Stack Engineering",
-              "AI Workflow Automation",
-              "Technical Product Leadership",
-              "Product Discovery & Iteration",
-              "System Architecture",
-              "UI/UX Systems Design",
-              "Cross-Functional Collaboration",
-              "Client Delivery Management",
-              "Project Management",
-            ].map((item) => (
-              <div key={item} className="flex items-center gap-fib-13">
-                <div className="size-1 shrink-0 rounded-full bg-line-strong" />
-                <span className="font-sans text-[length:clamp(var(--text-caption),0.92vw,0.875rem)] font-normal leading-body text-body-secondary">
-                  {item}
-                </span>
-              </div>
-            ))}
-          </div>
+          <SectionHeader title="Profile" />
+          <p className="max-w-reading font-sans text-[length:clamp(var(--text-caption),1.05vw,1.1875rem)] font-normal leading-body text-body-secondary">
+            {profile}
+          </p>
         </div>
 
         <HRule />
 
         <div
-          className="cv-body-grid grid [grid-template-columns:clamp(10rem,17vw,13.75rem)_1fr]"
+          className="cv-body-grid grid [grid-template-columns:1fr_clamp(12rem,19vw,15.5rem)]"
         >
 
           <aside
-            className="cv-sidebar flex flex-col gap-[clamp(var(--fib-34),3vw,2.75rem)] border-r border-line pr-[clamp(var(--fib-21),2vw,var(--fib-34))] mr-[clamp(var(--fib-21),3vw,3rem)]"
+            id="cv-skills"
+            className="cv-sidebar order-2 flex flex-col gap-[clamp(var(--fib-34),3vw,2.75rem)] self-start border-l border-line pl-[clamp(var(--fib-21),2vw,var(--fib-34))] ml-[clamp(var(--fib-21),3vw,3rem)] min-[1201px]:sticky min-[1201px]:top-fib-21"
           >
+            <div className="cv-sidebar-title min-[1201px]:hidden">
+              <SectionHeader title="Skills" />
+            </div>
+            <p className="cv-skill-hint cv-no-print -mb-fib-13 font-sans text-[length:var(--text-label)] leading-body text-[color:var(--color-label)]">
+              Pick a highlighted skill to see where I&apos;ve used it.
+            </p>
             {skills.map((group) => (
               <div key={group.label}>
                 <SidebarLabel>{group.label}</SidebarLabel>
-                {group.items.map((skill) => (
-                  <div key={skill.name} className="mb-1 flex items-center gap-fib-13">
-                    <div
-                      className={
-                        skill.strong
-                          ? "size-1 shrink-0 rounded-full bg-heading"
-                          : "size-1 shrink-0 rounded-full bg-line-strong"
-                      }
-                    />
-                    <span
-                      className={
-                        skill.strong
-                          ? "font-sans text-[length:clamp(var(--text-label),0.85vw,0.8125rem)] font-medium leading-body text-heading"
-                          : "font-sans text-[length:clamp(var(--text-label),0.85vw,0.8125rem)] font-normal leading-body text-body-secondary"
-                      }
+                <div className="cv-skill-list">
+                {group.items.map((skill) => {
+                  const count = hitCount(skill);
+                  const active = selected?.name === skill.name;
+                  const label = (
+                    <>
+                      <span
+                        className={`cv-skill-dot mt-[0.6em] size-1 shrink-0 rounded-full ${
+                          active ? "bg-heading" : count ? "bg-body-secondary" : "bg-line-strong"
+                        }`}
+                      />
+                      <span className="min-w-0">{skill.name}</span>
+                    </>
+                  );
+                  const text =
+                    "font-sans text-[length:clamp(var(--text-label),0.85vw,0.8125rem)] font-normal leading-body";
+                  return count ? (
+                    <button
+                      key={skill.name}
+                      type="button"
+                      aria-pressed={active}
+                      onClick={() => toggleSkill(skill)}
+                      title={`Highlight where I've used ${skill.name}`}
+                      className={`cv-skill mb-1 flex w-full items-start gap-fib-13 text-left underline decoration-line-hover underline-offset-4 transition-colors ${text} ${
+                        active ? "text-heading decoration-heading" : "text-body hover:text-heading"
+                      }`}
                     >
-                      {skill.name}
-                    </span>
-                  </div>
-                ))}
+                      {label}
+                    </button>
+                  ) : (
+                    <div key={skill.name} className={`cv-skill mb-1 flex items-start gap-fib-13 text-body-secondary ${text}`}>
+                      {label}
+                    </div>
+                  );
+                })}
+                </div>
               </div>
             ))}
 
@@ -464,32 +509,59 @@ export default function CVContent() {
             <div>
               <SidebarLabel>Education</SidebarLabel>
               <p className="font-sans text-[length:clamp(var(--text-caption),0.9vw,0.875rem)] font-normal leading-sub text-heading">
-                BSc Computer Science
+                Bachelor of Science in Computer Science
               </p>
               <p className="font-sans text-[length:clamp(var(--text-label),0.85vw,0.8125rem)] font-normal leading-sub text-body-secondary">
-                Minor in Business Admin
+                Minor in Business Administration
               </p>
               <p className="mt-0.5 font-sans text-[length:var(--text-label)] font-normal text-[color:var(--color-label)]">
-                Memorial University · 2025
+                Memorial University of Newfoundland · Graduated Winter 2025
               </p>
             </div>
           </aside>
 
-          <main className="cv-main flex flex-col gap-[clamp(var(--fib-34),4.5vw,3.75rem)]">
+          <main className="cv-main order-1 flex min-w-0 flex-col gap-[clamp(var(--fib-34),4.5vw,3.75rem)]">
+            {selected && (
+              <div
+                role="status"
+                className="cv-no-print flex flex-wrap items-center justify-between gap-fib-13 border border-line-strong px-fib-21 py-fib-13 font-sans text-[length:clamp(var(--text-label),0.85vw,0.8125rem)] text-body-secondary"
+              >
+                <span>
+                  Showing where I&apos;ve used <span className="text-heading">{selected.name}</span>
+                </span>
+                <span className="flex items-center gap-fib-21">
+                  {/* Skills sit below the entries on narrow screens — offer a way back. */}
+                  <button
+                    type="button"
+                    onClick={() => document.getElementById("cv-skills")?.scrollIntoView({ behavior: "smooth", block: "start" })}
+                    className="underline underline-offset-4 hover:text-heading min-[1201px]:hidden"
+                  >
+                    Back to skills
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setSelected(null)}
+                    className="underline underline-offset-4 hover:text-heading"
+                  >
+                    Clear
+                  </button>
+                </span>
+              </div>
+            )}
 
             <section>
               <SectionHeader title="Experience" />
-              <EntryGrid entries={experience} />
+              <EntryGrid entries={experience} skill={selected} />
             </section>
 
             <section>
-              <SectionHeader title="Selected Projects" />
-              <EntryGrid entries={projects} />
+              <SectionHeader title="Projects" />
+              <EntryGrid entries={projects} skill={selected} />
             </section>
 
             <section>
-              <SectionHeader title="Accelerators & Programs" />
-              <EntryGrid entries={accelerators} showTags={false} />
+              <SectionHeader title="Additional Experience" />
+              <EntryGrid entries={additionalExperience} skill={selected} />
             </section>
 
           </main>

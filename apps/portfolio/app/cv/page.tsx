@@ -4,7 +4,7 @@ import CVContent from "@/src/components/cv/CVContent";
 
 export const metadata: Metadata = {
   title: "CV",
-  description: "Curriculum vitae of Rashod Korala — Full Stack Developer & Entrepreneur.",
+  description: "CV of Rashod Korala — full-stack engineer across firmware, iOS, and cloud.",
 };
 
 export default function CVPage() {
