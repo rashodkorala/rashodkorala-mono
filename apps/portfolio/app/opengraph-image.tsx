@@ -1,15 +1,16 @@
+import { readFile } from "node:fs/promises";
+import { join } from "node:path";
 import { ImageResponse } from "next/og";
 
-export const runtime = "edge";
 export const alt = "Rashod Korala | Software Developer";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
-const JAKARTA_SANS_WOFF2 =
-  "https://fonts.gstatic.com/s/plusjakartasans/v8/LDIbaomQNQcsA88c7O9yZ4KMCoOg4IA6-91aHEjcWuA_KU7N.woff2";
-
 export default async function OGImage() {
-  const jakartaSans = await fetch(JAKARTA_SANS_WOFF2).then((res) => res.arrayBuffer());
+  // Bundled with the app: satori can't read woff2, and remote font URLs rot.
+  const jakartaSans = await readFile(
+    join(process.cwd(), "assets/fonts/PlusJakartaSans-Light.ttf")
+  );
 
   return new ImageResponse(
     (
