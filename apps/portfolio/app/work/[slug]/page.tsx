@@ -70,7 +70,9 @@ async function resolve(slug: string): Promise<
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const item = await resolve(slug);
-  if (!item || item.kind === "redirect") return { title: "Not found" };
+  if (!item) return { title: "Not found" };
+  // Redirecting to the project page — keep the default title rather than flashing "Not found".
+  if (item.kind === "redirect") return {};
 
   if (item.kind === "project") {
     const { project, story } = item;

@@ -28,6 +28,8 @@ const nextConfig = {
     return [
       // Projects used to live at /work/projects/{slug}; every piece of work is now /work/{slug}.
       { source: "/work/projects/:slug", destination: "/work/:slug", permanent: true },
+      // Renamed slugs (old links keep working).
+      { source: "/work/atlier", destination: "/work/atelier", permanent: true },
     ];
   },
 };
