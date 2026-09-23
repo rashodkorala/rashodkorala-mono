@@ -23,8 +23,8 @@ export default function DashboardLayout({
             className="bg-[#1a1a1a] text-white"
         >
             <AppSidebar variant="inset" collapsible="offcanvas" className="border-none" />
-            <SidebarInset className="min-w-0 overflow-x-hidden">
-                <main className="@container/main flex min-w-0 flex-1 flex-col bg-background rounded-2xl overflow-x-hidden">
+            <SidebarInset className="min-w-0 overflow-x-clip">
+                <main className="@container/main flex min-w-0 flex-1 flex-col bg-background rounded-2xl overflow-x-clip">
                     <SiteHeader />
                     <div className="min-w-0 flex-1">{children}</div>
                 </main>

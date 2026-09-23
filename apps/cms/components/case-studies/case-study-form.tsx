@@ -6,12 +6,19 @@ import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
 import { Checkbox } from "@/components/ui/checkbox"
-import { Card } from "@/components/ui/card"
 import { IconX } from "@tabler/icons-react"
 import type { CaseStudy, CaseStudyFormData } from "@/lib/types/case-study"
 import { createOrUpdateCaseStudy } from "@/lib/actions/case-studies"
+import { MarkdownEditor } from "@/components/editor/markdown-editor"
+import {
+  AutoGrowTextarea,
+  EditorLayout,
+  SaveBar,
+  SidebarSection,
+  useEditorShortcuts,
+} from "@/components/work-editor/editor-layout"
+import { TagInput } from "@/components/work-editor/tag-input"
 
 interface CaseStudyFormProps {
   caseStudy?: CaseStudy
@@ -27,9 +34,35 @@ function slugify(text: string): string {
     .trim()
 }
 
+const mediaUrl = (path: string) => `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/media/${path}`
+const isVideoPath = (path: string) => /\.(mp4|webm|mov|ogg)$/i.test(path)
+
+const selectClass = "h-9 w-full rounded-md border bg-background px-2 text-sm"
+
+function Thumb({ src, video, alt, onRemove }: { src: string; video?: boolean; alt: string; onRemove: () => void }) {
+  return (
+    <div className="relative">
+      {video ? (
+        <video src={src} className="h-20 w-full rounded object-cover" muted playsInline />
+      ) : (
+        <img src={src} alt={alt} className="h-20 w-full rounded object-cover" />
+      )}
+      <button
+        type="button"
+        onClick={onRemove}
+        aria-label={`Remove ${alt}`}
+        className="absolute right-1 top-1 rounded bg-black/60 p-1"
+      >
+        <IconX className="h-3 w-3 text-white" />
+      </button>
+    </div>
+  )
+}
+
 export function CaseStudyForm({ caseStudy, availableProjects }: CaseStudyFormProps) {
   const router = useRouter()
   const isEditing = !!caseStudy
+  const formRef = useRef<HTMLFormElement>(null)
 
   const [linkedProjectIds, setLinkedProjectIds] = useState<string[]>(
     caseStudy?.projectId ? [caseStudy.projectId] : []
@@ -49,7 +82,7 @@ export function CaseStudyForm({ caseStudy, availableProjects }: CaseStudyFormPro
     beforeImageFile: null,
     afterImageFile: null,
     order: caseStudy?.order ?? 0,
-    status: caseStudy?.status ?? 'draft',
+    status: caseStudy?.status ?? "draft",
     summary: caseStudy?.summary ?? "",
     role: caseStudy?.role ?? "",
     timeline: caseStudy?.timeline ?? "",
@@ -60,167 +93,98 @@ export function CaseStudyForm({ caseStudy, availableProjects }: CaseStudyFormPro
   })
 
   const [isLoading, setIsLoading] = useState(false)
-  const [isUploadingInlineImage, setIsUploadingInlineImage] = useState(false)
-  const markdownTextareaRef = useRef<HTMLTextAreaElement | null>(null)
-  const inlineImageInputRef = useRef<HTMLInputElement | null>(null)
 
   const [galleryFiles, setGalleryFiles] = useState<File[]>([])
   const [existingGallery, setExistingGallery] = useState<string[]>(caseStudy?.gallery || [])
   const [galleryPreviewUrls, setGalleryPreviewUrls] = useState<string[]>([])
   const [beforePreviewUrl, setBeforePreviewUrl] = useState<string | null>(
-    caseStudy?.beforeAfter?.beforeImage
-      ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/media/${caseStudy.beforeAfter.beforeImage}`
-      : null
+    caseStudy?.beforeAfter?.beforeImage ? mediaUrl(caseStudy.beforeAfter.beforeImage) : null
   )
   const [afterPreviewUrl, setAfterPreviewUrl] = useState<string | null>(
-    caseStudy?.beforeAfter?.afterImage
-      ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/media/${caseStudy.beforeAfter.afterImage}`
-      : null
+    caseStudy?.beforeAfter?.afterImage ? mediaUrl(caseStudy.beforeAfter.afterImage) : null
+  )
+  const [coverPreviewUrl, setCoverPreviewUrl] = useState<string | null>(
+    caseStudy?.coverPath ? mediaUrl(caseStudy.coverPath) : null
+  )
+  const [editSlug, setEditSlug] = useState(false)
+
+  const { dirty, markSaved } = useEditorShortcuts(
+    formRef,
+    [formData, linkedProjectIds, galleryFiles, existingGallery],
+    isLoading
   )
 
-  const [tagsCsv, setTagsCsv] = useState((caseStudy?.tags || []).join(", "))
-  const [stackCsv, setStackCsv] = useState((caseStudy?.stack || []).join(", "))
-  const [coverPreviewUrl, setCoverPreviewUrl] = useState<string | null>(
-    caseStudy?.coverPath
-      ? `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/media/${caseStudy.coverPath}`
-      : null
-  )
+  const update = <K extends keyof CaseStudyFormData>(key: K, value: CaseStudyFormData[K]) =>
+    setFormData((prev) => ({ ...prev, [key]: value }))
 
   const handleTitleChange = (title: string) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
       title,
       slug: isEditing ? prev.slug : slugify(title),
     }))
   }
 
+  const readPreview = (file: File, set: (url: string) => void) => {
+    const reader = new FileReader()
+    reader.onloadend = () => set(reader.result as string)
+    reader.readAsDataURL(file)
+  }
+
   const handleGalleryImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || [])
     if (files.length === 0) return
-    setGalleryFiles(prev => [...prev, ...files])
+    setGalleryFiles((prev) => [...prev, ...files])
     const previews = await Promise.all(
-      files.map((file) => {
-        if (file.type.startsWith("video/")) {
-          return Promise.resolve(URL.createObjectURL(file))
-        }
-        return new Promise<string>((resolve) => {
-          const reader = new FileReader()
-          reader.onloadend = () => resolve(reader.result as string)
-          reader.readAsDataURL(file)
-        })
-      })
+      files.map((file) =>
+        file.type.startsWith("video/")
+          ? Promise.resolve(URL.createObjectURL(file))
+          : new Promise<string>((resolve) => readPreview(file, resolve))
+      )
     )
-    setGalleryPreviewUrls(prev => [...prev, ...previews])
+    setGalleryPreviewUrls((prev) => [...prev, ...previews])
   }
 
   const removeGalleryImage = (index: number) => {
-    setGalleryPreviewUrls(prev => prev.filter((_, i) => i !== index))
-    setGalleryFiles(prev => prev.filter((_, i) => i !== index))
+    setGalleryPreviewUrls((prev) => prev.filter((_, i) => i !== index))
+    setGalleryFiles((prev) => prev.filter((_, i) => i !== index))
   }
 
-  const removeExistingGalleryImage = (index: number) => {
-    setExistingGallery((prev) => prev.filter((_, i) => i !== index))
-  }
-
-  const syncTagsFromCsv = (value: string) => {
-    setTagsCsv(value)
-    const tags = value.split(",").map((t) => t.trim()).filter(Boolean)
-    setFormData((prev) => ({ ...prev, tags }))
-  }
-
-  const syncStackFromCsv = (value: string) => {
-    setStackCsv(value)
-    const stack = value.split(",").map((t) => t.trim()).filter(Boolean)
-    setFormData((prev) => ({ ...prev, stack }))
-  }
-
-  const addLink = () => {
-    setFormData((prev) => ({ ...prev, links: [...prev.links, { label: "", url: "", type: "other" }] }))
-  }
+  const addLink = () => update("links", [...formData.links, { label: "", url: "", type: "other" }])
 
   const updateLink = (i: number, field: "label" | "url" | "type", value: string) => {
-    setFormData((prev) => {
-      const links = [...prev.links]
-      links[i] = { ...links[i], [field]: value }
-      return { ...prev, links }
-    })
+    const links = [...formData.links]
+    links[i] = { ...links[i], [field]: value }
+    update("links", links)
   }
 
-  const removeLink = (i: number) => {
-    setFormData((prev) => ({ ...prev, links: prev.links.filter((_, idx) => idx !== i) }))
-  }
+  /** Uploads media pasted/dropped into the editor; returns its public URL. */
+  const uploadInlineMedia = async (file: File): Promise<string> => {
+    if (!formData.slug.trim()) throw new Error("Add a title first — media is stored under the case study's slug")
 
-  const insertMarkdownAtCursor = (snippet: string) => {
-    const textarea = markdownTextareaRef.current
-    if (!textarea) {
-      setFormData((prev) => ({ ...prev, contentMd: `${prev.contentMd}\n${snippet}`.trim() }))
-      return
+    // Signed upload URL from the server avoids Next.js body size limits.
+    const urlRes = await fetch(
+      `/api/case-studies/signed-upload-url?slug=${encodeURIComponent(formData.slug)}&filename=${encodeURIComponent(file.name)}`
+    )
+    if (!urlRes.ok) {
+      const payload = await urlRes.json().catch(() => ({ error: "Failed to get upload URL" }))
+      throw new Error(payload.error || "Failed to get upload URL")
     }
+    const { signedUrl, publicUrl } = await urlRes.json()
 
-    const start = textarea.selectionStart ?? formData.contentMd.length
-    const end = textarea.selectionEnd ?? formData.contentMd.length
-    const next =
-      formData.contentMd.slice(0, start) +
-      snippet +
-      formData.contentMd.slice(end)
-    setFormData((prev) => ({ ...prev, contentMd: next }))
-
-    requestAnimationFrame(() => {
-      textarea.focus()
-      const cursor = start + snippet.length
-      textarea.setSelectionRange(cursor, cursor)
-    })
-  }
-
-  const handleInlineImageAttach = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-    if (!formData.slug.trim()) {
-      toast.error("Add a slug before attaching inline media")
-      return
+    // Supabase signed upload expects multipart FormData (file under "" key).
+    // Remap video/quicktime (.mov) → video/mp4 since Supabase doesn't accept quicktime.
+    const mimeType = file.type === "video/quicktime" ? "video/mp4" : file.type
+    const uploadBlob = mimeType !== file.type ? new Blob([file], { type: mimeType }) : file
+    const uploadForm = new FormData()
+    uploadForm.append("cacheControl", "3600")
+    uploadForm.append("", uploadBlob, file.name)
+    const uploadRes = await fetch(signedUrl, { method: "PUT", body: uploadForm })
+    if (!uploadRes.ok) {
+      const errText = await uploadRes.text().catch(() => "")
+      throw new Error(`Upload failed (${uploadRes.status})${errText ? `: ${errText}` : ""}`)
     }
-
-    setIsUploadingInlineImage(true)
-    try {
-      // Get a signed upload URL from the server (avoids Next.js body size limits)
-      const urlRes = await fetch(
-        `/api/case-studies/signed-upload-url?slug=${encodeURIComponent(formData.slug)}&filename=${encodeURIComponent(file.name)}`
-      )
-      if (!urlRes.ok) {
-        const payload = await urlRes.json().catch(() => ({ error: "Failed to get upload URL" }))
-        throw new Error(payload.error || "Failed to get upload URL")
-      }
-      const { signedUrl, publicUrl } = await urlRes.json()
-
-      // Upload directly from the browser to Supabase — no Next.js body limit
-      // Supabase signed upload endpoint expects multipart FormData (file under "" key)
-      // Remap video/quicktime (.mov) → video/mp4 since Supabase doesn't accept quicktime
-      const mimeType = file.type === "video/quicktime" ? "video/mp4" : file.type
-      const uploadBlob = mimeType !== file.type ? new Blob([file], { type: mimeType }) : file
-      const uploadForm = new FormData()
-      uploadForm.append("cacheControl", "3600")
-      uploadForm.append("", uploadBlob, file.name)
-      const uploadRes = await fetch(signedUrl, {
-        method: "PUT",
-        body: uploadForm,
-      })
-      if (!uploadRes.ok) {
-        const errText = await uploadRes.text().catch(() => "")
-        throw new Error(`Upload failed (${uploadRes.status})${errText ? `: ${errText}` : ""}`)
-      }
-
-      const isVid = file.type.startsWith("video/")
-      const snippet = isVid
-        ? `\n<video src="${publicUrl}" autoplay muted loop playsInline style="width:100%"></video>\n`
-        : `\n![${file.name.replace(/\.[^/.]+$/, "")}](${publicUrl})\n`
-      insertMarkdownAtCursor(snippet)
-      toast.success(isVid ? "Video uploaded and inserted" : "Image uploaded and inserted")
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Failed to attach media")
-    } finally {
-      setIsUploadingInlineImage(false)
-      if (inlineImageInputRef.current) inlineImageInputRef.current.value = ""
-    }
+    return publicUrl as string
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -234,12 +198,9 @@ export function CaseStudyForm({ caseStudy, availableProjects }: CaseStudyFormPro
     setIsLoading(true)
 
     try {
-      await createOrUpdateCaseStudy(
-        { ...formData, existingGallery, galleryFiles },
-        caseStudy?.id,
-        linkedProjectIds
-      )
+      await createOrUpdateCaseStudy({ ...formData, existingGallery, galleryFiles }, caseStudy?.id, linkedProjectIds)
 
+      markSaved()
       toast.success(isEditing ? "Case study updated" : "Case study created")
       router.push("/protected/work")
       router.refresh()
@@ -251,133 +212,140 @@ export function CaseStudyForm({ caseStudy, availableProjects }: CaseStudyFormPro
     }
   }
 
-  return (
-    <form onSubmit={handleSubmit} className="space-y-6">
-      <Card className="p-6 space-y-6">
-        <h2 className="text-lg font-semibold">Case Study</h2>
-        <div className="grid md:grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label htmlFor="title">Title *</Label>
-            <Input id="title" value={formData.title} onChange={(e) => handleTitleChange(e.target.value)} required />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="slug">Slug *</Label>
-            <Input id="slug" value={formData.slug} onChange={(e) => setFormData((p) => ({ ...p, slug: e.target.value }))} required />
-          </div>
+  const cancel = () => {
+    if (dirty && !confirm("Discard unsaved changes?")) return
+    router.push("/protected/work")
+  }
+
+  const galleryCount = existingGallery.length + galleryFiles.length
+  const detailsHint = [formData.role, formData.timeline].filter(Boolean).join(" · ")
+
+  const main = (
+    <div className="space-y-4">
+      <AutoGrowTextarea
+        aria-label="Title"
+        value={formData.title}
+        onChange={handleTitleChange}
+        placeholder="Untitled case study"
+        className="text-4xl font-bold leading-tight tracking-tight"
+      />
+      <AutoGrowTextarea
+        aria-label="Summary"
+        value={formData.summary}
+        onChange={(v) => update("summary", v)}
+        placeholder="One-line summary shown under the title on the portfolio"
+        className="text-lg text-muted-foreground"
+      />
+      <div className="border-t pt-6">
+        <MarkdownEditor
+          initialValue={formData.contentMd}
+          onChange={(md) => update("contentMd", md)}
+          uploadFile={uploadInlineMedia}
+        />
+      </div>
+    </div>
+  )
+
+  const sidebar = (
+    <>
+      <SidebarSection title="Publishing" defaultOpen>
+        <div className="space-y-2">
+          <Label htmlFor="cs-status">Status</Label>
+          <select
+            id="cs-status"
+            className={selectClass}
+            value={formData.status}
+            onChange={(e) => update("status", e.target.value as CaseStudyFormData["status"])}
+          >
+            <option value="draft">Draft</option>
+            <option value="published">Published</option>
+            <option value="archived">Archived</option>
+          </select>
         </div>
-        <div className="grid md:grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label>Project</Label>
-            <select
-              className="w-full border rounded-md p-2 bg-background"
-              value={linkedProjectIds[0] || ""}
-              onChange={(e) => setLinkedProjectIds(e.target.value ? [e.target.value] : [])}
-            >
-              <option value="">No project linked</option>
-              {(availableProjects || []).map((p) => (
-                <option key={p.id} value={p.id}>{p.title}</option>
-              ))}
-            </select>
-          </div>
-          <div className="space-y-2">
-            <Label>Order</Label>
-            <Input type="number" value={formData.order} onChange={(e) => setFormData((p) => ({ ...p, order: parseInt(e.target.value, 10) || 0 }))} />
-          </div>
+        <div className="space-y-2">
+          <Label htmlFor="cs-project">Project</Label>
+          <select
+            id="cs-project"
+            className={selectClass}
+            value={linkedProjectIds[0] || ""}
+            onChange={(e) => setLinkedProjectIds(e.target.value ? [e.target.value] : [])}
+          >
+            <option value="">No project linked</option>
+            {(availableProjects || []).map((p) => (
+              <option key={p.id} value={p.id}>
+                {p.title}
+              </option>
+            ))}
+          </select>
         </div>
         <div className="flex items-center gap-2">
-          <Checkbox checked={formData.featured} onCheckedChange={(c) => setFormData((p) => ({ ...p, featured: Boolean(c) }))} />
-          <Label>Featured</Label>
+          <Checkbox
+            id="cs-featured"
+            checked={formData.featured}
+            onCheckedChange={(c) => update("featured", Boolean(c))}
+          />
+          <Label htmlFor="cs-featured">Featured</Label>
         </div>
-      </Card>
+      </SidebarSection>
 
-      <Card className="p-6 space-y-4">
-        <h3 className="font-semibold">Metadata</h3>
-        <div className="grid md:grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label>Status</Label>
-            <select
-              className="w-full border rounded-md p-2 bg-background"
-              value={formData.status}
-              onChange={(e) => setFormData((p) => ({ ...p, status: e.target.value as CaseStudyFormData["status"] }))}
-            >
-              <option value="draft">Draft</option>
-              <option value="published">Published</option>
-              <option value="archived">Archived</option>
-            </select>
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="role">Role</Label>
-            <Input id="role" value={formData.role} onChange={(e) => setFormData((p) => ({ ...p, role: e.target.value }))} placeholder="Lead Engineer & Designer" />
-          </div>
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="summary">Summary</Label>
-          <Textarea id="summary" rows={2} value={formData.summary} onChange={(e) => setFormData((p) => ({ ...p, summary: e.target.value }))} placeholder="Short subtitle shown on the portfolio page" />
-        </div>
-        <div className="grid md:grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label htmlFor="timeline">Timeline</Label>
-            <Input id="timeline" value={formData.timeline} onChange={(e) => setFormData((p) => ({ ...p, timeline: e.target.value }))} placeholder="6 months" />
-          </div>
-          <div className="space-y-2">
-            <Label>Stack</Label>
-            <Input value={stackCsv} onChange={(e) => syncStackFromCsv(e.target.value)} placeholder="React, Supabase, TypeScript" />
-          </div>
-        </div>
-
-        <div className="space-y-2">
-          <Label>Cover Image</Label>
-          <Input
-            type="file"
-            accept="image/*"
-            onChange={(e) => {
-              const file = e.target.files?.[0] || null
-              setFormData((p) => ({ ...p, coverImageFile: file, clearCoverImage: false }))
-              if (file) {
-                const reader = new FileReader()
-                reader.onloadend = () => setCoverPreviewUrl(reader.result as string)
-                reader.readAsDataURL(file)
-              }
+      <SidebarSection title="Cover image" hint={coverPreviewUrl ? "Set" : "None"} defaultOpen={!isEditing}>
+        {coverPreviewUrl && (
+          <Thumb
+            src={coverPreviewUrl}
+            alt="Cover"
+            onRemove={() => {
+              setCoverPreviewUrl(null)
+              setFormData((p) => ({ ...p, coverImageFile: null, clearCoverImage: true }))
             }}
           />
-          {coverPreviewUrl && (
-            <div className="relative inline-block">
-              <img src={coverPreviewUrl} alt="Cover preview" className="h-32 w-auto object-cover rounded" />
-              <button
-                type="button"
-                onClick={() => {
-                  setCoverPreviewUrl(null)
-                  setFormData((p) => ({ ...p, coverImageFile: null, clearCoverImage: true }))
-                }}
-                className="absolute top-1 right-1 rounded bg-black/60 p-1"
-              >
-                <IconX className="h-3 w-3 text-white" />
-              </button>
-            </div>
-          )}
-        </div>
+        )}
+        <Input
+          type="file"
+          accept="image/*"
+          onChange={(e) => {
+            const file = e.target.files?.[0] || null
+            setFormData((p) => ({ ...p, coverImageFile: file, clearCoverImage: false }))
+            if (file) readPreview(file, setCoverPreviewUrl)
+          }}
+        />
+      </SidebarSection>
 
+      <SidebarSection title="Details" hint={detailsHint || undefined}>
         <div className="space-y-2">
-          <div className="flex items-center justify-between">
-            <Label>Links</Label>
-            <Button type="button" variant="outline" size="sm" onClick={addLink}>Add link</Button>
-          </div>
-          {formData.links.map((link, i) => (
-            <div key={i} className="flex gap-2 items-start">
-              <Input
-                placeholder="Label"
-                value={link.label}
-                onChange={(e) => updateLink(i, "label", e.target.value)}
-                className="flex-1"
-              />
-              <Input
-                placeholder="https://..."
-                value={link.url}
-                onChange={(e) => updateLink(i, "url", e.target.value)}
-                className="flex-[2]"
-              />
+          <Label htmlFor="cs-role">Role</Label>
+          <Input
+            id="cs-role"
+            value={formData.role}
+            onChange={(e) => update("role", e.target.value)}
+            placeholder="Lead Engineer & Designer"
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="cs-timeline">Timeline</Label>
+          <Input
+            id="cs-timeline"
+            value={formData.timeline}
+            onChange={(e) => update("timeline", e.target.value)}
+            placeholder="6 months"
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="cs-stack">Stack</Label>
+          <TagInput id="cs-stack" value={formData.stack} onChange={(v) => update("stack", v)} placeholder="React, Supabase…" />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="cs-tags">Tags</Label>
+          <TagInput id="cs-tags" value={formData.tags} onChange={(v) => update("tags", v)} placeholder="ui, redesign…" />
+        </div>
+      </SidebarSection>
+
+      <SidebarSection title="Links" hint={formData.links.length ? `${formData.links.length}` : undefined}>
+        {formData.links.map((link, i) => (
+          <div key={i} className="space-y-2 rounded-lg border p-2">
+            <div className="flex gap-2">
+              <Input placeholder="Label" value={link.label} onChange={(e) => updateLink(i, "label", e.target.value)} />
               <select
-                className="border rounded-md p-2 bg-background text-sm"
+                className="h-9 rounded-md border bg-background px-2 text-sm"
                 value={link.type || "other"}
                 onChange={(e) => updateLink(i, "type", e.target.value)}
               >
@@ -385,170 +353,127 @@ export function CaseStudyForm({ caseStudy, availableProjects }: CaseStudyFormPro
                 <option value="github">GitHub</option>
                 <option value="other">Other</option>
               </select>
-              <button type="button" onClick={() => removeLink(i)} className="rounded bg-muted p-2">
+              <button
+                type="button"
+                onClick={() => update("links", formData.links.filter((_, idx) => idx !== i))}
+                aria-label="Remove link"
+                className="rounded p-2 text-muted-foreground hover:bg-muted"
+              >
                 <IconX className="h-4 w-4" />
               </button>
             </div>
-          ))}
-        </div>
-      </Card>
-
-      <Card className="p-6 space-y-4">
-        <div className="flex items-center justify-between gap-3">
-          <h3 className="font-semibold">Content (Markdown)</h3>
-          <div className="flex items-center gap-2">
-            <input
-              ref={inlineImageInputRef}
-              type="file"
-              accept="image/*,video/*"
-              className="hidden"
-              onChange={handleInlineImageAttach}
-            />
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              disabled={isUploadingInlineImage}
-              onClick={() => inlineImageInputRef.current?.click()}
-            >
-              {isUploadingInlineImage ? "Uploading..." : "Attach media"}
-            </Button>
+            <Input placeholder="https://…" value={link.url} onChange={(e) => updateLink(i, "url", e.target.value)} />
           </div>
-        </div>
-        <Textarea
-          ref={markdownTextareaRef}
-          rows={16}
-          value={formData.contentMd}
-          onChange={(e) => setFormData((p) => ({ ...p, contentMd: e.target.value }))}
-          placeholder="Write case study content in markdown. Use 'Attach image' to upload and insert image markdown."
-          className="font-mono text-sm"
-        />
-      </Card>
+        ))}
+        <Button type="button" variant="outline" size="sm" onClick={addLink}>
+          Add link
+        </Button>
+      </SidebarSection>
 
-      <Card className="p-6 space-y-4">
-        <h3 className="font-semibold">Media</h3>
-        <div className="space-y-2">
-          <Label>Gallery</Label>
-          <Input type="file" accept="image/*,video/*" multiple onChange={handleGalleryImageUpload} />
-          {(existingGallery.length > 0 || galleryPreviewUrls.length > 0) && (
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-              {existingGallery.map((path, i) => {
-                const src = `${process.env.NEXT_PUBLIC_SUPABASE_URL}/storage/v1/object/public/media/${path}`
-                const isVid = /\.(mp4|webm|mov|ogg)$/i.test(path)
-                return (
-                  <div key={`existing-${path}-${i}`} className="relative">
-                    {isVid ? (
-                      <video src={src} className="w-full h-24 object-cover rounded" muted playsInline />
-                    ) : (
-                      <img src={src} alt={`Gallery ${i + 1}`} className="w-full h-24 object-cover rounded" />
-                    )}
-                    <button type="button" onClick={() => removeExistingGalleryImage(i)} className="absolute top-1 right-1 rounded bg-black/60 p-1">
-                      <IconX className="h-3 w-3 text-white" />
-                    </button>
-                  </div>
-                )
-              })}
-              {galleryPreviewUrls.map((url, i) => (
-                <div key={`new-${i}`} className="relative">
-                  {galleryFiles[i]?.type.startsWith("video/") ? (
-                    <video src={url} className="w-full h-24 object-cover rounded" muted playsInline />
-                  ) : (
-                    <img src={url} alt={`Gallery ${i + 1}`} className="w-full h-24 object-cover rounded" />
-                  )}
-                  <button type="button" onClick={() => removeGalleryImage(i)} className="absolute top-1 right-1 rounded bg-black/60 p-1">
-                    <IconX className="h-3 w-3 text-white" />
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-        <div className="grid md:grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <Label>Before Image</Label>
-            <Input
-              type="file"
-              accept="image/*"
-              onChange={(e) => {
-                const file = e.target.files?.[0] || null
-                setFormData((p) => ({ ...p, beforeImageFile: file, clearBeforeImage: false }))
-                if (file) {
-                  const reader = new FileReader()
-                  reader.onloadend = () => setBeforePreviewUrl(reader.result as string)
-                  reader.readAsDataURL(file)
-                }
-              }}
-            />
-            {beforePreviewUrl && (
-              <div className="relative inline-block">
-                <img src={beforePreviewUrl} alt="Before preview" className="h-24 w-24 object-cover rounded" />
-                <button
-                  type="button"
-                  onClick={() => {
-                    setBeforePreviewUrl(null)
-                    setFormData((p) => ({ ...p, beforeImageFile: null, clearBeforeImage: true }))
-                  }}
-                  className="absolute top-1 right-1 rounded bg-black/60 p-1"
-                >
-                  <IconX className="h-3 w-3 text-white" />
-                </button>
-              </div>
-            )}
-          </div>
-          <div className="space-y-2">
-            <Label>After Image</Label>
-            <Input
-              type="file"
-              accept="image/*"
-              onChange={(e) => {
-                const file = e.target.files?.[0] || null
-                setFormData((p) => ({ ...p, afterImageFile: file, clearAfterImage: false }))
-                if (file) {
-                  const reader = new FileReader()
-                  reader.onloadend = () => setAfterPreviewUrl(reader.result as string)
-                  reader.readAsDataURL(file)
-                }
-              }}
-            />
-            {afterPreviewUrl && (
-              <div className="relative inline-block">
-                <img src={afterPreviewUrl} alt="After preview" className="h-24 w-24 object-cover rounded" />
-                <button
-                  type="button"
-                  onClick={() => {
-                    setAfterPreviewUrl(null)
-                    setFormData((p) => ({ ...p, afterImageFile: null, clearAfterImage: true }))
-                  }}
-                  className="absolute top-1 right-1 rounded bg-black/60 p-1"
-                >
-                  <IconX className="h-3 w-3 text-white" />
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-      </Card>
-
-      <Card className="p-6 space-y-4">
-        <h3 className="font-semibold">Tags</h3>
-        <Input
-          value={tagsCsv}
-          onChange={(e) => syncTagsFromCsv(e.target.value)}
-          placeholder="ui, conversion, redesign"
-        />
-        {formData.tags.length > 0 && (
-          <div className="flex flex-wrap gap-2">
-            {formData.tags.map((tag, i) => (
-              <span key={`${tag}-${i}`} className="bg-secondary px-2 py-1 rounded text-sm">{tag}</span>
+      <SidebarSection title="Gallery" hint={galleryCount ? `${galleryCount} item${galleryCount === 1 ? "" : "s"}` : undefined}>
+        {galleryCount > 0 && (
+          <div className="grid grid-cols-3 gap-2">
+            {existingGallery.map((path, i) => (
+              <Thumb
+                key={`existing-${path}-${i}`}
+                src={mediaUrl(path)}
+                video={isVideoPath(path)}
+                alt={`Gallery ${i + 1}`}
+                onRemove={() => setExistingGallery((prev) => prev.filter((_, idx) => idx !== i))}
+              />
+            ))}
+            {galleryPreviewUrls.map((url, i) => (
+              <Thumb
+                key={`new-${i}`}
+                src={url}
+                video={galleryFiles[i]?.type.startsWith("video/")}
+                alt={`New gallery item ${i + 1}`}
+                onRemove={() => removeGalleryImage(i)}
+              />
             ))}
           </div>
         )}
-      </Card>
+        <Input type="file" accept="image/*,video/*" multiple onChange={handleGalleryImageUpload} />
+      </SidebarSection>
 
-      <div className="flex gap-3 justify-end">
-        <Button type="button" variant="outline" onClick={() => router.push("/protected/work")} disabled={isLoading}>Cancel</Button>
-        <Button type="submit" disabled={isLoading}>{isLoading ? "Saving..." : isEditing ? "Update Case Study" : "Create Case Study"}</Button>
-      </div>
+      <SidebarSection
+        title="Before / After"
+        hint={beforePreviewUrl || afterPreviewUrl ? "Set" : undefined}
+      >
+        {(
+          [
+            ["Before", beforePreviewUrl, setBeforePreviewUrl, "beforeImageFile", "clearBeforeImage"],
+            ["After", afterPreviewUrl, setAfterPreviewUrl, "afterImageFile", "clearAfterImage"],
+          ] as const
+        ).map(([label, preview, setPreview, fileKey, clearKey]) => (
+          <div key={label} className="space-y-2">
+            <Label>{label}</Label>
+            {preview && (
+              <Thumb
+                src={preview}
+                alt={`${label} image`}
+                onRemove={() => {
+                  setPreview(null)
+                  setFormData((p) => ({ ...p, [fileKey]: null, [clearKey]: true }))
+                }}
+              />
+            )}
+            <Input
+              type="file"
+              accept="image/*"
+              onChange={(e) => {
+                const file = e.target.files?.[0] || null
+                setFormData((p) => ({ ...p, [fileKey]: file, [clearKey]: false }))
+                if (file) readPreview(file, setPreview)
+              }}
+            />
+          </div>
+        ))}
+      </SidebarSection>
+
+      <SidebarSection title="Advanced" hint={formData.slug ? `/${formData.slug}` : undefined}>
+        <div className="space-y-2">
+          <div className="flex items-center justify-between">
+            <Label htmlFor="cs-slug">URL slug</Label>
+            {!editSlug && (
+              <button type="button" className="text-xs text-muted-foreground underline" onClick={() => setEditSlug(true)}>
+                Edit
+              </button>
+            )}
+          </div>
+          <Input
+            id="cs-slug"
+            value={formData.slug}
+            readOnly={!editSlug}
+            className={editSlug ? undefined : "text-muted-foreground"}
+            onChange={(e) => update("slug", e.target.value)}
+          />
+          <p className="text-xs text-muted-foreground">
+            {isEditing ? "Changing it breaks existing links to this case study." : "Generated from the title."}
+          </p>
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="cs-order">Order</Label>
+          <Input
+            id="cs-order"
+            type="number"
+            value={formData.order}
+            onChange={(e) => update("order", parseInt(e.target.value, 10) || 0)}
+          />
+        </div>
+      </SidebarSection>
+    </>
+  )
+
+  return (
+    <form ref={formRef} onSubmit={handleSubmit}>
+      <EditorLayout main={main} sidebar={sidebar} />
+      <SaveBar
+        dirty={dirty}
+        saving={isLoading}
+        submitLabel={isEditing ? "Save changes" : "Create case study"}
+        onCancel={cancel}
+      />
     </form>
   )
 }

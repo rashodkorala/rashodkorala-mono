@@ -1,6 +1,7 @@
 import { MetadataRoute } from "next"
 import { getCachedAllProjects } from "@/lib/supabase/cached-projects"
 import { getCachedCaseStudies } from "@/lib/supabase/cached-case-studies"
+import { buildWorkItems } from "@/lib/work"
 
 const BASE_URL = "https://rashodkorala.com"
 
@@ -28,21 +29,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     return staticRoutes
   }
 
-  const projectRoutes: MetadataRoute.Sitemap = projects.map((project) => ({
-    url: `${BASE_URL}/work/${project.slug}`,
-    lastModified: new Date(project.updated_at),
+  // One URL per piece of work (a project's case study lives on the project's page).
+  const workRoutes: MetadataRoute.Sitemap = buildWorkItems(projects, caseStudies).map((item) => ({
+    url: `${BASE_URL}/work/${item.slug}`,
+    lastModified: new Date(item.project?.updated_at ?? item.story?.updated_at ?? item.date),
     changeFrequency: "monthly",
     priority: 0.8,
   }))
 
-  const caseStudyRoutes: MetadataRoute.Sitemap = caseStudies
-    .filter((cs) => !projects.find((p) => p.slug === cs.slug))
-    .map((cs) => ({
-      url: `${BASE_URL}/work/${cs.slug}`,
-      lastModified: new Date(cs.updated_at),
-      changeFrequency: "monthly",
-      priority: 0.8,
-    }))
-
-  return [...staticRoutes, ...projectRoutes, ...caseStudyRoutes]
+  return [...staticRoutes, ...workRoutes]
 }
