@@ -4,15 +4,12 @@ import path from "path";
 
 const nextConfig: NextConfig = {
   transpilePackages: ["@rashodkorala/posthog-next"],
-  // Server Action payload limit (default 1 MB). Next may read either top-level
-  // `serverActions` or `experimental.serverActions` depending on version — set both.
+  // Server Action payload limit (default 1 MB). Next 15.5 reads this from
+  // `experimental.serverActions`; a top-level `serverActions` key is rejected.
   experimental: {
     serverActions: {
       bodySizeLimit: "100mb",
     },
-  },
-  serverActions: {
-    bodySizeLimit: "100mb",
   },
   // Set output file tracing root to the workspace root for monorepo support
   outputFileTracingRoot: path.join(__dirname, "../.."),
@@ -69,4 +66,9 @@ const withMDX = createMDX({
   // MDX options for file-based MDX pages (like docs)
 });
 
-export default withMDX(nextConfig);
+// @next/mdx imports `NextConfig` from whichever `next` the installer hoists.
+// This repo has 15.0.5, 15.3.6, and 15.5.9, so that type can disagree with
+// this app's config even though the wrapper only passes the object through.
+type MDXNextConfig = Parameters<typeof withMDX>[0];
+
+export default withMDX(nextConfig as MDXNextConfig);
