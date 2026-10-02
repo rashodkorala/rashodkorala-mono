@@ -21,8 +21,8 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
 import { Button } from "@/components/ui/button"
-import { IconDotsVertical, IconEdit, IconEye, IconTrash } from "@tabler/icons-react"
-import { deleteProject } from "@/lib/actions/projects"
+import { IconDotsVertical, IconEdit, IconEye, IconTrash, IconWorld, IconWorldOff } from "@tabler/icons-react"
+import { deleteProject, setProjectPublished } from "@/lib/actions/projects"
 import type { Project } from "@/lib/types/project"
 import Link from "next/link"
 
@@ -30,6 +30,21 @@ export function ProjectActions({ project }: { project: Project }) {
   const router = useRouter()
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
   const [isDeleting, setIsDeleting] = useState(false)
+  const [isUpdatingStatus, setIsUpdatingStatus] = useState(false)
+  const isPublished = project.status === "published"
+
+  const handleTogglePublished = async () => {
+    setIsUpdatingStatus(true)
+    try {
+      await setProjectPublished(project.id, !isPublished)
+      toast.success(isPublished ? "Project unpublished" : "Project published")
+      router.refresh()
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Failed to update project")
+    } finally {
+      setIsUpdatingStatus(false)
+    }
+  }
 
   const handleDelete = async () => {
     setIsDeleting(true)
@@ -65,6 +80,14 @@ export function ProjectActions({ project }: { project: Project }) {
               <IconEdit className="h-4 w-4 mr-2" />
               Edit
             </Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem disabled={isUpdatingStatus} onSelect={handleTogglePublished}>
+            {isPublished ? (
+              <IconWorldOff className="h-4 w-4 mr-2" />
+            ) : (
+              <IconWorld className="h-4 w-4 mr-2" />
+            )}
+            {isPublished ? "Unpublish" : "Publish"}
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem

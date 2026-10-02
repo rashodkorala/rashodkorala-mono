@@ -3,7 +3,7 @@
 import { createClient } from "@/lib/supabase/server"
 import { requestPortfolioRevalidation } from "@/lib/revalidate-portfolio"
 import { revalidatePath } from "next/cache"
-import type { Project, ProjectDB, ProjectFormData, ProjectMediaItem } from "@/lib/types/project"
+import type { Project, ProjectDB, ProjectFormData, ProjectMediaItem, ProjectStatus } from "@/lib/types/project"
 
 function transformProject(p: ProjectDB): Project {
   return {
@@ -21,9 +21,25 @@ function transformProject(p: ProjectDB): Project {
     techStack: p.tech_stack || [],
     liveUrl: p.live_url,
     githubUrl: p.github_url,
+    status: p.status === "published" ? "published" : "draft",
+    publishedAt: p.published_at,
     createdAt: p.created_at,
     updatedAt: p.updated_at,
   }
+}
+
+function publicationColumns(
+  status: ProjectStatus,
+  existing?: { status?: string | null; published_at?: string | null }
+) {
+  if (status === "published") {
+    const keepExisting = existing?.status === "published" && existing.published_at
+    return {
+      status: "published" as const,
+      published_at: keepExisting ? existing.published_at : new Date().toISOString(),
+    }
+  }
+  return { status: "draft" as const, published_at: null }
 }
 
 async function uploadProjectMedia(
@@ -152,6 +168,7 @@ export async function createProject(data: ProjectFormData): Promise<Project> {
     tech_stack: data.techStack || [],
     live_url: data.liveUrl || null,
     github_url: data.githubUrl || null,
+    ...publicationColumns(data.status || "draft"),
   }
 
   const { data: result, error } = await supabase
@@ -177,7 +194,7 @@ export async function updateProject(id: string, data: ProjectFormData): Promise<
 
   const { data: existing } = await supabase
     .from("projects")
-    .select("logo, cover_image, project_media")
+    .select("logo, cover_image, project_media, status, published_at")
     .eq("id", id)
     .eq("user_id", user.id)
     .single()
@@ -219,11 +236,44 @@ export async function updateProject(id: string, data: ProjectFormData): Promise<
     tech_stack: data.techStack || [],
     live_url: data.liveUrl || null,
     github_url: data.githubUrl || null,
+    ...publicationColumns(data.status || "draft", existing ?? undefined),
   }
 
   const { data: result, error } = await supabase
     .from("projects")
     .update(payload)
+    .eq("id", id)
+    .eq("user_id", user.id)
+    .select()
+    .single()
+
+  if (error) throw new Error(`Failed to update project: ${error.message}`)
+
+  revalidatePath("/protected/work")
+  await requestPortfolioRevalidation()
+  return transformProject(result)
+}
+
+export async function setProjectPublished(id: string, published: boolean): Promise<Project> {
+  const supabase = await createClient()
+
+  const {
+    data: { user },
+  } = await supabase.auth.getUser()
+  if (!user) throw new Error("Unauthorized")
+
+  const { data: existing, error: existingError } = await supabase
+    .from("projects")
+    .select("status, published_at")
+    .eq("id", id)
+    .eq("user_id", user.id)
+    .single()
+
+  if (existingError) throw new Error(`Failed to update project: ${existingError.message}`)
+
+  const { data: result, error } = await supabase
+    .from("projects")
+    .update(publicationColumns(published ? "published" : "draft", existing))
     .eq("id", id)
     .eq("user_id", user.id)
     .select()

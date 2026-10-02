@@ -1,5 +1,7 @@
 export type ProjectMediaType = "image" | "video"
 
+export type ProjectStatus = "draft" | "published"
+
 export interface ProjectMediaItem {
   type: ProjectMediaType
   url: string
@@ -21,6 +23,8 @@ export interface ProjectDB {
   tech_stack: string[] | null
   live_url: string | null
   github_url: string | null
+  status: ProjectStatus
+  published_at: string | null
   created_at: string
   updated_at: string
 }
@@ -41,6 +45,8 @@ export interface Project {
   techStack: string[]
   liveUrl: string | null
   githubUrl: string | null
+  status: ProjectStatus
+  publishedAt: string | null
   createdAt: string
   updatedAt: string
 }
@@ -58,6 +64,7 @@ export interface ProjectInsert {
   techStack?: string[] | null
   liveUrl?: string | null
   githubUrl?: string | null
+  status?: ProjectStatus
 }
 
 export interface ProjectUpdate extends Partial<ProjectInsert> {
@@ -80,4 +87,5 @@ export interface ProjectFormData {
   clearCoverImage?: boolean
   existingProjectMedia?: ProjectMediaItem[]
   mediaFiles?: File[]
+  status: ProjectStatus
 }

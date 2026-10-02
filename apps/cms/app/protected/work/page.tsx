@@ -42,6 +42,7 @@ export default async function WorkPage({ searchParams }: WorkPageProps) {
       kind: "case_study" as const,
       title: cs.title,
       subtitle: cs.contentMd?.trim() ? cs.contentMd.trim().slice(0, 140) : null,
+      status: cs.status,
       updatedAt: cs.updatedAt,
       slug: cs.slug,
       data: cs,
@@ -51,6 +52,7 @@ export default async function WorkPage({ searchParams }: WorkPageProps) {
       kind: "project" as const,
       title: p.title,
       subtitle: p.subtitle || p.shortDescription || null,
+      status: p.status,
       updatedAt: p.updatedAt,
       slug: p.slug,
       data: p,
@@ -124,6 +126,7 @@ export default async function WorkPage({ searchParams }: WorkPageProps) {
               <TableRow>
                 <TableHead>Title</TableHead>
                 <TableHead>Kind</TableHead>
+                <TableHead>Status</TableHead>
                 <TableHead>Updated</TableHead>
                 <TableHead className="w-[60px]" />
               </TableRow>
@@ -144,6 +147,14 @@ export default async function WorkPage({ searchParams }: WorkPageProps) {
                   <TableCell>
                     <Badge variant="outline" className="text-xs capitalize">
                       {item.kind === "case_study" ? "Case Study" : "Project"}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <Badge
+                      variant={item.status === "published" ? "default" : "secondary"}
+                      className="text-xs capitalize"
+                    >
+                      {item.status === "published" ? "Published" : item.status === "archived" ? "Archived" : "Draft"}
                     </Badge>
                   </TableCell>
                   <TableCell className="text-sm text-muted-foreground">

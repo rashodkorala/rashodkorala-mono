@@ -1,4 +1,5 @@
 'use client'
+import type { ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
@@ -15,12 +16,70 @@ const reveal = {
   }),
 };
 
-const socials = [
-  { label: "GitHub",    href: "https://github.com/rashodkorala" },
-  { label: "LinkedIn",  href: "https://linkedin.com/in/rashodk" },
+const defaultSocials = [
+  { label: "GitHub", href: "https://github.com/rashodkorala" },
+  { label: "LinkedIn", href: "https://linkedin.com/in/rashodk" },
   { label: "Instagram", href: "https://instagram.com/rashodkorala" },
-  { label: "CV",        href: "/cv" },
+  { label: "CV", href: "/cv" },
 ];
+
+const FALLBACK_BIO = [
+  "I am a software engineer and entrepreneur based in St. John\u2019s, Newfoundland, recently graduated and actively building experience across product, design, and technology. I am drawn to the craft of building, where I take an idea and shape it through code and design into something that solves a real problem. I am looking for roles where I can contribute meaningfully from day one, keep learning, and build things that matter.",
+  "I [work](/work) across the full arc from discovery to delivery, covering product design (UI/UX) and full-stack engineering, with a focus on translating complex technical ideas into outcomes that matter.",
+  "[Photography](https://photos.rashodkorala.com) runs alongside all of it, shaping how I see and communicate.",
+];
+
+function splitName(displayName?: string | null): [string, string] {
+  const name = displayName?.trim();
+  if (!name) return ["Rashod", "Korala"];
+  const parts = name.split(/\s+/);
+  if (parts.length === 1) return [parts[0], ""];
+  return [parts[0], parts.slice(1).join(" ")];
+}
+
+function safeHref(url: string): string | null {
+  const value = url.trim();
+  if (value.startsWith("/") && !value.startsWith("//")) return value;
+  try {
+    const parsed = new URL(value);
+    if (parsed.protocol === "http:" || parsed.protocol === "https:") return value;
+  } catch {
+    return null;
+  }
+  return null;
+}
+
+function BioText({ text }: { text: string }) {
+  const linkClass =
+    "font-medium text-heading underline underline-offset-[0.2em] decoration-from-font transition-opacity hover:opacity-80";
+  const nodes: ReactNode[] = [];
+  const pattern = /\[([^\]]+)\]\(([^)]+)\)/g;
+  let last = 0;
+  let match: RegExpExecArray | null;
+  let key = 0;
+  while ((match = pattern.exec(text)) !== null) {
+    if (match.index > last) nodes.push(text.slice(last, match.index));
+    const href = safeHref(match[2]);
+    if (!href) {
+      nodes.push(match[1]);
+    } else if (href.startsWith("/")) {
+      nodes.push(
+        <Link key={key++} href={href} className={linkClass}>
+          {match[1]}
+        </Link>
+      );
+    } else {
+      nodes.push(
+        <a key={key++} href={href} target="_blank" rel="noopener noreferrer" className={linkClass}>
+          {match[1]}
+        </a>
+      );
+    }
+    last = match.index + match[0].length;
+  }
+  if (last < text.length) nodes.push(text.slice(last));
+  return <>{nodes}</>;
+}
 
 /**
  * Match grid + gap for srcset selection (next/image `sizes`):
@@ -38,9 +97,27 @@ const HERO_PORTRAIT_SIZES =
   "(max-width: 1279px) calc((100vw - 336px) / 2), " +
   "calc((100vw - 336px) * 34 / 89)";
 
-interface HomeHeroProps { imageSrc?: string; }
+interface HomeHeroProps {
+  imageSrc?: string;
+  displayName?: string | null;
+  bio?: string | null;
+  /** Undefined keeps the built-in links. An array, including empty, is what was saved. */
+  socials?: { label: string; url: string }[];
+}
 
-export default function HomeHero({ imageSrc }: HomeHeroProps = {}) {
+export default function HomeHero({ imageSrc, displayName, bio, socials }: HomeHeroProps = {}) {
+  const [firstName, lastName] = splitName(displayName);
+  const savedBio = bio?.trim() ? bio : null;
+  const paragraphs = (savedBio ?? FALLBACK_BIO.join("\n\n"))
+    .split(/\n\s*\n/)
+    .map((paragraph) => paragraph.trim())
+    .filter(Boolean);
+  const footerLinks =
+    socials === undefined
+      ? defaultSocials
+      : socials
+          .map((link) => ({ label: link.label.trim(), href: safeHref(link.url) }))
+          .filter((link): link is { label: string; href: string } => !!link.label && !!link.href);
   return (
     <>
       <style>{`
@@ -182,56 +259,35 @@ export default function HomeHero({ imageSrc }: HomeHeroProps = {}) {
                   variants={reveal}
                   custom={0.2}
                 >
-                  Rashod
+                  {firstName}
                 </motion.span>
-                <motion.span
-                  className="hero-name text-heading block uppercase italic"
-                  style={{ fontFamily: cormorantGaramond, fontWeight: 400, letterSpacing: "-0.01em" }}
-                  variants={reveal}
-                  custom={0.35}
-                >
-                  Korala
-                </motion.span>
+                {lastName && (
+                  <motion.span
+                    className="hero-name text-heading block uppercase italic"
+                    style={{ fontFamily: cormorantGaramond, fontWeight: 400, letterSpacing: "-0.01em" }}
+                    variants={reveal}
+                    custom={0.35}
+                  >
+                    {lastName}
+                  </motion.span>
+                )}
               </motion.h1>
 
               <motion.div className="hero-bio-copy" initial="hidden" animate="visible">
-                <motion.p
-                  className="hero-bio-text font-sans font-normal text-body-secondary leading-[var(--leading-body)] tracking-[0.01em] mb-fib-21 md:mb-fib-34"
-                  variants={reveal}
-                  custom={0.55}
-                >
-                  I am a software engineer and entrepreneur based in St. John&rsquo;s, Newfoundland, recently graduated and actively building experience across product, design, and technology. I am drawn to the craft of building, where I take an idea and shape it through code and design into something that solves a real problem. I am looking for roles where I can contribute meaningfully from day one, keep learning, and build things that matter.
-                </motion.p>
-
-                <motion.p
-                  className="hero-bio-text font-sans font-normal text-body-secondary leading-[var(--leading-body)] tracking-[0.01em]"
-                  variants={reveal}
-                  custom={0.7}
-                >
-                  I{" "}
-                  <Link
-                    href="/work"
-                    className="font-medium text-heading underline underline-offset-[0.2em] decoration-from-font transition-opacity hover:opacity-80"
+                {paragraphs.map((paragraph, index) => (
+                  <motion.p
+                    key={index}
+                    className={`hero-bio-text font-sans font-normal text-body-secondary leading-[var(--leading-body)] tracking-[0.01em]${
+                      (savedBio ? index < paragraphs.length - 1 : index === 0)
+                        ? " mb-fib-21 md:mb-fib-34"
+                        : ""
+                    }`}
+                    variants={reveal}
+                    custom={0.55 + index * 0.15}
                   >
-                    work
-                  </Link>{" "}
-                  across the full arc from discovery to delivery, covering product design (UI/UX) and full-stack engineering, with a focus on translating complex technical ideas into outcomes that matter.
-                </motion.p>
-                <motion.p
-                  className="hero-bio-text font-sans font-normal text-body-secondary leading-[var(--leading-body)] tracking-[0.01em]"
-                  variants={reveal}
-                  custom={0.85}
-                >
-                  <a
-                    href="https://photos.rashodkorala.com"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="font-medium text-heading underline underline-offset-[0.2em] decoration-from-font transition-opacity hover:opacity-80"
-                  >
-                    Photography
-                  </a>{" "}
-                  runs alongside all of it, shaping how I see and communicate.
-                </motion.p>
+                    <BioText text={paragraph} />
+                  </motion.p>
+                ))}
               </motion.div>
             </div>
           </div>
@@ -246,7 +302,7 @@ export default function HomeHero({ imageSrc }: HomeHeroProps = {}) {
             {imageSrc ? (
               <Image
                 src={imageSrc}
-                alt="Rashod Korala"
+                alt={displayName?.trim() || "Rashod Korala"}
                 fill
                 sizes={HERO_PORTRAIT_SIZES}
                 className="object-cover object-[center_20%] grayscale"
@@ -269,7 +325,7 @@ export default function HomeHero({ imageSrc }: HomeHeroProps = {}) {
         >
 
           <div className="flex w-full max-w-full flex-wrap justify-center gap-x-4 gap-y-2 sm:w-auto sm:justify-start sm:items-center">
-            {socials.map((s) => (
+            {footerLinks.map((s) => (
               <a
                 key={s.label}
                 href={s.href}

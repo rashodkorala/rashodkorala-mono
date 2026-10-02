@@ -21,6 +21,8 @@ export interface Project {
   tech_stack?: string[] | null;
   live_url?: string;
   github_url?: string;
+  status?: 'draft' | 'published';
+  published_at?: string | null;
   created_at: string;
   updated_at: string;
   relatedCaseStudies?: CaseStudy[];

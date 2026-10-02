@@ -12,6 +12,11 @@ export interface AboutProfileDB {
   updated_at: string
 }
 
+export interface AboutSocialLink {
+  label: string
+  url: string
+}
+
 export interface AboutProfile {
   id: string
   userId: string
@@ -21,8 +26,17 @@ export interface AboutProfile {
   location: string | null
   emailPublic: string | null
   avatarUrl: string | null
-  socialLinks: Array<{ label: string; url: string }>
+  socialLinks: AboutSocialLink[]
   createdAt: string
   updatedAt: string
+}
+
+export interface AboutFormData {
+  displayName: string
+  bioMd: string
+  avatarUrl: string | null
+  avatarFile?: File | null
+  clearAvatar?: boolean
+  socialLinks: AboutSocialLink[]
 }
 

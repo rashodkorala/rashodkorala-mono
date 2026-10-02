@@ -3,6 +3,7 @@ import Link from "next/link"
 import { createClient } from "@/lib/supabase/server"
 import { getProjectBySlug } from "@/lib/actions/projects"
 import { getCaseStudiesByProjectId } from "@/lib/actions/case-studies"
+import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { IconChevronLeft, IconEdit, IconExternalLink } from "@tabler/icons-react"
@@ -29,7 +30,12 @@ export default async function ViewProjectPage({ params }: { params: Promise<{ sl
             </Link>
           </Button>
           <div>
-            <h1 className="text-2xl font-bold">{project.title}</h1>
+            <div className="flex items-center gap-2">
+              <h1 className="text-2xl font-bold">{project.title}</h1>
+              <Badge variant={project.status === "published" ? "default" : "secondary"} className="capitalize">
+                {project.status === "published" ? "Published" : "Draft"}
+              </Badge>
+            </div>
             {project.logo && (
               <img src={project.logo} alt={`${project.title} logo`} className="mt-2 h-10 w-10 rounded object-contain border bg-background p-1" />
             )}
