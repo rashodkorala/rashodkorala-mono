@@ -5,6 +5,8 @@ export async function getAllProjects(): Promise<Project[]> {
   const { data, error } = await supabase
     .from('projects')
     .select('*')
+    .eq('status', 'published')
+    .order('published_at', { ascending: false })
     .order('created_at', { ascending: false });
 
   if (error) {
@@ -20,6 +22,7 @@ export async function getProjectBySlug(slug: string): Promise<Project | null> {
     .from('projects')
     .select('*')
     .eq('slug', slug)
+    .eq('status', 'published')
     .single();
 
   if (error) {

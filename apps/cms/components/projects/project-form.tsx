@@ -17,6 +17,8 @@ import {
 } from "@/components/work-editor/editor-layout"
 import { TagInput } from "@/components/work-editor/tag-input"
 
+const selectClass = "h-9 w-full rounded-md border bg-background px-2 text-sm"
+
 interface ProjectFormProps {
   project?: Project
 }
@@ -56,6 +58,7 @@ export function ProjectForm({ project }: ProjectFormProps) {
     githubUrl: project?.githubUrl || "",
     coverImageFile: null,
     mediaFiles: [],
+    status: project?.status || "draft",
   })
 
   const [isLoading, setIsLoading] = useState(false)
@@ -184,6 +187,28 @@ export function ProjectForm({ project }: ProjectFormProps) {
 
   const sidebar = (
     <>
+      <SidebarSection
+        title="Publishing"
+        hint={formData.status === "published" ? "Published" : "Draft"}
+        defaultOpen
+      >
+        <div className="space-y-2">
+          <Label htmlFor="pj-status">Status</Label>
+          <select
+            id="pj-status"
+            className={selectClass}
+            value={formData.status}
+            onChange={(e) => update("status", e.target.value as ProjectFormData["status"])}
+          >
+            <option value="draft">Draft</option>
+            <option value="published">Published</option>
+          </select>
+          <p className="text-xs text-muted-foreground">
+            Drafts stay in the CMS. Published projects appear on the portfolio.
+          </p>
+        </div>
+      </SidebarSection>
+
       <SidebarSection title="Details" hint={detailsHint || undefined} defaultOpen>
         <div className="space-y-2">
           <Label htmlFor="pj-role">Role</Label>

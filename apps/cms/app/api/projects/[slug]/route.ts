@@ -86,7 +86,8 @@ export async function GET(
           .filter((item) => item.type === "video")
           .map((item) => item.url),
       category: legacyProject.category ?? null,
-      status: legacyProject.status ?? null,
+      status: project.status,
+      publishedAt: project.published_at,
       featured: legacyProject.featured ?? null,
       sortOrder: legacyProject.sort_order ?? null,
       createdAt: project.created_at,

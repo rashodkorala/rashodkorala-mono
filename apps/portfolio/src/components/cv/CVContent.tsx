@@ -31,9 +31,6 @@ interface Entry {
 // ─── Data ─────────────────────────────────────────────────────────────────────
 // Mirrors public/Rashod_Korala_Resume.pdf — keep the two in sync.
 
-const profile =
-  "Full-stack engineer who can take a product from the circuit board to the App Store. I have been the only engineer on a connected hardware product, owning the firmware, the iPhone app, and the cloud backend through to real customers. I work carefully where mistakes are expensive, and my business background means I can explain technical trade-offs to people who decide on cost and risk.";
-
 const plain = (...names: string[]): Skill[] => names.map((name) => ({ name }));
 
 const skills: SkillGroup[] = [
@@ -423,15 +420,6 @@ export default function CVContent() {
               Download PDF <DownloadIcon />
             </a>
           </div>
-        </div>
-
-        <HRule />
-
-        <div className="mb-[clamp(var(--fib-34),3.5vw,var(--fib-55))]">
-          <SectionHeader title="Profile" />
-          <p className="max-w-reading font-sans text-[length:clamp(var(--text-caption),1.05vw,1.1875rem)] font-normal leading-body text-body-secondary">
-            {profile}
-          </p>
         </div>
 
         <HRule />

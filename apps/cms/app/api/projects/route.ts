@@ -1,33 +1,17 @@
-import { NextRequest, NextResponse } from "next/server"
+import { NextResponse } from "next/server"
 import { createClient } from "@/lib/supabase/server"
 import type { ProjectDB } from "@/lib/types/project"
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
     const supabase = await createClient()
-    const searchParams = request.nextUrl.searchParams
 
-    // Get query parameters
-    const featured = searchParams.get("featured")
-    const category = searchParams.get("category")
-
-    // Build query - only published projects
-    let query = supabase
+    const { data, error } = await supabase
       .from("projects")
       .select("*")
       .eq("status", "published")
-      .order("sort_order", { ascending: true })
-      .order("updated_at", { ascending: false })
-
-    if (featured === "true") {
-      query = query.eq("featured", true)
-    }
-
-    if (category) {
-      query = query.eq("category", category)
-    }
-
-    const { data, error } = await query
+      .order("published_at", { ascending: false })
+      .order("created_at", { ascending: false })
 
     if (error) {
       console.error("Error fetching projects:", error)
@@ -84,7 +68,8 @@ export async function GET(request: NextRequest) {
             .filter((item) => item.type === "video")
             .map((item) => item.url),
         category: legacyProject.category ?? null,
-        status: legacyProject.status ?? null,
+        status: project.status,
+        publishedAt: project.published_at,
         featured: legacyProject.featured ?? null,
         sortOrder: legacyProject.sort_order ?? null,
         createdAt: project.created_at,
