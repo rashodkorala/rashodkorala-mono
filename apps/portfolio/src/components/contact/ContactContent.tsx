@@ -19,11 +19,6 @@ const contactGroups: ContactGroup[] = [
     title: "Studios & portfolio",
     items: [
       {
-        label: "R&D Creative Agency",
-        value: "r-d-creative.vercel.app",
-        href: "https://r-d-creative.vercel.app/",
-      },
-      {
         label: "AetherLabs",
         value: "aetherlabs.art",
         href: "https://www.aetherlabs.art",
