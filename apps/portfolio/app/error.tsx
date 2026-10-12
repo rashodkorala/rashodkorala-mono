@@ -20,10 +20,10 @@ export default function Error({
         <p className="font-sans text-xs sm:text-sm tracking-[0.3em] uppercase text-label mb-4">
           Something went wrong
         </p>
-        <h1 className="text-5xl sm:text-7xl md:text-8xl font-sans font-light leading-none tracking-tight mb-6">
+        <h1 className="text-5xl sm:text-7xl md:text-8xl font-poppins font-normal leading-none tracking-tight mb-6">
           Unexpected error
         </h1>
-        <p className="font-sans text-lg sm:text-xl text-body-secondary font-light mb-10 max-w-md">
+        <p className="font-sans text-lg sm:text-xl text-body-secondary font-normal mb-10 max-w-md">
           An error occurred while loading this page. Please try again.
         </p>
         <button

@@ -183,7 +183,7 @@ function HRule() {
 function SectionHeader({ title }: { title: string }) {
   return (
     <div className="mb-[clamp(var(--fib-21),2vw,var(--fib-34))] flex items-center gap-fib-21">
-      <h2 className="whitespace-nowrap font-serif text-h3 font-normal leading-none tracking-h1 text-heading">
+      <h2 className="whitespace-nowrap font-poppins text-h3 font-normal leading-none tracking-h1 text-heading">
         {title}
       </h2>
       <div className="h-px min-w-0 flex-1 bg-line" />
@@ -240,7 +240,7 @@ function EntryGrid({ entries, skill }: { entries: Entry[]; skill: Skill | null }
           </p>
 
           <div>
-            <p className="mb-0.5 font-sans text-[length:clamp(0.9375rem,1.4vw,1.625rem)] font-semibold leading-tight tracking-h2 text-heading">
+            <p className="mb-0.5 font-poppins text-[length:clamp(0.9375rem,1.4vw,1.625rem)] font-normal leading-tight tracking-h2 text-heading">
               {e.title}
             </p>
             <p className="mb-0 font-sans text-[length:clamp(var(--text-caption),0.85vw,0.8125rem)] font-normal text-body-secondary">
@@ -378,7 +378,7 @@ export default function CVContent() {
         <div
           className="cv-hero-inner flex flex-wrap items-end justify-between gap-fib-21 pb-[clamp(var(--fib-21),3vw,var(--fib-55))]"
         >
-          <h1 className="cv-hero-name font-serif font-light leading-[0.88] tracking-[-0.025em] text-heading">
+          <h1 className="cv-hero-name font-poppins font-normal leading-[0.88] tracking-[-0.025em] text-heading">
             Rashod
             <span className="block pl-[clamp(var(--fib-21),4vw,var(--fib-55))]">
               Korala

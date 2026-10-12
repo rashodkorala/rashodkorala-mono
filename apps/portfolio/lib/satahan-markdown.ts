@@ -1,5 +1,5 @@
 import { renderMarkdown, type MarkdownParserConfig } from "@rashodkorala/theView";
-import { cormorantGaramond, satoshi } from "@/lib/font";
+import { cormorantGaramond, poppins, satoshi } from "@/lib/font";
 import { sanitizeMd } from "@/lib/case-study-markdown";
 
 /**
@@ -61,8 +61,8 @@ export function openingLine(md: string | null | undefined): string | null {
 export const SATAHAN_PROSE_CSS = `
   .st-body { font-family:${satoshi}; }
   .st-body::after { content:""; display:block; clear:both; }
-  .st-h  { font-family:${satoshi}; font-size:11px; font-weight:500; letter-spacing:0.12em; text-transform:uppercase; color:var(--color-body-secondary); margin:clamp(36px,4vw,52px) 0 14px; }
-  .st-h3 { font-family:${cormorantGaramond}; font-size:clamp(20px,1.8vw,26px); font-weight:500; color:var(--color-heading); margin:28px 0 10px; }
+  .st-h  { font-family:${satoshi}; font-size:11px; font-weight:400; letter-spacing:0.12em; text-transform:uppercase; color:var(--color-body-secondary); margin:clamp(36px,4vw,52px) 0 14px; }
+  .st-h3 { font-family:${poppins}; font-size:clamp(20px,1.8vw,26px); font-weight:400; color:var(--color-heading); margin:28px 0 10px; }
   .st-p, .st-li { font-size:clamp(16px,calc(14px + 0.3vw),19px); line-height:1.8; color:var(--color-body); margin:0 0 1.2em; }
   .st-ul { list-style:none; padding:0; margin:0 0 1.2em; }
   .st-li { position:relative; padding-left:20px; margin-bottom:0.4em; }

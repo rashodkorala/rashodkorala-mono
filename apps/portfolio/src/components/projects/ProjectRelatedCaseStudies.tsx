@@ -73,7 +73,7 @@ export default function ProjectRelatedCaseStudies({
                   </div>
                 )}
                 {cs.featured && (
-                  <span className="absolute left-3 top-3 rounded-full border border-white/25 bg-black/45 px-2.5 py-0.5 text-[10px] font-medium uppercase tracking-[0.14em] text-white/95 backdrop-blur-sm">
+                  <span className="absolute left-3 top-3 rounded-full border border-white/25 bg-black/45 px-2.5 py-0.5 text-[10px] font-normal uppercase tracking-[0.14em] text-white/95 backdrop-blur-sm">
                     Featured
                   </span>
                 )}
@@ -93,7 +93,7 @@ export default function ProjectRelatedCaseStudies({
                   </div>
                 )}
                 <div className="flex items-start justify-between gap-4">
-                  <h3 className="font-sans text-xl font-semibold leading-snug tracking-tight text-title transition-colors group-hover:text-heading md:text-[1.35rem]">
+                  <h3 className="font-poppins text-xl font-normal leading-snug tracking-tight text-title transition-colors group-hover:text-heading md:text-[1.35rem]">
                     {cs.title}
                   </h3>
                   <span className="mt-1 shrink-0 text-faint transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-body-secondary">
@@ -105,7 +105,7 @@ export default function ProjectRelatedCaseStudies({
                     {excerpt}
                   </p>
                 )}
-                <span className="text-[12px] font-medium text-label transition-colors group-hover:text-body-secondary">
+                <span className="text-[12px] font-normal text-label transition-colors group-hover:text-body-secondary">
                   Read case study
                 </span>
               </div>

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { satoshi, cormorantGaramond, notoSerifSinhala } from "@/lib/font";
+import { poppins, satoshi, cormorantGaramond, notoSerifSinhala } from "@/lib/font";
 import { formatEntryNumber, type SatahanItem } from "@/lib/entries";
 import { SATAHAN_PROSE_CSS } from "@/lib/satahan-markdown";
 
@@ -73,9 +73,9 @@ export default function SatahanPageContent({ items }: { items: SatahanItem[] }) 
         .st-list { list-style:none; margin:0; padding:0; max-width:760px; }
         .st-entry { display:grid; grid-template-columns:clamp(44px,5vw,72px) minmax(0,1fr); gap:clamp(12px,1.6vw,20px);
           border-top:1px solid var(--color-border); padding:clamp(22px,2.6vw,34px) 0; }
-        .st-num { font-family:${cormorantGaramond}; font-style:italic; font-size:clamp(22px,2vw,30px); line-height:1; color:var(--color-faint); }
+        .st-num { font-family:${poppins}; font-weight:400; font-size:clamp(22px,2vw,30px); line-height:1; color:var(--color-faint); }
         .st-meta { font-family:${satoshi}; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--color-label); margin:0 0 8px; }
-        .st-title { font-family:${satoshi}; font-weight:500; font-size:clamp(24px,2.2vw,32px); line-height:1.12; letter-spacing:-0.01em; margin:0 0 10px; }
+        .st-title { font-family:${poppins}; font-weight:400; font-size:clamp(24px,2.2vw,32px); line-height:1.12; letter-spacing:-0.01em; margin:0 0 10px; }
         .st-title a { color:var(--color-heading); text-decoration:none; }
         .st-title a:hover { text-decoration:underline; text-underline-offset:5px; text-decoration-thickness:1px; }
         .st-opening { font-family:${cormorantGaramond}; font-style:italic; font-size:clamp(18px,1.5vw,21px); line-height:1.45; color:var(--color-body-secondary); margin:0; max-width:56ch; }
@@ -83,7 +83,7 @@ export default function SatahanPageContent({ items }: { items: SatahanItem[] }) 
           text-decoration:underline; text-underline-offset:4px; text-decoration-color:var(--color-link-underline); }
         .st-note { max-width:60ch; }
         .st-wordmark { display:flex; align-items:baseline; flex-wrap:wrap; gap:0.12em 0.22em; margin:0;
-          font-family:${satoshi}; font-size:clamp(40px, 5.4vw, 88px); font-weight:400; color:var(--color-heading);
+          font-family:${poppins}; font-size:clamp(40px, 5.4vw, 88px); font-weight:400; color:var(--color-heading);
           letter-spacing:-0.03em; line-height:1; overflow:visible; }
         .st-gloss { display:inline-block; white-space:nowrap; letter-spacing:-0.03em; line-height:1.85; overflow:visible; }
         .st-si { font-family:${notoSerifSinhala}; letter-spacing:0; line-height:inherit; }

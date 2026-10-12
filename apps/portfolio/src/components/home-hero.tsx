@@ -49,7 +49,7 @@ function safeHref(url: string): string | null {
 
 function BioText({ text }: { text: string }) {
   const linkClass =
-    "font-medium text-heading underline underline-offset-[0.2em] decoration-from-font transition-opacity hover:opacity-80";
+    "font-normal text-heading underline underline-offset-[0.2em] decoration-from-font transition-opacity hover:opacity-80";
   const nodes: ReactNode[] = [];
   const pattern = /\[([^\]]+)\]\(([^)]+)\)/g;
   let last = 0;
@@ -293,19 +293,19 @@ export default function HomeHero({ imageSrc, displayName, bio, socials }: HomeHe
                 href={s.href}
                 target={s.href.startsWith("http") ? "_blank" : undefined}
                 rel={s.href.startsWith("http") ? "noopener noreferrer" : undefined}
-                className="font-body font-medium text-xs text-heading underline underline-offset-4 tracking-[0.01em] sm:text-[13px]"
+                className="font-body font-normal text-xs text-heading underline underline-offset-4 tracking-[0.01em] sm:text-[13px]"
               >
                 {s.label}
               </a>
             ))}
-            <CalendlyPopupButton className="font-body font-medium text-xs text-heading underline underline-offset-4 tracking-[0.01em] sm:text-[13px]">
+            <CalendlyPopupButton className="font-body font-normal text-xs text-heading underline underline-offset-4 tracking-[0.01em] sm:text-[13px]">
               Schedule a call
             </CalendlyPopupButton>
           </div>
 
           <Link
             href="/privacy"
-            className="font-body font-medium text-xs text-body-secondary underline underline-offset-4 tracking-[0.01em] transition-opacity hover:opacity-80 sm:text-[13px]"
+            className="font-body font-normal text-xs text-body-secondary underline underline-offset-4 tracking-[0.01em] transition-opacity hover:opacity-80 sm:text-[13px]"
           >
             Privacy
           </Link>

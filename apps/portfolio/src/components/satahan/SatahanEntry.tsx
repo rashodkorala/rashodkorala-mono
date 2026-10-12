@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { satoshi, cormorantGaramond } from "@/lib/font";
+import { poppins, satoshi, cormorantGaramond } from "@/lib/font";
 import { formatEntryNumber, type SatahanItem } from "@/lib/entries";
 import { SATAHAN_PROSE_CSS } from "@/lib/satahan-markdown";
 
@@ -44,7 +44,7 @@ export default function SatahanEntry({ item, inShort, html, images, previous, ne
           text-decoration:none; padding:6px 0; margin-bottom:clamp(28px,4vw,56px); transition:color .15s; }
         .se-back:hover { color:var(--color-heading); }
         .se-label { display:block; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--color-label); }
-        .se-title { font-family:${satoshi}; font-weight:500; font-size:clamp(40px,5.4vw,76px); line-height:1; letter-spacing:-0.02em;
+        .se-title { font-family:${poppins}; font-weight:400; font-size:clamp(40px,5.4vw,76px); line-height:1; letter-spacing:-0.02em;
           color:var(--color-heading); margin:14px 0 clamp(20px,2.4vw,30px); }
         .se-short { border-left:1px solid var(--color-border-strong); padding-left:18px; margin:0 0 clamp(32px,4vw,48px); }
         .se-short p { font-family:${cormorantGaramond}; font-style:italic; font-size:clamp(20px,1.8vw,24px); line-height:1.4; color:var(--color-title); margin:6px 0 0; }
@@ -59,7 +59,7 @@ export default function SatahanEntry({ item, inShort, html, images, previous, ne
         .se-project-cta { font-size:13px; color:var(--color-link); white-space:nowrap; }
         .se-nav { display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-top:clamp(24px,3vw,32px); }
         .se-neighbour { text-decoration:none; color:inherit; }
-        .se-neighbour-title { display:block; font-family:${satoshi}; font-weight:500; font-size:19px; line-height:1.2; color:var(--color-heading); margin-top:6px; }
+        .se-neighbour-title { display:block; font-family:${poppins}; font-weight:400; font-size:19px; line-height:1.2; color:var(--color-heading); margin-top:6px; }
         .se-neighbour:hover .se-neighbour-title { text-decoration:underline; text-underline-offset:4px; text-decoration-thickness:1px; }
         @media (max-width:600px) { .se-nav { grid-template-columns:1fr; } .se-neighbour { text-align:left !important; } }
       `}</style>

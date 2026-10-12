@@ -105,7 +105,7 @@ export default function ProjectPhotoLightbox({
           className="pointer-events-auto flex shrink-0 items-center justify-between gap-4 border-b border-white/10 bg-[#0c0b0a]/40 px-4 py-3 backdrop-blur-md md:px-6 dark:bg-black/50"
           style={{ fontFamily: satoshi }}
         >
-          <p id={titleId} className="truncate text-sm font-medium text-white/90">
+          <p id={titleId} className="truncate text-sm font-normal text-white/90">
             {projectTitle}
             <span className="text-white/45">
               {" "}

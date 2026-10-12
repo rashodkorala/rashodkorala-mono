@@ -1,5 +1,5 @@
 import { renderMarkdown, type MarkdownParserConfig } from "@rashodkorala/theView";
-import { cormorantGaramond, satoshi } from "@/lib/font";
+import { cormorantGaramond, poppins, satoshi } from "@/lib/font";
 
 /**
  * Case study markdown → HTML, shared by the standalone case study page and the combined
@@ -95,10 +95,10 @@ export function readingMinutes(words: number): number {
 
 export const CASE_STUDY_PROSE_CSS = `
         /* Markdown prose */
-        .cs-h1,.cs-h2,.cs-h3 { font-family:${cormorantGaramond}; color:var(--color-heading); letter-spacing:-0.02em; }
-        .cs-h1 { font-size:clamp(28px,3vw,58px); font-weight:400; margin:clamp(32px,4vw,56px) 0 clamp(12px,1.2vw,18px); line-height:1.05; }
-        .cs-h2 { font-size:clamp(22px,2.4vw,46px); font-weight:700; margin:clamp(28px,3.5vw,52px) 0 clamp(12px,1.2vw,18px); line-height:1.18; }
-        .cs-h3 { font-size:clamp(18px,1.8vw,34px); font-weight:500; margin:clamp(20px,2.5vw,36px) 0 clamp(8px,0.8vw,12px); line-height:1.25; }
+        .cs-h1,.cs-h2,.cs-h3 { font-family:${poppins}; font-weight:400; color:var(--color-heading); letter-spacing:-0.02em; }
+        .cs-h1 { font-size:clamp(28px,3vw,58px); margin:clamp(32px,4vw,56px) 0 clamp(12px,1.2vw,18px); line-height:1.05; }
+        .cs-h2 { font-size:clamp(22px,2.4vw,46px); margin:clamp(28px,3.5vw,52px) 0 clamp(12px,1.2vw,18px); line-height:1.18; }
+        .cs-h3 { font-size:clamp(18px,1.8vw,34px); margin:clamp(20px,2.5vw,36px) 0 clamp(8px,0.8vw,12px); line-height:1.25; }
         .cs-p  { font-size:clamp(17px,calc(13.67px + 0.434vw),22px); color:var(--color-body); line-height:1.65; letter-spacing:0; font-family:${satoshi}; margin-bottom:clamp(14px,1.4vw,20px); }
         .cs-ul { padding-left:0; list-style:none; margin-bottom:clamp(14px,1.4vw,20px); }
         .cs-li { font-size:clamp(17px,calc(13.67px + 0.434vw),22px); color:var(--color-body); line-height:1.65; font-family:${satoshi}; padding-left:20px; position:relative; margin-bottom:8px; }

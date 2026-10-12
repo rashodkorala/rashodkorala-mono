@@ -4,7 +4,7 @@ import React, { useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion, useInView } from "framer-motion";
-import { satoshi } from "@/lib/font";
+import { poppins, satoshi } from "@/lib/font";
 import type { ProjectItem } from "@/lib/entries";
 
 /**
@@ -52,7 +52,7 @@ function CoverPlaceholder({ fill, initial }: { fill: string; initial: string }) 
         textAnchor="middle"
         fontFamily={satoshi}
         fontSize="96"
-        fontWeight="700"
+        fontWeight="400"
         fill="var(--color-inverse)"
         opacity="0.18"
         letterSpacing="-2"
@@ -122,7 +122,7 @@ function ProjectCard({
             letterSpacing: "0.06em",
             textTransform: "uppercase",
             color: "var(--color-body-tertiary)",
-            fontWeight: 500,
+            fontWeight: 400,
             margin: "0 0 6px",
             whiteSpace: "nowrap",
             overflow: "hidden",
@@ -131,7 +131,7 @@ function ProjectCard({
             {meta}
           </p>
           <p style={{
-            fontFamily: satoshi,
+            fontFamily: poppins,
             fontSize: "clamp(16px, 1.5vw, 22px)",
             color: "var(--color-heading)",
             fontWeight:400,
@@ -218,7 +218,7 @@ export default function ProjectsPageContent({ items }: ProjectsPageContentProps)
         >
           <div>
             <h1 style={{
-              fontFamily: satoshi,
+              fontFamily: poppins,
               fontSize: "clamp(48px, 7vw, 128px)",
               fontWeight: 400,
               color: "var(--color-heading)",
@@ -229,7 +229,7 @@ export default function ProjectsPageContent({ items }: ProjectsPageContentProps)
               Selected
             </h1>
             <h1 style={{
-              fontFamily: satoshi,
+              fontFamily: poppins,
               fontSize: "clamp(48px, 7vw, 128px)",
               fontWeight: 400,
               color: "var(--color-body-secondary)",
@@ -290,7 +290,7 @@ export default function ProjectsPageContent({ items }: ProjectsPageContentProps)
           <p style={{
             fontFamily: satoshi,
             fontSize: "11px",
-            fontWeight: 600,
+            fontWeight: 400,
             letterSpacing: "0.14em",
             textTransform: "uppercase",
             color: "var(--color-body-secondary)",
@@ -315,7 +315,7 @@ export default function ProjectsPageContent({ items }: ProjectsPageContentProps)
           >
             <div>
               <h2 style={{
-                fontFamily: satoshi,
+                fontFamily: poppins,
                 fontSize: "clamp(26px, 3vw, 40px)",
                 fontWeight: 400,
                 lineHeight: 1,

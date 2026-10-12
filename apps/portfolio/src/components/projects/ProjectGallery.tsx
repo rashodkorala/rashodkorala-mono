@@ -81,7 +81,7 @@ export default function ProjectGallery({ images, projectTitle }: ProjectGalleryP
           />
           <div className="pointer-events-none relative z-10 flex min-h-0 flex-1 flex-col">
           <div className="pointer-events-auto flex shrink-0 items-center justify-between gap-4 border-b border-white/10 bg-[#0c0b0a]/40 px-4 py-3 backdrop-blur-md md:px-6 dark:bg-black/50">
-            <p id={titleId} className="truncate text-sm font-medium text-white/90">
+            <p id={titleId} className="truncate text-sm font-normal text-white/90">
               {projectTitle}
               <span className="text-white/45"> — {lightboxIndex + 1} / {images.length}</span>
             </p>
@@ -172,7 +172,7 @@ export default function ProjectGallery({ images, projectTitle }: ProjectGalleryP
               sizes="(max-width: 896px) 100vw, 896px"
             />
             <span className="pointer-events-none absolute inset-0 bg-ink/[0.03] opacity-0 transition-opacity group-hover:opacity-100 dark:bg-black/20" />
-            <span className="pointer-events-none absolute bottom-3 right-3 rounded-full bg-black/55 px-3 py-1 text-[11px] font-medium uppercase tracking-[0.12em] text-white/95 backdrop-blur-sm">
+            <span className="pointer-events-none absolute bottom-3 right-3 rounded-full bg-black/55 px-3 py-1 text-[11px] font-normal uppercase tracking-[0.12em] text-white/95 backdrop-blur-sm">
               View
             </span>
           </button>
@@ -215,7 +215,7 @@ export default function ProjectGallery({ images, projectTitle }: ProjectGalleryP
                 sizes="(max-width: 896px) 100vw, 896px"
               />
               <span className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/25 via-transparent to-transparent opacity-60" />
-              <span className="pointer-events-none absolute bottom-4 left-4 rounded-full bg-black/50 px-3 py-1 text-[11px] font-medium uppercase tracking-[0.12em] text-white/95 backdrop-blur-sm">
+              <span className="pointer-events-none absolute bottom-4 left-4 rounded-full bg-black/50 px-3 py-1 text-[11px] font-normal uppercase tracking-[0.12em] text-white/95 backdrop-blur-sm">
                 Open gallery
               </span>
             </button>

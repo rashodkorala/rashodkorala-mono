@@ -86,7 +86,7 @@ export default function TopBar() {
         ) : (
           <Link
             href="/"
-            className="inline-flex h-fib-34 w-fib-34 items-center justify-center rounded-sm bg-surface-elevated text-inverse font-sans text-sm font-bold shrink-0"
+            className="inline-flex h-fib-34 w-fib-34 items-center justify-center rounded-sm bg-surface-elevated text-inverse font-sans text-sm font-normal shrink-0"
             aria-label="Home"
           >
             R

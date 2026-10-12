@@ -12,6 +12,7 @@ module.exports = {
         sans:    ["var(--font-satoshi)", "system-ui", "sans-serif"],
         body:    ["var(--font-satoshi)", "system-ui", "sans-serif"],
         reading: ["var(--font-satoshi)", "system-ui", "sans-serif"],
+        poppins: ["var(--font-poppins)", "system-ui", "sans-serif"],
         mono: [
           "var(--font-mono)",
           "ui-monospace",

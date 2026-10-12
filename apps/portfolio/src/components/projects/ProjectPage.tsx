@@ -5,7 +5,7 @@ import MobileToc from "./MobileToc";
 import ProjectPhotoLightbox from "./ProjectPhotoLightbox";
 import Image from "next/image";
 import Link from "next/link";
-import { satoshi } from "@/lib/font";
+import { poppins, satoshi } from "@/lib/font";
 import type { Project, CaseStudy } from "@/lib/types";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
@@ -36,7 +36,7 @@ function MetaLabel({ children }: { children: React.ReactNode }) {
 
 function MetaValue({ children }: { children: React.ReactNode }) {
   return (
-    <p style={{ fontFamily: satoshi, fontSize: "clamp(15px, 1.3vw, 24px)", color: "var(--color-heading)", fontWeight: 500, letterSpacing: "-0.01em", lineHeight: 1.3 }}>
+    <p style={{ fontFamily: satoshi, fontSize: "clamp(15px, 1.3vw, 24px)", color: "var(--color-heading)", fontWeight: 400, letterSpacing: "-0.01em", lineHeight: 1.3 }}>
       {children}
     </p>
   );
@@ -57,7 +57,7 @@ function ArrowIcon() {
 function CoverPlaceholder({ initial }: { initial: string }) {
   return (
     <div style={{ width: "100%", height: "100%", background: "linear-gradient(135deg, #c4beb6 0%, #a8a49c 40%, #8a8880 100%)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-      <span style={{ fontFamily: satoshi, fontSize: "clamp(4rem, 12vw, 10rem)", fontWeight: 700, color: "var(--color-inverse)", opacity: 0.18 }}>
+      <span style={{ fontFamily: poppins, fontSize: "clamp(4rem, 12vw, 10rem)", fontWeight: 400, color: "var(--color-inverse)", opacity: 0.18 }}>
         {initial}
       </span>
     </div>
@@ -84,14 +84,14 @@ function RelatedCard({ cs }: { cs: CaseStudy }) {
           <Image src={thumb} alt={cs.title} fill className="object-cover" sizes="(max-width: 900px) 50vw, 25vw" />
         ) : (
           <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <span style={{ fontFamily: satoshi, fontSize: "clamp(2rem, 4vw, 4rem)", fontWeight: 700, color: "var(--color-inverse)", opacity: 0.3 }}>
+            <span style={{ fontFamily: poppins, fontSize: "clamp(2rem, 4vw, 4rem)", fontWeight: 400, color: "var(--color-inverse)", opacity: 0.3 }}>
               {cs.title.charAt(0)}
             </span>
           </div>
         )}
       </div>
       <div style={{ paddingTop: "clamp(8px, 0.8vw, 12px)" }}>
-        <p style={{ fontFamily: satoshi, fontSize: "clamp(14px, 1.2vw, 18px)", color: "var(--color-heading)", fontWeight: 500, margin: "0 0 3px", letterSpacing: "0.007em" }}>
+        <p style={{ fontFamily: poppins, fontSize: "clamp(14px, 1.2vw, 18px)", color: "var(--color-heading)", fontWeight: 400, margin: "0 0 3px", letterSpacing: "0.007em" }}>
           {cs.title}
         </p>
         {cs.tags && cs.tags.length > 0 && (
@@ -310,7 +310,7 @@ export default function ProjectPage({ project, caseStudies }: { project: Project
           className="pd-title-row"
           style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 24, marginBottom: "clamp(6px, 1vw, 16px)", flexWrap: "wrap" }}
         >
-          <h1 style={{ fontFamily: satoshi, fontWeight: 500, fontSize: "clamp(40px, 7vw, 128px)", color: "var(--color-heading)", letterSpacing: "-0.025em", lineHeight: 0.9 }}>
+          <h1 style={{ fontFamily: poppins, fontWeight: 400, fontSize: "clamp(40px, 7vw, 128px)", color: "var(--color-heading)", letterSpacing: "-0.025em", lineHeight: 0.9 }}>
             {project.title}
           </h1>
 
@@ -329,7 +329,7 @@ export default function ProjectPage({ project, caseStudies }: { project: Project
             {logoSrc ? (
               <Image src={logoSrc} alt={`${project.title} logo`} fill className="object-cover" sizes="64px" />
             ) : (
-              <span style={{ color: "var(--color-inverse)", fontSize: "clamp(14px, 1.4vw, 22px)", fontWeight: 700, fontFamily: satoshi }}>
+              <span style={{ color: "var(--color-inverse)", fontSize: "clamp(14px, 1.4vw, 22px)", fontWeight: 400, fontFamily: poppins }}>
                 {project.title.slice(0, 2).toUpperCase()}
               </span>
             )}
@@ -337,7 +337,7 @@ export default function ProjectPage({ project, caseStudies }: { project: Project
         </div>
 
         {project.subtitle && (
-          <p style={{ fontFamily: satoshi, fontSize: "clamp(18px, 2vw, 38px)", color: "var(--color-body-secondary)", fontWeight: 300, marginBottom: "clamp(24px, 3vw, 44px)", letterSpacing: "0" }}>
+          <p style={{ fontFamily: poppins, fontSize: "clamp(18px, 2vw, 38px)", color: "var(--color-body-secondary)", fontWeight: 400, marginBottom: "clamp(24px, 3vw, 44px)", letterSpacing: "0" }}>
             {project.subtitle}
           </p>
         )}
