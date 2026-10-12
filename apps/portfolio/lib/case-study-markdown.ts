@@ -9,7 +9,7 @@ import { cormorantGaramond, jakartaSans } from "@/lib/font";
 // Tags we want to preserve as raw HTML in rendered output
 const SAFE_HTML_TAGS = /^\/?(video|audio|source|track|figure|figcaption|picture)\b/i
 
-function sanitizeMd(md: string): string {
+export function sanitizeMd(md: string): string {
   return md
     .replace(/\{\/\*[\s\S]*?\*\/\}/g, "\n")
     // Strip self-closing JSX components (e.g. <Component />) but not safe HTML

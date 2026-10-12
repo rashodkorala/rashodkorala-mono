@@ -15,14 +15,13 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { CaseStudyActions } from "@/components/case-studies/case-study-actions"
-import { ProjectActions } from "@/components/projects/project-actions"
-import { IconPlus, IconBriefcase } from "@tabler/icons-react"
+import { IconPlus, IconNews } from "@tabler/icons-react"
 
-interface WorkPageProps {
+interface SatahanPageProps {
   searchParams: Promise<{ status?: string }>
 }
 
-export default async function WorkPage({ searchParams }: WorkPageProps) {
+export default async function SatahanPage({ searchParams }: SatahanPageProps) {
   const supabase = await createClient()
   const {
     data: { user },
@@ -36,42 +35,31 @@ export default async function WorkPage({ searchParams }: WorkPageProps) {
     getProjects(),
   ])
 
-  const allItems = [
-    ...caseStudies.map((cs) => ({
+  const projectTitles = new Map(projects.map((p) => [p.id, p.title]))
+
+  const items = caseStudies
+    .map((cs) => ({
       id: cs.id,
-      kind: "case_study" as const,
       title: cs.title,
-      subtitle: cs.contentMd?.trim() ? cs.contentMd.trim().slice(0, 140) : null,
+      subtitle: cs.summary || (cs.contentMd?.trim() ? cs.contentMd.trim().slice(0, 140) : null),
+      project: cs.projectId ? projectTitles.get(cs.projectId) ?? null : null,
       status: cs.status,
       updatedAt: cs.updatedAt,
-      slug: cs.slug,
       data: cs,
-    })),
-    ...projects.map((p) => ({
-      id: p.id,
-      kind: "project" as const,
-      title: p.title,
-      subtitle: p.subtitle || p.shortDescription || null,
-      status: p.status,
-      updatedAt: p.updatedAt,
-      slug: p.slug,
-      data: p,
-    })),
-  ].sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
+    }))
+    .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
 
-  const total = allItems.length
-  const caseStudyCount = caseStudies.length
-  const projectCount = projects.length
+  const publishedCount = items.filter((i) => i.status === "published").length
 
   return (
     <div className="p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold">Work</h1>
-          <p className="text-sm text-muted-foreground">Manage projects and related case studies.</p>
+          <h1 className="text-2xl font-bold">Satahan</h1>
+          <p className="text-sm text-muted-foreground">Case studies and writing.</p>
         </div>
         <Button asChild>
-          <Link href="/protected/work/new">
+          <Link href="/protected/satahan/new">
             <IconPlus className="h-4 w-4 mr-2" />
             New Entry
           </Link>
@@ -80,40 +68,30 @@ export default async function WorkPage({ searchParams }: WorkPageProps) {
 
       {/* Stats */}
       <div className="grid grid-cols-3 gap-4">
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Total</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold">{total}</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Projects</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold">{projectCount}</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-muted-foreground">Case Studies</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-2xl font-bold">{caseStudyCount}</p>
-          </CardContent>
-        </Card>
+        {[
+          { label: "Total", value: items.length },
+          { label: "Published", value: publishedCount },
+          { label: "Drafts", value: items.length - publishedCount },
+        ].map((stat) => (
+          <Card key={stat.label}>
+            <CardHeader className="pb-2">
+              <CardTitle className="text-sm font-medium text-muted-foreground">{stat.label}</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-2xl font-bold">{stat.value}</p>
+            </CardContent>
+          </Card>
+        ))}
       </div>
 
       {/* Table */}
-      {allItems.length === 0 ? (
+      {items.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 text-center">
-          <IconBriefcase className="h-12 w-12 text-muted-foreground mb-4" />
+          <IconNews className="h-12 w-12 text-muted-foreground mb-4" />
           <p className="text-lg font-medium">No entries yet</p>
-          <p className="text-sm text-muted-foreground mb-4">Create your first project or case study.</p>
+          <p className="text-sm text-muted-foreground mb-4">Write your first case study.</p>
           <Button asChild>
-            <Link href="/protected/work/new">
+            <Link href="/protected/satahan/new">
               <IconPlus className="h-4 w-4 mr-2" />
               New Entry
             </Link>
@@ -125,15 +103,15 @@ export default async function WorkPage({ searchParams }: WorkPageProps) {
             <TableHeader>
               <TableRow>
                 <TableHead>Title</TableHead>
-                <TableHead>Kind</TableHead>
+                <TableHead>Project</TableHead>
                 <TableHead>Status</TableHead>
                 <TableHead>Updated</TableHead>
                 <TableHead className="w-[60px]" />
               </TableRow>
             </TableHeader>
             <TableBody>
-              {allItems.map((item) => (
-                <TableRow key={`${item.kind}-${item.id}`}>
+              {items.map((item) => (
+                <TableRow key={item.id}>
                   <TableCell className="font-medium">
                     <div>
                       <p>{item.title}</p>
@@ -145,9 +123,11 @@ export default async function WorkPage({ searchParams }: WorkPageProps) {
                     </div>
                   </TableCell>
                   <TableCell>
-                    <Badge variant="outline" className="text-xs capitalize">
-                      {item.kind === "case_study" ? "Case Study" : "Project"}
-                    </Badge>
+                    {item.project ? (
+                      <Badge variant="outline" className="text-xs">{item.project}</Badge>
+                    ) : (
+                      <span className="text-xs text-muted-foreground">—</span>
+                    )}
                   </TableCell>
                   <TableCell>
                     <Badge
@@ -165,11 +145,7 @@ export default async function WorkPage({ searchParams }: WorkPageProps) {
                     })}
                   </TableCell>
                   <TableCell>
-                    {item.kind === "case_study" ? (
-                      <CaseStudyActions caseStudy={item.data as any} />
-                    ) : (
-                      <ProjectActions project={item.data as any} />
-                    )}
+                    <CaseStudyActions caseStudy={item.data} />
                   </TableCell>
                 </TableRow>
               ))}

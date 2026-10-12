@@ -15,7 +15,7 @@ export default async function ViewProjectPage({ params }: { params: Promise<{ sl
 
   const { slug } = await params
   const project = await getProjectBySlug(slug)
-  if (!project) redirect("/protected/work")
+  if (!project) redirect("/protected/projects")
   const relatedCaseStudies = await getCaseStudiesByProjectId(project.id)
 
   return (
@@ -24,7 +24,7 @@ export default async function ViewProjectPage({ params }: { params: Promise<{ sl
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <Button variant="ghost" size="sm" asChild>
-            <Link href="/protected/work">
+            <Link href="/protected/projects">
               <IconChevronLeft className="h-4 w-4 mr-1" />
               Back
             </Link>
@@ -48,7 +48,7 @@ export default async function ViewProjectPage({ params }: { params: Promise<{ sl
           </div>
         </div>
         <Button variant="outline" size="sm" asChild>
-          <Link href={`/protected/work/projects/${project.slug}`}>
+          <Link href={`/protected/projects/${project.slug}`}>
             <IconEdit className="h-4 w-4 mr-1" />
             Edit
           </Link>
@@ -149,7 +149,7 @@ export default async function ViewProjectPage({ params }: { params: Promise<{ sl
               {relatedCaseStudies.map((cs) => (
                 <Link
                   key={cs.id}
-                  href={`/protected/work/view/${cs.slug}`}
+                  href={`/protected/satahan/view/${cs.slug}`}
                   className="block rounded border p-3 hover:bg-muted/40 transition-colors"
                 >
                   <p className="text-sm font-medium">{cs.title}</p>

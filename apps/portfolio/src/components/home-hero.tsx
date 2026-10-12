@@ -25,7 +25,7 @@ const defaultSocials = [
 
 const FALLBACK_BIO = [
   "I am a software engineer and entrepreneur based in St. John\u2019s, Newfoundland, recently graduated and actively building experience across product, design, and technology. I am drawn to the craft of building, where I take an idea and shape it through code and design into something that solves a real problem. I am looking for roles where I can contribute meaningfully from day one, keep learning, and build things that matter.",
-  "I [work](/work) across the full arc from discovery to delivery, covering product design (UI/UX) and full-stack engineering, with a focus on translating complex technical ideas into outcomes that matter.",
+  "I [work](/projects) across the full arc from discovery to delivery, covering product design (UI/UX) and full-stack engineering, with a focus on translating complex technical ideas into outcomes that matter.",
   "[Photography](https://photos.rashodkorala.com) runs alongside all of it, shaping how I see and communicate.",
 ];
 

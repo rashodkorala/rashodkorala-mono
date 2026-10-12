@@ -43,7 +43,7 @@ export default function ProjectRelatedCaseStudies({
         return (
           <li key={cs.id}>
             <Link
-              href={`/work/${cs.slug}`}
+              href={`/satahan/${cs.slug}`}
               className={cn(
                 "group relative flex flex-col overflow-hidden rounded-2xl border border-line bg-gradient-to-br from-surface-raised to-transparent transition-all duration-300",
                 "hover:border-line-hover hover:shadow-[0_12px_40px_-12px_rgba(43,43,43,0.18)]",

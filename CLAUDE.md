@@ -60,7 +60,7 @@ rashodkorala-mono/
 │   │   └── middleware.ts       # Auth middleware for /admin/* routes
 │   │
 │   └── portfolio/              # Portfolio Site
-│       ├── app/                # Pages: /, /about, /contact, /work, /work/[slug]
+│       ├── app/                # Pages: /, /contact, /cv, /projects, /projects/[slug], /satahan, /satahan/[slug]
 │       └── lib/supabase/       # Data layer: projects.ts, case-studies.ts + cached wrappers
 │
 ├── packages/
@@ -77,7 +77,7 @@ rashodkorala-mono/
 
 Active tables (8 total):
 - `projects` — Portfolio projects (renamed from projects_archived)
-- `case_studies` — Case studies with inline `content_md` (no storage bucket for content)
+- `case_studies` — Case studies with inline `content_md` (no storage bucket for content); shown on the portfolio as Satahan entries (`kind` case_study|note, permanent `entry_number` given on first publish, optional `in_short`; `> [!margin] …` in markdown renders a margin note)
 - `case_study_projects` — Junction table linking case_studies → projects
 - `photos` — Photography metadata
 - `about_profiles` — About page content
@@ -125,7 +125,7 @@ Folder structure within `media` bucket:
 - `apps/cms/lib/actions/about.ts` — About page management
 
 ### Portfolio Data Layer
-- `apps/portfolio/app/api/revalidate/route.ts` — POST (Bearer `PORTFOLIO_REVALIDATE_SECRET`); `revalidateTag` for `projects` / `case-studies` + paths `/`, `/work`
+- `apps/portfolio/app/api/revalidate/route.ts` — POST (Bearer `PORTFOLIO_REVALIDATE_SECRET`); `revalidateTag` for `projects` / `case-studies` + paths `/`, `/projects`, `/satahan`
 - `apps/portfolio/lib/supabase/projects.ts` — Queries `projects` table
 - `apps/portfolio/lib/supabase/cached-projects.ts` — unstable_cache wrappers, tags: ['projects']
 - `apps/portfolio/lib/supabase/case-studies.ts` — Queries `case_studies`, resolves cover_path → public URL

@@ -23,7 +23,7 @@ export default async function EditWorkPage({ params }: EditWorkPageProps) {
     getCaseStudyBySlug(slug),
     getProjects(),
   ])
-  if (!caseStudy) redirect("/protected/work")
+  if (!caseStudy) redirect("/protected/satahan")
 
   const availableProjects = projects.map(p => ({ id: p.id, title: p.title, slug: p.slug }))
 
@@ -31,7 +31,7 @@ export default async function EditWorkPage({ params }: EditWorkPageProps) {
     <div className="space-y-2">
       <div className="mx-auto flex max-w-7xl items-center gap-4 px-4 pt-4 md:px-8">
         <Button variant="ghost" size="sm" asChild>
-          <Link href="/protected/work">
+          <Link href="/protected/satahan">
             <IconChevronLeft className="h-4 w-4 mr-1" />
             Back
           </Link>

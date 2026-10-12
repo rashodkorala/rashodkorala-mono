@@ -14,6 +14,17 @@ const nextConfig: NextConfig = {
   // Set output file tracing root to the workspace root for monorepo support
   outputFileTracingRoot: path.join(__dirname, "../.."),
   pageExtensions: ["js", "jsx", "md", "mdx", "ts", "tsx"],
+  // "Work" was split into Projects and Satahan (case studies); keep old bookmarks working.
+  async redirects() {
+    return [
+      { source: "/protected/work", destination: "/protected/projects", permanent: true },
+      { source: "/protected/work/new", destination: "/protected/projects/new", permanent: true },
+      { source: "/protected/work/projects/view/:slug", destination: "/protected/projects/view/:slug", permanent: true },
+      { source: "/protected/work/projects/:slug", destination: "/protected/projects/:slug", permanent: true },
+      { source: "/protected/work/view/:slug", destination: "/protected/satahan/view/:slug", permanent: true },
+      { source: "/protected/work/:slug", destination: "/protected/satahan/:slug", permanent: true },
+    ];
+  },
   images: {
     // Allow images from Supabase Storage
     remotePatterns: [

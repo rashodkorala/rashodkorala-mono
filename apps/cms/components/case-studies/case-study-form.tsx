@@ -88,6 +88,8 @@ export function CaseStudyForm({ caseStudy, availableProjects }: CaseStudyFormPro
     timeline: caseStudy?.timeline ?? "",
     links: caseStudy?.links ?? [],
     stack: caseStudy?.stack ?? [],
+    kind: caseStudy?.kind ?? "case_study",
+    inShort: caseStudy?.inShort ?? "",
     coverImageFile: null,
     clearCoverImage: false,
   })
@@ -202,7 +204,7 @@ export function CaseStudyForm({ caseStudy, availableProjects }: CaseStudyFormPro
 
       markSaved()
       toast.success(isEditing ? "Case study updated" : "Case study created")
-      router.push("/protected/work")
+      router.push("/protected/satahan")
       router.refresh()
     } catch (error) {
       console.error("Error saving case study:", error)
@@ -214,7 +216,7 @@ export function CaseStudyForm({ caseStudy, availableProjects }: CaseStudyFormPro
 
   const cancel = () => {
     if (dirty && !confirm("Discard unsaved changes?")) return
-    router.push("/protected/work")
+    router.push("/protected/satahan")
   }
 
   const galleryCount = existingGallery.length + galleryFiles.length
@@ -226,7 +228,7 @@ export function CaseStudyForm({ caseStudy, availableProjects }: CaseStudyFormPro
         aria-label="Title"
         value={formData.title}
         onChange={handleTitleChange}
-        placeholder="Untitled case study"
+        placeholder="Untitled entry"
         className="text-4xl font-bold leading-tight tracking-tight"
       />
       <AutoGrowTextarea
@@ -236,12 +238,22 @@ export function CaseStudyForm({ caseStudy, availableProjects }: CaseStudyFormPro
         placeholder="One-line summary shown under the title on the portfolio"
         className="text-lg text-muted-foreground"
       />
+      <AutoGrowTextarea
+        aria-label="In short"
+        value={formData.inShort}
+        onChange={(v) => update("inShort", v)}
+        placeholder="In short: the one-line takeaway shown at the top of the entry (optional)"
+        className="text-base italic text-muted-foreground"
+      />
       <div className="border-t pt-6">
         <MarkdownEditor
           initialValue={formData.contentMd}
           onChange={(md) => update("contentMd", md)}
           uploadFile={uploadInlineMedia}
         />
+        <p className="mt-3 text-xs text-muted-foreground">
+          Margin note: start a quote with <code>[!margin]</code>, e.g. <code>&gt; [!margin] Spider charts were cut early.</code>
+        </p>
       </div>
     </div>
   )
@@ -249,6 +261,21 @@ export function CaseStudyForm({ caseStudy, availableProjects }: CaseStudyFormPro
   const sidebar = (
     <>
       <SidebarSection title="Publishing" defaultOpen>
+        <div className="space-y-2">
+          <Label htmlFor="cs-kind">Kind</Label>
+          <select
+            id="cs-kind"
+            className={selectClass}
+            value={formData.kind}
+            onChange={(e) => update("kind", e.target.value as CaseStudyFormData["kind"])}
+          >
+            <option value="case_study">Case study</option>
+            <option value="note">Note (short, shown in full on the index)</option>
+          </select>
+          {caseStudy?.entryNumber != null && (
+            <p className="text-xs text-muted-foreground">Satahan Nº {String(caseStudy.entryNumber).padStart(2, "0")}</p>
+          )}
+        </div>
         <div className="space-y-2">
           <Label htmlFor="cs-status">Status</Label>
           <select

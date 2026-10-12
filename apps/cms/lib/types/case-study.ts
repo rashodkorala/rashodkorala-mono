@@ -3,6 +3,9 @@ export interface BeforeAfter {
   afterImage: string | null
 }
 
+/** Satahan entry kind: a long-form case study or a short note. */
+export type CaseStudyKind = 'case_study' | 'note'
+
 // Database schema (snake_case) — matches new case_studies table
 export interface CaseStudyDB {
   id: string
@@ -23,6 +26,9 @@ export interface CaseStudyDB {
   timeline: string | null
   links: { label: string; url: string; type?: string }[]
   stack: string[]
+  kind: CaseStudyKind
+  entry_number: number | null
+  in_short: string | null
   created_at: string
   updated_at: string
 }
@@ -47,6 +53,9 @@ export interface CaseStudy {
   timeline: string | null
   links: { label: string; url: string; type?: string }[]
   stack: string[]
+  kind: CaseStudyKind
+  entryNumber: number | null
+  inShort: string | null
   createdAt: string
   updatedAt: string
 }
@@ -71,6 +80,8 @@ export interface CaseStudyFormData {
   timeline: string
   links: { label: string; url: string; type?: string }[]
   stack: string[]
+  kind: CaseStudyKind
+  inShort: string
   coverImageFile?: File | null
   clearCoverImage?: boolean
 }

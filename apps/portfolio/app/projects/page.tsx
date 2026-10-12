@@ -1,27 +1,27 @@
 import type { Metadata } from "next";
-import WorkPageContent from "@/src/components/work/WorkPageContent";
+import ProjectsPageContent from "@/src/components/projects/ProjectsPageContent";
 import PageShell from "@/src/components/page-shell";
 import { getCachedAllProjects } from "@/lib/supabase/cached-projects";
 import { getCachedCaseStudies } from "@/lib/supabase/cached-case-studies";
-import { buildWorkItems } from "@/lib/work";
+import { buildProjectItems } from "@/lib/entries";
 
 export const revalidate = 3600;
 
 export const metadata: Metadata = {
-  title: "Work",
-  description: "Projects and case studies by Rashod Korala.",
+  title: "Projects",
+  description: "Projects by Rashod Korala.",
 };
 
-export default async function WorkPage() {
+export default async function ProjectsPage() {
   // Do not catch Supabase errors and fall back to []: ISR would cache that empty
-  // response as a successful render, so /work could go blank after revalidation.
+  // response as a successful render, so /projects could go blank after revalidation.
   const [projects, caseStudies] = await Promise.all([
     getCachedAllProjects(),
     getCachedCaseStudies(),
   ]);
   return (
     <PageShell>
-      <WorkPageContent items={buildWorkItems(projects, caseStudies)} />
+      <ProjectsPageContent items={buildProjectItems(projects, caseStudies)} />
     </PageShell>
   );
 }

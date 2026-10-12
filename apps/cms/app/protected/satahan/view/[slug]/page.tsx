@@ -22,7 +22,7 @@ export default async function ViewWorkPage({ params }: ViewWorkPageProps) {
 
   const { slug } = await params
   const caseStudy = await getCaseStudyBySlug(slug)
-  if (!caseStudy) redirect("/protected/work")
+  if (!caseStudy) redirect("/protected/satahan")
   const relatedProject = caseStudy.projectId ? await getProjectById(caseStudy.projectId) : null
 
   const galleryUrls = (caseStudy.gallery || []).map((p) => getCoverUrl(p))
@@ -35,7 +35,7 @@ export default async function ViewWorkPage({ params }: ViewWorkPageProps) {
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <Button variant="ghost" size="sm" asChild>
-            <Link href="/protected/work">
+            <Link href="/protected/satahan">
               <IconChevronLeft className="h-4 w-4 mr-1" />
               Back
             </Link>
@@ -45,7 +45,7 @@ export default async function ViewWorkPage({ params }: ViewWorkPageProps) {
           </div>
         </div>
         <Button variant="outline" size="sm" asChild>
-          <Link href={`/protected/work/${caseStudy.slug}`}>
+          <Link href={`/protected/satahan/${caseStudy.slug}`}>
             <IconEdit className="h-4 w-4 mr-1" />
             Edit
           </Link>
@@ -88,7 +88,7 @@ export default async function ViewWorkPage({ params }: ViewWorkPageProps) {
             <p className="text-sm text-muted-foreground">No project linked.</p>
           ) : (
             <Link
-              href={`/protected/work/projects/view/${relatedProject.slug}`}
+              href={`/protected/projects/view/${relatedProject.slug}`}
               className="block rounded border p-3 hover:bg-muted/40 transition-colors"
             >
               <p className="text-sm font-medium">{relatedProject.title}</p>

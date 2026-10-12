@@ -16,7 +16,7 @@ export async function getCachedAllProjects(): Promise<Project[]> {
 
 /**
  * Not cached with `unstable_cache`: that would store `null` for up to REVALIDATE when
- * the slug was missing once (e.g. visited before publish). `/work` uses a separate
+ * the slug was missing once (e.g. visited before publish). `/projects` uses a separate
  * cached `getCachedAllProjects()` key, so the grid could show a project while this
  * route kept serving a stale 404. CMS `revalidatePath` does not touch the portfolio app.
  *

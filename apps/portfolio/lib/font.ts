@@ -3,3 +3,6 @@ export const jakartaSans = "var(--font-jakarta), system-ui, sans-serif" as const
 
 /** Cormorant Garamond — display headings, hero name, pull quotes */
 export const cormorantGaramond = "var(--font-cormorant), Georgia, serif" as const;
+
+/** Noto Serif Sinhala — Sinhala script (the Satahan wordmark) */
+export const notoSerifSinhala = "var(--font-sinhala), serif" as const;

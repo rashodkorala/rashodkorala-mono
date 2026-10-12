@@ -5,7 +5,8 @@ import { usePathname } from "next/navigation";
 import { ModeToggle } from "@/lib/theme_switcher";
 
 const links = [
-  { href: "/work", label: "Work" },
+  { href: "/projects", label: "Projects" },
+  { href: "/satahan", label: "Satahan" },
   { href: "/view", label: "The View" },
   { href: "/projects", label: "Projects" },
   { href: "/about", label: "About" },

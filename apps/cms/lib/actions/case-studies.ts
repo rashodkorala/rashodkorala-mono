@@ -25,6 +25,9 @@ function transformCaseStudy(cs: CaseStudyDB): CaseStudy {
     timeline: cs.timeline ?? null,
     links: cs.links ?? [],
     stack: cs.stack ?? [],
+    kind: cs.kind ?? 'case_study',
+    entryNumber: cs.entry_number ?? null,
+    inShort: cs.in_short ?? null,
     createdAt: cs.created_at,
     updatedAt: cs.updated_at,
   }
@@ -157,10 +160,11 @@ export async function createOrUpdateCaseStudy(
   let existingGalleryPaths: string[] = []
   let existingBeforeAfter: { beforeImage?: string | null; afterImage?: string | null } | null = null
   let existingCoverPath: string | null = null
+  let existingEntryNumber: number | null = null
   if (existingId) {
     const { data: existing } = await supabase
       .from("case_studies")
-      .select("gallery, before_after, cover_path")
+      .select("gallery, before_after, cover_path, entry_number")
       .eq("id", existingId)
       .eq("user_id", user.id)
       .single()
@@ -168,6 +172,7 @@ export async function createOrUpdateCaseStudy(
       existingGalleryPaths = existing.gallery || []
       existingBeforeAfter = existing.before_after || null
       existingCoverPath = existing.cover_path || null
+      existingEntryNumber = existing.entry_number ?? null
     }
   }
 
@@ -216,6 +221,20 @@ export async function createOrUpdateCaseStudy(
     afterImage = path
   }
 
+  // Satahan numbers are permanent: given on first publish, never reused or renumbered.
+  let entryNumber = existingEntryNumber
+  if (entryNumber == null && formData.status === "published") {
+    const { data: last } = await supabase
+      .from("case_studies")
+      .select("entry_number")
+      .eq("user_id", user.id)
+      .not("entry_number", "is", null)
+      .order("entry_number", { ascending: false })
+      .limit(1)
+      .maybeSingle()
+    entryNumber = (last?.entry_number ?? 0) + 1
+  }
+
   const payload = {
     user_id: user.id,
     project_id: linkedProjectIds && linkedProjectIds.length > 0 ? linkedProjectIds[0] : formData.projectId || null,
@@ -234,6 +253,9 @@ export async function createOrUpdateCaseStudy(
     timeline: formData.timeline || null,
     links: formData.links ?? [],
     stack: formData.stack ?? [],
+    kind: formData.kind ?? "case_study",
+    in_short: formData.inShort?.trim() || null,
+    entry_number: entryNumber,
   }
 
   let data
@@ -262,7 +284,7 @@ export async function createOrUpdateCaseStudy(
   if (error) throw new Error(`Failed to save case study: ${error.message}`)
 
   revalidatePath("/protected/case-studies")
-  revalidatePath("/protected/work")
+  revalidatePath("/protected/satahan")
   await requestPortfolioRevalidation()
 
   return transformCaseStudy(data)
@@ -298,6 +320,6 @@ export async function deleteCaseStudy(id: string): Promise<void> {
   if (error) throw new Error(`Failed to delete case study: ${error.message}`)
 
   revalidatePath("/protected/case-studies")
-  revalidatePath("/protected/work")
+  revalidatePath("/protected/satahan")
   await requestPortfolioRevalidation()
 }

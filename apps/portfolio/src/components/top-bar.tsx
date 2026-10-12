@@ -11,15 +11,16 @@ import {
 
 /** Returns a back-navigation target for sub-pages, null for top-level pages. */
 function getBackTarget(pathname: string): { href: string; label: string } | null {
-  if (pathname.startsWith("/work/")) return { href: "/work", label: "Work" };
+  if (pathname.startsWith("/projects/")) return { href: "/projects", label: "Projects" };
+  if (pathname.startsWith("/satahan/")) return { href: "/satahan", label: "Satahan" };
   return null;
 }
 
 /** Returns the short label for the current page (used as mobile centre title). */
 function getMobilePageLabel(pathname: string): string {
   if (pathname === "/") return "About";
-  if (pathname === "/work") return "Work";
-  if (pathname.startsWith("/work/")) return "Work";
+  if (pathname.startsWith("/projects")) return "Projects";
+  if (pathname.startsWith("/satahan")) return "Satahan";
   if (pathname.startsWith("/contact")) return "Contact";
   if (pathname.startsWith("/cv")) return "CV";
   if (pathname.startsWith("/privacy")) return "Privacy";

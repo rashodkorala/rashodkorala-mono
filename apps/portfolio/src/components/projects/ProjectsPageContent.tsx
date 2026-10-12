@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { motion, useInView } from "framer-motion";
 import { jakartaSans, cormorantGaramond } from "@/lib/font";
-import type { WorkItem } from "@/lib/work";
+import type { ProjectItem } from "@/lib/entries";
 
 /**
  * Cycling 12-column grid pattern — 6 slots per cycle:
@@ -25,8 +25,8 @@ const GRID_PATTERN = [
   { span: 6, aspect: "3 / 2"  },
 ] as const;
 
-interface WorkPageContentProps {
-  items: WorkItem[];
+interface ProjectsPageContentProps {
+  items: ProjectItem[];
 }
 
 /** Minimal tonal SVG placeholder shown when a project has no cover image */
@@ -66,11 +66,11 @@ function CoverPlaceholder({ fill, initial }: { fill: string; initial: string }) 
 // Soft tones that cycle for placeholders
 const PLACEHOLDER_FILLS = ["#b8b0a6", "#a8a49c", "#d8d2c8", "#c4beb6", "#b0aca4", "#cac4bc"];
 
-function WorkCard({
+function ProjectCard({
   item,
   index,
 }: {
-  item: WorkItem;
+  item: ProjectItem;
   index: number;
 }) {
   const ref = useRef(null);
@@ -87,7 +87,7 @@ function WorkCard({
       className={`pf-item span-${slot.span}`}
       style={{ overflow: "hidden", cursor: "pointer" }}
     >
-      <Link href={`/work/${item.slug}`} style={{ textDecoration: "none", display: "block" }}>
+      <Link href={`/projects/${item.slug}`} style={{ textDecoration: "none", display: "block" }}>
         {/* Image */}
         <div className="group rounded-xl" style={{
           width: "100%",
@@ -112,27 +112,6 @@ function WorkCard({
             />
           )}
 
-          {/* "Case study" badge — tells visitors there's a full write-up behind this card */}
-          {item.readingMinutes && (
-            <span style={{
-              position: "absolute",
-              top: "clamp(8px, 1vw, 14px)",
-              left: "clamp(8px, 1vw, 14px)",
-              zIndex: 1,
-              fontFamily: jakartaSans,
-              fontSize: "11px",
-              fontWeight: 500,
-              letterSpacing: "0.06em",
-              textTransform: "uppercase",
-              color: "var(--color-heading)",
-              background: "var(--color-page)",
-              padding: "4px 9px",
-              borderRadius: "999px",
-              opacity: 0.92,
-            }}>
-              Case study · {item.readingMinutes} min
-            </span>
-          )}
         </div>
 
         {/* Meta + title + subtitle */}
@@ -180,7 +159,7 @@ function WorkCard({
   );
 }
 
-export default function WorkPageContent({ items }: WorkPageContentProps) {
+export default function ProjectsPageContent({ items }: ProjectsPageContentProps) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true, margin: "-80px" });
 
@@ -190,7 +169,6 @@ export default function WorkPageContent({ items }: WorkPageContentProps) {
       ? `${years[0]}`
       : `${Math.min(...years)} — ${Math.max(...years)}`
     : null;
-  const storyCount = items.filter((i) => i.readingMinutes).length;
 
   return (
     <>
@@ -260,7 +238,7 @@ export default function WorkPageContent({ items }: WorkPageContentProps) {
               margin: 0,
               paddingLeft: "clamp(21px, 3vw, 48px)",
             }}>
-              Work
+              Projects
             </h1>
           </div>
 
@@ -272,8 +250,7 @@ export default function WorkPageContent({ items }: WorkPageContentProps) {
                 </span>
               )}
               <span style={{ fontFamily: jakartaSans, fontSize: "clamp(12px, 0.9vw, 14px)", color: "var(--color-body-secondary)", display: "block", marginTop: "4px" }}>
-                {items.length} {items.length === 1 ? "piece" : "pieces"} of work
-                {storyCount > 0 && storyCount < items.length && ` · ${storyCount} with case studies`}
+                {items.length} {items.length === 1 ? "project" : "projects"}
               </span>
             </div>
           )}
@@ -294,7 +271,7 @@ export default function WorkPageContent({ items }: WorkPageContentProps) {
 
         {items.length === 0 ? (
           <p style={{ fontFamily: jakartaSans, fontSize: "14px", color: "var(--color-body-secondary)" }}>
-            No work to show yet.
+            No projects to show yet.
           </p>
         ) : (
           <div style={{
@@ -303,12 +280,12 @@ export default function WorkPageContent({ items }: WorkPageContentProps) {
             gap: "clamp(8px, 1.2vw, 21px)",
           }}>
             {items.map((item, i) => (
-              <WorkCard key={item.slug} item={item} index={i} />
+              <ProjectCard key={item.slug} item={item} index={i} />
             ))}
           </div>
         )}
 
-        {/* Apps — products rather than client/case-study work, so they sit apart */}
+        {/* Apps — shipped products, so they sit apart from the project grid */}
         <section style={{ marginTop: "clamp(34px, 5vw, 89px)" }}>
           <p style={{
             fontFamily: jakartaSans,
