@@ -4,7 +4,7 @@ import React, { useRef } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { motion, useInView } from "framer-motion";
-import { jakartaSans, cormorantGaramond } from "@/lib/font";
+import { satoshi } from "@/lib/font";
 import type { ProjectItem } from "@/lib/entries";
 
 /**
@@ -50,7 +50,7 @@ function CoverPlaceholder({ fill, initial }: { fill: string; initial: string }) 
       <text
         x="250" y="320"
         textAnchor="middle"
-        fontFamily={jakartaSans}
+        fontFamily={satoshi}
         fontSize="96"
         fontWeight="700"
         fill="var(--color-inverse)"
@@ -117,7 +117,7 @@ function ProjectCard({
         {/* Meta + title + subtitle */}
         <div style={{ padding: "clamp(8px, 1vw, 14px) 0 clamp(16px, 2vw, 28px)" }}>
           <p style={{
-            fontFamily: jakartaSans,
+            fontFamily: satoshi,
             fontSize: "clamp(11px, 0.8vw, 12px)",
             letterSpacing: "0.06em",
             textTransform: "uppercase",
@@ -131,7 +131,7 @@ function ProjectCard({
             {meta}
           </p>
           <p style={{
-            fontFamily: jakartaSans,
+            fontFamily: satoshi,
             fontSize: "clamp(16px, 1.5vw, 22px)",
             color: "var(--color-heading)",
             fontWeight:400,
@@ -145,7 +145,7 @@ function ProjectCard({
             <p style={{
               fontSize: "clamp(13px, 0.85vw, 14px)",
               color: "var(--color-body-secondary)",
-              fontFamily: jakartaSans,
+              fontFamily: satoshi,
               margin: 0,
               letterSpacing: "0.02em",
               lineHeight: 1.5,
@@ -218,9 +218,9 @@ export default function ProjectsPageContent({ items }: ProjectsPageContentProps)
         >
           <div>
             <h1 style={{
-              fontFamily: cormorantGaramond,
+              fontFamily: satoshi,
               fontSize: "clamp(48px, 7vw, 128px)",
-              fontWeight: 300,
+              fontWeight: 400,
               color: "var(--color-heading)",
               letterSpacing: "-0.025em",
               lineHeight: 0.92,
@@ -229,9 +229,9 @@ export default function ProjectsPageContent({ items }: ProjectsPageContentProps)
               Selected
             </h1>
             <h1 style={{
-              fontFamily: cormorantGaramond,
+              fontFamily: satoshi,
               fontSize: "clamp(48px, 7vw, 128px)",
-              fontWeight: 300,
+              fontWeight: 400,
               color: "var(--color-body-secondary)",
               letterSpacing: "-0.025em",
               lineHeight: 0.92,
@@ -245,11 +245,11 @@ export default function ProjectsPageContent({ items }: ProjectsPageContentProps)
           {items.length > 0 && (
             <div className="pf-header-meta" style={{ textAlign: "right", paddingBottom: "clamp(4px, 0.5vw, 10px)" }}>
               {yearRange && (
-                <span style={{ fontFamily: jakartaSans, fontSize: "clamp(12px, 0.9vw, 14px)", color: "var(--color-body-secondary)", display: "block" }}>
+                <span style={{ fontFamily: satoshi, fontSize: "clamp(12px, 0.9vw, 14px)", color: "var(--color-body-secondary)", display: "block" }}>
                   {yearRange}
                 </span>
               )}
-              <span style={{ fontFamily: jakartaSans, fontSize: "clamp(12px, 0.9vw, 14px)", color: "var(--color-body-secondary)", display: "block", marginTop: "4px" }}>
+              <span style={{ fontFamily: satoshi, fontSize: "clamp(12px, 0.9vw, 14px)", color: "var(--color-body-secondary)", display: "block", marginTop: "4px" }}>
                 {items.length} {items.length === 1 ? "project" : "projects"}
               </span>
             </div>
@@ -270,7 +270,7 @@ export default function ProjectsPageContent({ items }: ProjectsPageContentProps)
         />
 
         {items.length === 0 ? (
-          <p style={{ fontFamily: jakartaSans, fontSize: "14px", color: "var(--color-body-secondary)" }}>
+          <p style={{ fontFamily: satoshi, fontSize: "14px", color: "var(--color-body-secondary)" }}>
             No projects to show yet.
           </p>
         ) : (
@@ -288,7 +288,7 @@ export default function ProjectsPageContent({ items }: ProjectsPageContentProps)
         {/* Apps — shipped products, so they sit apart from the project grid */}
         <section style={{ marginTop: "clamp(34px, 5vw, 89px)" }}>
           <p style={{
-            fontFamily: jakartaSans,
+            fontFamily: satoshi,
             fontSize: "11px",
             fontWeight: 600,
             letterSpacing: "0.14em",
@@ -315,7 +315,7 @@ export default function ProjectsPageContent({ items }: ProjectsPageContentProps)
           >
             <div>
               <h2 style={{
-                fontFamily: cormorantGaramond,
+                fontFamily: satoshi,
                 fontSize: "clamp(26px, 3vw, 40px)",
                 fontWeight: 400,
                 lineHeight: 1,
@@ -326,7 +326,7 @@ export default function ProjectsPageContent({ items }: ProjectsPageContentProps)
               </h2>
               <p style={{
                 maxWidth: "54ch",
-                fontFamily: jakartaSans,
+                fontFamily: satoshi,
                 fontSize: "clamp(13px, 0.9vw, 15px)",
                 lineHeight: 1.6,
                 color: "var(--color-body-secondary)",

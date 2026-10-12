@@ -76,7 +76,7 @@ export default function TopBar() {
           <Link
             href={backTarget.href}
             className="inline-flex items-center gap-1 text-body-secondary hover:text-heading transition-colors min-w-0"
-            style={{ fontSize: "13px", fontFamily: "var(--font-jakarta)", letterSpacing: "0.02em", minHeight: "34px" }}
+            style={{ fontSize: "13px", fontFamily: "var(--font-satoshi)", letterSpacing: "0.02em", minHeight: "34px" }}
           >
             <svg viewBox="0 0 16 16" fill="none" style={{ width: 15, height: 15, flexShrink: 0 }}>
               <path d="M10 3L5 8L10 13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />

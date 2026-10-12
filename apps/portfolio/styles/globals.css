@@ -180,7 +180,7 @@
 @layer base {
   body {
     @apply antialiased;
-    font-family: var(--font-jakarta), system-ui, sans-serif;
+    font-family: var(--font-satoshi), system-ui, sans-serif;
     background-color: var(--color-page);
     color: var(--color-body);
     font-size: var(--text-body-size);

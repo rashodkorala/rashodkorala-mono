@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
-import { jakartaSans } from "@/lib/font";
+import { satoshi } from "@/lib/font";
 
 const SWIPE_THRESHOLD_PX = 50;
 
@@ -103,7 +103,7 @@ export default function ProjectPhotoLightbox({
       <div className="pointer-events-none relative z-10 flex min-h-0 flex-1 flex-col">
         <div
           className="pointer-events-auto flex shrink-0 items-center justify-between gap-4 border-b border-white/10 bg-[#0c0b0a]/40 px-4 py-3 backdrop-blur-md md:px-6 dark:bg-black/50"
-          style={{ fontFamily: jakartaSans }}
+          style={{ fontFamily: satoshi }}
         >
           <p id={titleId} className="truncate text-sm font-medium text-white/90">
             {projectTitle}

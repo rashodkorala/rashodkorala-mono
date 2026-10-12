@@ -120,7 +120,7 @@ export default function ContactContent() {
           }
         }
         .ct-hero-contact {
-          font-family: var(--font-jakarta), system-ui, sans-serif;
+          font-family: var(--font-satoshi), system-ui, sans-serif;
           font-weight: 700;
           letter-spacing: var(--tracking-h1);
           line-height: 0.88;

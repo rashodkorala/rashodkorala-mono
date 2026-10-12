@@ -9,9 +9,9 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        sans:    ["var(--font-jakarta)", "system-ui", "sans-serif"],
-        body:    ["var(--font-jakarta)", "system-ui", "sans-serif"],
-        reading: ["var(--font-jakarta)", "system-ui", "sans-serif"],
+        sans:    ["var(--font-satoshi)", "system-ui", "sans-serif"],
+        body:    ["var(--font-satoshi)", "system-ui", "sans-serif"],
+        reading: ["var(--font-satoshi)", "system-ui", "sans-serif"],
         mono: [
           "var(--font-mono)",
           "ui-monospace",

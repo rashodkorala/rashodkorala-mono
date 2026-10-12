@@ -5,7 +5,7 @@ import MobileToc from "./MobileToc";
 import ProjectPhotoLightbox from "./ProjectPhotoLightbox";
 import Image from "next/image";
 import Link from "next/link";
-import { jakartaSans, cormorantGaramond } from "@/lib/font";
+import { satoshi } from "@/lib/font";
 import type { Project, CaseStudy } from "@/lib/types";
 
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
@@ -28,7 +28,7 @@ function normalizeHref(url: string | null | undefined): string | null {
 
 function MetaLabel({ children }: { children: React.ReactNode }) {
   return (
-    <p style={{ fontSize: "clamp(10px, 0.8vw, 15px)", color: "var(--color-body-secondary)", letterSpacing: "0.08em", textTransform: "uppercase", fontFamily: jakartaSans, marginBottom: 8 }}>
+    <p style={{ fontSize: "clamp(10px, 0.8vw, 15px)", color: "var(--color-body-secondary)", letterSpacing: "0.08em", textTransform: "uppercase", fontFamily: satoshi, marginBottom: 8 }}>
       {children}
     </p>
   );
@@ -36,7 +36,7 @@ function MetaLabel({ children }: { children: React.ReactNode }) {
 
 function MetaValue({ children }: { children: React.ReactNode }) {
   return (
-    <p style={{ fontFamily: jakartaSans, fontSize: "clamp(15px, 1.3vw, 24px)", color: "var(--color-heading)", fontWeight: 500, letterSpacing: "-0.01em", lineHeight: 1.3 }}>
+    <p style={{ fontFamily: satoshi, fontSize: "clamp(15px, 1.3vw, 24px)", color: "var(--color-heading)", fontWeight: 500, letterSpacing: "-0.01em", lineHeight: 1.3 }}>
       {children}
     </p>
   );
@@ -57,7 +57,7 @@ function ArrowIcon() {
 function CoverPlaceholder({ initial }: { initial: string }) {
   return (
     <div style={{ width: "100%", height: "100%", background: "linear-gradient(135deg, #c4beb6 0%, #a8a49c 40%, #8a8880 100%)", display: "flex", alignItems: "center", justifyContent: "center" }}>
-      <span style={{ fontFamily: jakartaSans, fontSize: "clamp(4rem, 12vw, 10rem)", fontWeight: 700, color: "var(--color-inverse)", opacity: 0.18 }}>
+      <span style={{ fontFamily: satoshi, fontSize: "clamp(4rem, 12vw, 10rem)", fontWeight: 700, color: "var(--color-inverse)", opacity: 0.18 }}>
         {initial}
       </span>
     </div>
@@ -84,18 +84,18 @@ function RelatedCard({ cs }: { cs: CaseStudy }) {
           <Image src={thumb} alt={cs.title} fill className="object-cover" sizes="(max-width: 900px) 50vw, 25vw" />
         ) : (
           <div style={{ width: "100%", height: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
-            <span style={{ fontFamily: jakartaSans, fontSize: "clamp(2rem, 4vw, 4rem)", fontWeight: 700, color: "var(--color-inverse)", opacity: 0.3 }}>
+            <span style={{ fontFamily: satoshi, fontSize: "clamp(2rem, 4vw, 4rem)", fontWeight: 700, color: "var(--color-inverse)", opacity: 0.3 }}>
               {cs.title.charAt(0)}
             </span>
           </div>
         )}
       </div>
       <div style={{ paddingTop: "clamp(8px, 0.8vw, 12px)" }}>
-        <p style={{ fontFamily: jakartaSans, fontSize: "clamp(14px, 1.2vw, 18px)", color: "var(--color-heading)", fontWeight: 500, margin: "0 0 3px", letterSpacing: "0.007em" }}>
+        <p style={{ fontFamily: satoshi, fontSize: "clamp(14px, 1.2vw, 18px)", color: "var(--color-heading)", fontWeight: 500, margin: "0 0 3px", letterSpacing: "0.007em" }}>
           {cs.title}
         </p>
         {cs.tags && cs.tags.length > 0 && (
-          <p style={{ fontSize: "clamp(10px, 0.8vw, 12px)", color: "var(--color-body-secondary)", fontFamily: jakartaSans, margin: 0, letterSpacing: "0.02em" }}>
+          <p style={{ fontSize: "clamp(10px, 0.8vw, 12px)", color: "var(--color-body-secondary)", fontFamily: satoshi, margin: 0, letterSpacing: "0.02em" }}>
             {cs.tags.slice(0, 2).join(" · ")}
           </p>
         )}
@@ -110,7 +110,7 @@ function PageNav({ sections }: { sections: { id: string; label: string }[] }) {
   if (sections.length === 0) return null;
   return (
     <div>
-      <p style={{ fontSize: "10px", color: "var(--color-body-secondary)", letterSpacing: "0.14em", textTransform: "uppercase", fontFamily: jakartaSans, marginBottom: 14 }}>
+      <p style={{ fontSize: "10px", color: "var(--color-body-secondary)", letterSpacing: "0.14em", textTransform: "uppercase", fontFamily: satoshi, marginBottom: 14 }}>
         On this page
       </p>
       <nav style={{ display: "flex", flexDirection: "column", gap: 10 }}>
@@ -121,7 +121,7 @@ function PageNav({ sections }: { sections: { id: string; label: string }[] }) {
             style={{
               fontSize: "clamp(11px, 0.9vw, 13px)",
               color: "var(--color-body-secondary)",
-              fontFamily: jakartaSans,
+              fontFamily: satoshi,
               textDecoration: "none",
               letterSpacing: "0.01em",
               transition: "color 0.15s",
@@ -177,7 +177,7 @@ export default function ProjectPage({ project, caseStudies }: { project: Project
     color: "var(--color-body-secondary)",
     letterSpacing: "0.08em",
     textTransform: "uppercase",
-    fontFamily: jakartaSans,
+    fontFamily: satoshi,
     marginBottom: "clamp(16px, 1.8vw, 24px)",
   };
 
@@ -189,12 +189,12 @@ export default function ProjectPage({ project, caseStudies }: { project: Project
           color: var(--color-heading);
           border: 1px solid var(--color-border-strong);
           padding: 6px 14px;
-          font-family: ${jakartaSans};
+          font-family: ${satoshi};
           letter-spacing: 0.03em;
           background: transparent;
         }
         .pd-meta-link {
-          font-family: ${jakartaSans};
+          font-family: ${satoshi};
           font-size: clamp(13px, 1vw, 15px);
           color: var(--color-link);
           text-decoration: underline;
@@ -208,7 +208,7 @@ export default function ProjectPage({ project, caseStudies }: { project: Project
           border: 1px solid var(--color-border-strong);
           padding: clamp(10px, 1.2vw, 16px) clamp(20px, 2.5vw, 36px);
           font-size: clamp(11px, 0.9vw, 13px);
-          font-family: ${jakartaSans};
+          font-family: ${satoshi};
           letter-spacing: 0.08em;
           text-transform: uppercase;
           cursor: pointer;
@@ -233,7 +233,7 @@ export default function ProjectPage({ project, caseStudies }: { project: Project
         .pd-back-link:hover { color: var(--color-heading); }
 
         /* In-page nav link classes (used by MobileToc) */
-        .pd-nav-link { font-size:clamp(11px,0.9vw,13px); color:var(--color-body-secondary); font-family:${jakartaSans}; text-decoration:none; letter-spacing:0.01em; display:flex; align-items:center; gap:8px; transition:color 0.15s; }
+        .pd-nav-link { font-size:clamp(11px,0.9vw,13px); color:var(--color-body-secondary); font-family:${satoshi}; text-decoration:none; letter-spacing:0.01em; display:flex; align-items:center; gap:8px; transition:color 0.15s; }
         .pd-nav-link:hover { color:var(--color-heading); }
         .pd-nav-dash { width:14px; height:1px; background:currentColor; flex-shrink:0; display:inline-block; }
 
@@ -243,7 +243,7 @@ export default function ProjectPage({ project, caseStudies }: { project: Project
           list-style: none; display: flex; align-items: center; justify-content: space-between;
           padding: 12px 0; cursor: pointer; font-size: 10px; color: var(--color-body-secondary);
           letter-spacing: 0.14em; text-transform: uppercase;
-          font-family: ${jakartaSans}; user-select: none;
+          font-family: ${satoshi}; user-select: none;
         }
         .pd-mobile-toc-summary::-webkit-details-marker { display: none; }
         .pd-mobile-toc-nav { padding-bottom: 14px; display: flex; flex-direction: column; gap: 10px; }
@@ -280,7 +280,7 @@ export default function ProjectPage({ project, caseStudies }: { project: Project
         }
       `}</style>
 
-      <div style={{ paddingBottom: "89px", fontFamily: jakartaSans }}>
+      <div style={{ paddingBottom: "89px", fontFamily: satoshi }}>
 
         {/* Breadcrumb / back */}
         <div style={{ display: "flex", alignItems: "center", gap: "clamp(8px,1vw,12px)", marginBottom: "clamp(20px,2.5vw,32px)" }}>
@@ -290,7 +290,7 @@ export default function ProjectPage({ project, caseStudies }: { project: Project
             style={{
               display: "inline-flex", alignItems: "center", gap: 5,
               color: "var(--color-body-secondary)", textDecoration: "none",
-              fontFamily: jakartaSans, fontSize: "clamp(12px, 0.85vw, 13px)",
+              fontFamily: satoshi, fontSize: "clamp(12px, 0.85vw, 13px)",
               letterSpacing: "0.04em", padding: "6px 0", transition: "color 0.15s",
             }}
           >
@@ -300,7 +300,7 @@ export default function ProjectPage({ project, caseStudies }: { project: Project
             Projects
           </Link>
           <span style={{ color: "var(--color-border-strong)", fontSize: "12px", userSelect: "none" }}>/</span>
-          <span style={{ fontFamily: jakartaSans, fontSize: "clamp(12px, 0.85vw, 13px)", color: "var(--color-heading)", letterSpacing: "0.04em" }}>
+          <span style={{ fontFamily: satoshi, fontSize: "clamp(12px, 0.85vw, 13px)", color: "var(--color-heading)", letterSpacing: "0.04em" }}>
             {project.title}
           </span>
         </div>
@@ -310,7 +310,7 @@ export default function ProjectPage({ project, caseStudies }: { project: Project
           className="pd-title-row"
           style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 24, marginBottom: "clamp(6px, 1vw, 16px)", flexWrap: "wrap" }}
         >
-          <h1 style={{ fontFamily: cormorantGaramond, fontWeight: 600, fontSize: "clamp(40px, 7vw, 128px)", color: "var(--color-heading)", letterSpacing: "-0.025em", lineHeight: 0.9 }}>
+          <h1 style={{ fontFamily: satoshi, fontWeight: 500, fontSize: "clamp(40px, 7vw, 128px)", color: "var(--color-heading)", letterSpacing: "-0.025em", lineHeight: 0.9 }}>
             {project.title}
           </h1>
 
@@ -329,7 +329,7 @@ export default function ProjectPage({ project, caseStudies }: { project: Project
             {logoSrc ? (
               <Image src={logoSrc} alt={`${project.title} logo`} fill className="object-cover" sizes="64px" />
             ) : (
-              <span style={{ color: "var(--color-inverse)", fontSize: "clamp(14px, 1.4vw, 22px)", fontWeight: 700, fontFamily: jakartaSans }}>
+              <span style={{ color: "var(--color-inverse)", fontSize: "clamp(14px, 1.4vw, 22px)", fontWeight: 700, fontFamily: satoshi }}>
                 {project.title.slice(0, 2).toUpperCase()}
               </span>
             )}
@@ -337,7 +337,7 @@ export default function ProjectPage({ project, caseStudies }: { project: Project
         </div>
 
         {project.subtitle && (
-          <p style={{ fontFamily: jakartaSans, fontSize: "clamp(18px, 2vw, 38px)", color: "var(--color-body-secondary)", fontWeight: 300, marginBottom: "clamp(24px, 3vw, 44px)", letterSpacing: "0" }}>
+          <p style={{ fontFamily: satoshi, fontSize: "clamp(18px, 2vw, 38px)", color: "var(--color-body-secondary)", fontWeight: 300, marginBottom: "clamp(24px, 3vw, 44px)", letterSpacing: "0" }}>
             {project.subtitle}
           </p>
         )}
@@ -373,7 +373,7 @@ export default function ProjectPage({ project, caseStudies }: { project: Project
           {/* ── Left ── */}
           <div style={{ minWidth: 0 }}>
             {project.short_description && (
-              <p id="pd-overview" style={{ fontSize: "clamp(14px, 1.15vw, 22px)", color: "var(--color-body)", lineHeight: 1.65, fontFamily: jakartaSans, fontWeight: 400, marginBottom: "clamp(32px, 4vw, 56px)", maxWidth: "var(--measure-reading)" }}>
+              <p id="pd-overview" style={{ fontSize: "clamp(14px, 1.15vw, 22px)", color: "var(--color-body)", lineHeight: 1.65, fontFamily: satoshi, fontWeight: 400, marginBottom: "clamp(32px, 4vw, 56px)", maxWidth: "var(--measure-reading)" }}>
                 {project.short_description}
               </p>
             )}
@@ -533,7 +533,7 @@ export default function ProjectPage({ project, caseStudies }: { project: Project
             <div style={{ marginTop: "clamp(24px, 3vw, 44px)" }}>
               <div style={{ display: "flex", alignItems: "baseline", justifyContent: "space-between", marginBottom: "clamp(16px, 1.8vw, 24px)" }}>
                 <p style={{ ...sectionLabel, marginBottom: 0 }}>In Satahan</p>
-                <Link href="/satahan" style={{ fontSize: "clamp(11px, 0.85vw, 13px)", color: "var(--color-link)", textDecoration: "underline", textUnderlineOffset: "4px", fontFamily: jakartaSans }}>
+                <Link href="/satahan" style={{ fontSize: "clamp(11px, 0.85vw, 13px)", color: "var(--color-link)", textDecoration: "underline", textUnderlineOffset: "4px", fontFamily: satoshi }}>
                   View all
                 </Link>
               </div>

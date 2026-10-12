@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
-import { jakartaSans, cormorantGaramond, notoSerifSinhala } from "@/lib/font";
+import { satoshi, cormorantGaramond, notoSerifSinhala } from "@/lib/font";
 import { formatEntryNumber, type SatahanItem } from "@/lib/entries";
 import { SATAHAN_PROSE_CSS } from "@/lib/satahan-markdown";
 
@@ -66,7 +66,7 @@ export default function SatahanPageContent({ items }: { items: SatahanItem[] }) 
       <style>{`
         ${SATAHAN_PROSE_CSS}
         .st-chips { display:flex; flex-wrap:wrap; gap:8px; margin:clamp(20px,2.4vw,32px) 0 clamp(8px,1vw,14px); }
-        .st-chip { font-family:${jakartaSans}; font-size:12px; letter-spacing:0.02em; padding:5px 12px; border-radius:999px;
+        .st-chip { font-family:${satoshi}; font-size:12px; letter-spacing:0.02em; padding:5px 12px; border-radius:999px;
           border:1px solid var(--color-border-strong); background:transparent; color:var(--color-body-secondary); cursor:pointer; transition:color .15s, border-color .15s; }
         .st-chip:hover { color:var(--color-heading); border-color:var(--color-border-hover); }
         .st-chip[aria-pressed="true"] { background:var(--color-heading); border-color:var(--color-heading); color:var(--color-page); }
@@ -74,35 +74,32 @@ export default function SatahanPageContent({ items }: { items: SatahanItem[] }) 
         .st-entry { display:grid; grid-template-columns:clamp(44px,5vw,72px) minmax(0,1fr); gap:clamp(12px,1.6vw,20px);
           border-top:1px solid var(--color-border); padding:clamp(22px,2.6vw,34px) 0; }
         .st-num { font-family:${cormorantGaramond}; font-style:italic; font-size:clamp(22px,2vw,30px); line-height:1; color:var(--color-faint); }
-        .st-meta { font-family:${jakartaSans}; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--color-label); margin:0 0 8px; }
-        .st-title { font-family:${cormorantGaramond}; font-weight:400; font-size:clamp(24px,2.2vw,32px); line-height:1.12; letter-spacing:-0.01em; margin:0 0 10px; }
+        .st-meta { font-family:${satoshi}; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--color-label); margin:0 0 8px; }
+        .st-title { font-family:${satoshi}; font-weight:500; font-size:clamp(24px,2.2vw,32px); line-height:1.12; letter-spacing:-0.01em; margin:0 0 10px; }
         .st-title a { color:var(--color-heading); text-decoration:none; }
         .st-title a:hover { text-decoration:underline; text-underline-offset:5px; text-decoration-thickness:1px; }
         .st-opening { font-family:${cormorantGaramond}; font-style:italic; font-size:clamp(18px,1.5vw,21px); line-height:1.45; color:var(--color-body-secondary); margin:0; max-width:56ch; }
-        .st-read { display:inline-block; margin-top:12px; font-family:${jakartaSans}; font-size:13px; color:var(--color-link);
+        .st-read { display:inline-block; margin-top:12px; font-family:${satoshi}; font-size:13px; color:var(--color-link);
           text-decoration:underline; text-underline-offset:4px; text-decoration-color:var(--color-link-underline); }
         .st-note { max-width:60ch; }
+        .st-wordmark { display:flex; align-items:baseline; flex-wrap:wrap; gap:0.12em 0.22em; margin:0;
+          font-family:${satoshi}; font-size:clamp(40px, 5.4vw, 88px); font-weight:400; color:var(--color-heading);
+          letter-spacing:-0.03em; line-height:1; overflow:visible; }
+        .st-gloss { display:inline-block; white-space:nowrap; letter-spacing:-0.03em; line-height:1.85; overflow:visible; }
+        .st-si { font-family:${notoSerifSinhala}; letter-spacing:0; line-height:inherit; }
         .st-note .st-p, .st-note .st-li { font-size:15px; line-height:1.75; }
         .st-note .st-lead::first-letter { all:unset; }
         .st-note .st-margin { float:none; width:auto; margin:0 0 1em; }
       `}</style>
 
-      <div style={{ paddingBottom: "89px", fontFamily: jakartaSans }}>
+      <div style={{ paddingBottom: "89px", fontFamily: satoshi }}>
         <header>
-          <h1 style={{
-            fontFamily: cormorantGaramond,
-            fontSize: "clamp(48px, 7vw, 128px)",
-            fontWeight: 300,
-            fontStyle: "italic",
-            color: "var(--color-heading)",
-            letterSpacing: "-0.025em",
-            lineHeight: 0.92,
-            margin: 0,
-          }}>
+          <h1 className="st-wordmark">
             Satahan
+            <span className="st-gloss">(<span lang="si" className="st-si">සටහන්</span>, sa&middot;ta&middot;han)</span>
           </h1>
           <p style={{ margin: "clamp(10px, 1.2vw, 16px) 0 0", maxWidth: "70ch", fontSize: "clamp(13px, 0.95vw, 15px)", lineHeight: 1.6, color: "var(--color-body-secondary)" }}>
-            <em>Satahan</em> (<span lang="si" style={{ fontFamily: notoSerifSinhala }}>සටහන්</span>, sa&middot;ta&middot;han) is a Sinhala word that translates to notes or records.
+            A Sinhala word that translates to notes or records.
             <br />
             About how I work, what I&rsquo;ve learnt, and what I think.
           </p>

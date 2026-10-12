@@ -2,14 +2,32 @@ import { Metadata } from 'next'
 import '@/styles/globals.css'
 
 import { PostHogProvider } from '@rashodkorala/posthog-next'
-import { Plus_Jakarta_Sans, Cormorant_Garamond, JetBrains_Mono, Noto_Serif_Sinhala } from 'next/font/google'
+import localFont from 'next/font/local'
+import { Cormorant_Garamond, JetBrains_Mono, Noto_Serif_Sinhala, Poppins } from 'next/font/google'
 import SideNav from '@/src/components/side-nav'
 import TopBar from '@/src/components/top-bar'
 
-const jakartaSans = Plus_Jakarta_Sans({
+const satoshi = localFont({
+  src: [
+    {
+      path: '../assets/fonts/Satoshi-Variable.woff2',
+      weight: '300 900',
+      style: 'normal',
+    },
+    {
+      path: '../assets/fonts/Satoshi-VariableItalic.woff2',
+      weight: '300 900',
+      style: 'italic',
+    },
+  ],
+  variable: '--font-satoshi',
+  display: 'swap',
+})
+
+const poppins = Poppins({
   subsets: ['latin'],
-  weight: ['300', '400', '500', '600', '700'],
-  variable: '--font-jakarta',
+  weight: ['400', '500'],
+  variable: '--font-poppins',
   display: 'swap',
 })
 
@@ -94,7 +112,7 @@ export default function RootLayout({
             suppressHydrationWarning
         >
             <body
-                className={`${jakartaSans.variable} ${cormorantGaramond.variable} ${jetbrainsMono.variable} ${notoSerifSinhala.variable}`}
+                className={`${satoshi.variable} ${poppins.variable} ${cormorantGaramond.variable} ${jetbrainsMono.variable} ${notoSerifSinhala.variable}`}
             >
                 <PostHogProvider app="portfolio">
                     <TopBar />
