@@ -10,7 +10,7 @@ export const UNIFIED_KIND_LABELS: Record<UnifiedContentKind, string> = {
   the_view: "The View (blog)",
   insight: "Insight",
   project_writeup: "Project write-up",
-  case_study: "Work item",
+  case_study: "Satahan entry",
 }
 
 export function inferKindFromBlogCategory(category: string | null | undefined): UnifiedContentKind {

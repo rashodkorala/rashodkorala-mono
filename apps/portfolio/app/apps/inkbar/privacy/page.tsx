@@ -45,11 +45,11 @@ export default function InkBarPrivacyPage() {
       <main className="mx-auto max-w-[58rem] pb-fib-89 pt-fib-55">
         <Link
           href="/apps/inkbar"
-          className="font-mono text-[0.72rem] font-semibold uppercase tracking-[0.18em] text-body-secondary hover:text-heading"
+          className="font-mono text-[0.72rem] font-normal uppercase tracking-[0.18em] text-body-secondary hover:text-heading"
         >
           InkBar
         </Link>
-        <h1 className="mt-fib-13 font-serif text-h1 font-medium leading-heading text-heading">
+        <h1 className="mt-fib-13 font-poppins text-h1 font-normal leading-heading text-heading">
           InkBar Privacy Policy
         </h1>
         <p className="mt-fib-13 font-sans text-sm leading-body text-body-secondary">Last updated: 26 June 2026</p>
@@ -60,14 +60,14 @@ export default function InkBarPrivacyPage() {
         <section className="mt-fib-34 divide-y divide-line border-y border-line">
           {sections.map((section) => (
             <article key={section.title} className="py-fib-21">
-              <h2 className="font-sans text-base font-semibold leading-ui text-heading">{section.title}</h2>
+              <h2 className="font-sans text-base font-normal leading-ui text-heading">{section.title}</h2>
               <p className="mb-0 mt-fib-8 font-sans text-sm leading-body text-body-secondary">{section.body}</p>
             </article>
           ))}
         </section>
 
         <section className="mt-fib-55 rounded-md border border-line-strong bg-surface-raised p-fib-34">
-          <h2 className="font-serif text-h2 font-medium leading-heading text-heading">Contact</h2>
+          <h2 className="font-poppins text-h2 font-normal leading-heading text-heading">Contact</h2>
           <p className="mb-0 mt-fib-13 font-sans text-sm leading-body text-body-secondary">
             Questions about privacy can be sent to{" "}
             <a className="text-link underline decoration-link-underline underline-offset-4 hover:text-link-hover" href={`mailto:${supportEmail}`}>

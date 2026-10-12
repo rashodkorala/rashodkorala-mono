@@ -13,10 +13,10 @@ export default function NotFound() {
         <p className="font-sans text-xs sm:text-sm tracking-[0.3em] uppercase text-label mb-4">
           Not found
         </p>
-        <h1 className="text-[clamp(6rem,20vw,18rem)] font-sans font-light leading-none tracking-tight mb-6">
+        <h1 className="text-[clamp(6rem,20vw,18rem)] font-poppins font-normal leading-none tracking-tight mb-6">
           404
         </h1>
-        <p className="font-sans text-lg sm:text-xl text-body-secondary font-light mb-10 max-w-md">
+        <p className="font-sans text-lg sm:text-xl text-body-secondary font-normal mb-10 max-w-md">
           This page doesn&apos;t exist. It may have been moved or removed.
         </p>
         <Link

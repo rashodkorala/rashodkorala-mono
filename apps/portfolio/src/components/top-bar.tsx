@@ -11,15 +11,16 @@ import {
 
 /** Returns a back-navigation target for sub-pages, null for top-level pages. */
 function getBackTarget(pathname: string): { href: string; label: string } | null {
-  if (pathname.startsWith("/work/")) return { href: "/work", label: "Work" };
+  if (pathname.startsWith("/projects/")) return { href: "/projects", label: "Projects" };
+  if (pathname.startsWith("/satahan/")) return { href: "/satahan", label: "Satahan" };
   return null;
 }
 
 /** Returns the short label for the current page (used as mobile centre title). */
 function getMobilePageLabel(pathname: string): string {
   if (pathname === "/") return "About";
-  if (pathname === "/work") return "Work";
-  if (pathname.startsWith("/work/")) return "Work";
+  if (pathname.startsWith("/projects")) return "Projects";
+  if (pathname.startsWith("/satahan")) return "Satahan";
   if (pathname.startsWith("/contact")) return "Contact";
   if (pathname.startsWith("/cv")) return "CV";
   if (pathname.startsWith("/privacy")) return "Privacy";
@@ -75,7 +76,7 @@ export default function TopBar() {
           <Link
             href={backTarget.href}
             className="inline-flex items-center gap-1 text-body-secondary hover:text-heading transition-colors min-w-0"
-            style={{ fontSize: "13px", fontFamily: "var(--font-jakarta)", letterSpacing: "0.02em", minHeight: "34px" }}
+            style={{ fontSize: "13px", fontFamily: "var(--font-satoshi)", letterSpacing: "0.02em", minHeight: "34px" }}
           >
             <svg viewBox="0 0 16 16" fill="none" style={{ width: 15, height: 15, flexShrink: 0 }}>
               <path d="M10 3L5 8L10 13" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
@@ -85,7 +86,7 @@ export default function TopBar() {
         ) : (
           <Link
             href="/"
-            className="inline-flex h-fib-34 w-fib-34 items-center justify-center rounded-sm bg-surface-elevated text-inverse font-sans text-sm font-bold shrink-0"
+            className="inline-flex h-fib-34 w-fib-34 items-center justify-center rounded-sm bg-surface-elevated text-inverse font-sans text-sm font-normal shrink-0"
             aria-label="Home"
           >
             R

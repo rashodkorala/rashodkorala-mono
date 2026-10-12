@@ -139,7 +139,7 @@ export function ProjectForm({ project }: ProjectFormProps) {
 
       markSaved()
       toast.success(isEditing ? "Project updated" : "Project created")
-      router.push("/protected/work")
+      router.push("/protected/projects")
       router.refresh()
     } catch (error) {
       console.error("Error saving project:", error)
@@ -151,7 +151,7 @@ export function ProjectForm({ project }: ProjectFormProps) {
 
   const cancel = () => {
     if (dirty && !confirm("Discard unsaved changes?")) return
-    router.push("/protected/work")
+    router.push("/protected/projects")
   }
 
   const mediaCount = existingProjectMedia.length + mediaFiles.length

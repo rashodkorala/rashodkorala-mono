@@ -5,7 +5,8 @@ import { usePathname } from "next/navigation";
 import { ModeToggle } from "@/lib/theme_switcher";
 
 const links = [
-  { href: "/work", label: "Work" },
+  { href: "/projects", label: "Projects" },
+  { href: "/satahan", label: "Satahan" },
   { href: "/view", label: "The View" },
   { href: "/projects", label: "Projects" },
   { href: "/about", label: "About" },
@@ -21,7 +22,7 @@ export default function PortfolioNav() {
       <div className="mx-auto flex max-w-[2800px] items-center justify-between gap-4 px-6 py-3">
         <Link
           href="/"
-          className="text-sm font-light tracking-tight text-black dark:text-white hover:opacity-70"
+          className="text-sm font-normal tracking-tight text-black dark:text-white hover:opacity-70"
         >
           Rashod Korala
         </Link>

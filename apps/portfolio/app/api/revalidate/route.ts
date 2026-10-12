@@ -9,8 +9,8 @@ const BLOGS_TAG = "blogs-portfolio"
 
 const STATIC_PATHS = [
   "/",
-  "/work",
-  "/work/projects",
+  "/projects",
+  "/satahan",
   "/contact",
   "/cv",
   "/privacy",
@@ -52,18 +52,16 @@ export async function POST(request: Request) {
       getAllProjects(),
       getAllCaseStudies(),
     ])
-    const slugs = new Set<string>()
     for (const project of projects) {
-      if (project.slug) slugs.add(project.slug)
+      if (!project.slug) continue
+      revalidatePath(`/projects/${project.slug}`)
+      slugPaths.push(`/projects/${project.slug}`)
     }
     for (const study of caseStudies) {
-      if (study.slug) slugs.add(study.slug)
-    }
-    for (const slug of Array.from(slugs)) {
-      revalidateTag(`case-study-${slug}`)
-      revalidatePath(`/work/${slug}`)
-      revalidatePath(`/work/projects/${slug}`)
-      slugPaths.push(slug)
+      if (!study.slug) continue
+      revalidateTag(`case-study-${study.slug}`)
+      revalidatePath(`/satahan/${study.slug}`)
+      slugPaths.push(`/satahan/${study.slug}`)
     }
   } catch (error) {
     console.error("[revalidate] failed to load slugs for path revalidation:", error)

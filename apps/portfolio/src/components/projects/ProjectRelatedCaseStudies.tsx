@@ -1,0 +1,118 @@
+import Image from "next/image";
+import Link from "next/link";
+import { ArrowUpRight, BookOpen } from "lucide-react";
+import type { CaseStudy } from "@/lib/types";
+import { cn } from "@/lib/utils";
+
+const baseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
+
+function plainTextExcerpt(md: string, max = 150): string {
+  if (!md?.trim()) return "";
+  const plain = md
+    .replace(/```[\s\S]*?```/g, " ")
+    .replace(/^#+\s+/gm, "")
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
+    .replace(/[*_`>#|]/g, "")
+    .replace(/\s+/g, " ")
+    .trim();
+  if (plain.length <= max) return plain;
+  return `${plain.slice(0, max).trim()}…`;
+}
+
+function mediaUrl(path: string) {
+  if (path.startsWith("http")) return path;
+  return `${baseUrl}/storage/v1/object/public/media/${path}`;
+}
+
+export default function ProjectRelatedCaseStudies({
+  caseStudies,
+  headingId,
+}: {
+  caseStudies: CaseStudy[];
+  headingId: string;
+}) {
+  if (caseStudies.length === 0) return null;
+
+  return (
+    <ul className="space-y-4 md:space-y-5" aria-labelledby={headingId}>
+      {caseStudies.map((cs) => {
+        const thumb = cs.cover_path ?? cs.gallery?.[0] ?? null;
+        const excerpt = plainTextExcerpt(cs.content_md ?? "");
+        const tags = (cs.tags ?? []).filter(Boolean).slice(0, 3);
+
+        return (
+          <li key={cs.id}>
+            <Link
+              href={`/satahan/${cs.slug}`}
+              className={cn(
+                "group relative flex flex-col overflow-hidden rounded-2xl border border-line bg-gradient-to-br from-surface-raised to-transparent transition-all duration-300",
+                "hover:border-line-hover hover:shadow-[0_12px_40px_-12px_rgba(43,43,43,0.18)]",
+                "dark:hover:shadow-[0_16px_48px_-16px_rgba(0,0,0,0.55)]",
+                "md:flex-row md:items-stretch"
+              )}
+            >
+              <div
+                className={cn(
+                  "relative aspect-[16/10] w-full shrink-0 overflow-hidden bg-surface",
+                  "md:w-[min(44%,260px)] md:aspect-auto md:min-h-[168px]"
+                )}
+              >
+                {thumb ? (
+                  <Image
+                    src={mediaUrl(thumb)}
+                    alt={cs.title}
+                    fill
+                    className="object-cover transition duration-500 ease-out group-hover:scale-[1.03] dark:brightness-[0.92]"
+                    sizes="(max-width: 768px) 100vw, 260px"
+                  />
+                ) : (
+                  <div className="flex h-full min-h-[140px] items-center justify-center md:min-h-0">
+                    <div className="rounded-full border border-line bg-surface-raised p-4 text-faint">
+                      <BookOpen className="h-8 w-8" strokeWidth={1.25} />
+                    </div>
+                  </div>
+                )}
+                {cs.featured && (
+                  <span className="absolute left-3 top-3 rounded-full border border-white/25 bg-black/45 px-2.5 py-0.5 text-[10px] font-normal uppercase tracking-[0.14em] text-white/95 backdrop-blur-sm">
+                    Featured
+                  </span>
+                )}
+              </div>
+
+              <div className="flex min-w-0 flex-1 flex-col justify-center gap-3 p-5 md:p-6 md:pl-7">
+                {tags.length > 0 && (
+                  <div className="flex flex-wrap gap-1.5">
+                    {tags.map((tag) => (
+                      <span
+                        key={tag}
+                        className="text-[10px] uppercase tracking-[0.1em] text-label"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                )}
+                <div className="flex items-start justify-between gap-4">
+                  <h3 className="font-poppins text-xl font-normal leading-snug tracking-tight text-title transition-colors group-hover:text-heading md:text-[1.35rem]">
+                    {cs.title}
+                  </h3>
+                  <span className="mt-1 shrink-0 text-faint transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 group-hover:text-body-secondary">
+                    <ArrowUpRight className="h-5 w-5" strokeWidth={1.5} />
+                  </span>
+                </div>
+                {excerpt && (
+                  <p className="line-clamp-2 text-[14px] leading-relaxed text-body-tertiary">
+                    {excerpt}
+                  </p>
+                )}
+                <span className="text-[12px] font-normal text-label transition-colors group-hover:text-body-secondary">
+                  Read case study
+                </span>
+              </div>
+            </Link>
+          </li>
+        );
+      })}
+    </ul>
+  );
+}

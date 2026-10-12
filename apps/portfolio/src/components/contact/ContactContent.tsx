@@ -54,7 +54,7 @@ function ContactField({ label, value, href }: ContactRow) {
       <p className="mb-fib-8 font-sans text-label uppercase tracking-caps text-body-secondary">
         {label}
       </p>
-      <p className="ct-contact-value font-sans font-semibold leading-[1.35] tracking-h2 text-heading">
+      <p className="ct-contact-value font-sans font-normal leading-[1.35] tracking-h2 text-heading">
         {href ? (
           <a
             href={href}
@@ -87,7 +87,7 @@ function ContactGroupSection({
     >
       <h2
         id={groupHeadingId(group.title)}
-        className="mb-[clamp(var(--fib-21),2vw,1.375rem)] font-sans text-label font-semibold uppercase tracking-caps text-heading"
+        className="mb-[clamp(var(--fib-21),2vw,1.375rem)] font-sans text-label font-normal uppercase tracking-caps text-heading"
       >
         {group.title}
       </h2>
@@ -120,8 +120,8 @@ export default function ContactContent() {
           }
         }
         .ct-hero-contact {
-          font-family: var(--font-jakarta), system-ui, sans-serif;
-          font-weight: 700;
+          font-family: var(--font-poppins), system-ui, sans-serif;
+          font-weight: 400;
           letter-spacing: var(--tracking-h1);
           line-height: 0.88;
           color: var(--color-heading);
@@ -183,7 +183,7 @@ export default function ContactContent() {
                 className="h-fib-8 w-fib-8 shrink-0 rounded-full bg-[var(--color-success)]"
                 aria-hidden
               />
-              <span className="font-sans text-nav font-medium text-[var(--color-success)]">
+              <span className="font-sans text-nav font-normal text-[var(--color-success)]">
                 Available for new projects
               </span>
             </div>
@@ -194,7 +194,7 @@ export default function ContactContent() {
                 <p className="mb-fib-8 font-sans text-label uppercase tracking-caps text-body-secondary">
                   Book a call
                 </p>
-                <p className="ct-contact-value font-sans font-semibold leading-[1.35] tracking-h2 text-heading">
+                <p className="ct-contact-value font-sans font-normal leading-[1.35] tracking-h2 text-heading">
                   <Suspense>
                     <CalendlyPopupButton className={linkUnderlineClass} />
                   </Suspense>

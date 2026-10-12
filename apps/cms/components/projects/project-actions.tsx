@@ -70,13 +70,13 @@ export function ProjectActions({ project }: { project: Project }) {
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end">
           <DropdownMenuItem asChild>
-            <Link href={`/protected/work/projects/view/${project.slug}`}>
+            <Link href={`/protected/projects/view/${project.slug}`}>
               <IconEye className="h-4 w-4 mr-2" />
               View
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
-            <Link href={`/protected/work/projects/${project.slug}`}>
+            <Link href={`/protected/projects/${project.slug}`}>
               <IconEdit className="h-4 w-4 mr-2" />
               Edit
             </Link>

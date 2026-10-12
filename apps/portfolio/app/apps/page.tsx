@@ -22,10 +22,10 @@ export default function AppsPage() {
     <PageShell>
       <main className="pb-fib-89 pt-fib-55">
         <section className="max-w-[48rem]">
-          <p className="mb-fib-13 font-mono text-[0.72rem] font-semibold uppercase tracking-[0.18em] text-body-secondary">
+          <p className="mb-fib-13 font-mono text-[0.72rem] font-normal uppercase tracking-[0.18em] text-body-secondary">
             Apps
           </p>
-          <h1 className="font-serif text-[clamp(3.25rem,9vw,8rem)] font-medium leading-[0.95] tracking-[0em] text-heading">
+          <h1 className="font-poppins text-[clamp(3.25rem,9vw,8rem)] font-normal leading-[0.95] tracking-[0em] text-heading">
             Useful tools, built quietly.
           </h1>
           <p className="mt-fib-34 max-w-reading font-sans text-lead leading-sub text-body-secondary">
@@ -44,16 +44,16 @@ export default function AppsPage() {
                 <div className="mb-fib-21 flex h-11 w-11 items-center justify-center rounded-md border border-line bg-page">
                   <Martini className="h-5 w-5 text-heading" aria-hidden="true" />
                 </div>
-                <p className="mb-fib-13 font-mono text-[0.72rem] font-semibold uppercase tracking-[0.18em] text-body-secondary">
+                <p className="mb-fib-13 font-mono text-[0.72rem] font-normal uppercase tracking-[0.18em] text-body-secondary">
                   iPhone
                 </p>
-                <h2 className="font-serif text-h1 font-medium leading-heading text-heading">InkBar</h2>
+                <h2 className="font-poppins text-h1 font-normal leading-heading text-heading">InkBar</h2>
                 <p className="mb-0 mt-fib-13 max-w-reading font-sans text-sm leading-body text-body-secondary">
                   Scale any cocktail to any batch in seconds. Convert oz, ml, cl, and parts,
                   estimate dilution, and keep house specs in one place.
                 </p>
               </div>
-              <span className="inline-flex w-fit items-center gap-2 font-sans text-sm font-semibold leading-ui text-heading">
+              <span className="inline-flex w-fit items-center gap-2 font-sans text-sm font-normal leading-ui text-heading">
                 View app
                 <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" aria-hidden="true" />
               </span>

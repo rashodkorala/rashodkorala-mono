@@ -6,7 +6,8 @@ export type PortfolioNavItem = {
 
 export const PORTFOLIO_NAV: readonly PortfolioNavItem[] = [
   { id: "about", label: "About", href: "/" },
-  { id: "work", label: "Work", href: "/work" },
+  { id: "projects", label: "Projects", href: "/projects" },
+  { id: "satahan", label: "Satahan", href: "/satahan" },
   {
     id: "photography",
     label: "Photography",
@@ -18,9 +19,8 @@ export const PORTFOLIO_NAV: readonly PortfolioNavItem[] = [
 
 export function getActiveNavSectionId(pathname: string): string {
   if (pathname === "/") return "about";
-  if (pathname.startsWith("/work") || pathname.startsWith("/projects") || pathname.startsWith("/apps")) {
-    return "work";
-  }
+  if (pathname.startsWith("/projects") || pathname.startsWith("/apps")) return "projects";
+  if (pathname.startsWith("/satahan")) return "satahan";
   if (pathname.startsWith("/cv")) return "cv";
   const match = PORTFOLIO_NAV.find(
     (s) =>

@@ -8,8 +8,8 @@ export const contentType = "image/png";
 
 export default async function OGImage() {
   // Bundled with the app: satori can't read woff2, and remote font URLs rot.
-  const jakartaSans = await readFile(
-    join(process.cwd(), "assets/fonts/PlusJakartaSans-Light.ttf")
+  const satoshi = await readFile(
+    join(process.cwd(), "assets/fonts/Satoshi-Light.ttf")
   );
 
   return new ImageResponse(
@@ -24,7 +24,7 @@ export default async function OGImage() {
           justifyContent: "flex-end",
           backgroundColor: "#000",
           padding: "80px",
-          fontFamily: '"Plus Jakarta Sans", sans-serif',
+          fontFamily: '"Satoshi", sans-serif',
         }}
       >
         <p
@@ -77,8 +77,8 @@ export default async function OGImage() {
       ...size,
       fonts: [
         {
-          name: "Plus Jakarta Sans",
-          data: jakartaSans,
+          name: "Satoshi",
+          data: satoshi,
           style: "normal",
           weight: 300,
         },

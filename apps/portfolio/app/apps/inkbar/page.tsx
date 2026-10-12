@@ -74,10 +74,10 @@ export default function InkBarMarketingPage() {
       <main className="pb-fib-89">
         <section className="grid min-h-[calc(100vh-5rem)] items-center gap-fib-55 py-fib-55 lg:grid-cols-[minmax(0,1fr)_minmax(22rem,34rem)]">
           <div className="max-w-[46rem]">
-            <p className="mb-fib-13 font-mono text-[0.72rem] font-semibold uppercase tracking-[0.18em] text-body-secondary">
+            <p className="mb-fib-13 font-mono text-[0.72rem] font-normal uppercase tracking-[0.18em] text-body-secondary">
               InkBar for iPhone
             </p>
-            <h1 className="font-serif text-[clamp(3.25rem,10vw,8.75rem)] font-medium leading-[0.92] tracking-[0em] text-heading">
+            <h1 className="font-poppins text-[clamp(3.25rem,10vw,8.75rem)] font-normal leading-[0.92] tracking-[0em] text-heading">
               Cocktail maths, settled.
             </h1>
             <p className="mt-fib-34 max-w-[39rem] font-sans text-lead leading-sub text-body-secondary">
@@ -88,14 +88,14 @@ export default function InkBarMarketingPage() {
             <div className="mt-fib-34 flex flex-wrap gap-fib-13">
               <a
                 href={`mailto:${supportEmail}`}
-                className="inline-flex items-center gap-2 rounded-md border border-line-strong bg-heading px-fib-21 py-fib-13 font-sans text-sm font-semibold leading-ui text-page transition hover:opacity-90"
+                className="inline-flex items-center gap-2 rounded-md border border-line-strong bg-heading px-fib-21 py-fib-13 font-sans text-sm font-normal leading-ui text-page transition hover:opacity-90"
               >
                 Contact support
                 <ArrowRight className="h-4 w-4" aria-hidden="true" />
               </a>
               <Link
                 href="/apps/inkbar/privacy"
-                className="inline-flex items-center gap-2 rounded-md border border-line px-fib-21 py-fib-13 font-sans text-sm font-semibold leading-ui text-body transition hover:border-line-hover hover:text-heading"
+                className="inline-flex items-center gap-2 rounded-md border border-line px-fib-21 py-fib-13 font-sans text-sm font-normal leading-ui text-body transition hover:border-line-hover hover:text-heading"
               >
                 Privacy policy
               </Link>
@@ -123,7 +123,7 @@ export default function InkBarMarketingPage() {
         <section className="grid gap-fib-21 border-y border-line py-fib-55 md:grid-cols-4">
           {features.map((feature) => (
             <article key={feature.title} className="rounded-md border border-line bg-surface-raised p-fib-21">
-              <h2 className="font-sans text-base font-semibold leading-ui text-heading">{feature.title}</h2>
+              <h2 className="font-sans text-base font-normal leading-ui text-heading">{feature.title}</h2>
               <p className="mb-0 mt-fib-13 font-sans text-sm leading-body text-body-secondary">{feature.body}</p>
             </article>
           ))}
@@ -132,10 +132,10 @@ export default function InkBarMarketingPage() {
         <section className="py-fib-55">
           <div className="mb-fib-34 flex flex-col gap-fib-13 md:flex-row md:items-end md:justify-between">
             <div>
-              <p className="mb-fib-13 font-mono text-[0.72rem] font-semibold uppercase tracking-[0.18em] text-body-secondary">
+              <p className="mb-fib-13 font-mono text-[0.72rem] font-normal uppercase tracking-[0.18em] text-body-secondary">
                 Product screens
               </p>
-              <h2 className="font-serif text-h1 font-medium leading-heading text-heading">
+              <h2 className="font-poppins text-h1 font-normal leading-heading text-heading">
                 Built to be read mid-service.
               </h2>
             </div>
@@ -161,7 +161,7 @@ export default function InkBarMarketingPage() {
                     sizes={index === 0 ? "(min-width: 1280px) 38vw, (min-width: 640px) 70vw, 86vw" : "(min-width: 1280px) 16vw, (min-width: 640px) 40vw, 86vw"}
                   />
                 </div>
-                <figcaption className="mt-fib-13 font-mono text-[0.68rem] font-semibold uppercase tracking-[0.16em] text-body-secondary">
+                <figcaption className="mt-fib-13 font-mono text-[0.68rem] font-normal uppercase tracking-[0.16em] text-body-secondary">
                   {screenshot.title}
                 </figcaption>
               </figure>
@@ -171,10 +171,10 @@ export default function InkBarMarketingPage() {
 
         <section className="grid gap-fib-34 py-fib-55 lg:grid-cols-[0.8fr_1.2fr]">
           <div>
-            <p className="mb-fib-13 font-mono text-[0.72rem] font-semibold uppercase tracking-[0.18em] text-body-secondary">
+            <p className="mb-fib-13 font-mono text-[0.72rem] font-normal uppercase tracking-[0.18em] text-body-secondary">
               Private by design
             </p>
-            <h2 className="font-serif text-h1 font-medium leading-heading text-heading">
+            <h2 className="font-poppins text-h1 font-normal leading-heading text-heading">
               No account. No tracking. No network connection.
             </h2>
           </div>
@@ -186,7 +186,7 @@ export default function InkBarMarketingPage() {
             ].map(([Icon, label]) => (
               <div key={label as string} className="rounded-md border border-line bg-surface-raised p-fib-21">
                 <Icon className="h-5 w-5 text-heading" aria-hidden="true" />
-                <p className="mb-0 mt-fib-13 font-sans text-sm font-semibold leading-ui text-heading">{label as string}</p>
+                <p className="mb-0 mt-fib-13 font-sans text-sm font-normal leading-ui text-heading">{label as string}</p>
               </div>
             ))}
           </div>
@@ -196,14 +196,14 @@ export default function InkBarMarketingPage() {
           <div className="flex flex-col gap-fib-21 md:flex-row md:items-center md:justify-between">
             <div>
               <Martini className="mb-fib-13 h-6 w-6 text-heading" aria-hidden="true" />
-              <h2 className="font-serif text-h2 font-medium leading-heading text-heading">Need help with InkBar?</h2>
+              <h2 className="font-poppins text-h2 font-normal leading-heading text-heading">Need help with InkBar?</h2>
               <p className="mb-0 mt-fib-8 font-sans text-sm leading-body text-body-secondary">
                 Questions, problems, feature ideas, and bug reports are welcome.
               </p>
             </div>
             <Link
               href="/apps/inkbar/support"
-              className="inline-flex w-fit items-center gap-2 rounded-md border border-line-strong px-fib-21 py-fib-13 font-sans text-sm font-semibold leading-ui text-heading transition hover:border-line-hover"
+              className="inline-flex w-fit items-center gap-2 rounded-md border border-line-strong px-fib-21 py-fib-13 font-sans text-sm font-normal leading-ui text-heading transition hover:border-line-hover"
             >
               Open support
               <ArrowRight className="h-4 w-4" aria-hidden="true" />

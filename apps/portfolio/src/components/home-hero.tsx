@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { cormorantGaramond } from "@/lib/font";
+import { poppins } from "@/lib/font";
 import CalendlyPopupButton from "@/src/components/contact/CalendlyPopupButton";
 
 const ease: [number, number, number, number] = [0.16, 1, 0.3, 1];
@@ -24,9 +24,7 @@ const defaultSocials = [
 ];
 
 const FALLBACK_BIO = [
-  "I am a software engineer and entrepreneur based in St. John\u2019s, Newfoundland, recently graduated and actively building experience across product, design, and technology. I am drawn to the craft of building, where I take an idea and shape it through code and design into something that solves a real problem. I am looking for roles where I can contribute meaningfully from day one, keep learning, and build things that matter.",
-  "I [work](/work) across the full arc from discovery to delivery, covering product design (UI/UX) and full-stack engineering, with a focus on translating complex technical ideas into outcomes that matter.",
-  "[Photography](https://photos.rashodkorala.com) runs alongside all of it, shaping how I see and communicate.",
+  "Software Engineer & Product Designer based in St. John\u2019s, Newfoundland. I bridge full-stack development, UI/UX design, and visual storytelling to transform complex ideas into polished, user-centered products.",
 ];
 
 function splitName(displayName?: string | null): [string, string] {
@@ -51,7 +49,7 @@ function safeHref(url: string): string | null {
 
 function BioText({ text }: { text: string }) {
   const linkClass =
-    "font-medium text-heading underline underline-offset-[0.2em] decoration-from-font transition-opacity hover:opacity-80";
+    "font-normal text-heading underline underline-offset-[0.2em] decoration-from-font transition-opacity hover:opacity-80";
   const nodes: ReactNode[] = [];
   const pattern = /\[([^\]]+)\]\(([^)]+)\)/g;
   let last = 0;
@@ -129,12 +127,8 @@ export default function HomeHero({ imageSrc, displayName, bio, socials }: HomeHe
           .hero-main {
             grid-template-columns: minmax(0, 1fr) !important;
           }
-          .hero-top-spacer {
-            flex: 0 0 auto !important;
-            height: 0.5rem;
-            min-height: 0;
-          }
-          .hero-copy-col { padding-bottom: 0; }
+          .hero-top-spacer { height: 0.5rem; }
+          .hero-copy-col { justify-content: flex-start; padding-bottom: 0; }
           .hero-photo {
             aspect-ratio: 4 / 5 !important;
             width: 100%;
@@ -161,78 +155,48 @@ export default function HomeHero({ imageSrc, displayName, bio, socials }: HomeHe
             overflow: visible !important;
           }
         }
-        /* Narrow phones: lower display min so “Rashod / Korala” fits without horizontal scroll */
-        .hero-name { font-size: clamp(2.5rem, 13vw, 12rem); }
-        @media (min-width: 400px) {
-          .hero-name { font-size: clamp(3rem, 12vw, 12rem); }
+        /* Size from the name column so each line stays intact. */
+        .hero-copy-col { container-type: inline-size; }
+        .hero-top-spacer { height: 0; }
+        .hero-copy-block {
+          width: fit-content;
+          max-width: 100%;
         }
-        @media (min-width: 640px) {
-          .hero-name { font-size: clamp(3.75rem, 11vw, 12rem); }
+        .hero-name {
+          font-size: clamp(2.5rem, 16cqi, 8.5rem);
+          font-weight: 400;
+          letter-spacing: -0.03em;
+          font-style: normal;
+          white-space: nowrap;
+        }
+        /* Bio shares the name's width, with a gap that scales with the column. */
+        .hero-bio-copy {
+          width: 100%;
+          max-width: 100%;
+          margin-top: clamp(1.15rem, 3.2cqi, 2.25rem);
+          text-wrap: pretty;
         }
         @media (min-width: 768px) {
-          .hero-name { font-size: clamp(4.5rem, min(12vw, 15vh), 12rem); }
+          .hero-copy-col { justify-content: center; }
+          .hero-bio-copy { max-width: 42ch; }
         }
         @media (max-width: 639px) {
-          .hero-top-spacer {
-            flex: 0 0 auto !important;
-            height: 0.75rem;
-            min-height: 0;
-          }
+          .hero-top-spacer { height: 0.25rem; }
           .hero-photo {
             max-height: min(72svh, 28rem);
             width: 100%;
+            margin-top: var(--fib-34);
           }
         }
         /*
-          Bio cap grows slightly toward 4K: 10% steps along viewport range 768px → 3840px
-          (each step +0.5rem, 40rem → 45rem), still clamped by --measure-reading & column width.
-        */
-        .hero-bio-copy {
-          width: 100%;
-          min-width: 0;
-          max-width: min(100%, var(--measure-reading));
-          text-wrap: pretty;
-        }
-        /*
-          Body size: avoid 2vw + 22px cap — in md–xl the copy sits in a half-width column but vw
-          is full viewport, so type read huge on laptops. Cap 18px, gentler vw.
+          Lead size for the hero bio. vw is the full viewport while the copy sits in a
+          half-width column, so the preferred value stays gentle and the cap holds it.
         */
         .hero-bio-text {
-          font-size: clamp(15px, 0.2rem + 0.95vw, 18px);
+          font-size: clamp(17px, 0.9rem + 0.5vw, 21px);
+          margin-bottom: 0;
         }
-        @media (min-width: 768px) {
-          .hero-bio-copy { max-width: min(100%, var(--measure-reading), 41rem); }
-        }
-        @media (min-width: 1075px) {
-          .hero-bio-copy { max-width: min(100%, var(--measure-reading), 41.5rem); }
-        }
-        @media (min-width: 1382px) {
-          .hero-bio-copy { max-width: min(100%, var(--measure-reading), 42rem); }
-        }
-        @media (min-width: 1690px) {
-          .hero-bio-copy { max-width: min(100%, var(--measure-reading), 42.5rem); }
-        }
-        @media (min-width: 1997px) {
-          .hero-bio-copy { max-width: min(100%, var(--measure-reading), 43rem); }
-        }
-        @media (min-width: 2304px) {
-          .hero-bio-copy { max-width: min(100%, var(--measure-reading), 44.5rem); }
-        }
-        @media (min-width: 2611px) {
-          .hero-bio-copy { max-width: min(100%, var(--measure-reading), 45rem); }
-        }
-        @media (min-width: 2918px) {
-          .hero-bio-copy { max-width: min(100%, var(--measure-reading), 45.5rem); }
-        }
-        @media (min-width: 3226px) {
-          .hero-bio-copy { max-width: min(100%, var(--measure-reading), 46rem); }
-        }
-        @media (min-width: 3533px) {
-          .hero-bio-copy { max-width: min(100%, var(--measure-reading), 46.5rem); }
-        }
-        @media (min-width: 3840px) {
-          .hero-bio-copy { max-width: min(100%, var(--measure-reading), 48rem); }
-        }
+        .hero-bio-text + .hero-bio-text { margin-top: var(--fib-21); }
       `}</style>
 
       <div className="hero-shell min-h-svh bg-page flex flex-col w-full max-w-[100vw] overflow-x-hidden lg:h-screen lg:max-w-none lg:overflow-hidden lg:pl-sidenav pt-16 lg:pt-20">
@@ -241,21 +205,19 @@ export default function HomeHero({ imageSrc, displayName, bio, socials }: HomeHe
         <main className="hero-main flex-1 min-h-0 grid grid-cols-1 md:grid-cols-[1fr_1fr] xl:grid-cols-[55fr_34fr] w-full min-w-0 px-page-px sm:px-page-px-sm md:px-page-px-md lg:px-page-px-lg gap-fib-21 md:gap-fib-34">
 
           {/* Left — name + bio only (socials moved to footer) */}
-          <div className="hero-copy-col flex flex-col min-w-0 pb-fib-21 md:pb-fib-34">
+          <div className="hero-copy-col flex flex-col min-w-0">
 
-            {/* Zone 1: top spacer — optical centre */}
-            <div className="hero-top-spacer flex-[0.2] md:flex-[0.618]" aria-hidden="true" />
+            <div className="hero-top-spacer" aria-hidden="true" />
 
-            {/* Zone 2: name + bio */}
-            <div className="flex flex-col justify-center">
+            <div className="hero-copy-block flex flex-col">
               <motion.h1
-                className="mb-fib-34 min-w-0 leading-[0.88]"
+                className="min-w-0 leading-[0.92]"
                 initial="hidden"
                 animate="visible"
               >
                 <motion.span
-                  className="hero-name text-heading block uppercase break-words [letter-spacing:-0.06em] sm:[letter-spacing:-0.1em]"
-                  style={{ fontFamily: cormorantGaramond, fontWeight: 500 }}
+                  className="hero-name text-heading block"
+                  style={{ fontFamily: poppins, fontWeight: 400 }}
                   variants={reveal}
                   custom={0.2}
                 >
@@ -263,8 +225,8 @@ export default function HomeHero({ imageSrc, displayName, bio, socials }: HomeHe
                 </motion.span>
                 {lastName && (
                   <motion.span
-                    className="hero-name text-heading block uppercase italic"
-                    style={{ fontFamily: cormorantGaramond, fontWeight: 400, letterSpacing: "-0.01em" }}
+                    className="hero-name text-heading block"
+                    style={{ fontFamily: poppins, fontWeight: 400 }}
                     variants={reveal}
                     custom={0.35}
                   >
@@ -331,19 +293,19 @@ export default function HomeHero({ imageSrc, displayName, bio, socials }: HomeHe
                 href={s.href}
                 target={s.href.startsWith("http") ? "_blank" : undefined}
                 rel={s.href.startsWith("http") ? "noopener noreferrer" : undefined}
-                className="font-body font-medium text-xs text-heading underline underline-offset-4 tracking-[0.01em] sm:text-[13px]"
+                className="font-body font-normal text-xs text-heading underline underline-offset-4 tracking-[0.01em] sm:text-[13px]"
               >
                 {s.label}
               </a>
             ))}
-            <CalendlyPopupButton className="font-body font-medium text-xs text-heading underline underline-offset-4 tracking-[0.01em] sm:text-[13px]">
+            <CalendlyPopupButton className="font-body font-normal text-xs text-heading underline underline-offset-4 tracking-[0.01em] sm:text-[13px]">
               Schedule a call
             </CalendlyPopupButton>
           </div>
 
           <Link
             href="/privacy"
-            className="font-body font-medium text-xs text-body-secondary underline underline-offset-4 tracking-[0.01em] transition-opacity hover:opacity-80 sm:text-[13px]"
+            className="font-body font-normal text-xs text-body-secondary underline underline-offset-4 tracking-[0.01em] transition-opacity hover:opacity-80 sm:text-[13px]"
           >
             Privacy
           </Link>

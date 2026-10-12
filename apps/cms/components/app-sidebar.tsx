@@ -6,7 +6,8 @@ import {
   IconDashboard,
   IconPhoto,
   IconSettings,
-  IconBriefcase,
+  IconCode,
+  IconNews,
 } from "@tabler/icons-react"
 
 import { NavMain } from "@/components/nav-main"
@@ -31,9 +32,14 @@ const data = {
       icon: IconDashboard,
     },
     {
-      title: "Work",
-      url: "/protected/work",
-      icon: IconBriefcase,
+      title: "Projects",
+      url: "/protected/projects",
+      icon: IconCode,
+    },
+    {
+      title: "Satahan",
+      url: "/protected/satahan",
+      icon: IconNews,
     },
     {
       title: "Photos",

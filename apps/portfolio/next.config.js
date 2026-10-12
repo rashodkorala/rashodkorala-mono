@@ -26,10 +26,14 @@ const nextConfig = {
   },
   async redirects() {
     return [
-      // Projects used to live at /work/projects/{slug}; every piece of work is now /work/{slug}.
-      { source: "/work/projects/:slug", destination: "/work/:slug", permanent: true },
+      // "Work" became Projects (+ Digest for case studies). /work/{slug} is resolved in
+      // app/work/[slug] because a slug there can be either a project or a case study.
+      { source: "/work", destination: "/projects", permanent: true },
+      { source: "/work/projects", destination: "/projects", permanent: true },
+      { source: "/work/projects/:slug", destination: "/projects/:slug", permanent: true },
       // Renamed slugs (old links keep working).
-      { source: "/work/atlier", destination: "/work/atelier", permanent: true },
+      { source: "/work/atlier", destination: "/projects/atelier", permanent: true },
+      { source: "/projects/atlier", destination: "/projects/atelier", permanent: true },
     ];
   },
 };

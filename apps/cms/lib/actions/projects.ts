@@ -179,7 +179,7 @@ export async function createProject(data: ProjectFormData): Promise<Project> {
 
   if (error) throw new Error(`Failed to create project: ${error.message}`)
 
-  revalidatePath("/protected/work")
+  revalidatePath("/protected/projects")
   await requestPortfolioRevalidation()
   return transformProject(result)
 }
@@ -249,7 +249,7 @@ export async function updateProject(id: string, data: ProjectFormData): Promise<
 
   if (error) throw new Error(`Failed to update project: ${error.message}`)
 
-  revalidatePath("/protected/work")
+  revalidatePath("/protected/projects")
   await requestPortfolioRevalidation()
   return transformProject(result)
 }
@@ -281,7 +281,7 @@ export async function setProjectPublished(id: string, published: boolean): Promi
 
   if (error) throw new Error(`Failed to update project: ${error.message}`)
 
-  revalidatePath("/protected/work")
+  revalidatePath("/protected/projects")
   await requestPortfolioRevalidation()
   return transformProject(result)
 }
@@ -302,6 +302,6 @@ export async function deleteProject(id: string): Promise<void> {
 
   if (error) throw new Error(`Failed to delete project: ${error.message}`)
 
-  revalidatePath("/protected/work")
+  revalidatePath("/protected/projects")
   await requestPortfolioRevalidation()
 }
