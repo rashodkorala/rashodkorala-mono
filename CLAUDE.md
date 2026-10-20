@@ -79,6 +79,7 @@ Active tables (8 total):
 - `projects` — Portfolio projects (renamed from projects_archived)
 - `case_studies` — Case studies with inline `content_md` (no storage bucket for content); shown on the portfolio as Satahan entries (`kind` case_study|note, permanent `entry_number` given on first publish, optional `in_short`; `> [!margin] …` in markdown renders a margin note)
 - `case_study_projects` — Junction table linking case_studies → projects
+- `preview_tokens` — Short-lived (1h) tokens the CMS creates for one entry; the portfolio exchanges them via the `preview_case_study(token)` security-definer function with the public key, so draft previews need no service-role key (public RLS only exposes published case_studies)
 - `photos` — Photography metadata
 - `about_profiles` — About page content
 - `media_library` — Centralized media asset registry
@@ -161,7 +162,6 @@ PORTFOLIO_URL                     # overrides the preview origin, e.g. http://lo
 
 # Portfolio (server-only; pair with CMS vars above for instant cache bust after publishes)
 PORTFOLIO_REVALIDATE_SECRET
-SUPABASE_SERVICE_ROLE_KEY         # draft previews; public RLS only exposes published case_studies
 
 # Photos App (server-only)
 SUPABASE_SERVICE_ROLE_KEY

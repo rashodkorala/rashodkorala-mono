@@ -1,19 +1,23 @@
-import { draftMode } from "next/headers";
+import { cookies, draftMode } from "next/headers";
 import { redirect } from "next/navigation";
 import { NextResponse } from "next/server";
-import { isValidPreviewRequest } from "@/lib/preview-token";
+import { getPreviewCaseStudy, PREVIEW_TOKEN_COOKIE } from "@/lib/supabase/preview";
 
-/** Entry point for CMS previews: checks the signed link, turns on Draft Mode, opens the entry. */
+/** Entry point for CMS previews: checks the token, turns on Draft Mode, opens the entry. */
 export async function GET(request: Request) {
-  const { searchParams } = new URL(request.url);
-  const slug = searchParams.get("slug") ?? "";
-  const expires = Number(searchParams.get("expires"));
-  const signature = searchParams.get("sig") ?? "";
-
-  if (!isValidPreviewRequest(slug, expires, signature)) {
-    return NextResponse.json({ error: "Invalid or expired preview link" }, { status: 401 });
+  const token = new URL(request.url).searchParams.get("token") ?? "";
+  const entry = await getPreviewCaseStudy(token);
+  if (!entry) {
+    return NextResponse.json({ error: "This preview link is invalid or has expired. Open Preview from the CMS again." }, { status: 401 });
   }
 
   (await draftMode()).enable();
-  redirect(`/satahan/${encodeURIComponent(slug)}`);
+  (await cookies()).set(PREVIEW_TOKEN_COOKIE, token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    path: "/",
+    maxAge: 60 * 60, // matches the token's lifetime in the database
+  });
+  redirect(`/satahan/${encodeURIComponent(entry.slug)}`);
 }

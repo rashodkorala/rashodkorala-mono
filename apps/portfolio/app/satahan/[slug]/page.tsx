@@ -1,10 +1,10 @@
 import type { Metadata } from "next";
-import { draftMode } from "next/headers";
+import { cookies, draftMode } from "next/headers";
 import { notFound } from "next/navigation";
 import { getCachedCaseStudies, getCachedCaseStudyBySlug } from "@/lib/supabase/cached-case-studies";
 import { getCachedAllProjects } from "@/lib/supabase/cached-projects";
 import { buildPreviewItem, buildSatahanItems, caseStudyCover, formatEntryNumber, mediaUrl } from "@/lib/entries";
-import { getPreviewCaseStudy } from "@/lib/supabase/preview";
+import { getPreviewCaseStudy, PREVIEW_TOKEN_COOKIE } from "@/lib/supabase/preview";
 import { renderSatahan } from "@/lib/satahan-markdown";
 import type { CaseStudy } from "@/lib/types";
 import SatahanEntry from "@/src/components/satahan/SatahanEntry";
@@ -21,13 +21,23 @@ async function getEntry(slug: string): Promise<CaseStudy | null> {
   return entry;
 }
 
+/** In Draft Mode, the entry the CMS preview token opens, if it's the one being viewed. */
+async function getPreviewEntry(slug: string): Promise<CaseStudy | null> {
+  if (!(await draftMode()).isEnabled) return null;
+  const token = (await cookies()).get(PREVIEW_TOKEN_COOKIE)?.value;
+  const entry = token ? await getPreviewCaseStudy(token) : null;
+  return entry?.slug === slug ? entry : null;
+}
+
 /**
- * The entry plus its place in the notebook (number, previous and next). In Draft Mode (a CMS
- * preview) the entry is read fresh in any status and shown where it will land once published.
+ * The entry plus its place in the notebook (number, previous and next). In a CMS preview the
+ * entry is read fresh in any status and shown where it will land once published; every other
+ * entry shows its public version.
  */
 async function getEntryInContext(slug: string) {
-  const { isEnabled: preview } = await draftMode();
-  const entry = preview ? await getPreviewCaseStudy(slug) : await getEntry(slug);
+  const previewEntry = await getPreviewEntry(slug);
+  const preview = !!previewEntry;
+  const entry = previewEntry ?? (await getEntry(slug));
   if (!entry) return null;
   const [caseStudies, projects] = await Promise.all([getCachedCaseStudies(), getCachedAllProjects()]);
   const items = buildSatahanItems(caseStudies, projects); // newest number first
