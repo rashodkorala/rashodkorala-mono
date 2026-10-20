@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
-import { IconCircleCheckFilled, IconCircleX, IconExternalLink, IconX } from "@tabler/icons-react"
+import { IconBrandNotion, IconCircleCheckFilled, IconCircleX, IconExternalLink, IconLoader2, IconX } from "@tabler/icons-react"
 import type { CaseStudy, CaseStudyFormData } from "@/lib/types/case-study"
 import { createOrUpdateCaseStudy } from "@/lib/actions/case-studies"
 import { getPublishChecks, SUMMARY_MAX_LENGTH } from "@/lib/satahan-requirements"
@@ -22,6 +22,8 @@ import {
 } from "@/components/work-editor/editor-layout"
 import { TagInput } from "@/components/work-editor/tag-input"
 import { openSatahanPreview } from "@/components/case-studies/open-preview"
+import { confirmReplaceBody } from "@/components/case-studies/notion-confirm"
+import { pullNotionPage } from "@/lib/actions/notion"
 
 interface CaseStudyFormProps {
   caseStudy?: CaseStudy
@@ -228,6 +230,35 @@ export function CaseStudyForm({ caseStudy, availableProjects }: CaseStudyFormPro
     router.push("/protected/satahan")
   }
 
+  const [pulling, setPulling] = useState(false)
+
+  // A pull rewrites the saved entry, then reloads the form with it.
+  const pullFromNotion = async () => {
+    if (!caseStudy?.id) return
+    if (dirty) {
+      toast.error("Save or discard your changes before pulling from Notion.")
+      return
+    }
+    setPulling(true)
+    try {
+      let result = await pullNotionPage(caseStudy.id)
+      if (result.conflict) {
+        if (!(await confirmReplaceBody(caseStudy.title))) return
+        result = await pullNotionPage(caseStudy.id, { force: true })
+      }
+      toast.success(
+        result.skipped > 0
+          ? `Pulled from Notion. ${result.skipped} block${result.skipped === 1 ? "" : "s"} couldn't be brought across.`
+          : "Pulled from Notion."
+      )
+      window.location.reload()
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Couldn't pull from Notion")
+    } finally {
+      setPulling(false)
+    }
+  }
+
   // Preview reads what's saved, so unsaved edits won't show until the next save.
   const preview = () => {
     if (!caseStudy?.slug) return
@@ -305,6 +336,30 @@ export function CaseStudyForm({ caseStudy, availableProjects }: CaseStudyFormPro
             : "Notes need only the basics."}
         </p>
       </SidebarSection>
+
+      {caseStudy?.notionPageId && (
+        <SidebarSection title="Notion" hint="Linked" defaultOpen>
+          <p className="text-sm text-muted-foreground">
+            The body comes from Notion.{" "}
+            {caseStudy.notionSyncedAt
+              ? `Last pulled ${new Date(caseStudy.notionSyncedAt).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" })}.`
+              : null}
+          </p>
+          <div className="flex flex-wrap gap-2">
+            <Button type="button" variant="outline" size="sm" onClick={pullFromNotion} disabled={pulling || isLoading}>
+              {pulling ? <IconLoader2 className="mr-1.5 h-4 w-4 animate-spin" /> : <IconBrandNotion className="mr-1.5 h-4 w-4" />}
+              Pull from Notion
+            </Button>
+            <Button type="button" variant="ghost" size="sm" asChild>
+              <a href={`https://www.notion.so/${caseStudy.notionPageId.replace(/-/g, "")}`} target="_blank" rel="noreferrer">
+                <IconExternalLink className="mr-1.5 h-4 w-4" />
+                Open in Notion
+              </a>
+            </Button>
+          </div>
+          <p className="text-xs text-muted-foreground">Cover, project, status and slug stay as set here.</p>
+        </SidebarSection>
+      )}
 
       <SidebarSection title="Publishing" defaultOpen>
         <div className="space-y-2">

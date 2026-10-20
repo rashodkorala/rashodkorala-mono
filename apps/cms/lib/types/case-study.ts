@@ -30,6 +30,10 @@ export interface CaseStudyDB {
   entry_number: number | null
   in_short: string | null
   published_at: string | null
+  notion_page_id: string | null
+  notion_last_edited_at: string | null
+  notion_synced_at: string | null
+  notion_body_hash: string | null
   created_at: string
   updated_at: string
 }
@@ -58,6 +62,10 @@ export interface CaseStudy {
   entryNumber: number | null
   inShort: string | null
   publishedAt: string | null
+  /** Linked page in the Notion Writings database, if the entry is pulled from Notion. */
+  notionPageId: string | null
+  notionLastEditedAt: string | null
+  notionSyncedAt: string | null
   createdAt: string
   updatedAt: string
 }

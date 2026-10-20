@@ -119,6 +119,7 @@ Folder structure within `media` bucket:
 - `apps/cms/lib/revalidate-portfolio.ts` — Server-side fetch to portfolio `/api/revalidate` after project/case-study mutations
 - `apps/cms/lib/actions/projects.ts` — CRUD for projects table
 - `apps/cms/lib/actions/case-studies.ts` — CRUD for case_studies table (content_md inline, cover/gallery stored as paths in media bucket)
+- `apps/cms/lib/actions/notion.ts` — Import/pull Satahan entries from the Notion Writings database (`lib/notion/`): manual pulls, Notion owns the body and its mapped columns (Title, Slug, Kind, Summary, Role, Timeline, Tags, Stack); cover/project/status/slug stay CMS-owned; images are re-hosted under `case-studies/{slug}/assets/notion-*`, callouts become margin notes; `notion_body_hash` detects CMS body edits so a pull asks before overwriting
 - `apps/cms/lib/actions/photos.ts` — Photo metadata management
 - `apps/cms/lib/actions/media.ts` — Media library (queries `media_library` table)
 - `apps/cms/lib/actions/analytics.ts` — Analytics summary via RPC (PostHog handles tracking)
@@ -151,8 +152,16 @@ OPENAI_API_KEY
 PORTFOLIO_REVALIDATE_URL          # e.g. https://yourdomain.com/api/revalidate
 PORTFOLIO_REVALIDATE_SECRET       # shared long random string (same value on CMS + portfolio)
 
+# CMS ← Notion "Writings" database (optional; Import from Notion only shows when both are set)
+NOTION_API_KEY                    # internal integration token; share the database with the integration
+NOTION_WRITINGS_DATABASE_ID
+
+# CMS → Portfolio draft preview (optional)
+PORTFOLIO_URL                     # overrides the preview origin, e.g. http://localhost:3002
+
 # Portfolio (server-only; pair with CMS vars above for instant cache bust after publishes)
 PORTFOLIO_REVALIDATE_SECRET
+SUPABASE_SERVICE_ROLE_KEY         # draft previews; public RLS only exposes published case_studies
 
 # Photos App (server-only)
 SUPABASE_SERVICE_ROLE_KEY

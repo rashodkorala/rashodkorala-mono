@@ -15,6 +15,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { CaseStudyActions } from "@/components/case-studies/case-study-actions"
+import { NotionImportDialog } from "@/components/case-studies/notion-import-dialog"
 import { IconPlus, IconNews } from "@tabler/icons-react"
 
 interface SatahanPageProps {
@@ -49,6 +50,9 @@ export default async function SatahanPage({ searchParams }: SatahanPageProps) {
     }))
     .sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
 
+  // The import button only appears once Notion is configured for the CMS.
+  const notionEnabled = !!process.env.NOTION_API_KEY && !!process.env.NOTION_WRITINGS_DATABASE_ID
+
   const publishedCount = items.filter((i) => i.status === "published").length
 
   return (
@@ -58,12 +62,15 @@ export default async function SatahanPage({ searchParams }: SatahanPageProps) {
           <h1 className="text-2xl font-bold">Satahan</h1>
           <p className="text-sm text-muted-foreground">Case studies and writing.</p>
         </div>
-        <Button asChild>
-          <Link href="/protected/satahan/new">
-            <IconPlus className="h-4 w-4 mr-2" />
-            New Entry
-          </Link>
-        </Button>
+        <div className="flex items-center gap-2">
+          {notionEnabled && <NotionImportDialog />}
+          <Button asChild>
+            <Link href="/protected/satahan/new">
+              <IconPlus className="h-4 w-4 mr-2" />
+              New Entry
+            </Link>
+          </Button>
+        </div>
       </div>
 
       {/* Stats */}

@@ -30,6 +30,9 @@ function transformCaseStudy(cs: CaseStudyDB): CaseStudy {
     entryNumber: cs.entry_number ?? null,
     inShort: cs.in_short ?? null,
     publishedAt: cs.published_at ?? null,
+    notionPageId: cs.notion_page_id ?? null,
+    notionLastEditedAt: cs.notion_last_edited_at ?? null,
+    notionSyncedAt: cs.notion_synced_at ?? null,
     createdAt: cs.created_at,
     updatedAt: cs.updated_at,
   }
