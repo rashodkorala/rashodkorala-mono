@@ -1,6 +1,5 @@
 import type { CaseStudy, Project } from "./types";
 import { firstImageSrcFromMarkdown } from "./first-image-from-markdown";
-import { openingLine, renderSatahan } from "./satahan-markdown";
 
 /**
  * The site has two listings:
@@ -34,16 +33,17 @@ export interface SatahanItem {
   /** Permanent notebook number ("Nº 02"). */
   number: number;
   kind: "case_study" | "note";
+  /** One line: the index row and the entry's deck. */
   summary: string | null;
-  /** First sentence of the body, shown on the index for case studies. */
-  opening: string | null;
-  /** Rendered body for notes, which are shown in full on the index. */
-  noteHtml: string | null;
   year: number;
+  /** Publish date (falls back to created_at for rows published before it was recorded). */
   date: string;
   updatedAt: string;
   cover: Cover | null;
   readingMinutes: number | null;
+  role: string | null;
+  timeline: string | null;
+  stack: string[];
   tags: string[];
   /** The project this piece is about, if any. */
   project: { slug: string; title: string } | null;
@@ -60,6 +60,10 @@ export function mediaUrl(raw: string): string {
   if (!supabaseUrl) return path;
   if (path.startsWith("storage/v1/")) return `${supabaseUrl}/${path}`;
   return `${supabaseUrl}/storage/v1/object/public/media/${path}`;
+}
+
+function publishedDate(cs: CaseStudy): string {
+  return cs.published_at || cs.created_at;
 }
 
 function isPublished(cs: CaseStudy): boolean {
@@ -134,7 +138,7 @@ export function buildSatahanItems(caseStudies: CaseStudy[], projects: Project[])
   const projectsById = new Map(projects.map((p) => [p.id, p]));
   const published = caseStudies
     .filter(isPublished)
-    .sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+    .sort((a, b) => new Date(publishedDate(a)).getTime() - new Date(publishedDate(b)).getTime());
   let next = Math.max(0, ...published.map((cs) => cs.entry_number ?? 0));
 
   return published
@@ -146,14 +150,15 @@ export function buildSatahanItems(caseStudies: CaseStudy[], projects: Project[])
         title: cs.title,
         number: cs.entry_number ?? ++next,
         kind,
-        summary: cs.summary || null,
-        opening: kind === "case_study" ? openingLine(cs.content_md) : null,
-        noteHtml: kind === "note" ? renderSatahan(cs.content_md) : null,
-        year: new Date(cs.created_at).getFullYear(),
-        date: cs.created_at,
+        summary: cs.summary?.trim() || cs.in_short?.trim() || null,
+        year: new Date(publishedDate(cs)).getFullYear(),
+        date: publishedDate(cs),
         updatedAt: cs.updated_at,
         cover: caseStudyCover(cs),
         readingMinutes: readingMinutes(cs),
+        role: cs.role?.trim() || null,
+        timeline: cs.timeline?.trim() || null,
+        stack: (cs.stack ?? []).filter(Boolean),
         tags: (cs.tags ?? []).filter(Boolean),
         project: project ? { slug: project.slug, title: project.title } : null,
       } satisfies SatahanItem;

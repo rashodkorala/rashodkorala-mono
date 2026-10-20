@@ -40,7 +40,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!found) return { title: "Not found" };
   const { entry, item } = found;
 
-  const description = entry.in_short || entry.summary || item.opening || undefined;
+  const description = item.summary || undefined;
   const cover = caseStudyCover(entry);
   return {
     title: entry.title,
@@ -70,7 +70,6 @@ export default async function SatahanEntryPage({ params }: Props) {
     <PageShell>
       <SatahanEntry
         item={item}
-        inShort={entry.in_short?.trim() || null}
         html={renderSatahan(entry.content_md)}
         images={images}
         previous={previous}

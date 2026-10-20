@@ -193,6 +193,14 @@ export default function ProjectsPageContent({ items }: ProjectsPageContentProps)
           outline: 2px solid var(--color-heading);
           outline-offset: 4px;
         }
+        .pf-apps {
+          display: grid;
+          grid-template-columns: minmax(0, 1fr);
+          gap: clamp(12px, 1.4vw, 16px);
+        }
+        @media (min-width: 768px) {
+          .pf-apps { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        }
         @media (prefers-reduced-motion: reduce) {
           .pf-img { transition: none; }
         }
@@ -240,7 +248,7 @@ export default function ProjectsPageContent({ items }: ProjectsPageContentProps)
           }}>
             Apps
           </p>
-          <div style={{ display: "grid", gap: "clamp(12px, 1.4vw, 16px)", maxWidth: "46rem" }}>
+          <div className="pf-apps">
             {APPS.map((app) => (
               <Link
                 key={app.href}

@@ -60,8 +60,10 @@ export interface CaseStudy {
   kind?: "case_study" | "note" | null;
   /** Permanent Satahan number ("Nº 02"), given on first publish. */
   entry_number?: number | null;
-  /** One-line takeaway shown at the top of the entry. */
+  /** Legacy one-liner; superseded by `summary`. */
   in_short?: string | null;
+  /** Set once, on first publish. Missing until the column's migration is applied. */
+  published_at?: string | null;
   created_at: string;
   updated_at: string;
   relatedProjects?: Project[];

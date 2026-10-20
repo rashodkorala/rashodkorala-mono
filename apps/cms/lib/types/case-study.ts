@@ -29,6 +29,7 @@ export interface CaseStudyDB {
   kind: CaseStudyKind
   entry_number: number | null
   in_short: string | null
+  published_at: string | null
   created_at: string
   updated_at: string
 }
@@ -56,6 +57,7 @@ export interface CaseStudy {
   kind: CaseStudyKind
   entryNumber: number | null
   inShort: string | null
+  publishedAt: string | null
   createdAt: string
   updatedAt: string
 }

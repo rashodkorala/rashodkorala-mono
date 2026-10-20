@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server"
 import { requestPortfolioRevalidation } from "@/lib/revalidate-portfolio"
 import { revalidatePath } from "next/cache"
 import type { CaseStudy, CaseStudyDB, CaseStudyFormData } from "@/lib/types/case-study"
+import { getPublishIssues } from "@/lib/satahan-requirements"
 
 function transformCaseStudy(cs: CaseStudyDB): CaseStudy {
   return {
@@ -28,6 +29,7 @@ function transformCaseStudy(cs: CaseStudyDB): CaseStudy {
     kind: cs.kind ?? 'case_study',
     entryNumber: cs.entry_number ?? null,
     inShort: cs.in_short ?? null,
+    publishedAt: cs.published_at ?? null,
     createdAt: cs.created_at,
     updatedAt: cs.updated_at,
   }
@@ -161,10 +163,11 @@ export async function createOrUpdateCaseStudy(
   let existingBeforeAfter: { beforeImage?: string | null; afterImage?: string | null } | null = null
   let existingCoverPath: string | null = null
   let existingEntryNumber: number | null = null
+  let existingPublishedAt: string | null = null
   if (existingId) {
     const { data: existing } = await supabase
       .from("case_studies")
-      .select("gallery, before_after, cover_path, entry_number")
+      .select("gallery, before_after, cover_path, entry_number, published_at")
       .eq("id", existingId)
       .eq("user_id", user.id)
       .single()
@@ -173,6 +176,16 @@ export async function createOrUpdateCaseStudy(
       existingBeforeAfter = existing.before_after || null
       existingCoverPath = existing.cover_path || null
       existingEntryNumber = existing.entry_number ?? null
+      existingPublishedAt = existing.published_at ?? null
+    }
+  }
+
+  // Checked before any upload so a rejected publish leaves no stray files behind.
+  if (formData.status === "published") {
+    const hasCover = !!formData.coverImageFile || (!formData.clearCoverImage && !!existingCoverPath)
+    const issues = getPublishIssues(formData, { hasCover })
+    if (issues.length > 0) {
+      throw new Error(`Can't publish yet. Missing: ${issues.map((i) => i.message).join(", ")}`)
     }
   }
 
@@ -234,6 +247,11 @@ export async function createOrUpdateCaseStudy(
       .maybeSingle()
     entryNumber = (last?.entry_number ?? 0) + 1
   }
+  // The published date is likewise set once; later edits keep it.
+  let publishedAt = existingPublishedAt
+  if (publishedAt == null && formData.status === "published") {
+    publishedAt = new Date().toISOString()
+  }
 
   const payload = {
     user_id: user.id,
@@ -256,6 +274,7 @@ export async function createOrUpdateCaseStudy(
     kind: formData.kind ?? "case_study",
     in_short: formData.inShort?.trim() || null,
     entry_number: entryNumber,
+    published_at: publishedAt,
   }
 
   let data

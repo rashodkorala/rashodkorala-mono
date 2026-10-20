@@ -34,12 +34,12 @@ export default function AppsPage() {
           </p>
         </section>
 
-        <section className="mt-fib-55 grid gap-fib-34">
+        <section className="mt-fib-55 grid gap-fib-34 md:grid-cols-2">
           <Link
             href="/apps/inkbar"
-            className="group grid overflow-hidden rounded-md border border-line-strong bg-surface-raised transition hover:border-line-hover lg:grid-cols-[1fr_18rem]"
+            className="group flex flex-col overflow-hidden rounded-md border border-line-strong bg-surface-raised transition hover:border-line-hover"
           >
-            <div className="flex flex-col justify-between gap-fib-55 p-fib-34">
+            <div className="flex flex-col justify-between gap-fib-34 p-fib-34">
               <div>
                 <div className="mb-fib-21 flex h-11 w-11 items-center justify-center rounded-md border border-line bg-page">
                   <Martini className="h-5 w-5 text-heading" aria-hidden="true" />
@@ -59,23 +59,23 @@ export default function AppsPage() {
               </span>
             </div>
 
-            <div className="relative hidden min-h-[28rem] overflow-hidden border-l border-line bg-[#f7f2e8] lg:block">
+            <div className="relative mt-auto min-h-[20rem] overflow-hidden border-t border-line bg-[#f7f2e8]">
               <Image
                 src="/inkbar/scaler.png"
                 alt="InkBar cocktail scaler screen on iPhone."
                 width={1320}
                 height={2868}
-                className="absolute left-1/2 top-fib-34 w-[17rem] -translate-x-1/2 rounded-[2rem] border border-black/10 shadow-2xl shadow-black/20 transition duration-300 group-hover:-translate-y-2"
-                sizes="18rem"
+                className="absolute left-1/2 top-fib-34 w-[13rem] -translate-x-1/2 rounded-[2rem] border border-black/10 shadow-2xl shadow-black/20 transition duration-300 group-hover:-translate-y-2"
+                sizes="13rem"
               />
             </div>
           </Link>
 
           <Link
             href="/apps/moov"
-            className="group grid overflow-hidden rounded-md border border-line-strong bg-surface-raised transition hover:border-line-hover lg:grid-cols-[1fr_18rem]"
+            className="group flex flex-col overflow-hidden rounded-md border border-line-strong bg-surface-raised transition hover:border-line-hover"
           >
-            <div className="flex flex-col justify-between gap-fib-55 p-fib-34">
+            <div className="flex flex-col justify-between gap-fib-34 p-fib-34">
               <div>
                 <div className="mb-fib-21 flex h-11 w-11 items-center justify-center rounded-md border border-line bg-page">
                   <Sun className="h-5 w-5 text-heading" aria-hidden="true" />
@@ -95,14 +95,14 @@ export default function AppsPage() {
               </span>
             </div>
 
-            <div className="relative hidden min-h-[28rem] overflow-hidden border-l border-line bg-[#1a1816] lg:block">
+            <div className="relative mt-auto min-h-[20rem] overflow-hidden border-t border-line bg-[#1a1816]">
               <Image
                 src="/moov/launch.png"
                 alt="MOOV welcome screen on iPhone."
                 width={1320}
                 height={2868}
-                className="absolute left-1/2 top-fib-34 w-[17rem] -translate-x-1/2 rounded-[2rem] border border-white/10 shadow-2xl shadow-black/40 transition duration-300 group-hover:-translate-y-2"
-                sizes="18rem"
+                className="absolute left-1/2 top-fib-34 w-[13rem] -translate-x-1/2 rounded-[2rem] border border-white/10 shadow-2xl shadow-black/40 transition duration-300 group-hover:-translate-y-2"
+                sizes="13rem"
               />
             </div>
           </Link>
