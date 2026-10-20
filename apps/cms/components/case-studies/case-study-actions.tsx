@@ -21,7 +21,8 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
 import { Button } from "@/components/ui/button"
-import { IconDotsVertical, IconEye, IconEdit, IconTrash } from "@tabler/icons-react"
+import { IconDotsVertical, IconEye, IconEdit, IconExternalLink, IconTrash } from "@tabler/icons-react"
+import { openSatahanPreview } from "@/components/case-studies/open-preview"
 import { deleteCaseStudy } from "@/lib/actions/case-studies"
 import type { CaseStudy } from "@/lib/types/case-study"
 import Link from "next/link"
@@ -64,6 +65,10 @@ export function CaseStudyActions({ caseStudy }: CaseStudyActionsProps) {
               <IconEye className="h-4 w-4 mr-2" />
               View
             </Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem onSelect={() => void openSatahanPreview(caseStudy.slug)}>
+            <IconExternalLink className="h-4 w-4 mr-2" />
+            Preview on site
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
             <Link href={`/protected/satahan/${caseStudy.slug}`}>

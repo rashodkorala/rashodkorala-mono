@@ -1,3 +1,5 @@
+import { Mark } from "@rashodkorala/brand/mark";
+
 export default function Loading() {
   return (
     <div
@@ -8,14 +10,8 @@ export default function Loading() {
     >
       <span className="sr-only">Loading</span>
 
-      {/* Name — muted, editorial caps */}
-      <p
-        aria-hidden
-        className="font-sans text-faint select-none"
-        style={{ fontSize: "10px", letterSpacing: "0.22em", textTransform: "uppercase" }}
-      >
-        Rashod Korala
-      </p>
+      {/* Logo mark above the scan line */}
+      <Mark aria-hidden title="" className="text-heading select-none" style={{ height: "22px", width: "auto" }} />
 
       {/* Scan line — sweep across a faint track */}
       <div

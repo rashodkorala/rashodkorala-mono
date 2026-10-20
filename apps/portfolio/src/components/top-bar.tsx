@@ -62,10 +62,9 @@ export default function TopBar() {
       <Link
         href="/"
         className="hidden min-w-0 items-center gap-fib-13 group shrink-0 lg:inline-flex"
+        aria-label="Home"
       >
-        <span className="uppercase font-sans h-fib-34 w-fib-34 inline-flex shrink-0 items-center justify-center rounded-sm bg-surface-elevated text-inverse font-sans text-xl leading-none">
-          R
-        </span>
+        <span className="font-poppins font-bold text-heading text-xl leading-none whitespace-pre">R{"\u2009"}K.</span>
       </Link>
 
       {/* ── Mobile header: 3-column grid ────────────────────────────────────── */}
@@ -86,10 +85,10 @@ export default function TopBar() {
         ) : (
           <Link
             href="/"
-            className="inline-flex h-fib-34 w-fib-34 items-center justify-center rounded-sm bg-surface-elevated text-inverse font-sans text-sm font-normal shrink-0"
+            className="inline-flex h-fib-34 items-center font-poppins font-bold text-heading text-base leading-none whitespace-pre shrink-0"
             aria-label="Home"
           >
-            R
+            R{"\u2009"}K.
           </Link>
         )}
 

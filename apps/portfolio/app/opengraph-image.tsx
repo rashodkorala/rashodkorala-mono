@@ -1,6 +1,7 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { ImageResponse } from "next/og";
+import { MARK_ASPECT, markDataUri } from "@rashodkorala/brand";
 
 export const alt = "Rashod Korala | Software Developer";
 export const size = { width: 1200, height: 630 };
@@ -25,8 +26,17 @@ export default async function OGImage() {
           backgroundColor: "#000",
           padding: "80px",
           fontFamily: '"Satoshi", sans-serif',
+          position: "relative",
         }}
       >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={markDataUri("#ffffff")}
+          width={Math.round(44 * MARK_ASPECT)}
+          height={44}
+          alt=""
+          style={{ position: "absolute", top: 80, left: 80 }}
+        />
         <p
           style={{
             fontSize: 14,

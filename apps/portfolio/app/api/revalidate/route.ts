@@ -16,6 +16,7 @@ const STATIC_PATHS = [
   "/privacy",
   "/apps",
   "/apps/inkbar",
+  "/apps/moov",
   "/apps/inkbar/support",
   "/apps/inkbar/privacy",
   "/inkbar",

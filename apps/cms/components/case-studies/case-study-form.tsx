@@ -7,9 +7,11 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
-import { IconX } from "@tabler/icons-react"
+import { IconBrandNotion, IconCircleCheckFilled, IconCircleX, IconExternalLink, IconLoader2, IconX } from "@tabler/icons-react"
 import type { CaseStudy, CaseStudyFormData } from "@/lib/types/case-study"
 import { createOrUpdateCaseStudy } from "@/lib/actions/case-studies"
+import { getPublishChecks, SUMMARY_MAX_LENGTH } from "@/lib/satahan-requirements"
+import { cn } from "@/lib/utils"
 import { MarkdownEditor } from "@/components/editor/markdown-editor"
 import {
   AutoGrowTextarea,
@@ -19,6 +21,9 @@ import {
   useEditorShortcuts,
 } from "@/components/work-editor/editor-layout"
 import { TagInput } from "@/components/work-editor/tag-input"
+import { openSatahanPreview } from "@/components/case-studies/open-preview"
+import { confirmReplaceBody } from "@/components/case-studies/notion-confirm"
+import { pullNotionPage } from "@/lib/actions/notion"
 
 interface CaseStudyFormProps {
   caseStudy?: CaseStudy
@@ -89,6 +94,7 @@ export function CaseStudyForm({ caseStudy, availableProjects }: CaseStudyFormPro
     links: caseStudy?.links ?? [],
     stack: caseStudy?.stack ?? [],
     kind: caseStudy?.kind ?? "case_study",
+    // No longer edited here; carried through so saving keeps any existing value.
     inShort: caseStudy?.inShort ?? "",
     coverImageFile: null,
     clearCoverImage: false,
@@ -197,6 +203,11 @@ export function CaseStudyForm({ caseStudy, availableProjects }: CaseStudyFormPro
       return
     }
 
+    if (formData.status === "published" && publishIssues.length > 0) {
+      toast.error(`Can't publish yet. Missing: ${publishIssues.map((c) => c.message).join(", ")}`)
+      return
+    }
+
     setIsLoading(true)
 
     try {
@@ -219,7 +230,46 @@ export function CaseStudyForm({ caseStudy, availableProjects }: CaseStudyFormPro
     router.push("/protected/satahan")
   }
 
+  const [pulling, setPulling] = useState(false)
+
+  // A pull rewrites the saved entry, then reloads the form with it.
+  const pullFromNotion = async () => {
+    if (!caseStudy?.id) return
+    if (dirty) {
+      toast.error("Save or discard your changes before pulling from Notion.")
+      return
+    }
+    setPulling(true)
+    try {
+      let result = await pullNotionPage(caseStudy.id)
+      if (result.conflict) {
+        if (!(await confirmReplaceBody(caseStudy.title))) return
+        result = await pullNotionPage(caseStudy.id, { force: true })
+      }
+      toast.success(
+        result.skipped > 0
+          ? `Pulled from Notion. ${result.skipped} block${result.skipped === 1 ? "" : "s"} couldn't be brought across.`
+          : "Pulled from Notion."
+      )
+      window.location.reload()
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Couldn't pull from Notion")
+    } finally {
+      setPulling(false)
+    }
+  }
+
+  // Preview reads what's saved, so unsaved edits won't show until the next save.
+  const preview = () => {
+    if (!caseStudy?.slug) return
+    if (dirty) toast.info("Preview shows the last saved version. Save to include your latest edits.")
+    void openSatahanPreview(caseStudy.slug)
+  }
+
   const galleryCount = existingGallery.length + galleryFiles.length
+  const publishChecks = getPublishChecks(formData, { hasCover: !!coverPreviewUrl })
+  const publishIssues = publishChecks.filter((c) => !c.ok)
+  const summaryLength = formData.summary.trim().length
   const detailsHint = [formData.role, formData.timeline].filter(Boolean).join(" · ")
 
   const main = (
@@ -231,20 +281,23 @@ export function CaseStudyForm({ caseStudy, availableProjects }: CaseStudyFormPro
         placeholder="Untitled entry"
         className="text-4xl font-bold leading-tight tracking-tight"
       />
-      <AutoGrowTextarea
-        aria-label="Summary"
-        value={formData.summary}
-        onChange={(v) => update("summary", v)}
-        placeholder="One-line summary shown under the title on the portfolio"
-        className="text-lg text-muted-foreground"
-      />
-      <AutoGrowTextarea
-        aria-label="In short"
-        value={formData.inShort}
-        onChange={(v) => update("inShort", v)}
-        placeholder="In short: the one-line takeaway shown at the top of the entry (optional)"
-        className="text-base italic text-muted-foreground"
-      />
+      <div>
+        <AutoGrowTextarea
+          aria-label="Summary"
+          value={formData.summary}
+          onChange={(v) => update("summary", v)}
+          placeholder="One-line summary shown on the index and under the title"
+          className="text-lg text-muted-foreground"
+        />
+        <p
+          className={cn(
+            "mt-1 text-right text-xs tabular-nums text-muted-foreground",
+            summaryLength > SUMMARY_MAX_LENGTH && "text-destructive"
+          )}
+        >
+          {summaryLength} / {SUMMARY_MAX_LENGTH}
+        </p>
+      </div>
       <div className="border-t pt-6">
         <MarkdownEditor
           initialValue={formData.contentMd}
@@ -260,6 +313,54 @@ export function CaseStudyForm({ caseStudy, availableProjects }: CaseStudyFormPro
 
   const sidebar = (
     <>
+      <SidebarSection
+        title="Ready to publish"
+        hint={publishIssues.length ? `${publishIssues.length} missing` : "Ready"}
+        defaultOpen
+      >
+        <ul className="space-y-1.5">
+          {publishChecks.map((check) => (
+            <li key={check.field} className="flex items-center gap-2 text-sm">
+              {check.ok ? (
+                <IconCircleCheckFilled className="h-4 w-4 shrink-0 fill-green-500 dark:fill-green-400" />
+              ) : (
+                <IconCircleX className="h-4 w-4 shrink-0 text-muted-foreground" />
+              )}
+              <span className={check.ok ? undefined : "text-muted-foreground"}>{check.message}</span>
+            </li>
+          ))}
+        </ul>
+        <p className="text-xs text-muted-foreground">
+          {formData.kind === "case_study"
+            ? "Case studies also need a cover, role and timeline."
+            : "Notes need only the basics."}
+        </p>
+      </SidebarSection>
+
+      {caseStudy?.notionPageId && (
+        <SidebarSection title="Notion" hint="Linked" defaultOpen>
+          <p className="text-sm text-muted-foreground">
+            The body comes from Notion.{" "}
+            {caseStudy.notionSyncedAt
+              ? `Last pulled ${new Date(caseStudy.notionSyncedAt).toLocaleString(undefined, { dateStyle: "medium", timeStyle: "short" })}.`
+              : null}
+          </p>
+          <div className="flex flex-wrap gap-2">
+            <Button type="button" variant="outline" size="sm" onClick={pullFromNotion} disabled={pulling || isLoading}>
+              {pulling ? <IconLoader2 className="mr-1.5 h-4 w-4 animate-spin" /> : <IconBrandNotion className="mr-1.5 h-4 w-4" />}
+              Pull from Notion
+            </Button>
+            <Button type="button" variant="ghost" size="sm" asChild>
+              <a href={`https://www.notion.so/${caseStudy.notionPageId.replace(/-/g, "")}`} target="_blank" rel="noreferrer">
+                <IconExternalLink className="mr-1.5 h-4 w-4" />
+                Open in Notion
+              </a>
+            </Button>
+          </div>
+          <p className="text-xs text-muted-foreground">Cover, project, status and slug stay as set here.</p>
+        </SidebarSection>
+      )}
+
       <SidebarSection title="Publishing" defaultOpen>
         <div className="space-y-2">
           <Label htmlFor="cs-kind">Kind</Label>
@@ -500,6 +601,14 @@ export function CaseStudyForm({ caseStudy, availableProjects }: CaseStudyFormPro
         saving={isLoading}
         submitLabel={isEditing ? "Save changes" : "Create case study"}
         onCancel={cancel}
+        extra={
+          caseStudy?.slug ? (
+            <Button type="button" variant="outline" onClick={preview} disabled={isLoading}>
+              <IconExternalLink className="mr-1.5 h-4 w-4" />
+              Preview
+            </Button>
+          ) : null
+        }
       />
     </form>
   )

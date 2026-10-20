@@ -79,6 +79,7 @@ Active tables (8 total):
 - `projects` — Portfolio projects (renamed from projects_archived)
 - `case_studies` — Case studies with inline `content_md` (no storage bucket for content); shown on the portfolio as Satahan entries (`kind` case_study|note, permanent `entry_number` given on first publish, optional `in_short`; `> [!margin] …` in markdown renders a margin note)
 - `case_study_projects` — Junction table linking case_studies → projects
+- `preview_tokens` — Short-lived (10 min) tokens the CMS creates for one entry; the portfolio exchanges them via the `preview_case_study(token)` security-definer function with the public key, so draft previews need no service-role key (public RLS only exposes published case_studies)
 - `photos` — Photography metadata
 - `about_profiles` — About page content
 - `media_library` — Centralized media asset registry
@@ -119,6 +120,7 @@ Folder structure within `media` bucket:
 - `apps/cms/lib/revalidate-portfolio.ts` — Server-side fetch to portfolio `/api/revalidate` after project/case-study mutations
 - `apps/cms/lib/actions/projects.ts` — CRUD for projects table
 - `apps/cms/lib/actions/case-studies.ts` — CRUD for case_studies table (content_md inline, cover/gallery stored as paths in media bucket)
+- `apps/cms/lib/actions/notion.ts` — Import/pull Satahan entries from the Notion Writings database (`lib/notion/`): manual pulls, Notion owns the body and its mapped columns (Title, Slug, Kind, Summary, Role, Timeline, Tags, Stack); cover/project/status/slug stay CMS-owned; images are re-hosted under `case-studies/{slug}/assets/notion-*`, callouts become margin notes; `notion_body_hash` detects CMS body edits so a pull asks before overwriting
 - `apps/cms/lib/actions/photos.ts` — Photo metadata management
 - `apps/cms/lib/actions/media.ts` — Media library (queries `media_library` table)
 - `apps/cms/lib/actions/analytics.ts` — Analytics summary via RPC (PostHog handles tracking)
@@ -150,6 +152,13 @@ OPENAI_API_KEY
 # CMS → Portfolio on-demand ISR (optional; omit locally if portfolio not reachable)
 PORTFOLIO_REVALIDATE_URL          # e.g. https://yourdomain.com/api/revalidate
 PORTFOLIO_REVALIDATE_SECRET       # shared long random string (same value on CMS + portfolio)
+
+# CMS ← Notion "Writings" database (optional; Import from Notion only shows when both are set)
+NOTION_API_KEY                    # internal integration token; share the database with the integration
+NOTION_WRITINGS_DATABASE_ID
+
+# CMS → Portfolio draft preview (optional)
+PORTFOLIO_URL                     # overrides the preview origin, e.g. http://localhost:3002
 
 # Portfolio (server-only; pair with CMS vars above for instant cache bust after publishes)
 PORTFOLIO_REVALIDATE_SECRET

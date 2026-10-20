@@ -1,12 +1,15 @@
 import type { Metadata } from "next";
+import { cookies, draftMode } from "next/headers";
 import { notFound } from "next/navigation";
 import { getCachedCaseStudies, getCachedCaseStudyBySlug } from "@/lib/supabase/cached-case-studies";
 import { getCachedAllProjects } from "@/lib/supabase/cached-projects";
-import { buildSatahanItems, caseStudyCover, formatEntryNumber, mediaUrl } from "@/lib/entries";
+import { buildPreviewItem, buildSatahanItems, caseStudyCover, formatEntryNumber, mediaUrl } from "@/lib/entries";
+import { getPreviewCaseStudy, PREVIEW_TOKEN_COOKIE } from "@/lib/supabase/preview";
 import { renderSatahan } from "@/lib/satahan-markdown";
 import type { CaseStudy } from "@/lib/types";
 import SatahanEntry from "@/src/components/satahan/SatahanEntry";
 import PageShell from "@/src/components/page-shell";
+import PreviewBanner from "@/src/components/satahan/PreviewBanner";
 
 export const revalidate = 3600;
 
@@ -18,19 +21,49 @@ async function getEntry(slug: string): Promise<CaseStudy | null> {
   return entry;
 }
 
-/** The entry plus its place in the notebook (number, previous and next). */
+/** In Draft Mode, the entry the CMS preview token opens, if it's the one being viewed. */
+async function getPreviewEntry(slug: string): Promise<CaseStudy | null> {
+  if (!(await draftMode()).isEnabled) return null;
+  const token = (await cookies()).get(PREVIEW_TOKEN_COOKIE)?.value;
+  const entry = token ? await getPreviewCaseStudy(token) : null;
+  return entry?.slug === slug ? entry : null;
+}
+
+/**
+ * The entry plus its place in the notebook (number, previous and next). In a CMS preview the
+ * entry is read fresh in any status and shown where it will land once published; every other
+ * entry shows its public version.
+ */
 async function getEntryInContext(slug: string) {
-  const entry = await getEntry(slug);
+  const previewEntry = await getPreviewEntry(slug);
+  const preview = !!previewEntry;
+  const entry = previewEntry ?? (await getEntry(slug));
   if (!entry) return null;
   const [caseStudies, projects] = await Promise.all([getCachedCaseStudies(), getCachedAllProjects()]);
   const items = buildSatahanItems(caseStudies, projects); // newest number first
   const index = items.findIndex((i) => i.slug === entry.slug);
+
+  if (preview) {
+    // Published entries keep their slot; a draft sits in front of the newest one.
+    const live = index !== -1 && entry.status === "published";
+    const item = buildPreviewItem(entry, items, projects);
+    if (live) item.number = items[index].number;
+    return {
+      entry,
+      item,
+      previous: live ? items[index + 1] ?? null : items[0] ?? null,
+      next: live ? items[index - 1] ?? null : null,
+      preview: true as const,
+    };
+  }
+
   if (index === -1) return null;
   return {
     entry,
     item: items[index],
     previous: items[index + 1] ?? null,
     next: items[index - 1] ?? null,
+    preview: false as const,
   };
 }
 
@@ -38,14 +71,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const found = await getEntryInContext(slug);
   if (!found) return { title: "Not found" };
-  const { entry, item } = found;
+  const { entry, item, preview } = found;
 
-  const description = entry.in_short || entry.summary || item.opening || undefined;
+  const description = item.summary || undefined;
   const cover = caseStudyCover(entry);
   return {
     title: entry.title,
     description,
     alternates: { canonical: `/satahan/${entry.slug}` },
+    ...(preview ? { robots: { index: false, follow: false } } : {}),
     openGraph: {
       title: `Satahan Nº ${formatEntryNumber(item.number)}: ${entry.title}`,
       description,
@@ -59,7 +93,7 @@ export default async function SatahanEntryPage({ params }: Props) {
   const { slug } = await params;
   const found = await getEntryInContext(slug);
   if (!found) notFound();
-  const { entry, item, previous, next } = found;
+  const { entry, item, previous, next, preview } = found;
 
   const images = (entry.gallery ?? [])
     .filter((g): g is string => typeof g === "string" && !!g.trim())
@@ -68,9 +102,9 @@ export default async function SatahanEntryPage({ params }: Props) {
 
   return (
     <PageShell>
+      {preview && <PreviewBanner status={entry.status ?? "draft"} slug={entry.slug} />}
       <SatahanEntry
         item={item}
-        inShort={entry.in_short?.trim() || null}
         html={renderSatahan(entry.content_md)}
         images={images}
         previous={previous}

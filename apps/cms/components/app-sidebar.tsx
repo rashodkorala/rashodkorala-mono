@@ -10,6 +10,8 @@ import {
   IconNews,
 } from "@tabler/icons-react"
 
+import Link from "next/link"
+import { Mark } from "@rashodkorala/brand/mark"
 import { NavMain } from "@/components/nav-main"
 import { NavSecondary } from "@/components/nav-secondary"
 import { NavUser } from "@/components/nav-user"
@@ -75,8 +77,9 @@ export function AppSidebar({
               asChild
               className="data-[slot=sidebar-menu-button]:!p-1.5"
             >
-              {/* <Image src={logo} alt="logo" width={32} height={32} /> */}
-              <span className="text-base font-semibold">Rashod korala</span>
+              <Link href="/protected/dashboard" aria-label="Rashod Korala, dashboard">
+                <Mark className="!h-5 !w-auto" title="" />
+              </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>

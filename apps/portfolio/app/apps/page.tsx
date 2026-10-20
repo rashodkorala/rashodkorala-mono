@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Martini } from "lucide-react";
+import { ArrowRight, Martini, Sun } from "lucide-react";
 import PageShell from "@/src/components/page-shell";
 
 export const metadata: Metadata = {
@@ -12,7 +12,7 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title: "Apps by Rashod Korala",
-    description: "Independent apps built by Rashod Korala.",
+    description: "Apps built by Rashod Korala.",
     url: "https://rashodkorala.com/apps",
   },
 };
@@ -34,12 +34,12 @@ export default function AppsPage() {
           </p>
         </section>
 
-        <section className="mt-fib-55 grid gap-fib-34 lg:grid-cols-[minmax(0,1fr)_minmax(20rem,28rem)]">
+        <section className="mt-fib-55 grid gap-fib-34 md:grid-cols-2">
           <Link
             href="/apps/inkbar"
-            className="group grid overflow-hidden rounded-md border border-line-strong bg-surface-raised transition hover:border-line-hover lg:grid-cols-[1fr_18rem]"
+            className="group flex flex-col overflow-hidden rounded-md border border-line-strong bg-surface-raised transition hover:border-line-hover"
           >
-            <div className="flex flex-col justify-between gap-fib-55 p-fib-34">
+            <div className="flex flex-col justify-between gap-fib-34 p-fib-34">
               <div>
                 <div className="mb-fib-21 flex h-11 w-11 items-center justify-center rounded-md border border-line bg-page">
                   <Martini className="h-5 w-5 text-heading" aria-hidden="true" />
@@ -59,14 +59,50 @@ export default function AppsPage() {
               </span>
             </div>
 
-            <div className="relative hidden min-h-[28rem] overflow-hidden border-l border-line bg-[#f7f2e8] lg:block">
+            <div className="relative mt-auto min-h-[20rem] overflow-hidden border-t border-line bg-[#f7f2e8]">
               <Image
                 src="/inkbar/scaler.png"
                 alt="InkBar cocktail scaler screen on iPhone."
                 width={1320}
                 height={2868}
-                className="absolute left-1/2 top-fib-34 w-[17rem] -translate-x-1/2 rounded-[2rem] border border-black/10 shadow-2xl shadow-black/20 transition duration-300 group-hover:-translate-y-2"
-                sizes="18rem"
+                className="absolute left-1/2 top-fib-34 w-[13rem] -translate-x-1/2 rounded-[2rem] border border-black/10 shadow-2xl shadow-black/20 transition duration-300 group-hover:-translate-y-2"
+                sizes="13rem"
+              />
+            </div>
+          </Link>
+
+          <Link
+            href="/apps/moov"
+            className="group flex flex-col overflow-hidden rounded-md border border-line-strong bg-surface-raised transition hover:border-line-hover"
+          >
+            <div className="flex flex-col justify-between gap-fib-34 p-fib-34">
+              <div>
+                <div className="mb-fib-21 flex h-11 w-11 items-center justify-center rounded-md border border-line bg-page">
+                  <Sun className="h-5 w-5 text-heading" aria-hidden="true" />
+                </div>
+                <p className="mb-fib-13 font-mono text-[0.72rem] font-normal uppercase tracking-[0.18em] text-body-secondary">
+                  iPhone · Internship
+                </p>
+                <h2 className="font-poppins text-h1 font-normal leading-heading text-heading">MOOV</h2>
+                <p className="mb-0 mt-fib-13 max-w-reading font-sans text-sm leading-body text-body-secondary">
+                  Built during an internship. A morning app: set a wake alarm, wind down with
+                  sleep sounds, and keep a short list for the day.
+                </p>
+              </div>
+              <span className="inline-flex w-fit items-center gap-2 font-sans text-sm font-normal leading-ui text-heading">
+                View app
+                <ArrowRight className="h-4 w-4 transition group-hover:translate-x-1" aria-hidden="true" />
+              </span>
+            </div>
+
+            <div className="relative mt-auto min-h-[20rem] overflow-hidden border-t border-line bg-[#1a1816]">
+              <Image
+                src="/moov/launch.png"
+                alt="MOOV welcome screen on iPhone."
+                width={1320}
+                height={2868}
+                className="absolute left-1/2 top-fib-34 w-[13rem] -translate-x-1/2 rounded-[2rem] border border-white/10 shadow-2xl shadow-black/40 transition duration-300 group-hover:-translate-y-2"
+                sizes="13rem"
               />
             </div>
           </Link>
