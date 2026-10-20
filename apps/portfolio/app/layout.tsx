@@ -26,7 +26,8 @@ const satoshi = localFont({
 
 const poppins = Poppins({
   subsets: ['latin'],
-  weight: ['400', '500'],
+  // 700 is only for the "R K." logo mark; headings stay at 400.
+  weight: ['400', '500', '700'],
   variable: '--font-poppins',
   display: 'swap',
 })
@@ -89,11 +90,6 @@ export const metadata: Metadata = {
             'max-image-preview': 'large',
             'max-snippet': -1,
         },
-    },
-    icons: {
-        icon: '/favicon.ico',
-        shortcut: '/favicon-16x16.png',
-        apple: '/apple-touch-icon.png',
     },
     verification: {
         google: 'your-google-site-verification',

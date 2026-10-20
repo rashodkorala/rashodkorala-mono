@@ -20,7 +20,7 @@ function supabaseImageRemotePattern() {
 
 const nextConfig = {
   reactStrictMode: true,
-  transpilePackages: ["@rashodkorala/posthog-next"],
+  transpilePackages: ["@rashodkorala/posthog-next", "@rashodkorala/brand"],
   images: {
     remotePatterns: [supabaseImageRemotePattern()],
   },

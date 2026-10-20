@@ -3,7 +3,7 @@ import createMDX from "@next/mdx";
 import path from "path";
 
 const nextConfig: NextConfig = {
-  transpilePackages: ["@rashodkorala/posthog-next"],
+  transpilePackages: ["@rashodkorala/posthog-next", "@rashodkorala/brand"],
   // Server Action payload limit (default 1 MB). Next 15.5 reads this from
   // `experimental.serverActions`; a top-level `serverActions` key is rejected.
   experimental: {

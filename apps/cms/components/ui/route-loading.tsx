@@ -1,7 +1,10 @@
+import { Mark } from "@rashodkorala/brand/mark"
+
 export default function RouteLoading() {
     return (
         <div className="flex items-center justify-center min-h-[400px] w-full h-full">
             <div className="flex flex-col items-center gap-4">
+                <Mark aria-hidden title="" className="h-5 w-auto text-foreground" />
                 <div className="w-[64px] h-[64px]">
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
