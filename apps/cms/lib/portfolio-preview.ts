@@ -18,7 +18,7 @@ function portfolioOrigin(): string | null {
 
 /**
  * A link that opens a Satahan entry on the portfolio in Draft Mode, exactly as the public page
- * would show it, in any status. It carries a fresh `preview_tokens` row (valid for an hour,
+ * would show it, in any status. It carries a fresh `preview_tokens` row (valid for 10 minutes,
  * for this one entry), which the portfolio exchanges via `preview_case_study()` using only
  * the public key.
  */

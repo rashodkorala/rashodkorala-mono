@@ -17,7 +17,7 @@ export async function GET(request: Request) {
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
     path: "/",
-    maxAge: 60 * 60, // matches the token's lifetime in the database
+    maxAge: 10 * 60, // matches the token's lifetime in the database
   });
   redirect(`/satahan/${encodeURIComponent(entry.slug)}`);
 }
