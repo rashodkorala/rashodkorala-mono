@@ -56,8 +56,10 @@ function select(p: Property | undefined): string | null {
   return p?.type === "select" ? (p.select?.name ?? null) : null
 }
 
+/** Empty counts as unset, like empty text, so a pull never wipes tags added in the CMS. */
 function multiSelect(p: Property | undefined): string[] | null {
-  return p?.type === "multi_select" ? p.multi_select.map((o) => o.name) : null
+  if (p?.type !== "multi_select" || p.multi_select.length === 0) return null
+  return p.multi_select.map((o) => o.name)
 }
 
 function kindFrom(value: string | null): CaseStudyKind | null {
