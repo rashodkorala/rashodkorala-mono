@@ -210,13 +210,15 @@ export default function HomeHero({ imageSrc, displayName, bio, socials }: HomeHe
             <div className="hero-top-spacer" aria-hidden="true" />
 
             <div className="hero-copy-block flex flex-col">
+              {/* Poppins R and K sit 0.077em in from their box; pull the name back so the
+                  letters' left edge lines up with the bio text below. */}
               <motion.h1
                 className="min-w-0 leading-[0.92]"
                 initial="hidden"
                 animate="visible"
               >
                 <motion.span
-                  className="hero-name text-heading block"
+                  className="hero-name text-heading block -ml-[0.077em]"
                   style={{ fontFamily: poppins, fontWeight: 400 }}
                   variants={reveal}
                   custom={0.2}
@@ -225,7 +227,7 @@ export default function HomeHero({ imageSrc, displayName, bio, socials }: HomeHe
                 </motion.span>
                 {lastName && (
                   <motion.span
-                    className="hero-name text-heading block"
+                    className="hero-name text-heading block -ml-[0.077em]"
                     style={{ fontFamily: poppins, fontWeight: 400 }}
                     variants={reveal}
                     custom={0.35}
