@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Checkbox } from "@/components/ui/checkbox"
-import { IconCircleCheckFilled, IconCircleX, IconX } from "@tabler/icons-react"
+import { IconCircleCheckFilled, IconCircleX, IconExternalLink, IconX } from "@tabler/icons-react"
 import type { CaseStudy, CaseStudyFormData } from "@/lib/types/case-study"
 import { createOrUpdateCaseStudy } from "@/lib/actions/case-studies"
 import { getPublishChecks, SUMMARY_MAX_LENGTH } from "@/lib/satahan-requirements"
@@ -21,6 +21,7 @@ import {
   useEditorShortcuts,
 } from "@/components/work-editor/editor-layout"
 import { TagInput } from "@/components/work-editor/tag-input"
+import { openSatahanPreview } from "@/components/case-studies/open-preview"
 
 interface CaseStudyFormProps {
   caseStudy?: CaseStudy
@@ -225,6 +226,13 @@ export function CaseStudyForm({ caseStudy, availableProjects }: CaseStudyFormPro
   const cancel = () => {
     if (dirty && !confirm("Discard unsaved changes?")) return
     router.push("/protected/satahan")
+  }
+
+  // Preview reads what's saved, so unsaved edits won't show until the next save.
+  const preview = () => {
+    if (!caseStudy?.slug) return
+    if (dirty) toast.info("Preview shows the last saved version. Save to include your latest edits.")
+    void openSatahanPreview(caseStudy.slug)
   }
 
   const galleryCount = existingGallery.length + galleryFiles.length
@@ -538,6 +546,14 @@ export function CaseStudyForm({ caseStudy, availableProjects }: CaseStudyFormPro
         saving={isLoading}
         submitLabel={isEditing ? "Save changes" : "Create case study"}
         onCancel={cancel}
+        extra={
+          caseStudy?.slug ? (
+            <Button type="button" variant="outline" onClick={preview} disabled={isLoading}>
+              <IconExternalLink className="mr-1.5 h-4 w-4" />
+              Preview
+            </Button>
+          ) : null
+        }
       />
     </form>
   )
