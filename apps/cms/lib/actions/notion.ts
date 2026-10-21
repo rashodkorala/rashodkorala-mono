@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache"
 import { createClient } from "@/lib/supabase/server"
 import { requestPortfolioRevalidation } from "@/lib/revalidate-portfolio"
-import { getWritingPage, queryWritings } from "@/lib/notion/client"
+import { getWritingPage, queryWritings, syncWritingStatus } from "@/lib/notion/client"
 import { bodyFrom, entryFieldsFrom, hashBody, slugify, type NotionEntryFields } from "@/lib/notion/to-entry"
 
 /**
@@ -70,6 +70,22 @@ function syncColumns(lastEditedAt: string, contentMd: string) {
     notion_last_edited_at: lastEditedAt,
     notion_synced_at: new Date().toISOString(),
     notion_body_hash: hashBody(contentMd),
+  }
+}
+
+/** Writes the CMS status onto the Notion page; best effort, like on save. */
+async function mirrorStatus(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  id: string,
+  pageId: string,
+  status: string,
+  lastEditedAt: string
+) {
+  try {
+    const next = await syncWritingStatus(pageId, status as "draft" | "published" | "archived", lastEditedAt)
+    if (next && next !== lastEditedAt) await supabase.from("case_studies").update({ notion_last_edited_at: next }).eq("id", id)
+  } catch (error) {
+    console.warn("[notion] couldn't update the Notion status:", error)
   }
 }
 
@@ -146,6 +162,7 @@ export async function importNotionPage(pageId: string, options: { linkTo?: strin
       .eq("id", row.id)
       .eq("user_id", user.id)
     if (updateError) throw new Error(`Failed to link entry: ${updateError.message}`)
+    await mirrorStatus(supabase, row.id, page.id, row.status, page.last_edited_time)
     await refresh(row.status)
     return { conflict: false, skipped: body.skipped, id: row.id, slug: row.slug }
   }
@@ -178,6 +195,7 @@ export async function importNotionPage(pageId: string, options: { linkTo?: strin
     .select("id, slug")
     .single()
   if (error) throw new Error(`Failed to import: ${error.message}`)
+  await mirrorStatus(supabase, created.id, page.id, "draft", page.last_edited_time)
   await refresh("draft")
   return { conflict: false, skipped: body.skipped, id: created.id, slug: created.slug }
 }
