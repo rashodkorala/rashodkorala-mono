@@ -5,6 +5,7 @@ import { requestPortfolioRevalidation } from "@/lib/revalidate-portfolio"
 import { revalidatePath } from "next/cache"
 import type { CaseStudy, CaseStudyDB, CaseStudyFormData } from "@/lib/types/case-study"
 import { getPublishIssues } from "@/lib/satahan-requirements"
+import { syncWritingStatus } from "@/lib/notion/client"
 
 function transformCaseStudy(cs: CaseStudyDB): CaseStudy {
   return {
@@ -304,6 +305,19 @@ export async function createOrUpdateCaseStudy(
   }
 
   if (error) throw new Error(`Failed to save case study: ${error.message}`)
+
+  if (data.notion_page_id) {
+    // Best effort: keep the Notion page's Status column in step, but never fail the save over it.
+    try {
+      const lastEdited = await syncWritingStatus(data.notion_page_id, data.status, data.notion_last_edited_at)
+      if (lastEdited && lastEdited !== data.notion_last_edited_at) {
+        await supabase.from("case_studies").update({ notion_last_edited_at: lastEdited }).eq("id", data.id).eq("user_id", user.id)
+        data.notion_last_edited_at = lastEdited
+      }
+    } catch (notionError) {
+      console.warn("[case-studies] couldn't update the Notion status:", notionError)
+    }
+  }
 
   revalidatePath("/protected/case-studies")
   revalidatePath("/protected/satahan")
