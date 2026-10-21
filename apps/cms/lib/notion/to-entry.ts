@@ -98,6 +98,73 @@ const EXT_BY_TYPE: Record<string, string> = {
   "image/svg+xml": "svg",
 }
 
+/**
+ * Downloads a Notion file (its URLs expire after an hour) into the media bucket at `basePath`
+ * plus the right extension, overwriting any earlier copy at that path.
+ */
+async function copyToMedia(supabase: SupabaseClient, url: string, basePath: string) {
+  const res = await fetch(url)
+  if (!res.ok) throw new Error(`Couldn't download an image from Notion (${res.status})`)
+  const type = res.headers.get("content-type")?.split(";")[0] ?? "image/png"
+  return saveToMedia(supabase, await res.arrayBuffer(), type, basePath)
+}
+
+async function saveToMedia(supabase: SupabaseClient, bytes: ArrayBuffer, type: string, basePath: string) {
+  const path = `${basePath}.${EXT_BY_TYPE[type] ?? "png"}`
+  const { error } = await supabase.storage.from("media").upload(path, bytes, { contentType: type, upsert: true })
+  if (error) throw new Error(`Couldn't save an image from Notion: ${error.message}`)
+  return { path, publicUrl: supabase.storage.from("media").getPublicUrl(path).data.publicUrl }
+}
+
+/**
+ * The page's Notion cover, copied into `case-studies/{slug}/cover/` and returned as a storage path
+ * for `cover_path`; null when the page has no cover (the CMS cover is then left as it is). The
+ * file is named by its contents, so an unchanged cover keeps its path and a new one gets a new one.
+ */
+export async function coverFrom(
+  page: PageObjectResponse,
+  { slug, supabase }: { slug: string; supabase: SupabaseClient }
+): Promise<string | null> {
+  const cover = page.cover
+  if (!cover) return null
+  const url = cover.type === "external" ? cover.external.url : cover.file.url
+  const res = await fetch(url)
+  if (!res.ok) throw new Error(`Couldn't download the cover from Notion (${res.status})`)
+  const type = res.headers.get("content-type")?.split(";")[0] ?? "image/jpeg"
+  const bytes = await res.arrayBuffer()
+  const digest = createHash("sha256").update(Buffer.from(bytes)).digest("hex").slice(0, 16)
+  const { path } = await saveToMedia(supabase, bytes, type, `case-studies/${slug}/cover/notion-cover-${digest}`)
+  return path
+}
+
+/**
+ * Deletes copies a pull made earlier that the entry no longer uses: `notion-*` images in its
+ * assets folder that the body doesn't reference, and `notion-cover-*` files other than the
+ * current cover. Only files with those prefixes are touched, so CMS uploads are never removed.
+ */
+export async function pruneNotionFiles(
+  supabase: SupabaseClient,
+  slug: string,
+  { contentMd, coverPath }: { contentMd: string; coverPath: string | null }
+): Promise<number> {
+  const stale: string[] = []
+  const assets = `case-studies/${slug}/assets`
+  const { data: assetFiles } = await supabase.storage.from("media").list(assets, { limit: 1000 })
+  for (const f of assetFiles ?? []) {
+    if (f.name.startsWith("notion-") && !contentMd.includes(`${assets}/${f.name}`)) stale.push(`${assets}/${f.name}`)
+  }
+  const covers = `case-studies/${slug}/cover`
+  const { data: coverFiles } = await supabase.storage.from("media").list(covers, { limit: 1000 })
+  for (const f of coverFiles ?? []) {
+    const path = `${covers}/${f.name}`
+    if (f.name.startsWith("notion-cover-") && path !== coverPath) stale.push(path)
+  }
+  if (stale.length === 0) return 0
+  const { error } = await supabase.storage.from("media").remove(stale)
+  if (error) throw new Error(`Couldn't remove old Notion copies: ${error.message}`)
+  return stale.length
+}
+
 const SKIPPED_BLOCKS = ["child_database", "embed", "link_preview", "pdf", "file", "audio", "unsupported"] as const
 
 /**
@@ -119,16 +186,8 @@ export async function bodyFrom(
     const alt = image.caption.map((t) => t.plain_text).join("").replace(/[[\]]/g, "") || ""
     if (image.type === "external") return `![${alt}](${image.external.url})`
 
-    const res = await fetch(image.file.url)
-    if (!res.ok) throw new Error(`Couldn't download an image from Notion (${res.status})`)
-    const type = res.headers.get("content-type")?.split(";")[0] ?? "image/png"
-    const path = `case-studies/${slug}/assets/notion-${block.id}.${EXT_BY_TYPE[type] ?? "png"}`
-    const { error } = await supabase.storage
-      .from("media")
-      .upload(path, await res.arrayBuffer(), { contentType: type, upsert: true })
-    if (error) throw new Error(`Couldn't save an image from Notion: ${error.message}`)
-    const { data } = supabase.storage.from("media").getPublicUrl(path)
-    return `![${alt}](${data.publicUrl})`
+    const { publicUrl } = await copyToMedia(supabase, image.file.url, `case-studies/${slug}/assets/notion-${block.id}`)
+    return `![${alt}](${publicUrl})`
   })
 
   n2m.setCustomTransformer("callout", async (block) => {

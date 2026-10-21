@@ -4,7 +4,15 @@ import { revalidatePath } from "next/cache"
 import { createClient } from "@/lib/supabase/server"
 import { requestPortfolioRevalidation } from "@/lib/revalidate-portfolio"
 import { getWritingPage, queryWritings, syncWritingStatus } from "@/lib/notion/client"
-import { bodyFrom, entryFieldsFrom, hashBody, slugify, type NotionEntryFields } from "@/lib/notion/to-entry"
+import {
+  bodyFrom,
+  coverFrom,
+  entryFieldsFrom,
+  hashBody,
+  pruneNotionFiles,
+  slugify,
+  type NotionEntryFields,
+} from "@/lib/notion/to-entry"
 
 /**
  * - new: not in the CMS yet
@@ -36,12 +44,13 @@ interface LinkedRow {
   title: string
   status: string
   content_md: string | null
+  cover_path: string | null
   notion_page_id: string | null
   notion_last_edited_at: string | null
   notion_body_hash: string | null
 }
 
-const LINK_COLUMNS = "id, slug, title, status, content_md, notion_page_id, notion_last_edited_at, notion_body_hash"
+const LINK_COLUMNS = "id, slug, title, status, content_md, cover_path, notion_page_id, notion_last_edited_at, notion_body_hash"
 
 async function requireUser() {
   const supabase = await createClient()
@@ -70,6 +79,20 @@ function syncColumns(lastEditedAt: string, contentMd: string) {
     notion_last_edited_at: lastEditedAt,
     notion_synced_at: new Date().toISOString(),
     notion_body_hash: hashBody(contentMd),
+  }
+}
+
+/** Removes Notion copies the entry no longer uses; best effort, after the entry is saved. */
+async function tidyNotionFiles(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  slug: string,
+  contentMd: string,
+  coverPath: string | null
+) {
+  try {
+    await pruneNotionFiles(supabase, slug, { contentMd, coverPath })
+  } catch (error) {
+    console.warn("[notion] couldn't remove old Notion copies:", error)
   }
 }
 
@@ -156,12 +179,19 @@ export async function importNotionPage(pageId: string, options: { linkTo?: strin
     if (error || !existing) throw new Error("Couldn't find the entry to link")
     const row = existing as LinkedRow
     const body = await bodyFrom(page.id, { slug: row.slug, supabase })
+    const notionCover = await coverFrom(page, { slug: row.slug, supabase })
     const { error: updateError } = await supabase
       .from("case_studies")
-      .update({ ...mappedColumns(fields), ...syncColumns(page.last_edited_time, body.contentMd), notion_page_id: page.id })
+      .update({
+        ...mappedColumns(fields),
+        ...syncColumns(page.last_edited_time, body.contentMd),
+        ...(notionCover ? { cover_path: notionCover } : {}),
+        notion_page_id: page.id,
+      })
       .eq("id", row.id)
       .eq("user_id", user.id)
     if (updateError) throw new Error(`Failed to link entry: ${updateError.message}`)
+    await tidyNotionFiles(supabase, row.slug, body.contentMd, notionCover ?? row.cover_path)
     await mirrorStatus(supabase, row.id, page.id, row.status, page.last_edited_time)
     await refresh(row.status)
     return { conflict: false, skipped: body.skipped, id: row.id, slug: row.slug }
@@ -175,6 +205,7 @@ export async function importNotionPage(pageId: string, options: { linkTo?: strin
   for (let n = 2; used.has(slug); n++) slug = `${base}-${n}`
 
   const body = await bodyFrom(page.id, { slug, supabase })
+  const notionCover = await coverFrom(page, { slug, supabase })
   const { data: created, error } = await supabase
     .from("case_studies")
     .insert({
@@ -190,6 +221,7 @@ export async function importNotionPage(pageId: string, options: { linkTo?: strin
       links: [],
       ...mappedColumns(fields),
       ...syncColumns(page.last_edited_time, body.contentMd),
+      cover_path: notionCover,
       notion_page_id: page.id,
     })
     .select("id, slug")
@@ -221,12 +253,19 @@ export async function pullNotionPage(caseStudyId: string, options: { force?: boo
 
   const page = await getWritingPage(row.notion_page_id)
   const body = await bodyFrom(page.id, { slug: row.slug, supabase })
+  // A Notion cover replaces the CMS cover; with none in Notion, the CMS cover stays.
+  const notionCover = await coverFrom(page, { slug: row.slug, supabase })
   const { error: updateError } = await supabase
     .from("case_studies")
-    .update({ ...mappedColumns(entryFieldsFrom(page)), ...syncColumns(page.last_edited_time, body.contentMd) })
+    .update({
+      ...mappedColumns(entryFieldsFrom(page)),
+      ...syncColumns(page.last_edited_time, body.contentMd),
+      ...(notionCover ? { cover_path: notionCover } : {}),
+    })
     .eq("id", row.id)
     .eq("user_id", user.id)
   if (updateError) throw new Error(`Failed to pull from Notion: ${updateError.message}`)
+  await tidyNotionFiles(supabase, row.slug, body.contentMd, notionCover ?? row.cover_path)
   await refresh(row.status)
   return { conflict: false, skipped: body.skipped, id: row.id, slug: row.slug }
 }
