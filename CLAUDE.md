@@ -162,6 +162,7 @@ PORTFOLIO_URL                     # overrides the preview origin, e.g. http://lo
 
 # Portfolio (server-only; pair with CMS vars above for instant cache bust after publishes)
 PORTFOLIO_REVALIDATE_SECRET
+DITHERTOOL_URL                    # optional; dither tool deployment origin, proxied at /dithertool (build-time)
 
 # Photos App (server-only)
 SUPABASE_SERVICE_ROLE_KEY
