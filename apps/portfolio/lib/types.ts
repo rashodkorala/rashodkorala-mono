@@ -57,7 +57,7 @@ export interface CaseStudy {
   links?: CaseStudyLink[] | null;
   stack?: string[] | null;
   /** Satahan entry kind; missing on rows saved before the column existed. */
-  kind?: "case_study" | "note" | null;
+  kind?: "case_study" | "article" | "note" | null;
   /** Permanent Satahan number ("Nº 02"), given on first publish. */
   entry_number?: number | null;
   /** Legacy one-liner; superseded by `summary`. */

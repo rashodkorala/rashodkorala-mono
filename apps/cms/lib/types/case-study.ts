@@ -3,8 +3,8 @@ export interface BeforeAfter {
   afterImage: string | null
 }
 
-/** Satahan entry kind: a long-form case study or a short note. */
-export type CaseStudyKind = 'case_study' | 'note'
+/** Satahan entry kind: a case study of a project, a long-form article, or a short note. */
+export type CaseStudyKind = 'case_study' | 'article' | 'note'
 
 // Database schema (snake_case) — matches new case_studies table
 export interface CaseStudyDB {
@@ -59,7 +59,6 @@ export interface CaseStudy {
   links: { label: string; url: string; type?: string }[]
   stack: string[]
   kind: CaseStudyKind
-  entryNumber: number | null
   inShort: string | null
   publishedAt: string | null
   /** Linked page in the Notion Writings database, if the entry is pulled from Notion. */

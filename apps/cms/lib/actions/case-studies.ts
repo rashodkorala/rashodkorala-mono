@@ -28,7 +28,6 @@ function transformCaseStudy(cs: CaseStudyDB): CaseStudy {
     links: cs.links ?? [],
     stack: cs.stack ?? [],
     kind: cs.kind ?? 'case_study',
-    entryNumber: cs.entry_number ?? null,
     inShort: cs.in_short ?? null,
     publishedAt: cs.published_at ?? null,
     notionPageId: cs.notion_page_id ?? null,
@@ -166,12 +165,11 @@ export async function createOrUpdateCaseStudy(
   let existingGalleryPaths: string[] = []
   let existingBeforeAfter: { beforeImage?: string | null; afterImage?: string | null } | null = null
   let existingCoverPath: string | null = null
-  let existingEntryNumber: number | null = null
   let existingPublishedAt: string | null = null
   if (existingId) {
     const { data: existing } = await supabase
       .from("case_studies")
-      .select("gallery, before_after, cover_path, entry_number, published_at")
+      .select("gallery, before_after, cover_path, published_at")
       .eq("id", existingId)
       .eq("user_id", user.id)
       .single()
@@ -179,7 +177,6 @@ export async function createOrUpdateCaseStudy(
       existingGalleryPaths = existing.gallery || []
       existingBeforeAfter = existing.before_after || null
       existingCoverPath = existing.cover_path || null
-      existingEntryNumber = existing.entry_number ?? null
       existingPublishedAt = existing.published_at ?? null
     }
   }
@@ -238,20 +235,7 @@ export async function createOrUpdateCaseStudy(
     afterImage = path
   }
 
-  // Satahan numbers are permanent: given on first publish, never reused or renumbered.
-  let entryNumber = existingEntryNumber
-  if (entryNumber == null && formData.status === "published") {
-    const { data: last } = await supabase
-      .from("case_studies")
-      .select("entry_number")
-      .eq("user_id", user.id)
-      .not("entry_number", "is", null)
-      .order("entry_number", { ascending: false })
-      .limit(1)
-      .maybeSingle()
-    entryNumber = (last?.entry_number ?? 0) + 1
-  }
-  // The published date is likewise set once; later edits keep it.
+  // The published date is set once, on first publish; later edits keep it.
   let publishedAt = existingPublishedAt
   if (publishedAt == null && formData.status === "published") {
     publishedAt = new Date().toISOString()
@@ -277,7 +261,6 @@ export async function createOrUpdateCaseStudy(
     stack: formData.stack ?? [],
     kind: formData.kind ?? "case_study",
     in_short: formData.inShort?.trim() || null,
-    entry_number: entryNumber,
     published_at: publishedAt,
   }
 

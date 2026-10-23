@@ -333,7 +333,7 @@ export function CaseStudyForm({ caseStudy, availableProjects }: CaseStudyFormPro
         <p className="text-xs text-muted-foreground">
           {formData.kind === "case_study"
             ? "Case studies also need a cover, role and timeline."
-            : "Notes need only the basics."}
+            : "Articles and notes need only the basics."}
         </p>
       </SidebarSection>
 
@@ -371,11 +371,9 @@ export function CaseStudyForm({ caseStudy, availableProjects }: CaseStudyFormPro
             onChange={(e) => update("kind", e.target.value as CaseStudyFormData["kind"])}
           >
             <option value="case_study">Case study</option>
+            <option value="article">Article (long-form writing)</option>
             <option value="note">Note (short, shown in full on the index)</option>
           </select>
-          {caseStudy?.entryNumber != null && (
-            <p className="text-xs text-muted-foreground">Satahan Nº {String(caseStudy.entryNumber).padStart(2, "0")}</p>
-          )}
         </div>
         <div className="space-y-2">
           <Label htmlFor="cs-status">Status</Label>
