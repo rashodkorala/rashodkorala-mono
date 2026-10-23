@@ -3,7 +3,7 @@ import { cookies, draftMode } from "next/headers";
 import { notFound } from "next/navigation";
 import { getCachedCaseStudies, getCachedCaseStudyBySlug } from "@/lib/supabase/cached-case-studies";
 import { getCachedAllProjects } from "@/lib/supabase/cached-projects";
-import { buildPreviewItem, buildSatahanItems, caseStudyCover, formatEntryNumber, mediaUrl } from "@/lib/entries";
+import { buildPreviewItem, buildSatahanItems, caseStudyCover, mediaUrl } from "@/lib/entries";
 import { getPreviewCaseStudy, PREVIEW_TOKEN_COOKIE } from "@/lib/supabase/preview";
 import { renderSatahan } from "@/lib/satahan-markdown";
 import type { CaseStudy } from "@/lib/types";
@@ -30,7 +30,7 @@ async function getPreviewEntry(slug: string): Promise<CaseStudy | null> {
 }
 
 /**
- * The entry plus its place in the notebook (number, previous and next). In a CMS preview the
+ * The entry plus its place in the notebook (previous and next). In a CMS preview the
  * entry is read fresh in any status and shown where it will land once published; every other
  * entry shows its public version.
  */
@@ -40,14 +40,13 @@ async function getEntryInContext(slug: string) {
   const entry = previewEntry ?? (await getEntry(slug));
   if (!entry) return null;
   const [caseStudies, projects] = await Promise.all([getCachedCaseStudies(), getCachedAllProjects()]);
-  const items = buildSatahanItems(caseStudies, projects); // newest number first
+  const items = buildSatahanItems(caseStudies, projects); // newest first
   const index = items.findIndex((i) => i.slug === entry.slug);
 
   if (preview) {
     // Published entries keep their slot; a draft sits in front of the newest one.
     const live = index !== -1 && entry.status === "published";
-    const item = buildPreviewItem(entry, items, projects);
-    if (live) item.number = items[index].number;
+    const item = buildPreviewItem(entry, projects);
     return {
       entry,
       item,
@@ -81,7 +80,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     alternates: { canonical: `/satahan/${entry.slug}` },
     ...(preview ? { robots: { index: false, follow: false } } : {}),
     openGraph: {
-      title: `Satahan Nº ${formatEntryNumber(item.number)}: ${entry.title}`,
+      title: `Satahan: ${entry.title}`,
       description,
       type: "article",
       images: cover ? [{ url: cover.src }] : [],

@@ -33,7 +33,7 @@ export function getPublishChecks(data: PublishableFields, { hasCover }: { hasCov
   const checks: PublishCheck[] = [
     { field: "title", message: "Title", ok: filled(data.title) },
     { field: "slug", message: "URL slug", ok: filled(data.slug) },
-    { field: "kind", message: "Kind", ok: data.kind === "case_study" || data.kind === "note" },
+    { field: "kind", message: "Kind", ok: data.kind === "case_study" || data.kind === "article" || data.kind === "note" },
     {
       field: "summary",
       message: summary.length > SUMMARY_MAX_LENGTH ? `Summary (max ${SUMMARY_MAX_LENGTH} characters)` : "Summary",

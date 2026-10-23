@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { poppins, satoshi, cormorantGaramond } from "@/lib/font";
-import { formatEntryNumber, type SatahanItem } from "@/lib/entries";
+import type { SatahanItem } from "@/lib/entries";
 import { SATAHAN_PROSE_CSS } from "@/lib/satahan-markdown";
 import SatahanToc, { type TocHeading } from "@/src/components/satahan/SatahanToc";
 
@@ -53,26 +53,29 @@ function Neighbour({ item, label, align }: { item: SatahanItem | null; label: st
   if (!item) return <span />;
   return (
     <Link href={`/satahan/${item.slug}`} className="se-neighbour" style={{ textAlign: align }}>
-      <span className="se-label">{label} · Nº {formatEntryNumber(item.number)}</span>
+      <span className="se-label">{label}</span>
       <span className="se-neighbour-title">{item.title}</span>
     </Link>
   );
 }
 
+const KIND_LABEL: Record<SatahanItem["kind"], string> = { case_study: "Case study", article: "Article", note: "Note" };
+
 /**
- * Editorial entry. Case studies open on a wide cover and a facts strip (role, timeline,
- * project); notes are just the reading column. One layout at every width.
+ * Editorial entry. Case studies and articles open on a wide cover and get contents when long
+ * enough; case studies add a facts strip (role, timeline, project). Notes are just the reading
+ * column. One layout at every width.
  */
 export default function SatahanEntry({ item, html, images, previous, next }: SatahanEntryProps) {
   const isCaseStudy = item.kind === "case_study";
+  const isLongForm = item.kind !== "note";
   const headed = withHeadingIds(html);
-  const showToc = isCaseStudy && headed.toc.length >= MIN_TOC_HEADINGS;
+  const showToc = isLongForm && headed.toc.length >= MIN_TOC_HEADINGS;
   // An "inline" cover is the body's first image; showing it as the hero would repeat it.
-  const hero = isCaseStudy && item.cover?.variant === "hero" ? item.cover.src : null;
+  const hero = isLongForm && item.cover?.variant === "hero" ? item.cover.src : null;
 
   const kicker = [
-    `Nº ${formatEntryNumber(item.number)}`,
-    isCaseStudy ? "Case study" : "Note",
+    KIND_LABEL[item.kind],
     monthYear(item.date),
     item.readingMinutes ? `${item.readingMinutes} min` : null,
   ].filter(Boolean);
@@ -92,7 +95,7 @@ export default function SatahanEntry({ item, html, images, previous, next }: Sat
         ${SATAHAN_PROSE_CSS}
 
         .se { font-family:${satoshi}; padding-bottom:var(--fib-89); }
-        .se-col { max-width:680px; margin:0 auto; min-width:0; }
+        .se-col { max-width:760px; margin:0 auto; min-width:0; }
         .se-back { display:inline-flex; align-items:center; gap:6px; font-size:13px; letter-spacing:0.04em;
           color:var(--color-body-secondary); text-decoration:none; padding:6px 0; margin-bottom:var(--fib-34); transition:color .15s; }
         .se-back:hover { color:var(--color-heading); }

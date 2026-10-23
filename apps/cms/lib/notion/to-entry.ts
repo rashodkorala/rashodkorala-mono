@@ -66,6 +66,7 @@ function kindFrom(value: string | null): CaseStudyKind | null {
   if (!value) return null
   const v = value.toLowerCase()
   if (v.startsWith("note")) return "note"
+  if (v.startsWith("article")) return "article"
   if (v.startsWith("case")) return "case_study"
   return null
 }

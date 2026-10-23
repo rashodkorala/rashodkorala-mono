@@ -3,17 +3,18 @@
 import { useState } from "react";
 import Link from "next/link";
 import { poppins, satoshi, notoSerifSinhala } from "@/lib/font";
-import { formatEntryNumber, type SatahanItem } from "@/lib/entries";
+import type { SatahanItem } from "@/lib/entries";
 
-type Filter = "all" | "case_study" | "note";
+type Filter = "all" | SatahanItem["kind"];
 
 const FILTERS: { id: Filter; label: string }[] = [
   { id: "all", label: "All" },
   { id: "case_study", label: "Case studies" },
+  { id: "article", label: "Articles" },
   { id: "note", label: "Notes" },
 ];
 
-const KIND_LABEL: Record<SatahanItem["kind"], string> = { case_study: "Case study", note: "Note" };
+const KIND_LABEL: Record<SatahanItem["kind"], string> = { case_study: "Case study", article: "Article", note: "Note" };
 
 function shortDate(iso: string): string {
   return new Date(iso).toLocaleDateString("en-US", { month: "short", year: "2-digit" }).replace(" ", " ’");
@@ -24,14 +25,13 @@ function longDate(iso: string): string {
 }
 
 /**
- * One ledger line. Default: Nº | title + summary | kind | date.
+ * One ledger line. Default: title + summary | kind | date.
  * From 1280px the summary and project get their own columns; below 700px kind and date fold above the title.
  */
 function Row({ item }: { item: SatahanItem }) {
   return (
     <li>
       <Link href={`/satahan/${item.slug}`} className="st-row">
-        <span className="st-num">{formatEntryNumber(item.number)}</span>
         <span className="st-main">
           <span className="st-title">{item.title}</span>
           {item.summary && <span className="st-summary st-narrow">{item.summary}</span>}
@@ -50,7 +50,10 @@ function Row({ item }: { item: SatahanItem }) {
 
 export default function SatahanPageContent({ items }: { items: SatahanItem[] }) {
   const [filter, setFilter] = useState<Filter>("all");
-  const hasBothKinds = items.some((i) => i.kind === "note") && items.some((i) => i.kind === "case_study");
+  // Filters only appear once there is more than one kind to pick between, and only for kinds that exist.
+  const kinds = new Set(items.map((i) => i.kind));
+  const filters = FILTERS.filter((f) => f.id === "all" || kinds.has(f.id));
+  const hasBothKinds = kinds.size > 1;
   const visible = filter === "all" ? items : items.filter((i) => i.kind === filter);
 
   return (
@@ -63,7 +66,7 @@ export default function SatahanPageContent({ items }: { items: SatahanItem[] }) 
         .st-chip[aria-pressed="true"] { background:var(--color-heading); border-color:var(--color-heading); color:var(--color-page); }
         .st-table { max-width:1040px; }
         .st-ledger { list-style:none; margin:0; padding:0; }
-        .st-row, .st-head { display:grid; grid-template-columns:clamp(48px,6vw,84px) minmax(0,1fr) 120px 72px; gap:clamp(12px,2vw,28px); align-items:baseline; }
+        .st-row, .st-head { display:grid; grid-template-columns:minmax(0,1fr) 120px 72px; gap:clamp(12px,2vw,28px); align-items:baseline; }
         .st-wide { display:none; }
         .st-summary-col { font-size:15px; line-height:1.55; color:var(--color-body-secondary); max-width:56ch;
           -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
@@ -72,7 +75,6 @@ export default function SatahanPageContent({ items }: { items: SatahanItem[] }) 
         .st-head span:last-child, .st-date { text-align:right; }
         .st-row { border-top:1px solid var(--color-border); padding:clamp(16px,1.8vw,24px) 0; text-decoration:none; color:inherit; }
         .st-ledger li:last-child .st-row { border-bottom:1px solid var(--color-border); }
-        .st-num { font-family:${poppins}; font-weight:400; font-size:clamp(24px,2.4vw,36px); line-height:1; color:var(--color-faint); font-variant-numeric:tabular-nums; transition:color .15s; }
         .st-main { display:flex; flex-direction:column; gap:6px; min-width:0; }
         .st-title { font-family:${poppins}; font-weight:400; font-size:clamp(19px,1.6vw,24px); line-height:1.2; letter-spacing:-0.01em; color:var(--color-heading); text-wrap:balance; }
         .st-summary { font-size:14px; line-height:1.55; color:var(--color-body-secondary); max-width:60ch;
@@ -80,16 +82,15 @@ export default function SatahanPageContent({ items }: { items: SatahanItem[] }) 
         .st-kind, .st-date { font-size:13px; color:var(--color-body-secondary); white-space:nowrap; }
         .st-date { color:var(--color-label); font-variant-numeric:tabular-nums; }
         .st-fold { display:none; font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--color-label); }
-        .st-row:hover .st-num { color:var(--color-heading); }
         .st-row:hover .st-title { text-decoration:underline; text-underline-offset:5px; text-decoration-thickness:1px; }
         @media (max-width:699px) {
-          .st-row { grid-template-columns:40px minmax(0,1fr); }
+          .st-row { grid-template-columns:minmax(0,1fr); }
           .st-head, .st-kind, .st-date { display:none; }
           .st-fold { display:block; order:-1; }
         }
         @media (min-width:1280px) {
           .st-table { max-width:none; }
-          .st-row, .st-head { grid-template-columns:clamp(64px,5vw,96px) minmax(0,1fr) minmax(0,1.15fr) minmax(120px,0.4fr) 110px 80px; gap:clamp(24px,2.2vw,48px); }
+          .st-row, .st-head { grid-template-columns:minmax(0,1fr) minmax(0,1.15fr) minmax(120px,0.4fr) 110px 80px; gap:clamp(24px,2.2vw,48px); }
           .st-wide { display:block; }
           .st-summary-col { display:-webkit-box; }
           .st-narrow { display:none; }
@@ -125,7 +126,7 @@ export default function SatahanPageContent({ items }: { items: SatahanItem[] }) 
 
         {hasBothKinds && (
           <div className="st-chips" role="group" aria-label="Filter entries">
-            {FILTERS.map((f) => (
+            {filters.map((f) => (
               <button key={f.id} type="button" className="st-chip" aria-pressed={filter === f.id} onClick={() => setFilter(f.id)}>
                 {f.label}
               </button>
@@ -138,7 +139,6 @@ export default function SatahanPageContent({ items }: { items: SatahanItem[] }) 
         ) : (
           <div className="st-table" style={{ marginTop: hasBothKinds ? "clamp(12px, 1.4vw, 20px)" : "clamp(28px, 3vw, 44px)" }}>
             <div className="st-head" aria-hidden="true">
-              <span>Nº</span>
               <span>Entry</span>
               <span className="st-wide">Summary</span>
               <span className="st-wide">Project</span>
