@@ -7,13 +7,10 @@ import Image from "next/image";
 import Link from "next/link";
 import { poppins, satoshi } from "@/lib/font";
 import type { Project, CaseStudy } from "@/lib/types";
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
+import { mediaUrl } from "@/lib/entries";
 
 function resolveUrl(raw: string | null | undefined): string | null {
-  if (!raw) return null;
-  if (raw.startsWith("http")) return raw;
-  return `${supabaseUrl}/storage/v1/object/public/media/${raw}`;
+  return raw ? mediaUrl(raw) || null : null;
 }
 
 function normalizeHref(url: string | null | undefined): string | null {
@@ -215,7 +212,7 @@ export default function ProjectPage({ project, caseStudies }: { project: Project
           color: var(--color-heading);
           transition: background 0.2s, color 0.2s;
         }
-        .pd-view-more-btn:hover { background: var(--color-heading); color: var(--color-inverse); }
+        .pd-view-more-btn:hover { background: var(--color-heading); color: var(--color-page); }
 
         .pd-gallery-thumb {
           padding: 0; border: none; margin: 0; width: 100%; max-width: 100%; min-width: 0;
@@ -329,7 +326,7 @@ export default function ProjectPage({ project, caseStudies }: { project: Project
             {logoSrc ? (
               <Image src={logoSrc} alt={`${project.title} logo`} fill className="object-cover" sizes="64px" />
             ) : (
-              <span style={{ color: "var(--color-inverse)", fontSize: "clamp(14px, 1.4vw, 22px)", fontWeight: 400, fontFamily: poppins }}>
+              <span style={{ color: "var(--color-page)", fontSize: "clamp(14px, 1.4vw, 22px)", fontWeight: 400, fontFamily: poppins }}>
                 {project.title.slice(0, 2).toUpperCase()}
               </span>
             )}
