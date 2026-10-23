@@ -36,6 +36,18 @@ const nextConfig = {
       { source: "/projects/atlier", destination: "/projects/atelier", permanent: true },
     ];
   },
+  async rewrites() {
+    // The dither tool is its own deployment (separate repo, built with base path
+    // /dithertool); proxy it so it lives at rashodkorala.com/dithertool.
+    const dithertool = process.env.DITHERTOOL_URL?.trim().replace(/\/+$/, "");
+    if (!dithertool) return [];
+    return [
+      // The app's index lives at /dithertool/ upstream; don't rely on the host
+      // resolving the slashless path.
+      { source: "/dithertool", destination: `${dithertool}/dithertool/` },
+      { source: "/dithertool/:path*", destination: `${dithertool}/dithertool/:path*` },
+    ];
+  },
 };
 
 module.exports = nextConfig;
