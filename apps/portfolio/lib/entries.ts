@@ -51,12 +51,16 @@ export interface SatahanItem {
 
 const supabaseUrl = (process.env.NEXT_PUBLIC_SUPABASE_URL ?? "").replace(/\/+$/, "");
 
-/** Public URL for a storage path in the `media` bucket, or pass-through for absolute URLs. */
+/**
+ * Public URL for a storage path in the `media` bucket. Absolute URLs pass through, and so do
+ * root-relative paths ("/moov/cover.png"), which point at the portfolio's own `public/` files.
+ */
 export function mediaUrl(raw: string): string {
   const t = raw.trim();
   if (!t) return "";
   if (/^https?:\/\//i.test(t)) return t;
-  const path = t.replace(/^\/+/, "");
+  if (/^\/(?!\/)/.test(t)) return t;
+  const path = t;
   if (!supabaseUrl) return path;
   if (path.startsWith("storage/v1/")) return `${supabaseUrl}/${path}`;
   return `${supabaseUrl}/storage/v1/object/public/media/${path}`;

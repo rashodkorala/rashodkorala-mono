@@ -48,7 +48,9 @@ const skills: SkillGroup[] = [
     items: [
       ...plain("SwiftUI", "Core NFC", "CoreBluetooth"),
       { name: "AlarmKit", match: /AlarmKit/ },
-      ...plain("WidgetKit", "Jetpack Compose", "React Native"),
+      { name: "WidgetKit" },
+      { name: "Jetpack Compose", match: /Jetpack Compose/ },
+      { name: "React Native" },
     ],
   },
   {
@@ -71,7 +73,9 @@ const skills: SkillGroup[] = [
   {
     label: "Practices",
     items: [
-      ...plain("Infrastructure as code (CDK, SST)", "Cloudflare", "CI/CD"),
+      ...plain("Infrastructure as code (CDK, SST)", "Cloudflare"),
+      { name: "CI/CD", match: /\bCI\b/ },
+      { name: "Spec-driven development", match: /spec-driven/i },
       { name: "Automated testing", match: /\btests?\b/i },
       { name: "Security & access control", match: /secur|cryptograph|counterfeit/i },
       { name: "Disaster recovery", match: /backups?|recovery|rollback/i },
@@ -91,14 +95,17 @@ const experience: Entry[] = [
     date: "Jun 2026 — Present",
     title: "Software Engineering Intern (Mitacs)",
     org: "Moov Technologies · St. John's, NL",
-    context: "Connected smart alarm: device firmware, iPhone app, and cloud backend",
+    context: "Connected smart alarm: device firmware, iPhone and Android apps, and cloud backend",
     bullets: [
-      "Sole engineer across firmware, iOS, and cloud; delivered the product's first end-to-end over-the-air update.",
+      "Sole engineer across firmware, iOS, Android, and cloud; delivered the product's first end-to-end over-the-air update.",
+      "Introduced spec-driven development across all four codebases: one versioned spec repo of contracts, feature specs, and decision records that engineers and AI agents build from.",
       "Audited the legacy backend with the team, found critical security flaws, and built a secure AWS replacement with 194 tests.",
       "Cut monthly AWS costs by over 55% through right-sizing, while keeping the system ready to scale.",
       "Resolved a firmware defect that bypassed the low-battery update check; added automatic rollback for failed updates.",
       "Worked around iOS limits with AlarmKit and layered fallback alarms, so only the physical device can stop the alarm.",
       "Rebuilt the iPhone app, won Apple's approval for restricted Screen Time access, and submitted it to the App Store.",
+      "Brought the Android app (Kotlin, Jetpack Compose) to parity with iOS, tracked rule by rule against the spec, and prepared its first Google Play release.",
+      "Added CI to the Android app, running build, lint, and 433 unit tests on every pull request, with automated Google Play release builds.",
     ],
   },
   {
