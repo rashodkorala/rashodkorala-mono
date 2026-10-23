@@ -226,6 +226,17 @@ export default function ProjectPage({ project, caseStudies }: { project: Project
           outline-offset: 3px;
         }
 
+        /* Every edge fades out (a soft vignette, strongest at the bottom), so any cover blends into either theme. */
+        .pd-cover {
+          position: relative; width: 100%; aspect-ratio: 16 / 7; overflow: hidden; background: #b8b2aa;
+          --pd-fade-y: linear-gradient(to bottom, transparent 0, #000 14%, #000 48%, transparent 100%);
+          --pd-fade-x: linear-gradient(to right, transparent 0, #000 12%, #000 88%, transparent 100%);
+          -webkit-mask-image: var(--pd-fade-y), var(--pd-fade-x);
+          -webkit-mask-composite: source-in;
+          mask-image: var(--pd-fade-y), var(--pd-fade-x);
+          mask-composite: intersect;
+        }
+
         /* Back link */
         .pd-back-link:hover { color: var(--color-heading); }
 
@@ -274,6 +285,7 @@ export default function ProjectPage({ project, caseStudies }: { project: Project
           .pd-photo-wide   { aspect-ratio: 4 / 3 !important; }
           .pd-related-grid { grid-template-columns: 1fr !important; }
           .pd-title-row    { flex-direction: column !important; align-items: flex-start !important; }
+          .pd-cover        { aspect-ratio: 3 / 2; }
         }
       `}</style>
 
@@ -302,10 +314,19 @@ export default function ProjectPage({ project, caseStudies }: { project: Project
           </span>
         </div>
 
+        {/* Cover, fading into the page so the title below sits on it */}
+        <div className="pd-cover">
+          {coverSrc ? (
+            <Image src={coverSrc} alt={project.title} fill className="object-cover" priority sizes="100vw" />
+          ) : (
+            <CoverPlaceholder initial={project.title.charAt(0)} />
+          )}
+        </div>
+
         {/* Title row */}
         <div
           className="pd-title-row"
-          style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 24, marginBottom: "clamp(6px, 1vw, 16px)", flexWrap: "wrap" }}
+          style={{ position: "relative", display: "flex", alignItems: "flex-end", justifyContent: "space-between", gap: 24, marginTop: "calc(-1 * clamp(24px, 4.5vw, 88px))", marginBottom: "clamp(6px, 1vw, 16px)", flexWrap: "wrap" }}
         >
           <h1 style={{ fontFamily: poppins, fontWeight: 400, fontSize: "clamp(40px, 7vw, 128px)", color: "var(--color-heading)", letterSpacing: "-0.025em", lineHeight: 0.9 }}>
             {project.title}
@@ -334,19 +355,10 @@ export default function ProjectPage({ project, caseStudies }: { project: Project
         </div>
 
         {project.subtitle && (
-          <p style={{ fontFamily: poppins, fontSize: "clamp(18px, 2vw, 38px)", color: "var(--color-body-secondary)", fontWeight: 400, marginBottom: "clamp(24px, 3vw, 44px)", letterSpacing: "0" }}>
+          <p style={{ fontFamily: poppins, fontSize: "clamp(18px, 2vw, 38px)", color: "var(--color-body-secondary)", fontWeight: 400, marginBottom: "clamp(28px, 4vw, 56px)", letterSpacing: "0" }}>
             {project.subtitle}
           </p>
         )}
-
-        {/* Cover */}
-        <div style={{ width: "100%", aspectRatio: "16 / 7", background: "#b8b2aa", overflow: "hidden", position: "relative", marginBottom: "clamp(28px, 4vw, 56px)" }}>
-          {coverSrc ? (
-            <Image src={coverSrc} alt={project.title} fill className="object-cover" priority sizes="100vw" />
-          ) : (
-            <CoverPlaceholder initial={project.title.charAt(0)} />
-          )}
-        </div>
 
         {/* Mobile sticky TOC — hidden on desktop, sticky bar on mobile */}
         {sections.length > 1 && (
