@@ -29,7 +29,6 @@ interface Entry {
 }
 
 // ─── Data ─────────────────────────────────────────────────────────────────────
-// Mirrors public/Rashod_Korala_Resume.pdf — keep the two in sync.
 
 const plain = (...names: string[]): Skill[] => names.map((name) => ({ name }));
 
@@ -170,12 +169,6 @@ const additionalExperience: Entry[] = [
 
 const metaLinkClass =
   "inline-flex items-center gap-1 font-sans text-[length:clamp(var(--text-label),0.88vw,0.8125rem)] text-body-secondary underline decoration-line-hover underline-offset-3 transition-colors hover:text-body";
-
-const DownloadIcon = () => (
-  <svg viewBox="0 0 12 12" fill="none" className="h-fib-13 w-fib-13 shrink-0">
-    <path d="M6 1v7M6 8l-3-3M6 8l3-3M1 11h10" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
-  </svg>
-);
 
 const ArrowIcon = () => (
   <svg viewBox="0 0 12 12" fill="none" className="h-fib-13 w-fib-13 shrink-0">
@@ -419,13 +412,6 @@ export default function CVContent() {
                 </p>
               ),
             )}
-            <a
-              className="cv-no-print mt-1 inline-flex items-center gap-fib-8 font-sans text-[length:clamp(var(--text-label),0.85vw,0.8125rem)] text-heading underline decoration-line-hover underline-offset-4 transition-colors hover:text-body"
-              href="/Rashod_Korala_Resume.pdf"
-              download="Rashod_Korala_Resume.pdf"
-            >
-              Download PDF <DownloadIcon />
-            </a>
           </div>
         </div>
 
