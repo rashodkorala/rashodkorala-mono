@@ -91,7 +91,7 @@ const certs: Cert[] = [
 const experience: Entry[] = [
   {
     id: "moov",
-    date: "Jun 2026 — Present",
+    date: "Aug 2026 — Present",
     title: "Software Engineering Intern (Mitacs)",
     org: "Moov Technologies · St. John's, NL",
     context: "Connected smart alarm: device firmware, iPhone and Android apps, and cloud backend",
