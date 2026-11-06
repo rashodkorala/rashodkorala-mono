@@ -110,7 +110,7 @@ const experience: Entry[] = [
   {
     id: "aetherlabs",
     date: "Aug 2024 — Present",
-    title: "Founding Engineer",
+    title: "Founder",
     org: "AetherLabs · aetherlabs.art · Propel ICT & Genesis Evolve accelerators",
     context: "Proof of authenticity for physical artwork",
     bullets: [
