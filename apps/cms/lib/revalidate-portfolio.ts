@@ -8,12 +8,21 @@ export async function requestPortfolioRevalidation(): Promise<void> {
   if (!url || !secret) return
 
   try {
+    // A redirect (http -> https, apex -> www) is a different origin, so fetch would drop the
+    // Authorization header and the portfolio would answer 401. Never follow one with the secret.
     const res = await fetch(url, {
       method: "POST",
       headers: {
         Authorization: `Bearer ${secret}`,
       },
+      redirect: "manual",
     })
+    if (res.status >= 300 && res.status < 400) {
+      console.warn(
+        `[revalidate-portfolio] PORTFOLIO_REVALIDATE_URL redirects (${res.status}) to ${res.headers.get("location") ?? "an unknown location"}; set it to that URL`
+      )
+      return
+    }
     if (!res.ok) {
       const body = await res.text().catch(() => "")
       console.warn(
