@@ -150,7 +150,7 @@ NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
 OPENAI_API_KEY
 
 # CMS → Portfolio on-demand ISR (optional; omit locally if portfolio not reachable)
-PORTFOLIO_REVALIDATE_URL          # e.g. https://yourdomain.com/api/revalidate
+PORTFOLIO_REVALIDATE_URL          # the final URL, e.g. https://www.rashodkorala.com/api/revalidate; one that redirects (http, apex) loses the Bearer header and gets 401
 PORTFOLIO_REVALIDATE_SECRET       # shared long random string (same value on CMS + portfolio)
 
 # CMS ← Notion "Writings" database (optional; Import from Notion only shows when both are set)
