@@ -39,7 +39,8 @@ const skills: SkillGroup[] = [
       { name: "TypeScript" },
       { name: "Swift", entries: ["moov", "aetherlabs"] },
       { name: "Kotlin", entries: ["moov", "aetherlabs"] },
-      ...plain("Python", "C", "SQL"),
+      { name: "Python", entries: ["transcriber"] },
+      ...plain("C", "SQL"),
     ],
   },
   {
@@ -55,8 +56,19 @@ const skills: SkillGroup[] = [
   {
     label: "Backend & Cloud",
     items: [
-      ...plain("Node.js", "NestJS", "Hono", "PostgreSQL", "Prisma", "Drizzle"),
+      ...plain("Node.js", "NestJS"),
+      { name: "FastAPI", entries: ["transcriber"] },
+      ...plain("Hono", "PostgreSQL", "Prisma", "Drizzle"),
       { name: "AWS (Lambda, Aurora, RDS, Fargate, S3, KMS, Cognito)", match: /\bAWS\b|\bKMS\b|serverless/i },
+    ],
+  },
+  {
+    label: "AI",
+    items: [
+      { name: "Claude API", entries: ["transcriber", "transcript"] },
+      { name: "LangGraph", entries: ["transcriber"] },
+      { name: "Speech (Azure, ElevenLabs)", entries: ["transcriber"] },
+      { name: "AI coding agents", match: /\bAI agents\b/ },
     ],
   },
   {
@@ -123,6 +135,18 @@ const experience: Entry[] = [
 ];
 
 const projects: Entry[] = [
+  {
+    id: "transcriber",
+    date: "Oct–Nov 2026",
+    title: "Patient-Physician Transcriber",
+    org: "AI medical interpreter prototype · Open source",
+    context: "Live interpretation for patients and physicians who don't share a language",
+    bullets: [
+      "Built a live medical interpreter prototype in English with Canadian French, Punjabi or Tamil: each person speaks in turn, a shared screen shows what they said beside the translation, and the translation is read aloud.",
+      "Made the software check medication doses and frequencies in both languages before anything is spoken, pausing playback until the physician confirms a mismatch.",
+      "Produced a clinical note linked to the conversation, a summary in the patient's language, and a record that shows whether anything was changed, backed by 458 automated tests.",
+    ],
+  },
   {
     id: "moov-shopify",
     date: "Mar 2026 — Jun 2026",
